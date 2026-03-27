@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en" style="background:#080808;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#080808" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <title>Wylde Self — Train With The Person You're Becoming</title>
+
+  <!-- SOCIAL SHARE META -->
+  <meta name="description" content="An AI-powered experience where you train alongside a future version of yourself." />
+  <meta property="og:title" content="Wylde Self — Train With The Person You're Becoming" />
+  <meta property="og:description" content="An AI-powered experience where you train alongside a future version of yourself." />
+  <meta property="og:image" content="https://wyldeself.com/og-image.png" />
+  <meta property="og:url" content="https://wyldeself.com" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Wylde Self — Train With The Person You're Becoming" />
+  <meta name="twitter:description" content="An AI-powered experience where you train alongside a future version of yourself." />
+  <meta name="twitter:image" content="https://wyldeself.com/og-image.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #080808; --charcoal: #111111; --surface: #161616;
+      --white: #f5f4f0; --muted: #b0afa8; --gold: #c8a96e;
+      --ff-hero: 'Bebas Neue', sans-serif;
+      --ff-serif: 'Cormorant Garamond', serif;
+      --ff-body: 'DM Sans', sans-serif;
+    }
+    html, body { background: #080808 !important; color: #f5f4f0; font-family: var(--ff-body); font-weight: 400; overflow-x: hidden; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+    body::after { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); opacity: 0.03; pointer-events: none; z-index: 9000; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: #080808; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .logo { font-family: var(--ff-hero); font-size: 18px; letter-spacing: 0.14em; color: #f5f4f0; text-decoration: none; }
+    .logo span { color: var(--gold); }
+    .nav-btn { font-family: var(--ff-body); font-size: 12px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #080808; background: var(--gold); padding: 9px 20px; text-decoration: none; border: none; cursor: pointer; transition: opacity 0.2s; }
+    .nav-btn:hover { opacity: 0.8; }
+
+    /* HERO */
+    #hero { min-height: 100vh; min-height: 100svh; background: #080808; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; padding: 100px 24px 80px; overflow: hidden; }
+    .hero-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 55% at 50% 35%, rgba(200,169,110,0.11) 0%, transparent 65%); pointer-events: none; }
+    .hero-line { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 1px; height: 100%; background: linear-gradient(to bottom, transparent 0%, rgba(200,169,110,0.22) 38%, rgba(200,169,110,0.06) 65%, transparent 100%); filter: blur(12px); pointer-events: none; }
+    .hero-content { position: relative; z-index: 2; max-width: 860px; width: 100%; }
+    .eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 28px; opacity: 0; animation: up 0.7s ease forwards 0.15s; }
+    .hero-h1 { font-family: var(--ff-hero); font-size: clamp(58px, 11vw, 128px); line-height: 0.93; letter-spacing: 0.02em; color: #f5f4f0; margin-bottom: 24px; opacity: 0; animation: up 0.8s ease forwards 0.3s; }
+    .hero-h1 em { font-family: var(--ff-serif); font-style: italic; font-weight: 300; color: var(--gold); font-size: clamp(64px, 11.5vw, 136px); }
+    .hero-sub { font-family: var(--ff-serif); font-size: clamp(16px, 1.9vw, 20px); font-style: italic; font-weight: 300; color: #b8b7b0; max-width: 500px; margin: 0 auto 44px; line-height: 1.7; opacity: 0; animation: up 0.8s ease forwards 0.45s; }
+    .waitlist-wrap { opacity: 0; animation: up 0.8s ease forwards 0.6s; }
+    .waitlist-form { display: flex; max-width: 420px; margin: 0 auto 12px; }
+    .waitlist-input { flex: 1; background: #161616; border: 1px solid rgba(255,255,255,0.13); border-right: none; color: #f5f4f0; font-family: var(--ff-body); font-size: 14px; padding: 14px 16px; outline: none; transition: border-color 0.2s; -webkit-appearance: none; border-radius: 0; min-width: 0; }
+    .waitlist-input::placeholder { color: #555; }
+    .waitlist-input:focus { border-color: var(--gold); }
+    .waitlist-btn { font-family: var(--ff-body); font-size: 12px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #080808; background: var(--gold); border: none; padding: 14px 22px; cursor: pointer; white-space: nowrap; transition: opacity 0.2s; -webkit-appearance: none; border-radius: 0; }
+    .waitlist-btn:hover { opacity: 0.85; }
+    .form-note { font-size: 11px; letter-spacing: 0.06em; color: #4a4a44; }
+    .form-success { display: none; font-family: var(--ff-serif); font-style: italic; font-size: 18px; color: var(--gold); padding: 14px; max-width: 420px; margin: 0 auto 12px; }
+
+    /* DIVIDER */
+    .divider { width: 1px; height: 72px; background: linear-gradient(to bottom, transparent, rgba(200,169,110,0.4), transparent); margin: 0 auto; }
+
+    /* SECTIONS */
+    .section { background: #080808; padding: 100px 24px; max-width: 1080px; margin: 0 auto; }
+    .section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+
+    /* REVEAL */
+    .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    .d1 { transition-delay: 0.08s; } .d2 { transition-delay: 0.18s; } .d3 { transition-delay: 0.28s; } .d4 { transition-delay: 0.38s; }
+    @keyframes up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+    /* PROBLEM */
+    #problem { text-align: center; }
+    .problem-h2 { font-family: var(--ff-hero); font-size: clamp(34px, 5.5vw, 64px); letter-spacing: 0.03em; line-height: 1; color: #f5f4f0; margin-bottom: 48px; }
+    .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.07); max-width: 760px; margin: 0 auto; text-align: left; }
+    .problem-cell { background: #111; padding: 40px 32px; }
+    .problem-cell p { font-family: var(--ff-serif); font-size: clamp(15px, 1.6vw, 17px); line-height: 1.85; color: #c0bfb8; }
+    .problem-cell p strong { color: #f5f4f0; font-weight: 600; }
+
+    /* SOLUTION */
+    #solution { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+    .solution-copy h2 { font-family: var(--ff-hero); font-size: clamp(36px, 4.8vw, 58px); letter-spacing: 0.03em; line-height: 1; margin-bottom: 22px; }
+    .solution-copy h2 em { font-family: var(--ff-serif); font-style: italic; font-weight: 300; color: var(--gold); }
+    .solution-copy p { font-family: var(--ff-serif); font-size: clamp(15px, 1.6vw, 17px); line-height: 1.85; color: #c0bfb8; margin-bottom: 12px; }
+    .solution-visual { position: relative; background: #111; border: 1px solid rgba(255,255,255,0.07); overflow: hidden; }
+    .solution-visual img { width: 100%; height: auto; display: block; }
+    .vis-tag { position: absolute; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); padding: 7px 12px; border: 1px solid rgba(200,169,110,0.22); background: rgba(8,8,8,0.85); font-family: var(--ff-body); }
+    .vis-tag-now { top: 16px; left: 16px; } .vis-tag-future { bottom: 16px; right: 16px; }
+
+    /* HOW */
+    #how { text-align: center; }
+    #how h2 { font-family: var(--ff-hero); font-size: clamp(32px, 5vw, 58px); letter-spacing: 0.03em; margin-bottom: 56px; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.07); }
+    .step { background: #111; padding: 44px 28px; text-align: left; transition: background 0.25s; }
+    .step:hover { background: #161616; }
+    .step-num { font-family: var(--ff-hero); font-size: 52px; line-height: 1; background: linear-gradient(135deg, var(--gold) 0%, rgba(200,169,110,0.22) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 18px; }
+    .step h3 { font-family: var(--ff-serif); font-size: 19px; font-weight: 400; color: #f5f4f0; margin-bottom: 10px; }
+    .step p { font-size: 14px; line-height: 1.75; color: var(--muted); }
+
+    /* SHOWCASE / SLIDER */
+    #showcase { background: #080808; padding: 100px 24px; text-align: center; }
+    .showcase-inner { max-width: 420px; margin: 0 auto; }
+    #showcase h2 { font-family: var(--ff-hero); font-size: clamp(32px,5vw,58px); letter-spacing: 0.03em; margin-bottom: 14px; }
+    #showcase .sub { font-family: var(--ff-serif); font-style: italic; font-size: 18px; color: #888; margin-bottom: 40px; }
+    .showcase-caption { margin-top: 20px; font-family: var(--ff-serif); font-style: italic; font-size: 14px; color: #444; }
+
+    /* SLIDER CORE */
+    .slider-wrap {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: ew-resize;
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .slider-after {
+      display: block;
+      width: 100%;
+      height: auto;
+      pointer-events: none;
+    }
+    .slider-before-wrap {
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 50%;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .slider-before {
+      display: block;
+      width: auto;
+      height: 100%;
+      max-width: none;
+      pointer-events: none;
+    }
+    .slider-line {
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 50%;
+      width: 3px;
+      background: var(--gold);
+      transform: translateX(-50%);
+      pointer-events: none;
+      box-shadow: 0 0 10px rgba(200,169,110,0.6);
+    }
+    .slider-handle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 16px rgba(200,169,110,0.5);
+    }
+    .slider-tag {
+      position: absolute;
+      top: 14px;
+      font-family: var(--ff-body);
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--gold);
+      padding: 5px 10px;
+      border: 1px solid rgba(200,169,110,0.25);
+      background: rgba(8,8,8,0.88);
+      pointer-events: none;
+    }
+    .slider-tag-now { left: 12px; }
+    .slider-tag-future { right: 12px; }
+
+    /* EMOTIONAL */
+    #emotional { text-align: center; position: relative; }
+    #emotional::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(200,169,110,0.05) 0%, transparent 70%); pointer-events: none; }
+    .emotional-h2 { font-family: var(--ff-hero); font-size: clamp(40px, 7vw, 86px); letter-spacing: 0.04em; line-height: 1; margin-bottom: 36px; position: relative; }
+    .gold-rule { width: 44px; height: 1px; background: var(--gold); margin: 0 auto 32px; }
+    .emotional-body { max-width: 560px; margin: 0 auto; position: relative; }
+    .emotional-body p { font-family: var(--ff-serif); font-size: clamp(17px, 1.9vw, 21px); line-height: 1.85; color: #c0bfb8; margin-bottom: 14px; }
+    .emotional-body p strong { color: #f5f4f0; }
+
+    /* STATS */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.07); }
+    .stat-card { background: #111; padding: 48px 32px; text-align: left; transition: background 0.25s; }
+    .stat-card:hover { background: #161616; }
+    .stat-num { font-family: var(--ff-hero); font-size: 64px; line-height: 1; background: linear-gradient(135deg, var(--gold) 0%, rgba(200,169,110,0.35) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px; }
+    .stat-label { font-family: var(--ff-serif); font-size: clamp(15px, 1.6vw, 17px); line-height: 1.8; color: #d0cfc8; margin-bottom: 16px; }
+    .stat-source { font-size: 11px; letter-spacing: 0.04em; color: #555; }
+    .stat-source em { font-style: italic; }
+
+    /* CTA */
+    #cta { background: #080808; text-align: center; padding: 120px 24px 100px; position: relative; overflow: hidden; }
+    #cta::before { content: ''; position: absolute; top: 0; left: 8%; right: 8%; height: 1px; background: linear-gradient(to right, transparent, rgba(200,169,110,0.35), transparent); }
+    #cta::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 50% 65% at 50% 50%, rgba(200,169,110,0.06) 0%, transparent 65%); pointer-events: none; }
+    .cta-inner { position: relative; z-index: 2; max-width: 680px; margin: 0 auto; }
+    .cta-h2 { font-family: var(--ff-hero); font-size: clamp(40px, 8vw, 96px); letter-spacing: 0.03em; line-height: 0.95; margin-bottom: 48px; }
+    .cta-h2 em { font-family: var(--ff-serif); font-style: italic; font-weight: 300; color: var(--gold); }
+
+    /* FOOTER */
+    footer { background: #080808; border-top: 1px solid rgba(255,255,255,0.07); padding: 32px 40px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-logo { font-family: var(--ff-hero); font-size: 16px; letter-spacing: 0.14em; color: #f5f4f0; }
+    .footer-logo span { color: var(--gold); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #555; text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: #f5f4f0; }
+
+    /* MOBILE */
+    @media (max-width: 680px) {
+      nav { padding: 16px 20px; }
+      .problem-grid { grid-template-columns: 1fr; }
+      #solution { grid-template-columns: 1fr; gap: 36px; }
+      .steps { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .waitlist-form { flex-direction: column; }
+      .waitlist-input { border-right: 1px solid rgba(255,255,255,0.13); border-bottom: none; }
+      footer { flex-direction: column; gap: 18px; text-align: center; padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body style="background:#080808;">
+
+  <nav>
+    <a href="#" class="logo" style="display:flex;align-items:center;">
+      <svg height="36" viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg" style="width:auto;">
+        <style>
+          .geo  { fill: none; stroke: #c8a96e; stroke-opacity: 0.45; stroke-width: 0.8; }
+          .geo2 { fill: none; stroke: #c8a96e; stroke-opacity: 0.75; stroke-width: 1.4; }
+          .wm   { font-family: 'Bebas Neue', 'Arial Narrow', sans-serif; }
+          .tag  { font-family: Georgia, serif; font-style: italic; }
+          .f0  { fill: #c8a96e; fill-opacity: 0.95; stroke: #080808; stroke-width: 0.6; }
+          .f1  { fill: #c8a96e; fill-opacity: 0.75; stroke: #080808; stroke-width: 0.6; }
+          .f2  { fill: #c8a96e; fill-opacity: 0.55; stroke: #080808; stroke-width: 0.6; }
+          .f3  { fill: #c8a96e; fill-opacity: 0.38; stroke: #080808; stroke-width: 0.6; }
+        </style>
+        <!-- SACRED GEOMETRY -->
+        <circle cx="152" cy="152" r="106" class="geo2"/>
+        <rect x="78" y="82" width="148" height="148" class="geo"/>
+        <circle cx="152" cy="99"  r="53" class="geo"/>
+        <circle cx="152" cy="205" r="53" class="geo"/>
+        <circle cx="106" cy="126" r="53" class="geo"/>
+        <circle cx="198" cy="126" r="53" class="geo"/>
+        <circle cx="106" cy="178" r="53" class="geo"/>
+        <circle cx="198" cy="178" r="53" class="geo"/>
+        <circle cx="152" cy="152" r="53" class="geo"/>
+        <polygon points="152,70 220,108 220,194 152,232 84,194 84,108" class="geo"/>
+        <polygon points="152,232 84,108 220,108" class="geo"/>
+        <polygon points="152,70 84,194 220,194" class="geo"/>
+        <rect x="78" y="82" width="148" height="148" class="geo" transform="rotate(45 152 156)"/>
+        <!-- HEAD -->
+        <polygon points="152,46 144,52 148,64 152,66 156,64 160,52" class="f0"/>
+        <polygon points="144,52 140,60 144,66 148,64" class="f1"/>
+        <polygon points="160,52 156,64 160,66 164,60" class="f2"/>
+        <polygon points="148,64 144,66 146,72 150,74 152,72" class="f1"/>
+        <polygon points="152,66 156,64 158,70 154,74 152,72" class="f2"/>
+        <!-- NECK -->
+        <polygon points="148,72 144,78 148,82 152,80" class="f1"/>
+        <polygon points="152,72 154,74 158,80 156,82 152,80" class="f2"/>
+        <!-- SHOULDERS -->
+        <polygon points="144,78 130,80 124,88 132,94 140,90 148,82" class="f0"/>
+        <polygon points="156,80 158,82 164,90 172,94 180,88 170,80" class="f1"/>
+        <polygon points="148,82 140,90 142,100 150,102 152,98" class="f0"/>
+        <polygon points="152,80 152,98 158,100 162,90 156,82" class="f1"/>
+        <!-- CHEST -->
+        <polygon points="132,94 124,100 126,112 136,114 142,100 140,90" class="f0"/>
+        <polygon points="140,90 142,100 148,104 150,102" class="f1"/>
+        <polygon points="172,94 180,100 178,112 168,114 162,100 164,90" class="f2"/>
+        <polygon points="164,90 162,100 156,104 154,102 156,82" class="f1"/>
+        <polygon points="142,100 148,104 150,114 144,116 136,114" class="f1"/>
+        <polygon points="158,100 156,104 154,114 160,116 168,114" class="f2"/>
+        <polygon points="148,104 152,102 156,104 154,114 150,114" class="f0"/>
+        <!-- ABS -->
+        <polygon points="144,116 150,114 150,124 146,126 140,122" class="f1"/>
+        <polygon points="150,114 156,114 160,122 154,126 150,124" class="f2"/>
+        <polygon points="140,122 146,126 144,136 138,132" class="f0"/>
+        <polygon points="154,126 160,122 162,132 156,136" class="f1"/>
+        <polygon points="146,126 150,124 154,126 156,136 150,138 144,136" class="f2"/>
+        <polygon points="138,132 144,136 142,146 136,142" class="f1"/>
+        <polygon points="156,136 162,132 164,142 158,146" class="f2"/>
+        <polygon points="144,136 150,138 156,136 158,146 150,150 142,146" class="f0"/>
+        <!-- HIPS -->
+        <polygon points="136,142 142,146 140,156 130,154" class="f1"/>
+        <polygon points="158,146 164,142 170,154 160,156" class="f2"/>
+        <polygon points="142,146 150,150 158,146 160,156 150,160 140,156" class="f1"/>
+        <!-- LEFT ARM -->
+        <polygon points="124,88 108,92 100,100 112,104 124,100" class="f0"/>
+        <polygon points="108,92 90,96 82,104 94,108 100,100" class="f1"/>
+        <polygon points="90,96 72,100 64,108 76,112 82,104" class="f2"/>
+        <polygon points="72,100 56,104 50,110 62,114 64,108" class="f3"/>
+        <polygon points="50,110 44,106 38,112 46,116" class="f2"/>
+        <polygon points="44,106 40,102 36,108 38,112" class="f3"/>
+        <!-- RIGHT ARM -->
+        <polygon points="180,88 196,92 204,100 192,104 180,100" class="f1"/>
+        <polygon points="196,92 214,96 222,104 210,108 204,100" class="f2"/>
+        <polygon points="214,96 232,100 240,108 228,112 222,104" class="f1"/>
+        <polygon points="232,100 248,104 254,110 242,114 240,108" class="f2"/>
+        <polygon points="254,110 260,106 266,112 258,116" class="f1"/>
+        <polygon points="260,106 264,102 268,108 266,112" class="f3"/>
+        <!-- LEFT LEG -->
+        <polygon points="134,156 150,160 148,172 132,168" class="f0"/>
+        <polygon points="132,168 148,172 146,186 130,182" class="f1"/>
+        <polygon points="130,182 146,186 144,200 128,196" class="f2"/>
+        <polygon points="128,196 144,200 142,214 126,210" class="f1"/>
+        <polygon points="126,210 142,214 140,228 124,224" class="f0"/>
+        <polygon points="124,224 140,228 138,242 122,238" class="f2"/>
+        <polygon points="122,238 138,242 135,250 118,247" class="f1"/>
+        <polygon points="118,247 135,250 132,256 115,253" class="f3"/>
+        <!-- RIGHT LEG -->
+        <polygon points="170,156 154,160 156,172 172,168" class="f1"/>
+        <polygon points="172,168 156,172 158,186 174,182" class="f2"/>
+        <polygon points="174,182 158,186 160,200 176,196" class="f0"/>
+        <polygon points="176,196 160,200 162,214 178,210" class="f1"/>
+        <polygon points="178,210 162,214 164,228 180,224" class="f2"/>
+        <polygon points="180,224 164,228 166,242 182,238" class="f0"/>
+        <polygon points="182,238 166,242 169,250 186,247" class="f1"/>
+        <polygon points="186,247 169,250 172,256 189,253" class="f3"/>
+        <!-- WORDMARK -->
+        <text x="292" y="152" class="wm" font-size="90" fill="none" stroke="#c8a96e" stroke-width="1.2" stroke-opacity="0.9" letter-spacing="0.06em">WYLDE</text>
+        <text x="294" y="212" class="wm" font-size="58" fill="#c8a96e" letter-spacing="0.1em">SELF</text>
+        <line x1="294" y1="224" x2="626" y2="224" stroke="#c8a96e" stroke-width="0.6" stroke-opacity="0.4"/>
+        <text x="295" y="248" class="tag" font-size="14" fill="#c8a96e" fill-opacity="0.65">Train with the person you're becoming</text>
+      </svg>
+    </a>
+    <a href="#cta" class="nav-btn">Join Waitlist</a>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero" style="background:#080808;">
+    <div class="hero-glow"></div>
+    <div class="hero-line"></div>
+    <div class="hero-content">
+      <p class="eyebrow">AI-Powered Identity Training</p>
+      <h1 class="hero-h1">Train with the<br>person you're<br><em>becoming</em></h1>
+      <p class="hero-sub">Meet a future version of yourself—and train alongside them. Because when you can see who you're becoming, showing up stops being hard.</p>
+      <div class="waitlist-wrap">
+        <form class="waitlist-form" id="heroForm" action="https://formspree.io/f/mkoponoz" method="POST" style="flex-direction:column;gap:0;">
+          <div style="display:flex;margin-bottom:1px;">
+            <input class="waitlist-input" type="text" name="name" placeholder="Your first name" required style="border-right:1px solid rgba(255,255,255,0.13);flex:1;" />
+          </div>
+          <div style="display:flex;">
+            <input class="waitlist-input" type="email" name="email" placeholder="Your email address" required style="flex:1;border-right:none;" />
+            <button class="waitlist-btn" type="submit">Get Access</button>
+          </div>
+        </form>
+        <div class="form-success" id="heroSuccess">You're in. We'll be in touch.</div>
+        <p class="form-note">No spam. Early access only.</p>
+        <div style="margin-top:24px;">
+          <a href="/app.html" id="heroDemoBtn" onclick="return checkDemo(event)" style="display:inline-block;font-family:var(--ff-body);font-size:13px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);padding:13px 32px;text-decoration:none;transition:all 0.2s;background:transparent;" onmouseover="this.style.background='rgba(200,169,110,0.1)'" onmouseout="this.style.background='transparent'">
+            Try the Early Demo →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- PROBLEM -->
+  <div class="section" id="problem" style="background:#080808;">
+    <p class="section-label reveal">The Gap</p>
+    <h2 class="problem-h2 reveal d1">Motivation fades.<br>Identity sticks.</h2>
+    <div class="problem-grid reveal d2">
+      <div class="problem-cell"><p>Most people don't fail because they don't know what to do.<br><br>They fail because <strong>they can't see who they're becoming.</strong></p></div>
+      <div class="problem-cell"><p>Fitness apps give you workouts.<br><br>None of them change <strong>how you see yourself.</strong><br><br>Without that shift—nothing holds.</p></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SOLUTION -->
+  <div class="section" id="solution" style="background:#080808;">
+    <div class="solution-copy reveal">
+      <p class="section-label">The Shift</p>
+      <h2>Meet your<br><em>future self</em></h2>
+      <p>Wylde Self generates a personalized, evolving version of you—and puts them right in front of you every session.</p>
+      <p>You're not following a program.<br>You're training alongside the person you're becoming.</p>
+    </div>
+    <div class="solution-visual reveal d2" style="height:auto;background:none;border:none;">
+      <div class="slider-wrap" id="sliderWrap" style="border:1px solid rgba(255,255,255,0.07);">
+        <img class="slider-after" id="sliderAfter" src="after.png" alt="Future Self" draggable="false" />
+        <div class="slider-before-wrap" id="sliderBeforeWrap">
+          <img class="slider-before" id="sliderBefore" src="before.png" alt="Now" draggable="false" />
+        </div>
+        <div class="slider-line" id="sliderLine">
+          <div class="slider-handle">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#080808" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#080808" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div class="slider-tag slider-tag-now">Now</div>
+        <div class="slider-tag slider-tag-future">Becoming</div>
+      </div>
+      <p class="showcase-caption" style="margin-top:16px;">AI-generated preview. Results vary.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- HOW IT WORKS -->
+  <div class="section" id="how" style="background:#080808;">
+    <p class="section-label reveal">The Method</p>
+    <h2 class="reveal d1">Three steps.<br>One transformation.</h2>
+    <div class="steps">
+      <div class="step reveal d1"><div class="step-num">01</div><h3>See Your Future</h3><p>Upload a photo. Set your goals. We generate a future version of you—real enough to feel like a destination worth moving toward.</p></div>
+      <div class="step reveal d2"><div class="step-num">02</div><h3>Train Together</h3><p>Follow workouts guided by that version of you. Every session is a conversation with who you're in the process of becoming.</p></div>
+      <div class="step reveal d3"><div class="step-num">03</div><h3>Become Them</h3><p>As you progress, your future self evolves with you. The gap closes. The identity shifts. That's the whole point.</p></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- EMOTIONAL -->
+  <div class="section" id="emotional" style="background:#080808;">
+    <p class="section-label reveal">The Real Work</p>
+    <h2 class="emotional-h2 reveal d1">This isn't<br>about fitness</h2>
+    <div class="gold-rule reveal d2"></div>
+    <div class="emotional-body reveal d3">
+      <p>This is about <strong>closing the gap</strong> between who you are today and who you know you're capable of being.</p>
+      <p>Every session builds evidence.</p>
+      <p>Every rep reinforces <strong>identity.</strong></p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- STATS -->
+  <div class="section" id="stats" style="background:#080808;">
+    <p class="section-label reveal">The Science</p>
+    <h2 class="reveal d1" style="font-family:var(--ff-hero);font-size:clamp(30px,4.5vw,50px);letter-spacing:0.03em;margin-bottom:52px;">The research is clear.<br>Identity drives behavior.</h2>
+    <div class="stats-grid reveal d2">
+      <div class="stat-card"><div class="stat-num">2×</div><p class="stat-label">People are twice as likely to follow through when they identify with the person who does the behavior.</p><p class="stat-source">Identity-based habits — James Clear, <em>Atomic Habits</em></p></div>
+      <div class="stat-card"><div class="stat-num">73%</div><p class="stat-label">of people who quit fitness programs cite lack of motivation — not lack of knowledge — as the reason.</p><p class="stat-source">IHRSA Health Club Consumer Report</p></div>
+      <div class="stat-card"><div class="stat-num">↑38%</div><p class="stat-label">Participants who visualized their future self exercised significantly more than those who didn't.</p><p class="stat-source">Stanford Future Self Lab — Hershfield et al.</p></div>
+    </div>
+  </div>
+
+  <!-- FINAL CTA -->
+  <section id="cta" style="background:#080808;">
+    <div class="cta-inner">
+      <p class="section-label reveal">The Beginning</p>
+      <h2 class="cta-h2 reveal d1">The person you're<br>becoming is already<br><em>in motion</em></h2>
+      <div class="reveal d2">
+        <form class="waitlist-form" id="ctaForm" action="https://formspree.io/f/mkoponoz" method="POST" style="flex-direction:column;gap:0;">
+          <div style="display:flex;margin-bottom:1px;">
+            <input class="waitlist-input" type="text" name="name" placeholder="Your first name" required style="border-right:1px solid rgba(255,255,255,0.13);flex:1;" />
+          </div>
+          <div style="display:flex;">
+            <input class="waitlist-input" type="email" name="email" placeholder="Your email address" required style="flex:1;border-right:none;" />
+            <button class="waitlist-btn" type="submit">Get Early Access</button>
+          </div>
+        </form>
+        <div class="form-success" id="ctaSuccess">You're in. We'll be in touch soon.</div>
+        <p class="form-note">Be part of the first release of Wylde Self.</p>
+        <div style="margin-top:24px;">
+          <a href="/app.html" onclick="return checkDemo(event)" style="display:inline-block;font-family:var(--ff-body);font-size:13px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);padding:13px 32px;text-decoration:none;transition:all 0.2s;background:transparent;" onmouseover="this.style.background='rgba(200,169,110,0.1)'" onmouseout="this.style.background='transparent'">
+            Try the Early Demo →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="background:#080808;">
+    <div class="footer-logo">WYLDE <span>SELF</span></div>
+    <div class="footer-links">
+      <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a>
+    </div>
+  </footer>
+
+  <script>
+    // SLIDER
+    (function() {
+      var wrap        = document.getElementById('sliderWrap');
+      var beforeWrap  = document.getElementById('sliderBeforeWrap');
+      var beforeImg   = document.getElementById('sliderBefore');
+      var line        = document.getElementById('sliderLine');
+      if (!wrap) return;
+      var active = false;
+
+      function set(clientX) {
+        var rect = wrap.getBoundingClientRect();
+        var pct  = Math.max(2, Math.min(98, ((clientX - rect.left) / rect.width) * 100));
+        beforeWrap.style.width = pct + '%';
+        beforeImg.style.width  = rect.width + 'px';
+        line.style.left        = pct + '%';
+      }
+
+      function reset() {
+        var w = wrap.getBoundingClientRect().width;
+        beforeWrap.style.width = '50%';
+        beforeImg.style.width  = w + 'px';
+        line.style.left        = '50%';
+      }
+
+      wrap.addEventListener('mousedown',     function(e) { active=true; set(e.clientX); e.preventDefault(); });
+      document.addEventListener('mousemove', function(e) { if(active) set(e.clientX); });
+      document.addEventListener('mouseup',   function()  { active=false; });
+      wrap.addEventListener('touchstart',    function(e) { active=true; set(e.touches[0].clientX); e.preventDefault(); }, {passive:false});
+      wrap.addEventListener('touchmove',     function(e) { if(active){ set(e.touches[0].clientX); e.preventDefault(); } }, {passive:false});
+      document.addEventListener('touchend',  function()  { active=false; });
+
+      window.addEventListener('load',   reset);
+      window.addEventListener('resize', reset);
+    })();
+
+    // SCROLL REVEAL
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) { if(e.isIntersecting) e.target.classList.add('in'); });
+    }, {threshold:0.1});
+    document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+
+
+    // DEMO GATE
+    function checkDemo(e) {
+      if (sessionStorage.getItem('wylde_submitted')) {
+        return true; // already submitted — let them through
+      }
+      e.preventDefault();
+      // Flash the form to draw attention
+      var heroForm = document.getElementById('heroForm');
+      var heroSuccess = document.getElementById('heroSuccess');
+      if (heroSuccess && heroSuccess.style.display === 'block') {
+        // They submitted but page refreshed — let them through
+        sessionStorage.setItem('wylde_submitted', '1');
+        window.location.href = '/app.html';
+        return false;
+      }
+      // Scroll to hero form and highlight it
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(function() {
+        var nameInput = document.querySelector('#heroForm input[name="name"]');
+        var emailInput = document.querySelector('#heroForm input[name="email"]');
+        if (nameInput) {
+          nameInput.style.borderColor = 'var(--gold)';
+          nameInput.focus();
+        }
+        if (emailInput) {
+          emailInput.style.borderColor = 'var(--gold)';
+        }
+        setTimeout(function() {
+          if (nameInput) nameInput.style.borderColor = '';
+          if (emailInput) emailInput.style.borderColor = '';
+        }, 2000);
+      }, 600);
+      // Show prompt message
+      var note = document.querySelector('.form-note');
+      if (note) {
+        note.textContent = 'Join the waitlist to unlock the demo.';
+        note.style.color = 'var(--gold)';
+        setTimeout(function() {
+          note.textContent = 'No spam. Early access only.';
+          note.style.color = '';
+        }, 3000);
+      }
+      return false;
+    }
+
+    // WAITLIST — Formspree AJAX + EmailJS auto-reply
+    document.querySelectorAll('.waitlist-form').forEach(function(form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var btn = form.querySelector('.waitlist-btn');
+        var nameInput  = form.querySelector('input[name="name"]');
+        var emailInput = form.querySelector('input[name="email"]');
+        var userName   = nameInput  ? nameInput.value.trim()  : '';
+        var userEmail  = emailInput ? emailInput.value.trim() : '';
+
+        btn.textContent = 'Sending...';
+        btn.disabled = true;
+
+        // 1 — Send to Formspree (captures to your inbox)
+        fetch('https://formspree.io/f/mkoponoz', {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        }).then(function(res) {
+          if (res.ok) {
+            // 2 — Send branded auto-reply via EmailJS
+            emailjs.send('Wylde_service', 'template_5th6z59', {
+              name:  userName,
+              email: userEmail
+            }).catch(function() {});
+
+            // Mark as submitted — unlocks demo
+            sessionStorage.setItem('wylde_submitted', '1');
+
+            // 3 — Show success
+            form.style.display = 'none';
+            var successId = form.id === 'heroForm' ? 'heroSuccess' : 'ctaSuccess';
+            document.getElementById(successId).style.display = 'block';
+
+            // Update demo button to go straight through
+            document.querySelectorAll('a[onclick*="checkDemo"]').forEach(function(btn) {
+              btn.textContent = 'Try the Early Demo →';
+              btn.style.borderColor = 'var(--gold)';
+            });
+          } else {
+            btn.textContent = 'Try Again';
+            btn.disabled = false;
+          }
+        }).catch(function() {
+          btn.textContent = 'Try Again';
+          btn.disabled = false;
+        });
+      });
+    });
+
+  </script>
+
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>emailjs.init('nj1F_Dh0xYh31o_kS');</script>
+</body>
+</html>

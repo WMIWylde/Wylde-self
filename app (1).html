@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en" style="background:#080808;">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#080808"/>
+  <title>Wylde Self — App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #080808;
+      --charcoal: #111;
+      --surface: #161616;
+      --border: rgba(255,255,255,0.08);
+      --white: #f5f4f0;
+      --muted: #a0a098;
+      --gold: #c8a96e;
+      --gold-dim: rgba(200,169,110,0.12);
+      --ff-hero: 'Bebas Neue', sans-serif;
+      --ff-serif: 'Cormorant Garamond', serif;
+      --ff-body: 'DM Sans', sans-serif;
+    }
+    html, body { background: #080808 !important; color: #f5f4f0; font-family: var(--ff-body); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: #080808; border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; height: 56px; gap: 0; }
+    .nav-logo { font-family: var(--ff-hero); font-size: 16px; letter-spacing: 0.14em; color: #f5f4f0; text-decoration: none; margin-right: 32px; }
+    .nav-logo span { color: var(--gold); }
+    .nav-tabs { display: flex; gap: 0; flex: 1; }
+    .nav-tab { font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0 16px; height: 56px; display: flex; align-items: center; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; background: none; border-top: none; border-left: none; border-right: none; font-family: var(--ff-body); white-space: nowrap; }
+    .nav-tab:hover { color: #f5f4f0; }
+    .nav-tab.locked { opacity: 0.3; cursor: not-allowed; }
+    .nav-tab.locked:hover { color: var(--muted); }
+
+    /* SCREENS */
+    .screen { display: none; min-height: 100vh; padding: 108px 0 40px; }
+    .screen.active { display: block; }
+
+    /* SHARED */
+    .container { max-width: 680px; margin: 0 auto; padding: 40px 24px; }
+    .section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+    .screen-title { font-family: var(--ff-hero); font-size: clamp(36px, 7vw, 64px); letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px; }
+    .screen-sub { font-family: var(--ff-serif); font-style: italic; font-size: 17px; color: var(--muted); margin-bottom: 40px; line-height: 1.6; }
+    .gold-rule { width: 40px; height: 1px; background: var(--gold); margin-bottom: 32px; }
+    .btn { font-family: var(--ff-body); font-size: 13px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; background: var(--gold); color: #080808; border: none; padding: 14px 32px; cursor: pointer; transition: opacity 0.2s; display: inline-block; }
+    .btn:hover { opacity: 0.85; }
+    .btn-outline { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
+    .btn-outline:hover { background: var(--gold-dim); opacity: 1; }
+    .input { background: #161616; border: 1px solid var(--border); color: #f5f4f0; font-family: var(--ff-body); font-size: 14px; padding: 13px 16px; outline: none; width: 100%; transition: border-color 0.2s; border-radius: 0; -webkit-appearance: none; }
+    .input:focus { border-color: var(--gold); }
+    .input::placeholder { color: #444; }
+    .card { background: #111; border: 1px solid var(--border); padding: 28px; margin-bottom: 12px; }
+
+    /* ONBOARDING */
+    .onboard-form { display: flex; flex-direction: column; gap: 16px; }
+    .form-group label { display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill { font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 9px 18px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.2s; font-family: var(--ff-body); }
+    .pill:hover { border-color: var(--gold); color: #f5f4f0; }
+    .pill.selected { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); }
+
+    /* FUTURE SELF */
+    .upload-zone { border: 1px dashed rgba(200,169,110,0.3); background: #111; padding: 60px 24px; text-align: center; cursor: pointer; transition: all 0.25s; position: relative; }
+    .upload-zone:hover { border-color: var(--gold); background: var(--gold-dim); }
+    .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .upload-icon { font-size: 32px; margin-bottom: 12px; color: var(--gold); opacity: 0.6; }
+    .upload-label { font-family: var(--ff-serif); font-style: italic; font-size: 17px; color: var(--muted); }
+
+    .comparison { display: none; }
+    .comparison.show { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 24px; }
+    .comp-side { position: relative; }
+    .comp-side img { width: 100%; display: block; }
+    .comp-tag { position: absolute; top: 12px; left: 12px; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); padding: 5px 10px; border: 1px solid rgba(200,169,110,0.3); background: rgba(8,8,8,0.88); font-family: var(--ff-body); }
+    .generate-progress { display: none; margin-top: 24px; }
+    .progress-bar-wrap { background: #161616; height: 2px; margin-top: 16px; overflow: hidden; }
+    .progress-bar { height: 100%; background: var(--gold); width: 0; transition: width 0.1s linear; }
+    .progress-label { font-size: 12px; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
+
+    /* PROGRAM */
+    .program-output { display: none; }
+    .program-output.show { display: block; }
+    .day-card { background: #111; border: 1px solid var(--border); margin-bottom: 2px; overflow: hidden; transition: border-color 0.2s; }
+    .day-card:hover { border-color: rgba(200,169,110,0.2); }
+    .day-header { padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .day-name { font-family: var(--ff-hero); font-size: 18px; letter-spacing: 0.08em; color: #f5f4f0; }
+    .day-focus { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
+    .day-body { padding: 0 24px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s; }
+    .day-body.open { max-height: 400px; padding: 0 24px 20px; }
+    .exercise { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .exercise:last-child { border-bottom: none; }
+    .ex-name { font-size: 14px; color: #f5f4f0; }
+    .ex-sets { font-size: 12px; color: var(--gold); letter-spacing: 0.06em; }
+    .typing-cursor { display: inline-block; width: 2px; height: 14px; background: var(--gold); margin-left: 2px; animation: blink 0.8s infinite; vertical-align: middle; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* COACH */
+    .chat-wrap { display: flex; flex-direction: column; height: calc(100vh - 160px); max-height: 600px; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; background: #111; border: 1px solid var(--border); border-bottom: none; }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb { background: rgba(200,169,110,0.2); }
+    .msg { max-width: 80%; }
+    .msg-ai { align-self: flex-start; }
+    .msg-user { align-self: flex-end; }
+    .msg-bubble { padding: 12px 16px; font-size: 14px; line-height: 1.7; }
+    .msg-ai .msg-bubble { background: #161616; border: 1px solid var(--border); color: #d8d7d0; border-radius: 0 8px 8px 8px; }
+    .msg-user .msg-bubble { background: var(--gold-dim); border: 1px solid rgba(200,169,110,0.2); color: #f5f4f0; border-radius: 8px 0 8px 8px; }
+    .msg-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .msg-ai .msg-label { color: var(--gold); }
+    .chat-input-row { display: flex; border: 1px solid var(--border); border-top: 1px solid var(--gold); }
+    .chat-input { flex: 1; background: #111; border: none; color: #f5f4f0; font-family: var(--ff-body); font-size: 14px; padding: 14px 16px; outline: none; }
+    .chat-input::placeholder { color: #444; }
+    .chat-send { background: var(--gold); border: none; color: #080808; padding: 14px 20px; cursor: pointer; font-family: var(--ff-body); font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; transition: opacity 0.2s; }
+    .chat-send:hover { opacity: 0.85; }
+
+    /* PROGRESS */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-bottom: 24px; }
+    .stat-box { background: #111; border: 1px solid var(--border); padding: 28px 20px; text-align: center; }
+    .stat-num { font-family: var(--ff-hero); font-size: 48px; color: var(--gold); letter-spacing: 0.04em; line-height: 1; margin-bottom: 8px; }
+    .stat-label { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+    .complete-btn { width: 100%; padding: 18px; font-size: 14px; margin-bottom: 24px; }
+    .session-log { background: #111; border: 1px solid var(--border); }
+    .log-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--border); }
+    .log-item:last-child { border-bottom: none; }
+    .log-name { font-size: 13px; color: #f5f4f0; }
+    .log-date { font-size: 11px; color: var(--muted); }
+    .log-check { width: 20px; height: 20px; border-radius: 50%; background: var(--gold-dim); border: 1px solid rgba(200,169,110,0.3); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--gold); }
+    .streak-fire { font-size: 11px; letter-spacing: 0.08em; color: var(--gold); text-align: center; margin-top: 8px; }
+
+    /* MOBILE */
+    @media (max-width: 600px) {
+      .nav-tab { padding: 0 10px; font-size: 10px; }
+      .stats-grid { grid-template-columns: repeat(3, 1fr); }
+      .comparison.show { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body style="background:#080808;">
+
+<nav>
+  <a href="/" class="nav-logo">W<span>S</span></a>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showScreen('onboard')">Start</button>
+    <button class="nav-tab locked" onclick="showScreen('future')">Future Self</button>
+    <button class="nav-tab locked" onclick="showScreen('program')">Program</button>
+    <button class="nav-tab locked" onclick="showScreen('coach')">Coach</button>
+    <button class="nav-tab locked" onclick="showScreen('progress')">Progress</button>
+  </div>
+</nav>
+
+<!-- DISCLAIMER BANNER -->
+<div style="background:rgba(200,169,110,0.06);border-bottom:1px solid rgba(200,169,110,0.15);padding:8px 24px;text-align:center;position:fixed;top:56px;left:0;right:0;z-index:199;">
+  <p style="font-size:11px;letter-spacing:0.08em;color:rgba(200,169,110,0.7);font-family:'DM Sans',sans-serif;">
+    Early Access Demo — AI personalization is actively in development. Features shown are prototype demonstrations.
+  </p>
+</div>
+
+<!-- ═══ ONBOARDING ═══ -->
+<div class="screen active" id="screen-onboard">
+  <div class="container">
+    <p class="section-label">Welcome</p>
+    <h1 class="screen-title">Let's build<br>your profile</h1>
+    <p class="screen-sub">Tell us about yourself so we can generate your future self and build your program.</p>
+    <div class="gold-rule"></div>
+
+    <div class="onboard-form">
+
+      <div class="form-group">
+        <label>Your first name</label>
+        <input class="input" type="text" id="userName" placeholder="Enter your name" />
+      </div>
+
+      <div class="form-group">
+        <label>I identify as</label>
+        <div class="pill-group" id="genderGroup">
+          <button class="pill" onclick="selectPill(this,'genderGroup')">Male</button>
+          <button class="pill" onclick="selectPill(this,'genderGroup')">Female</button>
+          <button class="pill" onclick="selectPill(this,'genderGroup')">Non-binary</button>
+          <button class="pill" onclick="selectPill(this,'genderGroup')">Prefer not to say</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Age range</label>
+        <div class="pill-group" id="ageGroup">
+          <button class="pill" onclick="selectPill(this,'ageGroup')">18–24</button>
+          <button class="pill" onclick="selectPill(this,'ageGroup')">25–34</button>
+          <button class="pill" onclick="selectPill(this,'ageGroup')">35–44</button>
+          <button class="pill" onclick="selectPill(this,'ageGroup')">45–54</button>
+          <button class="pill" onclick="selectPill(this,'ageGroup')">55+</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Primary goal</label>
+        <div class="pill-group" id="goalGroup">
+          <button class="pill" onclick="selectPill(this,'goalGroup')">Lose fat</button>
+          <button class="pill" onclick="selectPill(this,'goalGroup')">Build muscle</button>
+          <button class="pill" onclick="selectPill(this,'goalGroup')">Get lean &amp; athletic</button>
+          <button class="pill" onclick="selectPill(this,'goalGroup')">Build confidence</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Current fitness level</label>
+        <div class="pill-group" id="levelGroup">
+          <button class="pill" onclick="selectPill(this,'levelGroup')">Beginner</button>
+          <button class="pill" onclick="selectPill(this,'levelGroup')">Intermediate</button>
+          <button class="pill" onclick="selectPill(this,'levelGroup')">Advanced</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Days per week</label>
+        <div class="pill-group" id="daysGroup">
+          <button class="pill" onclick="selectPill(this,'daysGroup')">3 days</button>
+          <button class="pill" onclick="selectPill(this,'daysGroup')">4 days</button>
+          <button class="pill" onclick="selectPill(this,'daysGroup')">5 days</button>
+          <button class="pill" onclick="selectPill(this,'daysGroup')">6 days</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Health concerns or limitations <span style="color:#444;font-size:10px;letter-spacing:0.06em;text-transform:none;font-weight:400;">(optional)</span></label>
+        <div class="pill-group" id="healthGroup" style="margin-bottom:12px;">
+          <button class="pill" onclick="togglePill(this)">Lower back pain</button>
+          <button class="pill" onclick="togglePill(this)">Knee issues</button>
+          <button class="pill" onclick="togglePill(this)">Shoulder injury</button>
+          <button class="pill" onclick="togglePill(this)">High blood pressure</button>
+          <button class="pill" onclick="togglePill(this)">Diabetes</button>
+          <button class="pill" onclick="togglePill(this)">Postpartum</button>
+          <button class="pill" onclick="togglePill(this)">Heart condition</button>
+          <button class="pill" onclick="togglePill(this)">Arthritis</button>
+          <button class="pill" onclick="togglePill(this)">None</button>
+        </div>
+        <textarea class="input" id="healthNotes" placeholder="Anything else? Injuries, medications, doctor\'s advice..." rows="3" style="resize:vertical;font-family:var(--ff-body);line-height:1.6;margin-top:4px;"></textarea>
+      </div>
+
+      <div style="margin-top:8px;">
+        <button class="btn" onclick="completeOnboard()">Build My Profile</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FUTURE SELF ═══ -->
+<div class="screen" id="screen-future">
+  <div class="container">
+    <p class="section-label">Future Self Generator</p>
+    <h1 class="screen-title">See who you're<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">becoming</span></h1>
+    <p class="screen-sub">Upload a photo and we'll generate a future version of you based on your goals.</p>
+    <div class="gold-rule"></div>
+
+    <div class="upload-zone" id="uploadZone" onclick="triggerUpload()">
+      <input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(event)" />
+      <div class="upload-icon">↑</div>
+      <p class="upload-label">Tap to upload your photo</p>
+      <p style="font-size:12px;color:#444;margin-top:8px;letter-spacing:0.06em;">Front-facing, good lighting works best</p>
+    </div>
+
+    <p style="font-size:11px;color:rgba(200,169,110,0.45);letter-spacing:0.06em;margin-top:12px;text-align:center;font-style:italic;font-family:'Cormorant Garamond',serif;">
+      Transformation previews are illustrative. Personalized AI generation is in development.
+    </p>
+
+    <div class="generate-progress" id="generateProgress">
+      <p class="progress-label" id="progressLabel">Analyzing your photo...</p>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
+
+    <div class="comparison" id="comparison">
+      <div class="comp-side">
+        <img id="beforeImg" src="" alt="You — Now" />
+        <div class="comp-tag">You — Now</div>
+      </div>
+      <div class="comp-side">
+        <img id="afterImg" src="after_male_5.png" alt="You — Becoming" />
+        <div class="comp-tag" style="left:auto;right:12px;">Becoming</div>
+      </div>
+    </div>
+
+    <div id="futureActions" style="margin-top:24px;display:none;">
+      <button class="btn" onclick="showScreen('program')" style="margin-right:12px;">Build My Program</button>
+      <button class="btn btn-outline" onclick="resetPhoto()">Try Another Photo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PROGRAM ═══ -->
+<div class="screen" id="screen-program">
+  <div class="container">
+    <p class="section-label">Your Program</p>
+    <h1 class="screen-title">Built for<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);" id="programName">you</span></h1>
+    <p class="screen-sub" id="programSub">A personalized program designed around your goals and schedule.</p>
+    <div class="gold-rule"></div>
+
+    <button class="btn" id="generateProgramBtn" onclick="generateProgram()">Generate My Program</button>
+
+    <div class="program-output" id="programOutput" style="margin-top:32px;">
+      <div id="programDays"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COACH ═══ -->
+<div class="screen" id="screen-coach">
+  <div class="container" style="padding-bottom:0;">
+    <p class="section-label">AI Coach</p>
+    <h1 class="screen-title" style="margin-bottom:24px;">Your future self<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">is talking</span></h1>
+
+    <div class="chat-wrap">
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg msg-ai">
+          <div class="msg-label">Wylde Coach</div>
+          <div class="msg-bubble">Hey — I'm the version of you that's already done the work. Ask me anything. I'll tell you what I know.</div>
+        </div>
+      </div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="chatInput" placeholder="Ask your future self..." onkeydown="if(event.key==='Enter')sendMessage()" />
+        <button class="chat-send" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PROGRESS ═══ -->
+<div class="screen" id="screen-progress">
+  <div class="container">
+    <p class="section-label">Your Progress</p>
+    <h1 class="screen-title">Closing<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">the gap</span></h1>
+    <div class="gold-rule"></div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-num" id="sessionCount">0</div>
+        <div class="stat-label">Sessions</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="streakCount">0</div>
+        <div class="stat-label">Day Streak</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="weekCount">0</div>
+        <div class="stat-label">Weeks In</div>
+      </div>
+    </div>
+
+    <button class="btn complete-btn" onclick="completeSession()">✓ Complete Today's Session</button>
+
+    <p class="section-label">Session Log</p>
+    <div class="session-log" id="sessionLog">
+      <div class="log-item" style="justify-content:center;padding:32px;">
+        <p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);">Your sessions will appear here.</p>
+      </div>
+    </div>
+    <p class="streak-fire" id="streakMsg"></p>
+  </div>
+</div>
+
+<script>
+  // STATE
+  var state = {
+    name: '', gender: '', age: '', goal: '', level: '', days: '',
+    health: [], healthNotes: '',
+    sessions: 0, streak: 0,
+    log: []
+  };
+
+  // After images by gender
+  var afterImages = {
+    'Male':              ['after_male_5.png','after_male_6.png','after_male_7.png'],
+    'Female':            ['after_female_5.png','after_female_6.png','after_female_7.png'],
+    'Non-binary':        ['after_male_5.png','after_male_6.png','after_male_7.png','after_female_5.png','after_female_6.png','after_female_7.png'],
+    'Prefer not to say': ['after_male_5.png','after_male_6.png','after_male_7.png','after_female_5.png','after_female_6.png','after_female_7.png']
+  };
+
+  function getAfterImage() {
+    var imgs = afterImages[state.gender] || afterImages['Male'];
+    return imgs[Math.floor(Math.random() * imgs.length)];
+  }
+
+  function setAfterImage() {
+    var el = document.getElementById('afterImg');
+    if (el) el.src = getAfterImage();
+  }
+
+  // NAV
+  function showScreen(id) {
+    // Gate all screens except onboard behind profile completion
+    if (id !== 'onboard' && !state.name) {
+      // Flash the onboarding form
+      showScreen('onboard');
+      var btn = document.querySelector('.btn[onclick="completeOnboard()"]');
+      if (btn) {
+        btn.textContent = 'Build Your Profile First';
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--gold)';
+        btn.style.border = '1px solid var(--gold)';
+        setTimeout(function() {
+          btn.textContent = 'Build My Profile';
+          btn.style.background = 'var(--gold)';
+          btn.style.color = '#080808';
+          btn.style.border = 'none';
+        }, 2500);
+      }
+      var nameInput = document.getElementById('userName');
+      if (nameInput) {
+        nameInput.focus();
+        nameInput.style.borderColor = 'var(--gold)';
+        setTimeout(function() { nameInput.style.borderColor = ''; }, 2000);
+      }
+      return;
+    }
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+    document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
+    document.getElementById('screen-' + id).classList.add('active');
+    var tabs = { onboard:0, future:1, program:2, coach:3, progress:4 };
+    document.querySelectorAll('.nav-tab')[tabs[id]].classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  // PILLS — single select
+  function selectPill(el, groupId) {
+    document.querySelectorAll('#' + groupId + ' .pill').forEach(function(p){ p.classList.remove('selected'); });
+    el.classList.add('selected');
+  }
+
+  // PILLS — multi select (health concerns)
+  function togglePill(el) {
+    el.classList.toggle('selected');
+  }
+
+  // ONBOARDING
+  function completeOnboard() {
+    var name = document.getElementById('userName').value.trim();
+    if (!name) { document.getElementById('userName').style.borderColor='rgba(220,80,80,0.6)'; return; }
+    var gender  = document.querySelector('#genderGroup .selected');
+    var age     = document.querySelector('#ageGroup .selected');
+    var goal    = document.querySelector('#goalGroup .selected');
+    var level   = document.querySelector('#levelGroup .selected');
+    var days    = document.querySelector('#daysGroup .selected');
+    var health  = Array.from(document.querySelectorAll('#healthGroup .selected')).map(function(p){ return p.textContent; });
+    var notes   = document.getElementById('healthNotes').value.trim();
+
+    state.name        = name;
+    state.gender      = gender  ? gender.textContent  : 'Prefer not to say';
+    state.age         = age     ? age.textContent      : '';
+    state.goal        = goal    ? goal.textContent     : 'Get lean & athletic';
+    state.level       = level   ? level.textContent    : 'Intermediate';
+    state.days        = days    ? days.textContent     : '4 days';
+    state.health      = health;
+    state.healthNotes = notes;
+
+    document.getElementById('programName').textContent = name;
+    document.getElementById('programSub').textContent  = 'A ' + state.days + ' program built around your goal: ' + state.goal + '.';
+
+    // Unlock all nav tabs
+    document.querySelectorAll('.nav-tab.locked').forEach(function(t){ t.classList.remove('locked'); });
+
+    // Set after image based on gender
+    setAfterImage();
+
+    showScreen('future');
+  }
+
+  // PHOTO UPLOAD
+  function triggerUpload() {}
+  function handlePhoto(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      document.getElementById('beforeImg').src = ev.target.result;
+      document.getElementById('uploadZone').style.display = 'none';
+      startGeneration();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function startGeneration() {
+    var prog = document.getElementById('generateProgress');
+    var bar = document.getElementById('progressBar');
+    var label = document.getElementById('progressLabel');
+    prog.style.display = 'block';
+    var steps = ['Analyzing your photo...', 'Mapping body composition...', 'Applying your goals...', 'Generating your future self...', 'Almost there...'];
+    var pct = 0;
+    var step = 0;
+    var interval = setInterval(function() {
+      pct += 1.4;
+      bar.style.width = Math.min(pct, 98) + '%';
+      if (pct > 20 && step === 0) { label.textContent = steps[1]; step++; }
+      if (pct > 45 && step === 1) { label.textContent = steps[2]; step++; }
+      if (pct > 65 && step === 2) { label.textContent = steps[3]; step++; }
+      if (pct > 85 && step === 3) { label.textContent = steps[4]; step++; }
+      if (pct >= 100) {
+        clearInterval(interval);
+        bar.style.width = '100%';
+        setTimeout(revealFutureSelf, 400);
+      }
+    }, 40);
+  }
+
+  function revealFutureSelf() {
+    document.getElementById('generateProgress').style.display = 'none';
+    setAfterImage();
+    document.getElementById('comparison').classList.add('show');
+    document.getElementById('futureActions').style.display = 'block';
+  }
+
+  function resetPhoto() {
+    document.getElementById('uploadZone').style.display = 'block';
+    document.getElementById('comparison').classList.remove('show');
+    document.getElementById('futureActions').style.display = 'none';
+    document.getElementById('photoInput').value = '';
+  }
+
+  // PROGRAM GENERATOR
+  var programs = {
+    'Lose fat': [
+      { day:'Day 01', focus:'Full Body Burn', exercises:[['Squat','4 × 12'],['Push-up','4 × 15'],['Dumbbell Row','4 × 12'],['Plank','4 × 45s'],['Jump Rope','10 min']] },
+      { day:'Day 02', focus:'Cardio + Core', exercises:[['Treadmill Intervals','20 min'],['Hanging Knee Raise','3 × 15'],['Russian Twist','3 × 20'],['Mountain Climbers','3 × 30s'],['Dead Bug','3 × 10']] },
+      { day:'Day 03', focus:'Upper Body', exercises:[['Bench Press','4 × 10'],['Lat Pulldown','4 × 12'],['Shoulder Press','3 × 12'],['Bicep Curl','3 × 15'],['Tricep Dip','3 × 12']] },
+      { day:'Day 04', focus:'Lower Body', exercises:[['Deadlift','4 × 8'],['Lunges','4 × 12'],['Leg Press','3 × 15'],['Calf Raise','4 × 20'],['Glute Bridge','3 × 15']] },
+    ],
+    'Build muscle': [
+      { day:'Day 01', focus:'Chest & Triceps', exercises:[['Bench Press','5 × 5'],['Incline Dumbbell Press','4 × 10'],['Cable Fly','3 × 15'],['Skull Crusher','4 × 10'],['Tricep Pushdown','3 × 15']] },
+      { day:'Day 02', focus:'Back & Biceps', exercises:[['Deadlift','5 × 5'],['Pull-up','4 × 8'],['Barbell Row','4 × 10'],['Hammer Curl','3 × 12'],['Face Pull','3 × 15']] },
+      { day:'Day 03', focus:'Legs', exercises:[['Back Squat','5 × 5'],['Romanian Deadlift','4 × 10'],['Leg Press','4 × 12'],['Leg Curl','3 × 12'],['Calf Raise','5 × 15']] },
+      { day:'Day 04', focus:'Shoulders & Arms', exercises:[['Overhead Press','4 × 8'],['Lateral Raise','4 × 15'],['Front Raise','3 × 12'],['Barbell Curl','4 × 10'],['Dip','4 × 12']] },
+    ],
+    'default': [
+      { day:'Day 01', focus:'Power & Strength', exercises:[['Squat','4 × 6'],['Bench Press','4 × 6'],['Deadlift','3 × 5'],['Pull-up','4 × 8'],['Core Circuit','3 × 45s']] },
+      { day:'Day 02', focus:'Athletic Conditioning', exercises:[['Box Jump','4 × 6'],['Kettlebell Swing','4 × 15'],['Battle Rope','4 × 30s'],['Sled Push','4 × 20m'],['Burpee','3 × 10']] },
+      { day:'Day 03', focus:'Hypertrophy', exercises:[['Incline Press','4 × 12'],['Cable Row','4 × 12'],['Leg Press','4 × 15'],['Lateral Raise','3 × 15'],['Bicep Curl','3 × 15']] },
+      { day:'Day 04', focus:'Mobility & Recovery', exercises:[['Hip Flexor Stretch','3 × 60s'],['Thoracic Rotation','3 × 10'],['Foam Roll','10 min'],['Yoga Flow','15 min'],['Breathing Work','5 min']] },
+    ]
+  };
+
+  function generateProgram() {
+    document.getElementById('generateProgramBtn').style.display = 'none';
+    var output = document.getElementById('programOutput');
+    var container = document.getElementById('programDays');
+    output.classList.add('show');
+    container.innerHTML = '';
+    var plan = programs[state.goal] || programs['default'];
+    var i = 0;
+    function addDay() {
+      if (i >= plan.length) return;
+      var d = plan[i];
+      var card = document.createElement('div');
+      card.className = 'day-card';
+      var exHTML = d.exercises.map(function(ex) {
+        return '<div class="exercise"><span class="ex-name">' + ex[0] + '</span><span class="ex-sets">' + ex[1] + '</span></div>';
+      }).join('');
+      card.innerHTML = '<div class="day-header" onclick="toggleDay(this)"><span class="day-name">' + d.day + '</span><span class="day-focus">' + d.focus + '</span></div><div class="day-body"><div style="padding-top:4px;">' + exHTML + '</div></div>';
+      container.appendChild(card);
+      i++;
+      setTimeout(addDay, 180);
+    }
+    addDay();
+  }
+
+  function toggleDay(header) {
+    var body = header.nextElementSibling;
+    body.classList.toggle('open');
+  }
+
+  // COACH
+  var coachResponses = [
+    "You already have what it takes. The question is whether you're willing to show up when it doesn't feel easy.",
+    "I didn't get here by being motivated every day. I got here by deciding who I was — and acting like it.",
+    "That feeling you get before a session — that resistance — that's exactly where the identity shift happens. Push through it.",
+    "Every rep you do is a vote for the person you're becoming. Small votes. Consistent votes. That's how you win.",
+    "Rest is part of the work. Don't confuse rest days with quitting. Recovery is how you come back stronger.",
+    "The version of you standing in the mirror six months from now is shaped by the decisions you make today.",
+    "Nutrition is the other half of this. You can't out-train a bad diet. What you eat is a statement about who you are.",
+    "Comparison is the enemy. The only person you're competing with is who you were yesterday.",
+    "Progress feels slow until you look back. Keep a log. You'll be surprised how far you've come.",
+    "I know it's hard. I was where you are. That's exactly why I know you can do this."
+  ];
+  var coachIdx = 0;
+
+  function sendMessage() {
+    var input = document.getElementById('chatInput');
+    var msg = input.value.trim();
+    if (!msg) return;
+    input.value = '';
+    var messages = document.getElementById('chatMessages');
+
+    // User message
+    var userDiv = document.createElement('div');
+    userDiv.className = 'msg msg-user';
+    userDiv.innerHTML = '<div class="msg-label">' + (state.name || 'You') + '</div><div class="msg-bubble">' + msg + '</div>';
+    messages.appendChild(userDiv);
+    messages.scrollTop = messages.scrollHeight;
+
+    // Typing indicator
+    var typingDiv = document.createElement('div');
+    typingDiv.className = 'msg msg-ai';
+    typingDiv.innerHTML = '<div class="msg-label">Wylde Coach</div><div class="msg-bubble"><span class="typing-cursor"></span></div>';
+    messages.appendChild(typingDiv);
+    messages.scrollTop = messages.scrollHeight;
+
+    // Response
+    var response = coachResponses[coachIdx % coachResponses.length];
+    coachIdx++;
+    setTimeout(function() {
+      typingDiv.remove();
+      var aiDiv = document.createElement('div');
+      aiDiv.className = 'msg msg-ai';
+      aiDiv.innerHTML = '<div class="msg-label">Wylde Coach</div><div class="msg-bubble"></div>';
+      messages.appendChild(aiDiv);
+      var bubble = aiDiv.querySelector('.msg-bubble');
+      var i = 0;
+      function typeChar() {
+        if (i < response.length) {
+          bubble.textContent += response[i];
+          i++;
+          messages.scrollTop = messages.scrollHeight;
+          setTimeout(typeChar, 18);
+        }
+      }
+      typeChar();
+    }, 900);
+  }
+
+  // PROGRESS
+  function completeSession() {
+    state.sessions++;
+    state.streak++;
+    var weeks = Math.floor(state.sessions / (parseInt(state.days) || 4));
+    document.getElementById('sessionCount').textContent = state.sessions;
+    document.getElementById('streakCount').textContent = state.streak;
+    document.getElementById('weekCount').textContent = weeks;
+
+    var log = document.getElementById('sessionLog');
+    var now = new Date();
+    var dateStr = now.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+    var names = ['Full Body Burn','Chest & Triceps','Athletic Conditioning','Legs & Core','Power Session','Hypertrophy','Back & Biceps'];
+    var sessionName = names[state.sessions % names.length];
+
+    if (state.sessions === 1) { log.innerHTML = ''; }
+    var item = document.createElement('div');
+    item.className = 'log-item';
+    item.innerHTML = '<span class="log-name">Session ' + state.sessions + ' — ' + sessionName + '</span><span class="log-date">' + dateStr + '</span><div class="log-check">✓</div>';
+    log.insertBefore(item, log.firstChild);
+
+    var msgs = ['Keep going.','The gap is closing.','You\'re building evidence.','Identity is shifting.','This is the work.'];
+    document.getElementById('streakMsg').textContent = msgs[state.streak % msgs.length];
+
+    var btn = document.querySelector('.complete-btn');
+    btn.textContent = '✓ Session Complete';
+    btn.style.background = 'transparent';
+    btn.style.color = 'var(--gold)';
+    btn.style.border = '1px solid var(--gold)';
+    setTimeout(function() {
+      btn.textContent = '✓ Complete Today\'s Session';
+      btn.style.background = 'var(--gold)';
+      btn.style.color = '#080808';
+      btn.style.border = 'none';
+    }, 2000);
+  }
+</script>
+</body>
+</html>
