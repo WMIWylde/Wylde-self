@@ -146,6 +146,7 @@
     <button class="nav-tab locked" onclick="showScreen('program')">Program</button>
     <button class="nav-tab locked" onclick="showScreen('coach')">Coach</button>
     <button class="nav-tab locked" onclick="showScreen('progress')">Progress</button>
+    <button class="nav-tab locked" onclick="showScreen('health')">Health+</button>
   </div>
 </nav>
 
@@ -276,7 +277,7 @@
         <div class="comp-tag">You — Now</div>
       </div>
       <div class="comp-side">
-        <img id="afterImg" src="after_male_5.png" alt="You — Becoming" />
+        <img id="afterImg" src="glow_neutral.png" alt="You — Becoming" />
         <div class="comp-tag" style="left:auto;right:12px;">Becoming</div>
       </div>
     </div>
@@ -368,12 +369,12 @@
     log: []
   };
 
-  // After images by gender
+  // After images by gender — glowing silhouettes (placeholder until real AI generation)
   var afterImages = {
-    'Male':              ['after_male_5.png','after_male_6.png','after_male_7.png'],
-    'Female':            ['after_female_5.png','after_female_6.png','after_female_7.png'],
-    'Non-binary':        ['after_male_5.png','after_male_6.png','after_male_7.png','after_female_5.png','after_female_6.png','after_female_7.png'],
-    'Prefer not to say': ['after_male_5.png','after_male_6.png','after_male_7.png','after_female_5.png','after_female_6.png','after_female_7.png']
+    'Male':              ['glow_male.png'],
+    'Female':            ['glow_female.png'],
+    'Non-binary':        ['glow_neutral.png'],
+    'Prefer not to say': ['glow_neutral.png']
   };
 
   function getAfterImage() {
@@ -416,7 +417,7 @@
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
-    var tabs = { onboard:0, future:1, program:2, coach:3, progress:4 };
+    var tabs = { onboard:0, future:1, program:2, coach:3, progress:4, health:5 };
     document.querySelectorAll('.nav-tab')[tabs[id]].classList.add('active');
     window.scrollTo(0,0);
   }
@@ -465,13 +466,19 @@
     showScreen('future');
   }
 
+  // FAL.AI CONFIG — paste your new key here before uploading to GitHub
+  var FAL_KEY = '33c7a34a-aad7-4ce2-8ddb-8bb7c4ac3802:761c0fd57246be209a8c918e46f43a95';
+
   // PHOTO UPLOAD
   function triggerUpload() {}
+  var uploadedImageBase64 = null;
+
   function handlePhoto(e) {
     var file = e.target.files[0];
     if (!file) return;
     var reader = new FileReader();
     reader.onload = function(ev) {
+      uploadedImageBase64 = ev.target.result;
       document.getElementById('beforeImg').src = ev.target.result;
       document.getElementById('uploadZone').style.display = 'none';
       startGeneration();
@@ -480,26 +487,69 @@
   }
 
   function startGeneration() {
-    var prog = document.getElementById('generateProgress');
-    var bar = document.getElementById('progressBar');
+    var prog  = document.getElementById('generateProgress');
+    var bar   = document.getElementById('progressBar');
     var label = document.getElementById('progressLabel');
     prog.style.display = 'block';
-    var steps = ['Analyzing your photo...', 'Mapping body composition...', 'Applying your goals...', 'Generating your future self...', 'Almost there...'];
-    var pct = 0;
-    var step = 0;
+
+    var steps = ['Analyzing your photo...','Mapping body composition...','Applying your goals...','Generating your future self...','Almost there...'];
+    var pct = 0, step = 0;
     var interval = setInterval(function() {
-      pct += 1.4;
-      bar.style.width = Math.min(pct, 98) + '%';
+      pct += 0.6;
+      bar.style.width = Math.min(pct, 92) + '%';
       if (pct > 20 && step === 0) { label.textContent = steps[1]; step++; }
       if (pct > 45 && step === 1) { label.textContent = steps[2]; step++; }
       if (pct > 65 && step === 2) { label.textContent = steps[3]; step++; }
       if (pct > 85 && step === 3) { label.textContent = steps[4]; step++; }
-      if (pct >= 100) {
-        clearInterval(interval);
-        bar.style.width = '100%';
-        setTimeout(revealFutureSelf, 400);
-      }
-    }, 40);
+    }, 60);
+
+    // Goal-aware prompt
+    var goalPrompts = {
+      'Lose fat':            'lean, athletic, toned physique, visible muscle definition, healthy body fat percentage',
+      'Build muscle':        'muscular, strong, well-built physique, significant muscle mass and definition',
+      'Get lean & athletic': 'lean athletic build, toned muscles, confident posture, athletic physique',
+      'Build confidence':    'fit, healthy, confident posture, toned and strong physique'
+    };
+    var goalDesc = goalPrompts[state.goal] || 'fit, healthy, athletic physique';
+    var prompt = 'Transform this person into their best physical self: ' + goalDesc + '. Same person, same face, realistic fitness transformation. Professional studio lighting, dark background. Photorealistic.';
+
+    // If no API key — fall back to glow placeholder
+    if (!FAL_KEY || FAL_KEY === '33c7a34a-aad7-4ce2-8ddb-8bb7c4ac3802:761c0fd57246be209a8c918e46f43a95') {
+      clearInterval(interval);
+      bar.style.width = '100%';
+      setTimeout(function() { revealFutureSelf(); }, 400);
+      return;
+    }
+
+    // Call fal.ai
+    fetch('https://queue.fal.run/fal-ai/fast-sdxl/image-to-image', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Key ' + FAL_KEY
+      },
+      body: JSON.stringify({
+        image_url: uploadedImageBase64,
+        prompt: prompt,
+        negative_prompt: 'deformed, blurry, bad anatomy, disfigured, ugly, different person',
+        strength: 0.65,
+        num_inference_steps: 30,
+        guidance_scale: 7.5
+      })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      clearInterval(interval);
+      bar.style.width = '100%';
+      var resultUrl = data.images && data.images[0] && data.images[0].url;
+      if (resultUrl) document.getElementById('afterImg').src = resultUrl;
+      setTimeout(function() { revealFutureSelf(); }, 400);
+    })
+    .catch(function() {
+      clearInterval(interval);
+      bar.style.width = '100%';
+      setTimeout(function() { revealFutureSelf(); }, 400);
+    });
   }
 
   function revealFutureSelf() {
@@ -663,5 +713,133 @@
     }, 2000);
   }
 </script>
+
+<!-- ═══ HEALTH OPTIMIZATION ═══ -->
+<div class="screen" id="screen-health">
+  <div class="container">
+    <p class="section-label">Health Optimization</p>
+    <h1 class="screen-title">Beyond<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">the workout</span></h1>
+    <p class="screen-sub">Connect with a naturopath, review your labs, and access clinically optimized protocols — all inside Wylde Self.</p>
+    <div class="gold-rule"></div>
+
+    <!-- TIER BANNER -->
+    <div style="background:rgba(200,169,110,0.06);border:1px solid rgba(200,169,110,0.2);padding:20px 24px;margin-bottom:32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div>
+        <p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Health+ Tier</p>
+        <p style="font-size:14px;color:#f5f4f0;">Unlock naturopath consultations, lab review & peptide protocols</p>
+      </div>
+      <button class="btn" onclick="showUpgrade()">Upgrade — $99/mo</button>
+    </div>
+
+    <!-- CONSULT BOOKING -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex;align-items:flex-start;gap:20px;">
+        <div style="width:40px;height:40px;border:1px solid rgba(200,169,110,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">⚕</div>
+        <div style="flex:1;">
+          <p style="font-family:var(--ff-serif);font-size:18px;color:#f5f4f0;margin-bottom:6px;">Book a Naturopath Consultation</p>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;">A licensed naturopath reviews your health profile, goals, and labs. They can recommend and refer peptide protocols tailored specifically to you.</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn" onclick="bookConsult()" style="font-size:12px;padding:11px 24px;">Book Consultation</button>
+            <button class="btn btn-outline" onclick="showConsultInfo()" style="font-size:12px;padding:11px 24px;">Learn More</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAB UPLOAD -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex;align-items:flex-start;gap:20px;">
+        <div style="width:40px;height:40px;border:1px solid rgba(200,169,110,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">🧬</div>
+        <div style="flex:1;">
+          <p style="font-family:var(--ff-serif);font-size:18px;color:#f5f4f0;margin-bottom:6px;">Upload Your Labs</p>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;">Upload your bloodwork and your naturopath will review it before your consultation — so every minute counts.</p>
+          <div class="upload-zone" style="padding:24px;text-align:center;border:1px dashed rgba(200,169,110,0.25);cursor:pointer;position:relative;" onclick="document.getElementById('labInput').click()">
+            <input type="file" id="labInput" accept=".pdf,.jpg,.png" style="display:none;" onchange="handleLabUpload(event)"/>
+            <p style="font-size:13px;color:var(--muted);">Tap to upload bloodwork PDF or image</p>
+          </div>
+          <p id="labUploadStatus" style="font-size:12px;color:var(--gold);margin-top:8px;display:none;">✓ Labs uploaded — your naturopath will review before your consultation.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PEPTIDE PARTNER -->
+    <div class="card" style="margin-bottom:16px;border-color:rgba(200,169,110,0.2);">
+      <div style="display:flex;align-items:flex-start;gap:20px;">
+        <div style="width:40px;height:40px;border:1px solid rgba(200,169,110,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">◎</div>
+        <div style="flex:1;">
+          <p style="font-family:var(--ff-serif);font-size:18px;color:#f5f4f0;margin-bottom:6px;">Peptide Protocols</p>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;">Based on your labs and goals, your naturopath can refer you to clinically optimized peptide protocols through our vetted partner provider.</p>
+          <div style="background:rgba(200,169,110,0.05);border:1px solid rgba(200,169,110,0.12);padding:16px;margin-bottom:16px;">
+            <p style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Vetted Partner</p>
+            <p style="font-size:13px;color:#f5f4f0;">Pharmaceutical-grade peptides. Prescriptions issued only through licensed naturopathic physicians after lab review.</p>
+          </div>
+          <button class="btn btn-outline" onclick="showPeptideInfo()" style="font-size:12px;padding:11px 24px;">Learn About Peptides</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHAT TO EXPECT -->
+    <p class="section-label" style="margin-top:32px;">The Process</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.07);">
+      <div style="background:#111;padding:24px 20px;">
+        <p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">01</p>
+        <p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Complete your health profile</p>
+        <p style="font-size:12px;color:var(--muted);">Goals, concerns, medications, history</p>
+      </div>
+      <div style="background:#111;padding:24px 20px;">
+        <p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">02</p>
+        <p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Upload your labs</p>
+        <p style="font-size:12px;color:var(--muted);">Bloodwork reviewed before your consult</p>
+      </div>
+      <div style="background:#111;padding:24px 20px;">
+        <p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">03</p>
+        <p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Consult with your naturopath</p>
+        <p style="font-size:12px;color:var(--muted);">Video call, inside the app</p>
+      </div>
+      <div style="background:#111;padding:24px 20px;">
+        <p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">04</p>
+        <p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Receive your protocol</p>
+        <p style="font-size:12px;color:var(--muted);">Peptide referral + optimization plan</p>
+      </div>
+    </div>
+
+    <!-- DISCLAIMER -->
+    <p style="font-size:11px;color:#444;margin-top:24px;line-height:1.7;font-style:italic;font-family:var(--ff-serif);">
+      Wylde Self does not prescribe medications. All peptide protocols are issued through licensed naturopathic physicians following consultation and lab review. This service is not available in all regions.
+    </p>
+  </div>
+</div>
+
+<!-- CONSULT MODAL -->
+<div id="consultModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:500;align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#111;border:1px solid rgba(200,169,110,0.2);max-width:540px;width:100%;padding:40px;position:relative;">
+    <button onclick="closeModal('consultModal')" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;">×</button>
+    <p class="section-label">Book a Consultation</p>
+    <h2 style="font-family:var(--ff-hero);font-size:36px;letter-spacing:0.03em;margin-bottom:16px;">Schedule Your Session</h2>
+    <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:24px;">Your naturopath will review your Wylde Self health profile before the call. Sessions are 45 minutes via video.</p>
+    <!-- Replace href with actual Calendly link -->
+    <a href="https://calendly.com" target="_blank" class="btn" style="display:block;text-align:center;text-decoration:none;margin-bottom:12px;">Open Booking Calendar</a>
+    <p style="font-size:11px;color:#444;text-align:center;letter-spacing:0.06em;">Available to Health+ members only</p>
+  </div>
+</div>
+
+<!-- UPGRADE MODAL -->
+<div id="upgradeModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:500;align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#111;border:1px solid rgba(200,169,110,0.2);max-width:480px;width:100%;padding:40px;position:relative;">
+    <button onclick="closeModal('upgradeModal')" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;">×</button>
+    <p class="section-label">Health+ Tier</p>
+    <h2 style="font-family:var(--ff-hero);font-size:40px;letter-spacing:0.03em;margin-bottom:8px;">$99 / month</h2>
+    <div style="width:40px;height:1px;background:var(--gold);margin-bottom:24px;"></div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:32px;">
+      <div style="display:flex;gap:12px;align-items:center;"><span style="color:var(--gold);font-size:16px;">✓</span><span style="font-size:14px;color:#d8d7d0;">Everything in Core ($29/mo)</span></div>
+      <div style="display:flex;gap:12px;align-items:center;"><span style="color:var(--gold);font-size:16px;">✓</span><span style="font-size:14px;color:#d8d7d0;">Monthly naturopath consultation</span></div>
+      <div style="display:flex;gap:12px;align-items:center;"><span style="color:var(--gold);font-size:16px;">✓</span><span style="font-size:14px;color:#d8d7d0;">Lab upload & async review</span></div>
+      <div style="display:flex;gap:12px;align-items:center;"><span style="color:var(--gold);font-size:16px;">✓</span><span style="font-size:14px;color:#d8d7d0;">Peptide protocol referrals</span></div>
+      <div style="display:flex;gap:12px;align-items:center;"><span style="color:var(--gold);font-size:16px;">✓</span><span style="font-size:14px;color:#d8d7d0;">Priority AI coaching</span></div>
+    </div>
+    <button class="btn" style="width:100%;padding:16px;" onclick="alert('Stripe integration coming soon.')">Upgrade Now</button>
+  </div>
+</div>
+
 </body>
 </html>
