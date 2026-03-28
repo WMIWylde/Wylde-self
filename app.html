@@ -554,11 +554,23 @@
                    || (data.output && data.output[0]);
       if (resultUrl) {
         console.log('Got image URL:', resultUrl.substring(0, 60));
-        document.getElementById('afterImg').src = resultUrl;
+        var afterImg = document.getElementById('afterImg');
+        // Wait for image to fully load before revealing
+        afterImg.onload = function() {
+          console.log('Image loaded successfully');
+          revealFutureSelf();
+        };
+        afterImg.onerror = function() {
+          console.log('Image failed to load, using fallback');
+          revealFutureSelf();
+        };
+        afterImg.src = resultUrl;
+        // Safety timeout — reveal after 8s regardless
+        setTimeout(function() { revealFutureSelf(); }, 8000);
       } else {
         console.log('No image URL in response');
+        revealFutureSelf();
       }
-      setTimeout(function() { revealFutureSelf(); }, 600);
     })
     .catch(function(err) {
       console.error('fal.ai error:', err);
