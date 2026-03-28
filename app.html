@@ -60,6 +60,11 @@
     .pill:hover { border-color: var(--gold); color: #f5f4f0; }
     .pill.selected { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); }
 
+    /* TIMELINE */
+    .timeline-btn { flex:1; font-family:var(--ff-body); font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; padding:10px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.2s; }
+    .timeline-btn:hover { border-color:var(--gold); color:#f5f4f0; }
+    .timeline-btn.active { border-color:var(--gold); background:var(--gold-dim); color:var(--gold); }
+
     /* FUTURE SELF */
     .upload-zone { border: 1px dashed rgba(200,169,110,0.3); background: #111; padding: 60px 24px; text-align: center; cursor: pointer; transition: all 0.25s; position: relative; }
     .upload-zone:hover { border-color: var(--gold); background: var(--gold-dim); }
@@ -253,6 +258,13 @@
     <p class="screen-sub">Upload a photo and we'll generate a future version of you based on your goals.</p>
     <div class="gold-rule"></div>
 
+    <!-- TIMELINE TOGGLE -->
+    <div style="display:flex;gap:2px;margin-bottom:16px;" id="timelineToggle">
+      <button class="timeline-btn active" onclick="setTimeline(this,'12weeks')">12 Weeks</button>
+      <button class="timeline-btn" onclick="setTimeline(this,'6months')">6 Months</button>
+      <button class="timeline-btn" onclick="setTimeline(this,'1year')">1 Year</button>
+    </div>
+
     <div class="upload-zone" id="uploadZone" onclick="document.getElementById('photoInput').click()">
       <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handlePhoto(event)" />
       <div class="upload-icon">↑</div>
@@ -278,7 +290,7 @@
       </div>
       <div class="comp-side">
         <img id="afterImg" src="glow_neutral.png" alt="You — Becoming" />
-        <div class="comp-tag" style="left:auto;right:12px;">Becoming</div>
+        <div class="comp-tag" id="becomingTag" style="left:auto;right:12px;">12 Weeks</div>
       </div>
     </div>
 
@@ -466,6 +478,15 @@
     showScreen('future');
   }
 
+  // TIMELINE
+  var selectedTimeline = '12weeks';
+
+  function setTimeline(el, timeline) {
+    document.querySelectorAll('.timeline-btn').forEach(function(b){ b.classList.remove('active'); });
+    el.classList.add('active');
+    selectedTimeline = timeline;
+  }
+
   // FAL.AI CONFIG — paste your new key here before uploading to GitHub
   var FAL_KEY = '33c7a34a-aad7-4ce2-8ddb-8bb7c4ac3802:761c0fd57246be209a8c918e46f43a95';
 
@@ -512,15 +533,30 @@
     }
 
     // Call fal.ai
-    var goalPrompts = {
-      'Lose fat':            'lean toned fit body, visible abs, low body fat, athletic build',
-      'Build muscle':        'muscular defined body, strong athletic build, fit and powerful',
-      'Get lean & athletic': 'lean athletic toned body, defined muscles, fit physique',
-      'Build confidence':    'fit toned healthy body, athletic physique, confident posture'
+    var timelinePrompts = {
+      '12weeks': {
+        'Lose fat':            'slightly leaner body, early fat loss progress, 5-8 lbs lighter, modest visible improvement, realistic 12 week transformation',
+        'Build muscle':        'slightly more muscular, early strength gains, modest muscle definition beginning to show, realistic 12 week progress',
+        'Get lean & athletic': 'slightly more toned and athletic, early fitness progress, lean and energetic, realistic 12 week result',
+        'Build confidence':    'slightly fitter, healthier looking, modest visible improvement, realistic 12 week transformation'
+      },
+      '6months': {
+        'Lose fat':            'noticeably leaner, visible abs starting to show, 15-20 lbs lighter, clear fat loss transformation, realistic 6 month result',
+        'Build muscle':        'noticeably more muscular, defined chest and arms, clear muscle gains, athletic build, realistic 6 month transformation',
+        'Get lean & athletic': 'lean and athletic, toned muscles, fit and defined, sports physique, realistic 6 month result',
+        'Build confidence':    'fit and toned, healthy athletic body, clear transformation, confident physique, realistic 6 month result'
+      },
+      '1year': {
+        'Lose fat':            'very lean, visible six pack abs, dramatic fat loss, athletic defined physique, realistic 1 year transformation',
+        'Build muscle':        'muscular and strong, significant muscle mass, powerful athletic build, defined and impressive, realistic 1 year result',
+        'Get lean & athletic': 'very lean and athletic, highly defined muscles, peak athletic physique, realistic 1 year transformation',
+        'Build confidence':    'highly fit, lean muscular physique, dramatic full body transformation, realistic 1 year result'
+      }
     };
-    var goalDesc = goalPrompts[state.goal] || 'fit athletic toned body';
-    var genderDesc = state.gender === 'Female' ? 'fit woman, toned feminine physique' : 'fit man, athletic masculine physique';
-    var prompt = genderDesc + ', ' + goalDesc + ', same pose, natural lighting, realistic photograph, photorealistic, 8k, high detail, fitness transformation';
+    var goalDesc = (timelinePrompts[selectedTimeline] && timelinePrompts[selectedTimeline][state.goal]) || 'fit athletic physique';
+    var timelineLabel = selectedTimeline === '12weeks' ? '12 week' : selectedTimeline === '6months' ? '6 month' : '1 year';
+    var genderDesc = state.gender === 'Female' ? 'fit woman' : 'fit man';
+    var prompt = genderDesc + ', ' + goalDesc + ', ' + timelineLabel + ' fitness transformation, same room same background same clothing, photorealistic, high quality photograph';
 
     console.log('Calling fal.ai with key:', FAL_KEY.substring(0,8) + '...');
     console.log('Prompt:', prompt);
