@@ -558,6 +558,7 @@
         // Wait for image to fully load before revealing
         afterImg.onload = function() {
           console.log('Image loaded successfully');
+          afterImg.onload = null; // prevent repeated firing
           revealFutureSelf();
         };
         afterImg.onerror = function() {
@@ -582,7 +583,11 @@
 
   function revealFutureSelf() {
     document.getElementById('generateProgress').style.display = 'none';
-    setAfterImage();
+    // Only use glow fallback if no real AI image was generated
+    var afterImg = document.getElementById('afterImg');
+    if (!afterImg.src || afterImg.src.includes('glow')) {
+      setAfterImage();
+    }
     document.getElementById('comparison').classList.add('show');
     document.getElementById('futureActions').style.display = 'block';
   }
