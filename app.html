@@ -525,19 +525,20 @@
     console.log('Calling fal.ai with key:', FAL_KEY.substring(0,8) + '...');
     console.log('Prompt:', prompt);
 
-    fetch('https://fal.run/fal-ai/fast-sdxl/image-to-image', {
+    fetch('https://fal.run/fal-ai/instantid', {
       method: 'POST',
       headers: {
         'Authorization': 'Key ' + FAL_KEY,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        image_url: uploadedImageBase64,
+        face_image_url: uploadedImageBase64,
         prompt: prompt,
-        negative_prompt: 'ugly, deformed, blurry, low quality, text, watermark',
-        strength: 0.7,
-        num_inference_steps: 28,
-        guidance_scale: 7
+        negative_prompt: 'ugly, deformed, blurry, low quality, text, watermark, overweight, obese',
+        num_inference_steps: 30,
+        guidance_scale: 7.5,
+        ip_adapter_scale: 0.8,
+        controlnet_conditioning_scale: 0.8
       })
     })
     .then(function(res) {
