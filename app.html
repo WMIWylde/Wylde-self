@@ -253,8 +253,8 @@
     <p class="screen-sub">Upload a photo and we'll generate a future version of you based on your goals.</p>
     <div class="gold-rule"></div>
 
-    <div class="upload-zone" id="uploadZone" onclick="triggerUpload()">
-      <input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(event)" />
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('photoInput').click()">
+      <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handlePhoto(event)" />
       <div class="upload-icon">↑</div>
       <p class="upload-label">Tap to upload your photo</p>
       <p style="font-size:12px;color:#444;margin-top:8px;letter-spacing:0.06em;">Front-facing, good lighting works best</p>
@@ -470,7 +470,7 @@
   var FAL_KEY = '33c7a34a-aad7-4ce2-8ddb-8bb7c4ac3802:761c0fd57246be209a8c918e46f43a95';
 
   // PHOTO UPLOAD
-  function triggerUpload() {}
+  function triggerUpload() { document.getElementById("photoInput").click(); }
   var uploadedImageBase64 = null;
 
   function handlePhoto(e) {
