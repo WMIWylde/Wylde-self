@@ -706,7 +706,7 @@
       '- "exercises": array of [exercise_name, sets_and_reps] pairs\n\n' +
       'Include 5-6 exercises per day. Account for any health concerns listed. Make the program progressive and appropriate for the fitness level. Return only the JSON array.';
 
-    fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_KEY, {
+    fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + GEMINI_KEY, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
