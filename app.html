@@ -503,16 +503,6 @@
       if (pct > 85 && step === 3) { label.textContent = steps[4]; step++; }
     }, 60);
 
-    // Goal-aware prompt
-    var goalPrompts = {
-      'Lose fat':            'lean, athletic, toned physique, visible muscle definition, healthy body fat percentage',
-      'Build muscle':        'muscular, strong, well-built physique, significant muscle mass and definition',
-      'Get lean & athletic': 'lean athletic build, toned muscles, confident posture, athletic physique',
-      'Build confidence':    'fit, healthy, confident posture, toned and strong physique'
-    };
-    var goalDesc = goalPrompts[state.goal] || 'fit, healthy, athletic physique';
-    var prompt = 'Transform this person into their best physical self: ' + goalDesc + '. Same person, same face, realistic fitness transformation. Professional studio lighting, dark background. Photorealistic.';
-
     // If no API key — fall back to glow placeholder
     if (!FAL_KEY || FAL_KEY.includes('YOUR_KEY')) {
       clearInterval(interval);
@@ -522,30 +512,56 @@
     }
 
     // Call fal.ai
-    fetch('https://queue.fal.run/fal-ai/fast-sdxl/image-to-image', {
+    var goalPrompts = {
+      'Lose fat':            'lean athletic toned physique, visible abs, low body fat, fit and healthy',
+      'Build muscle':        'muscular strong physique, significant muscle mass, powerful build',
+      'Get lean & athletic': 'lean athletic build, toned muscles, sports performance physique',
+      'Build confidence':    'fit healthy confident physique, toned and strong body'
+    };
+    var goalDesc = goalPrompts[state.goal] || 'fit healthy athletic physique';
+    var genderDesc = state.gender === 'Female' ? 'woman' : 'man';
+    var prompt = 'A fit ' + genderDesc + ' with a ' + goalDesc + ', front-facing, dark studio background, professional fitness photo, photorealistic, high quality';
+
+    console.log('Calling fal.ai with key:', FAL_KEY.substring(0,8) + '...');
+    console.log('Prompt:', prompt);
+
+    fetch('https://fal.run/fal-ai/fast-sdxl/image-to-image', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Key ' + FAL_KEY
+        'Authorization': 'Key ' + FAL_KEY,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         image_url: uploadedImageBase64,
         prompt: prompt,
-        negative_prompt: 'deformed, blurry, bad anatomy, disfigured, ugly, different person',
-        strength: 0.65,
-        num_inference_steps: 30,
-        guidance_scale: 7.5
+        negative_prompt: 'ugly, deformed, blurry, low quality, text, watermark',
+        strength: 0.7,
+        num_inference_steps: 28,
+        guidance_scale: 7
       })
     })
-    .then(function(res) { return res.json(); })
+    .then(function(res) {
+      console.log('fal.ai response status:', res.status);
+      return res.json();
+    })
     .then(function(data) {
+      console.log('fal.ai response data:', JSON.stringify(data).substring(0, 200));
       clearInterval(interval);
       bar.style.width = '100%';
-      var resultUrl = data.images && data.images[0] && data.images[0].url;
-      if (resultUrl) document.getElementById('afterImg').src = resultUrl;
-      setTimeout(function() { revealFutureSelf(); }, 400);
+      label.textContent = 'Your future self is ready.';
+      var resultUrl = (data.images && data.images[0] && data.images[0].url)
+                   || (data.image && data.image.url)
+                   || (data.output && data.output[0]);
+      if (resultUrl) {
+        console.log('Got image URL:', resultUrl.substring(0, 60));
+        document.getElementById('afterImg').src = resultUrl;
+      } else {
+        console.log('No image URL in response');
+      }
+      setTimeout(function() { revealFutureSelf(); }, 600);
     })
-    .catch(function() {
+    .catch(function(err) {
+      console.error('fal.ai error:', err);
       clearInterval(interval);
       bar.style.width = '100%';
       setTimeout(function() { revealFutureSelf(); }, 400);
