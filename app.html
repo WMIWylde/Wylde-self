@@ -514,7 +514,7 @@
     var prompt = 'Transform this person into their best physical self: ' + goalDesc + '. Same person, same face, realistic fitness transformation. Professional studio lighting, dark background. Photorealistic.';
 
     // If no API key — fall back to glow placeholder
-    if (!FAL_KEY || FAL_KEY === 'YOUR_FAL_KEY_HERE') {
+    if (!FAL_KEY || FAL_KEY.includes('YOUR_KEY')) {
       clearInterval(interval);
       bar.style.width = '100%';
       setTimeout(function() { revealFutureSelf(); }, 400);
