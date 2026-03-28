@@ -513,32 +513,31 @@
 
     // Call fal.ai
     var goalPrompts = {
-      'Lose fat':            'lean athletic toned physique, visible abs, low body fat, fit and healthy',
-      'Build muscle':        'muscular strong physique, significant muscle mass, powerful build',
-      'Get lean & athletic': 'lean athletic build, toned muscles, sports performance physique',
-      'Build confidence':    'fit healthy confident physique, toned and strong body'
+      'Lose fat':            'lean toned fit body, visible abs, low body fat, athletic build',
+      'Build muscle':        'muscular defined body, strong athletic build, fit and powerful',
+      'Get lean & athletic': 'lean athletic toned body, defined muscles, fit physique',
+      'Build confidence':    'fit toned healthy body, athletic physique, confident posture'
     };
-    var goalDesc = goalPrompts[state.goal] || 'fit healthy athletic physique';
-    var genderDesc = state.gender === 'Female' ? 'woman' : 'man';
-    var prompt = 'A fit ' + genderDesc + ' with a ' + goalDesc + ', front-facing, dark studio background, professional fitness photo, photorealistic, high quality';
+    var goalDesc = goalPrompts[state.goal] || 'fit athletic toned body';
+    var genderDesc = state.gender === 'Female' ? 'fit woman, toned feminine physique' : 'fit man, athletic masculine physique';
+    var prompt = genderDesc + ', ' + goalDesc + ', same pose, natural lighting, realistic photograph, photorealistic, 8k, high detail, fitness transformation';
 
     console.log('Calling fal.ai with key:', FAL_KEY.substring(0,8) + '...');
     console.log('Prompt:', prompt);
 
-    fetch('https://fal.run/fal-ai/instantid', {
+    fetch('https://fal.run/fal-ai/fast-sdxl/image-to-image', {
       method: 'POST',
       headers: {
         'Authorization': 'Key ' + FAL_KEY,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        face_image_url: uploadedImageBase64,
+        image_url: uploadedImageBase64,
         prompt: prompt,
-        negative_prompt: 'ugly, deformed, blurry, low quality, text, watermark, overweight, obese',
-        num_inference_steps: 30,
-        guidance_scale: 7.5,
-        ip_adapter_scale: 0.8,
-        controlnet_conditioning_scale: 0.8
+        negative_prompt: 'ugly, deformed, blurry, low quality, text, watermark, cartoon, anime',
+        strength: 0.65,
+        num_inference_steps: 28,
+        guidance_scale: 6.5
       })
     })
     .then(function(res) {
