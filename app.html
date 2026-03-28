@@ -152,6 +152,7 @@
     <button class="nav-tab locked" onclick="showScreen('coach')">Coach</button>
     <button class="nav-tab locked" onclick="showScreen('progress')">Progress</button>
     <button class="nav-tab locked" onclick="showScreen('health')">Health+</button>
+    <button class="nav-tab locked" onclick="showScreen('nutrition')">Nutrition</button>
   </div>
 </nav>
 
@@ -199,6 +200,28 @@
       </div>
 
       <div class="form-group">
+        <label>Height</label>
+        <div class="pill-group" id="heightGroup">
+          <button class="pill" onclick="selectPill(this,'heightGroup')">Under 5'4"</button>
+          <button class="pill" onclick="selectPill(this,'heightGroup')">5'4"–5'7"</button>
+          <button class="pill" onclick="selectPill(this,'heightGroup')">5'8"–5'11"</button>
+          <button class="pill" onclick="selectPill(this,'heightGroup')">6'0"–6'3"</button>
+          <button class="pill" onclick="selectPill(this,'heightGroup')">Over 6'3"</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Current weight</label>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input class="input" type="number" id="weightInput" placeholder="e.g. 180" style="max-width:140px;" />
+          <div class="pill-group" id="weightUnitGroup">
+            <button class="pill selected" onclick="selectPill(this,'weightUnitGroup')">lbs</button>
+            <button class="pill" onclick="selectPill(this,'weightUnitGroup')">kg</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
         <label>Primary goal</label>
         <div class="pill-group" id="goalGroup">
           <button class="pill" onclick="selectPill(this,'goalGroup')">Lose fat</button>
@@ -241,6 +264,24 @@
           <button class="pill" onclick="togglePill(this)">None</button>
         </div>
         <textarea class="input" id="healthNotes" placeholder="Anything else? Injuries, medications, doctor\'s advice..." rows="3" style="resize:vertical;font-family:var(--ff-body);line-height:1.6;margin-top:4px;"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Dietary preferences <span style="color:#444;font-size:10px;letter-spacing:0.06em;text-transform:none;font-weight:400;">(optional)</span></label>
+        <div class="pill-group" id="dietGroup" style="margin-bottom:12px;">
+          <button class="pill" onclick="togglePill(this)">No restrictions</button>
+          <button class="pill" onclick="togglePill(this)">Vegetarian</button>
+          <button class="pill" onclick="togglePill(this)">Vegan</button>
+          <button class="pill" onclick="togglePill(this)">Gluten-free</button>
+          <button class="pill" onclick="togglePill(this)">Dairy-free</button>
+          <button class="pill" onclick="togglePill(this)">Keto</button>
+          <button class="pill" onclick="togglePill(this)">Paleo</button>
+          <button class="pill" onclick="togglePill(this)">Halal</button>
+          <button class="pill" onclick="togglePill(this)">Kosher</button>
+          <button class="pill" onclick="togglePill(this)">Nut allergy</button>
+          <button class="pill" onclick="togglePill(this)">Shellfish allergy</button>
+        </div>
+        <input class="input" id="dietNotes" placeholder="Any other dietary needs or allergies..." style="margin-top:4px;" />
       </div>
 
       <div style="margin-top:8px;">
@@ -294,6 +335,10 @@
     <p style="font-size:11px;color:rgba(200,169,110,0.45);letter-spacing:0.06em;margin-top:12px;text-align:center;font-style:italic;font-family:'Cormorant Garamond',serif;">
       Transformation previews are illustrative. Personalized AI generation is in development.
     </p>
+
+    <div style="text-align:center;margin-top:20px;">
+      <button onclick="showScreen('program')" style="background:none;border:none;color:var(--muted);font-family:var(--ff-body);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;text-decoration:underline;text-underline-offset:3px;">Skip — go straight to my program →</button>
+    </div>
 
     <div class="generate-progress" id="generateProgress">
       <p class="progress-label" id="progressLabel">Analyzing your photo...</p>
@@ -394,8 +439,9 @@
 <script>
   // STATE
   var state = {
-    name: '', gender: '', age: '', goal: '', level: '', days: '',
-    health: [], healthNotes: '',
+    name: '', gender: '', age: '', height: '', weight: '', weightUnit: 'lbs',
+    goal: '', level: '', days: '',
+    health: [], healthNotes: '', diet: [], dietNotes: '',
     sessions: 0, streak: 0,
     log: []
   };
@@ -448,7 +494,8 @@
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
-    var tabs = { onboard:0, future:1, program:2, coach:3, progress:4, health:5 };
+    if (id === 'nutrition' && state.weight) { calculateMacros(); }
+    var tabs = { onboard:0, future:1, program:2, coach:3, progress:4, health:5, nutrition:6 };
     document.querySelectorAll('.nav-tab')[tabs[id]].classList.add('active');
     window.scrollTo(0,0);
   }
@@ -473,17 +520,27 @@
     var goal    = document.querySelector('#goalGroup .selected');
     var level   = document.querySelector('#levelGroup .selected');
     var days    = document.querySelector('#daysGroup .selected');
+    var height  = document.querySelector('#heightGroup .selected');
+    var weight  = document.getElementById('weightInput').value.trim();
+    var wUnit   = document.querySelector('#weightUnitGroup .selected');
     var health  = Array.from(document.querySelectorAll('#healthGroup .selected')).map(function(p){ return p.textContent; });
     var notes   = document.getElementById('healthNotes').value.trim();
 
     state.name        = name;
     state.gender      = gender  ? gender.textContent  : 'Prefer not to say';
     state.age         = age     ? age.textContent      : '';
+    state.height      = height  ? height.textContent   : '';
+    state.weight      = weight  || '';
+    state.weightUnit  = wUnit   ? wUnit.textContent    : 'lbs';
     state.goal        = goal    ? goal.textContent     : 'Get lean & athletic';
     state.level       = level   ? level.textContent    : 'Intermediate';
     state.days        = days    ? days.textContent     : '4 days';
+    var diet   = Array.from(document.querySelectorAll('#dietGroup .selected')).map(function(p){ return p.textContent; });
+    var dNotes = document.getElementById('dietNotes').value.trim();
     state.health      = health;
     state.healthNotes = notes;
+    state.diet        = diet;
+    state.dietNotes   = dNotes;
 
     document.getElementById('programName').textContent = name;
     document.getElementById('programSub').textContent  = 'A ' + state.days + ' program built around your goal: ' + state.goal + '.';
@@ -506,8 +563,8 @@
     selectedTimeline = timeline;
   }
 
-  // GEMINI CONFIG
-  var GEMINI_KEY = 'AIzaSyBIipkQ84kgGiKn7eUGEH8pkzc3OxvAcB8';
+  // AI COACH CONFIG — paste your Anthropic API key here
+  var GEMINI_KEY = 'PASTE_ANTHROPIC_KEY_HERE';
 
   // FAL.AI CONFIG — paste your new key here before uploading to GitHub
   var FAL_KEY = '33c7a34a-aad7-4ce2-8ddb-8bb7c4ac3802:761c0fd57246be209a8c918e46f43a95';
@@ -706,17 +763,23 @@
       '- "exercises": array of [exercise_name, sets_and_reps] pairs\n\n' +
       'Include 5-6 exercises per day. Account for any health concerns listed. Make the program progressive and appropriate for the fitness level. Return only the JSON array.';
 
-    fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + GEMINI_KEY, {
+    fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': GEMINI_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.7, maxOutputTokens: 2048 }
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 2048,
+        messages: [{ role: 'user', content: prompt }]
       })
     })
     .then(function(res) { return res.json(); })
     .then(function(data) {
-      var text = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+      var text = data.content && data.content[0] && data.content[0].text;
       if (!text) throw new Error('No response');
 
       // Clean JSON
@@ -866,6 +929,208 @@
       btn.style.border = 'none';
     }, 2000);
   }
+
+  // ═══ NUTRITION ═══
+
+  var foodLogItems = [];
+  var totalLoggedCal = 0;
+
+  function calculateMacros() {
+    // Estimate TDEE based on profile
+    var weightLbs = parseFloat(state.weight) || 170;
+    if (state.weightUnit === 'kg') weightLbs = weightLbs * 2.205;
+
+    var weightKg = weightLbs / 2.205;
+
+    // Age midpoint
+    var ageMid = 30;
+    if (state.age === '18–24') ageMid = 21;
+    else if (state.age === '25–34') ageMid = 29;
+    else if (state.age === '35–44') ageMid = 39;
+    else if (state.age === '45–54') ageMid = 49;
+    else if (state.age === '55+') ageMid = 60;
+
+    // BMR (Mifflin-St Jeor)
+    var bmr;
+    if (state.gender === 'Female') {
+      bmr = 10 * weightKg + 6.25 * 165 - 5 * ageMid - 161;
+    } else {
+      bmr = 10 * weightKg + 6.25 * 175 - 5 * ageMid + 5;
+    }
+
+    // Activity multiplier based on days
+    var days = parseInt(state.days) || 4;
+    var multiplier = days <= 3 ? 1.375 : days <= 4 ? 1.55 : 1.725;
+    var tdee = Math.round(bmr * multiplier);
+
+    // Adjust for goal
+    var calories, protein, carbs, fat;
+    if (state.goal === 'Lose fat') {
+      calories = tdee - 400;
+      protein  = Math.round(weightLbs * 0.9);
+      fat      = Math.round(calories * 0.28 / 9);
+      carbs    = Math.round((calories - protein * 4 - fat * 9) / 4);
+    } else if (state.goal === 'Build muscle') {
+      calories = tdee + 200;
+      protein  = Math.round(weightLbs * 1.0);
+      fat      = Math.round(calories * 0.25 / 9);
+      carbs    = Math.round((calories - protein * 4 - fat * 9) / 4);
+    } else {
+      calories = tdee;
+      protein  = Math.round(weightLbs * 0.85);
+      fat      = Math.round(calories * 0.30 / 9);
+      carbs    = Math.round((calories - protein * 4 - fat * 9) / 4);
+    }
+
+    var water = Math.round(weightLbs * 0.55);
+
+    document.getElementById('macroCalories').textContent = calories;
+    document.getElementById('macroProtein').textContent  = protein + 'g';
+    document.getElementById('macroCarbs').textContent    = carbs + 'g';
+    document.getElementById('macroFat').textContent      = fat + 'g';
+    document.getElementById('macroWater').textContent    = water + 'oz';
+
+    state.macros = { calories, protein, carbs, fat, water };
+  }
+
+  function generateMealPlan() {
+    if (!state.macros) calculateMacros();
+    var btn = document.getElementById('generateMealBtn');
+    btn.textContent = 'Building your plan...';
+    btn.disabled = true;
+    var output = document.getElementById('mealPlanOutput');
+    output.innerHTML = '<div style="padding:24px 0;text-align:center;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);">Your AI nutritionist is building your meal plan...</p></div>';
+
+    var prompt = 'You are an expert nutritionist. Create a 5-day meal plan for:\n' +
+      'Goal: ' + state.goal + '\n' +
+      'Daily targets: ' + state.macros.calories + ' calories, ' + state.macros.protein + 'g protein, ' + state.macros.carbs + 'g carbs, ' + state.macros.fat + 'g fat\n' +
+      'Health concerns: ' + (state.health.join(', ') || 'none') + '\n\n' +
+      'Return ONLY a JSON array. Each element: {"day":"Monday","meals":[{"name":"Breakfast","foods":"description","calories":number,"protein":number},...]}\n' +
+      'Include breakfast, lunch, dinner, snack per day. No markdown, no backticks, just the JSON array.';
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': GEMINI_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 3000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      var text = data.content && data.content[0] && data.content[0].text;
+      if (!text) throw new Error('No response');
+      text = text.replace(/```json/g,'').replace(/```/g,'').trim();
+      var plan = JSON.parse(text);
+      renderMealPlan(plan);
+      btn.textContent = 'Regenerate';
+      btn.disabled = false;
+    })
+    .catch(function(err) {
+      console.error('Meal plan error:', err);
+      output.innerHTML = '<div style="padding:24px;text-align:center;"><p style="color:var(--muted);font-size:13px;">Could not generate meal plan. Please try again.</p></div>';
+      btn.textContent = 'Try Again';
+      btn.disabled = false;
+    });
+  }
+
+  function renderMealPlan(plan) {
+    var output = document.getElementById('mealPlanOutput');
+    output.innerHTML = '';
+    plan.forEach(function(day) {
+      var card = document.createElement('div');
+      card.className = 'day-card';
+      var mealsHTML = day.meals.map(function(m) {
+        return '<div class="exercise"><span class="ex-name" style="flex:1;">' + m.name + ' — ' + m.foods + '</span><span class="ex-sets">' + m.calories + ' cal · ' + m.protein + 'g P</span></div>';
+      }).join('');
+      card.innerHTML = '<div class="day-header" onclick="toggleDay(this)"><span class="day-name">' + day.day + '</span><span class="day-focus">Tap to expand</span></div><div class="day-body"><div style="padding-top:4px;">' + mealsHTML + '</div></div>';
+      output.appendChild(card);
+    });
+  }
+
+  function generateRecipes() {
+    if (!state.macros) calculateMacros();
+    var output = document.getElementById('recipeOutput');
+    output.innerHTML = '<div style="padding:24px 0;text-align:center;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);">Finding recipes that hit your macros...</p></div>';
+
+    var prompt = 'You are an expert nutritionist. Suggest 4 high-protein recipes for someone with goal: ' + state.goal + ', targeting ' + (state.macros ? state.macros.protein : 150) + 'g protein per day.\n' +
+      'Health concerns: ' + (state.health.join(', ') || 'none') + '\n\n' +
+      'Return ONLY a JSON array. Each element: {"name":"Recipe Name","ingredients":"brief list","macros":"calories/protein/carbs/fat","prep":"X mins","difficulty":"Easy/Medium"}\n' +
+      'No markdown, no backticks, just the JSON array.';
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': GEMINI_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1500,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      var text = data.content && data.content[0] && data.content[0].text;
+      if (!text) throw new Error('No response');
+      text = text.replace(/```json/g,'').replace(/```/g,'').trim();
+      var recipes = JSON.parse(text);
+      renderRecipes(recipes);
+    })
+    .catch(function(err) {
+      console.error('Recipe error:', err);
+      output.innerHTML = '<div style="padding:24px;text-align:center;"><p style="color:var(--muted);font-size:13px;">Could not load recipes. Please try again.</p></div>';
+    });
+  }
+
+  function renderRecipes(recipes) {
+    var output = document.getElementById('recipeOutput');
+    output.innerHTML = '';
+    recipes.forEach(function(r) {
+      var card = document.createElement('div');
+      card.className = 'card';
+      card.style.marginBottom = '8px';
+      card.innerHTML =
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
+          '<p style="font-family:var(--ff-serif);font-size:17px;color:#f5f4f0;">' + r.name + '</p>' +
+          '<span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(200,169,110,0.3);padding:3px 8px;">' + r.difficulty + '</span>' +
+        '</div>' +
+        '<p style="font-size:12px;color:var(--muted);margin-bottom:8px;">' + r.ingredients + '</p>' +
+        '<div style="display:flex;justify-content:space-between;">' +
+          '<span style="font-size:11px;color:var(--gold);">' + r.macros + '</span>' +
+          '<span style="font-size:11px;color:var(--muted);">⏱ ' + r.prep + '</span>' +
+        '</div>';
+      output.appendChild(card);
+    });
+  }
+
+  function logFood() {
+    var input = document.getElementById('foodLogInput');
+    var food = input.value.trim();
+    if (!food) return;
+    input.value = '';
+
+    var log = document.getElementById('foodLog');
+    if (foodLogItems.length === 0) log.innerHTML = '';
+
+    foodLogItems.push(food);
+    var item = document.createElement('div');
+    item.className = 'log-item';
+    item.innerHTML = '<span class="log-name">' + food + '</span><div class="log-check">✓</div>';
+    log.appendChild(item);
+
+    document.getElementById('foodLogTotals').style.display = 'block';
+  }
+
 </script>
 
 <!-- ═══ HEALTH OPTIMIZATION ═══ -->
@@ -992,6 +1257,85 @@
       <div style="display:flex;gap:12px;align-items:center;"><span style="color:var(--gold);font-size:16px;">✓</span><span style="font-size:14px;color:#d8d7d0;">Priority AI coaching</span></div>
     </div>
     <button class="btn" style="width:100%;padding:16px;" onclick="alert('Stripe integration coming soon.')">Upgrade Now</button>
+  </div>
+</div>
+
+
+<!-- ═══ NUTRITION ═══ -->
+<div class="screen" id="screen-nutrition">
+  <div class="container">
+    <p class="section-label">Nutrition</p>
+    <h1 class="screen-title">Fuel your<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">becoming</span></h1>
+    <p class="screen-sub" id="nutritionSub">Your personalized macro targets and meal plan.</p>
+    <div class="gold-rule"></div>
+
+    <!-- MACRO TARGETS -->
+    <p class="section-label">Daily Macro Targets</p>
+    <div class="stats-grid" style="margin-bottom:32px;" id="macroGrid">
+      <div class="stat-box">
+        <div class="stat-num" id="macroCalories" style="font-size:32px;">—</div>
+        <div class="stat-label">Calories</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="macroProtein" style="font-size:32px;">—g</div>
+        <div class="stat-label">Protein</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="macroCarbs" style="font-size:32px;">—g</div>
+        <div class="stat-label">Carbs</div>
+      </div>
+    </div>
+    <div class="stats-grid" style="margin-bottom:32px;">
+      <div class="stat-box">
+        <div class="stat-num" id="macroFat" style="font-size:32px;">—g</div>
+        <div class="stat-label">Fat</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="macroWater" style="font-size:32px;">—oz</div>
+        <div class="stat-label">Water</div>
+      </div>
+      <div class="stat-box" style="cursor:pointer;" onclick="calculateMacros()">
+        <div class="stat-num" style="font-size:20px;color:var(--gold);">↻</div>
+        <div class="stat-label">Recalculate</div>
+      </div>
+    </div>
+
+    <!-- MEAL PLAN -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <p class="section-label" style="margin-bottom:0;">AI Meal Plan</p>
+      <button class="btn" id="generateMealBtn" onclick="generateMealPlan()" style="font-size:11px;padding:10px 20px;">Generate This Week</button>
+    </div>
+    <div id="mealPlanOutput"></div>
+
+    <!-- RECIPE GUIDE -->
+    <div style="margin-top:32px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <p class="section-label" style="margin-bottom:0;">Recipe Guide</p>
+        <button class="btn btn-outline" onclick="generateRecipes()" style="font-size:11px;padding:10px 20px;">Get Recipes</button>
+      </div>
+      <div id="recipeOutput"></div>
+    </div>
+
+    <!-- FOOD LOG -->
+    <div style="margin-top:32px;">
+      <p class="section-label">Today's Food Log</p>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <input class="input" id="foodLogInput" placeholder="e.g. 2 eggs, oatmeal, chicken breast..." style="flex:1;" onkeydown="if(event.key==='Enter')logFood()" />
+        <button class="btn" onclick="logFood()" style="padding:13px 20px;font-size:12px;">Add</button>
+      </div>
+      <div id="foodLog" style="background:#111;border:1px solid var(--border);">
+        <div style="padding:24px;text-align:center;">
+          <p style="font-family:var(--ff-serif);font-style:italic;font-size:14px;color:var(--muted);">Your food log is empty. Add your first meal above.</p>
+        </div>
+      </div>
+      <div id="foodLogTotals" style="display:none;background:#161616;border:1px solid rgba(200,169,110,0.2);padding:16px;margin-top:2px;">
+        <div style="display:flex;justify-content:space-between;">
+          <span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Logged today</span>
+          <span style="font-size:11px;color:var(--gold);" id="loggedCalories">0 cal</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
