@@ -272,6 +272,25 @@
       <p style="font-size:12px;color:#444;margin-top:8px;letter-spacing:0.06em;">Front-facing, good lighting works best</p>
     </div>
 
+    <!-- PHOTO TIPS -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:12px;">
+      <div style="background:#111;border:1px solid var(--border);padding:14px 12px;text-align:center;">
+        <p style="font-size:18px;margin-bottom:6px;">☀️</p>
+        <p style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Lighting</p>
+        <p style="font-size:11px;color:var(--muted);line-height:1.5;">Natural light or bright indoor</p>
+      </div>
+      <div style="background:#111;border:1px solid var(--border);padding:14px 12px;text-align:center;">
+        <p style="font-size:18px;margin-bottom:6px;">🧍</p>
+        <p style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Pose</p>
+        <p style="font-size:11px;color:var(--muted);line-height:1.5;">Front-facing, full or half body</p>
+      </div>
+      <div style="background:#111;border:1px solid var(--border);padding:14px 12px;text-align:center;">
+        <p style="font-size:18px;margin-bottom:6px;">🏠</p>
+        <p style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Background</p>
+        <p style="font-size:11px;color:var(--muted);line-height:1.5;">Plain wall or simple room</p>
+      </div>
+    </div>
+
     <p style="font-size:11px;color:rgba(200,169,110,0.45);letter-spacing:0.06em;margin-top:12px;text-align:center;font-style:italic;font-family:'Cormorant Garamond',serif;">
       Transformation previews are illustrative. Personalized AI generation is in development.
     </p>
@@ -487,6 +506,9 @@
     selectedTimeline = timeline;
   }
 
+  // GEMINI CONFIG
+  var GEMINI_KEY = 'AIzaSyBiD9qL9SlrDn2eY1Jeo7NuZ_dj_sQeFPM';
+
   // FAL.AI CONFIG — paste your new key here before uploading to GitHub
   var FAL_KEY = '33c7a34a-aad7-4ce2-8ddb-8bb7c4ac3802:761c0fd57246be209a8c918e46f43a95';
 
@@ -658,27 +680,90 @@
   };
 
   function generateProgram() {
-    document.getElementById('generateProgramBtn').style.display = 'none';
+    var btn = document.getElementById('generateProgramBtn');
+    btn.textContent = 'Building your program...';
+    btn.disabled = true;
     var output = document.getElementById('programOutput');
     var container = document.getElementById('programDays');
     output.classList.add('show');
-    container.innerHTML = '';
-    var plan = programs[state.goal] || programs['default'];
-    var i = 0;
-    function addDay() {
-      if (i >= plan.length) return;
-      var d = plan[i];
-      var card = document.createElement('div');
-      card.className = 'day-card';
-      var exHTML = d.exercises.map(function(ex) {
-        return '<div class="exercise"><span class="ex-name">' + ex[0] + '</span><span class="ex-sets">' + ex[1] + '</span></div>';
-      }).join('');
-      card.innerHTML = '<div class="day-header" onclick="toggleDay(this)"><span class="day-name">' + d.day + '</span><span class="day-focus">' + d.focus + '</span></div><div class="day-body"><div style="padding-top:4px;">' + exHTML + '</div></div>';
-      container.appendChild(card);
-      i++;
-      setTimeout(addDay, 180);
-    }
-    addDay();
+    container.innerHTML = '<div style="padding:32px 0;text-align:center;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:16px;color:var(--muted);">Your AI coach is building your program...</p><div style="width:40px;height:1px;background:var(--gold);margin:16px auto;"></div></div>';
+
+    // Build prompt from user profile
+    var healthStr = state.health.length > 0 ? state.health.join(', ') : 'none';
+    var notesStr = state.healthNotes ? state.healthNotes : 'none';
+
+    var prompt = 'You are an expert personal trainer and strength coach. Create a detailed ' + state.days + ' per week workout program for the following person:\n\n' +
+      'Name: ' + state.name + '\n' +
+      'Age range: ' + (state.age || 'not specified') + '\n' +
+      'Goal: ' + state.goal + '\n' +
+      'Fitness level: ' + state.level + '\n' +
+      'Days per week: ' + state.days + '\n' +
+      'Health concerns: ' + healthStr + '\n' +
+      'Additional notes: ' + notesStr + '\n\n' +
+      'Return ONLY a JSON array with no markdown, no backticks, no extra text. Each element should be an object with:\n' +
+      '- "day": string (e.g. "Day 01")\n' +
+      '- "focus": string (e.g. "Chest & Triceps")\n' +
+      '- "exercises": array of [exercise_name, sets_and_reps] pairs\n\n' +
+      'Include 5-6 exercises per day. Account for any health concerns listed. Make the program progressive and appropriate for the fitness level. Return only the JSON array.';
+
+    fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_KEY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.7, maxOutputTokens: 2048 }
+      })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      var text = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+      if (!text) throw new Error('No response');
+
+      // Clean JSON
+      text = text.replace(/```json/g,'').replace(/```/g,'').trim();
+      var plan = JSON.parse(text);
+
+      container.innerHTML = '';
+      btn.style.display = 'none';
+
+      var i = 0;
+      function addDay() {
+        if (i >= plan.length) return;
+        var d = plan[i];
+        var card = document.createElement('div');
+        card.className = 'day-card';
+        var exHTML = d.exercises.map(function(ex) {
+          return '<div class="exercise"><span class="ex-name">' + ex[0] + '</span><span class="ex-sets">' + ex[1] + '</span></div>';
+        }).join('');
+        card.innerHTML = '<div class="day-header" onclick="toggleDay(this)"><span class="day-name">' + d.day + '</span><span class="day-focus">' + d.focus + '</span></div><div class="day-body"><div style="padding-top:4px;">' + exHTML + '</div></div>';
+        container.appendChild(card);
+        i++;
+        setTimeout(addDay, 200);
+      }
+      addDay();
+    })
+    .catch(function(err) {
+      console.error('Gemini error:', err);
+      // Fall back to static program
+      container.innerHTML = '';
+      btn.style.display = 'none';
+      var plan = programs[state.goal] || programs['default'];
+      var i = 0;
+      function addDay() {
+        if (i >= plan.length) return;
+        var d = plan[i];
+        var card = document.createElement('div');
+        card.className = 'day-card';
+        var exHTML = d.exercises.map(function(ex) {
+          return '<div class="exercise"><span class="ex-name">' + ex[0] + '</span><span class="ex-sets">' + ex[1] + '</span></div>';
+        }).join('');
+        card.innerHTML = '<div class="day-header" onclick="toggleDay(this)"><span class="day-name">' + d.day + '</span><span class="day-focus">' + d.focus + '</span></div><div class="day-body"><div style="padding-top:4px;">' + exHTML + '</div></div>';
+        container.appendChild(card);
+        i++;
+        setTimeout(addDay, 180);
+      }
+      addDay();
+    });
   }
 
   function toggleDay(header) {
