@@ -9,10 +9,11 @@ export default async function handler(req, res) {
   try {
     const { endpoint, requestId } = req.query;
 
-    // Poll existing request
+    // Poll existing request — endpoint param required to build correct URL
     if (req.method === 'GET' && requestId) {
+      const model = endpoint || 'fal-ai/fast-sdxl/image-to-image';
       const response = await fetch(
-        `https://queue.fal.run/fal-ai/instantid/requests/${requestId}`,
+        `https://queue.fal.run/${model}/requests/${requestId}`,
         { headers: { 'Authorization': `Key ${process.env.FAL_API_KEY}` } }
       );
       const data = await response.json();
@@ -21,7 +22,7 @@ export default async function handler(req, res) {
 
     // Submit new request
     if (req.method === 'POST') {
-      const falEndpoint = endpoint || 'fal-ai/instantid';
+      const falEndpoint = endpoint || 'fal-ai/fast-sdxl/image-to-image';
       const response = await fetch(`https://queue.fal.run/${falEndpoint}`, {
         method: 'POST',
         headers: {

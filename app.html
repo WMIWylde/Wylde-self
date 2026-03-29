@@ -891,7 +891,7 @@
       // Queue response — poll for result
       var requestId = data.request_id;
       if (requestId) {
-        pollFalResult(requestId, interval, bar, label, 0);
+        pollFalResult(requestId, 'fal-ai/fast-sdxl/image-to-image', interval, bar, label, 0);
       } else {
         clearInterval(interval);
         bar.style.width = '100%';
@@ -917,14 +917,14 @@
     setTimeout(function() { revealFutureSelf(); }, 8000);
   }
 
-  function pollFalResult(requestId, interval, bar, label, attempts) {
+  function pollFalResult(requestId, endpoint, interval, bar, label, attempts) {
     if (attempts > 30) {
       clearInterval(interval);
       bar.style.width = '100%';
       setTimeout(function() { revealFutureSelf(); }, 400);
       return;
     }
-    fetch('/api/fal?requestId=' + encodeURIComponent(requestId))
+    fetch('/api/fal?requestId=' + encodeURIComponent(requestId) + '&endpoint=' + encodeURIComponent(endpoint))
       .then(function(res) { return res.json(); })
       .then(function(data) {
         if (data.status === 'COMPLETED') {
@@ -939,11 +939,11 @@
           bar.style.width = '100%';
           setTimeout(function() { revealFutureSelf(); }, 400);
         } else {
-          setTimeout(function() { pollFalResult(requestId, interval, bar, label, attempts + 1); }, 2000);
+          setTimeout(function() { pollFalResult(requestId, endpoint, interval, bar, label, attempts + 1); }, 2000);
         }
       })
       .catch(function() {
-        setTimeout(function() { pollFalResult(requestId, interval, bar, label, attempts + 1); }, 2000);
+        setTimeout(function() { pollFalResult(requestId, endpoint, interval, bar, label, attempts + 1); }, 2000);
       });
   }
 
@@ -956,7 +956,8 @@
       state.avatarUrl = src;
       var da = document.getElementById('dashAvatar');
       if (da) { da.src = src; }
-    } else {
+    } else if (!state.avatarUrl) {
+      // Only fall back to placeholder if we don't already have a real avatar
       setAfterImage();
     }
     document.getElementById('comparison').classList.add('show');
