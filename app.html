@@ -181,6 +181,35 @@
     .protocol-section-body ul { padding-left: 18px; margin-top: 6px; }
     .protocol-section-body li { margin-bottom: 4px; }
 
+    /* DASHBOARD */
+    .dash-grid-top { display:grid; grid-template-columns:150px 1fr; gap:10px; margin-bottom:12px; }
+    .dash-grid-mid { display:grid; grid-template-columns:130px 1fr; gap:10px; margin-bottom:16px; }
+    .dash-profile-card { background:#111; border:1px solid var(--border); padding:18px 14px; text-align:center; }
+    .dash-avatar { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; margin-bottom:10px; }
+    .dash-badge { font-size:9px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(200,169,110,0.3); padding:3px 8px; display:inline-block; margin:2px 0; }
+    .dash-badge-muted { color:var(--muted); border-color:var(--border); }
+    .dash-week-wrap { margin-top:10px; }
+    .dash-week-lbl { font-size:10px; color:var(--muted); letter-spacing:0.06em; margin-bottom:4px; }
+    .dash-week-track { background:#161616; height:3px; }
+    .dash-week-fill { height:3px; background:var(--gold); width:0%; transition:width 0.6s ease; }
+    .dash-stat-row { display:flex; justify-content:space-between; align-items:center; background:#111; border:1px solid var(--border); padding:9px 13px; margin-bottom:2px; }
+    .dash-stat-lbl { font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); }
+    .dash-stat-inp { background:transparent; border:none; border-bottom:1px solid var(--border); color:#f5f4f0; font-family:var(--ff-body); font-size:13px; width:72px; text-align:right; outline:none; padding:1px 2px; }
+    .dash-stat-inp:focus { border-bottom-color:var(--gold); }
+    .dash-pm { background:none; border:1px solid var(--border); color:var(--gold); width:24px; height:24px; cursor:pointer; font-size:15px; line-height:1; transition:all 0.2s; display:inline-flex; align-items:center; justify-content:center; }
+    .dash-pm:hover { border-color:var(--gold); background:var(--gold-dim); }
+    .dash-star { background:none; border:none; font-size:18px; color:#2a2a2a; cursor:pointer; padding:0 1px; transition:color 0.15s; }
+    .dash-star.active { color:var(--gold); }
+    .dash-ring-card { background:#111; border:1px solid var(--border); padding:16px; display:flex; flex-direction:column; align-items:center; }
+    .dash-macro-card { background:#111; border:1px solid var(--border); padding:18px; }
+    .dash-macro-row { margin-bottom:12px; }
+    .dash-macro-row:last-child { margin-bottom:0; }
+    .dash-macro-bar-track { background:#161616; height:4px; margin-top:5px; }
+    .dash-macro-bar-fill { height:4px; width:0%; transition:width 0.6s; }
+    .dash-quick-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .dash-motiv { background:rgba(200,169,110,0.05); border:1px solid rgba(200,169,110,0.15); padding:16px 20px; margin-bottom:18px; text-align:center; }
+    @media (max-width:600px) { .dash-grid-top,.dash-grid-mid { grid-template-columns:1fr; } }
+
     /* COACH SIDEBAR */
     .coach-fab { position: fixed; bottom: 28px; right: 28px; z-index: 1000; width: 52px; height: 52px; border-radius: 50%; background: var(--gold); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 24px rgba(200,169,110,0.4); transition: transform 0.2s, opacity 0.2s; }
     .coach-fab:hover { transform: scale(1.07); }
@@ -224,6 +253,7 @@
   <a href="/" class="nav-logo">W<span>S</span></a>
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showScreen('onboard')">Start</button>
+    <button class="nav-tab locked" onclick="showScreen('dashboard')">Dashboard</button>
     <button class="nav-tab locked" onclick="showScreen('future')">Future Self</button>
     <button class="nav-tab locked" onclick="showScreen('program')">Program</button>
     <button class="nav-tab locked" onclick="showScreen('coach')">Coach</button>
@@ -364,6 +394,109 @@
       <div style="margin-top:8px;">
         <button class="btn" onclick="completeOnboard()">Build My Profile</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="screen" id="screen-dashboard">
+  <div class="container">
+    <p class="section-label">Dashboard</p>
+    <h1 class="screen-title" style="margin-bottom:8px;">Today,<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);" id="dashGreet">let's work</span></h1>
+    <div class="gold-rule"></div>
+
+    <!-- TOP: profile + stats -->
+    <div class="dash-grid-top">
+      <div class="dash-profile-card">
+        <img id="dashAvatar" class="dash-avatar" src="glow_neutral.png" alt="Avatar" onerror="this.src='glow_neutral.png'"/>
+        <p style="font-family:var(--ff-hero);font-size:16px;letter-spacing:0.06em;color:#f5f4f0;margin-bottom:6px;" id="dashName">—</p>
+        <span class="dash-badge" id="dashGoal">—</span><br>
+        <span class="dash-badge dash-badge-muted" id="dashLevel" style="margin-top:4px;">—</span>
+        <div class="dash-week-wrap">
+          <p class="dash-week-lbl" id="dashWeekLabel">Week 1 of 12</p>
+          <div class="dash-week-track"><div class="dash-week-fill" id="dashWeekBar"></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="dash-stat-row">
+          <span class="dash-stat-lbl">Weight</span>
+          <span style="font-size:13px;color:#f5f4f0;" id="dashWeight">—</span>
+        </div>
+        <div class="dash-stat-row">
+          <span class="dash-stat-lbl">Steps</span>
+          <input class="dash-stat-inp" type="number" id="dash_steps" placeholder="0" oninput="saveDashStat('steps',this.value)"/>
+        </div>
+        <div class="dash-stat-row">
+          <span class="dash-stat-lbl">Sleep (hrs)</span>
+          <input class="dash-stat-inp" type="number" step="0.5" id="dash_sleep" placeholder="7.5" oninput="saveDashStat('sleep',this.value)"/>
+        </div>
+        <div class="dash-stat-row">
+          <span class="dash-stat-lbl">Water</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <button class="dash-pm" onclick="addWater(-8)">−</button>
+            <span id="dash_water_val" style="font-size:12px;color:#f5f4f0;min-width:40px;text-align:center;">0 oz</span>
+            <button class="dash-pm" onclick="addWater(8)">+</button>
+          </div>
+        </div>
+        <div class="dash-stat-row">
+          <span class="dash-stat-lbl">Energy</span>
+          <div>
+            <button class="dash-star" onclick="setEnergy(1)">★</button>
+            <button class="dash-star" onclick="setEnergy(2)">★</button>
+            <button class="dash-star" onclick="setEnergy(3)">★</button>
+            <button class="dash-star" onclick="setEnergy(4)">★</button>
+            <button class="dash-star" onclick="setEnergy(5)">★</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MID: calorie ring + macro bars -->
+    <div class="dash-grid-mid">
+      <div class="dash-ring-card">
+        <p class="section-label" style="margin-bottom:10px;">Calories</p>
+        <svg width="86" height="86" viewBox="0 0 86 86">
+          <circle cx="43" cy="43" r="36" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="7"/>
+          <circle id="dashCalRing" cx="43" cy="43" r="36" fill="none" stroke="#c8a96e" stroke-width="7"
+            stroke-linecap="round" stroke-dasharray="226.19" stroke-dashoffset="226.19"
+            transform="rotate(-90 43 43)" style="transition:stroke-dashoffset 0.6s ease;"/>
+        </svg>
+        <p style="margin-top:8px;text-align:center;">
+          <span id="dashCalConsumed" style="color:var(--gold);font-size:18px;font-family:var(--ff-hero);">0</span>
+          <span style="font-size:11px;color:#444;"> / </span>
+          <span id="dashCalGoal" style="font-size:11px;color:var(--muted);">2000</span>
+        </p>
+        <p style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#444;text-align:center;">kcal</p>
+      </div>
+      <div class="dash-macro-card">
+        <p class="section-label" style="margin-bottom:14px;">Macros</p>
+        <div class="dash-macro-row">
+          <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);">Protein</span><span style="font-size:11px;color:var(--muted);" id="dashMacro_protein">—</span></div>
+          <div class="dash-macro-bar-track"><div class="dash-macro-bar-fill" id="dashBar_protein" style="background:var(--gold);"></div></div>
+        </div>
+        <div class="dash-macro-row">
+          <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(200,169,110,0.6);">Carbs</span><span style="font-size:11px;color:var(--muted);" id="dashMacro_carbs">—</span></div>
+          <div class="dash-macro-bar-track"><div class="dash-macro-bar-fill" id="dashBar_carbs" style="background:rgba(200,169,110,0.55);"></div></div>
+        </div>
+        <div class="dash-macro-row">
+          <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(200,169,110,0.4);">Fat</span><span style="font-size:11px;color:var(--muted);" id="dashMacro_fat">—</span></div>
+          <div class="dash-macro-bar-track"><div class="dash-macro-bar-fill" id="dashBar_fat" style="background:rgba(200,169,110,0.35);"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- motivational message -->
+    <div class="dash-motiv">
+      <p style="font-family:var(--ff-serif);font-style:italic;font-size:16px;color:#f5f4f0;line-height:1.6;" id="dashMotivation">Show up today. That's all it takes.</p>
+    </div>
+
+    <!-- quick actions -->
+    <p class="section-label">Quick Actions</p>
+    <div class="dash-quick-grid">
+      <button class="btn" style="font-size:11px;padding:13px;" onclick="completeSession();showScreen('progress')">Log Session</button>
+      <button class="btn btn-outline" style="font-size:11px;padding:13px;" onclick="showScreen('nutrition')">Log Food</button>
+      <button class="btn btn-outline" style="font-size:11px;padding:13px;" onclick="showScreen('program')">View Program</button>
+      <button class="btn btn-outline" style="font-size:11px;padding:13px;" onclick="toggleCoachPanel()">Ask Coach</button>
     </div>
   </div>
 </div>
@@ -539,7 +672,8 @@
     goal: '', level: '', days: '',
     health: [], healthNotes: '', diet: [], dietNotes: '',
     sessions: 0, streak: 0,
-    log: []
+    log: [],
+    avatarUrl: ''
   };
 
   // After images by gender — glowing silhouettes (placeholder until real AI generation)
@@ -591,7 +725,8 @@
     document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
     if (id === 'nutrition' && state.weight) { calculateMacros(); }
-    var tabs = { onboard:0, future:1, program:2, coach:3, progress:4, health:5, nutrition:6 };
+    if (id === 'dashboard') { updateDashboard(); }
+    var tabs = { onboard:0, dashboard:1, future:2, program:3, coach:4, progress:5, health:6, nutrition:7 };
     document.querySelectorAll('.nav-tab')[tabs[id]].classList.add('active');
     currentScreen = id;
     if (sidebarOpen) updateCoachContext();
@@ -814,9 +949,14 @@
 
   function revealFutureSelf() {
     document.getElementById('generateProgress').style.display = 'none';
-    // Only use glow fallback if no real AI image was generated
     var afterImg = document.getElementById('afterImg');
-    if (!afterImg.src || afterImg.src.includes('glow')) {
+    var src = afterImg.src || '';
+    var isReal = src && !src.includes('glow') && !src.endsWith('app.html') && !src.endsWith('/');
+    if (isReal) {
+      state.avatarUrl = src;
+      var da = document.getElementById('dashAvatar');
+      if (da) { da.src = src; }
+    } else {
       setAfterImage();
     }
     document.getElementById('comparison').classList.add('show');
@@ -1049,7 +1189,9 @@
       if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
       var g = JSON.parse(text);
       var mistakesHTML = (g.common_mistakes || []).map(function(m){ return '<li>' + esc(m) + '</li>'; }).join('');
-      body.innerHTML =
+      var animSVG = getExAnim(exerciseName);
+      var animBlock = animSVG ? '<div style="text-align:center;margin-bottom:20px;padding:16px 0;border-bottom:1px solid var(--border);">' + animSVG + '</div>' : '';
+      body.innerHTML = animBlock +
         '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Setup</p><p>' + esc(g.setup||'') + '</p></div>' +
         '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
         '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Execution</p><p>' + esc(g.execution||'') + '</p></div>' +
@@ -1488,6 +1630,114 @@
         '<div class="protocol-section-body"><ul>' + lifeHTML + '</ul></div>' +
       '</div>' +
       (p.protocol_note ? '<div class="protocol-section"><p style="font-size:12px;color:rgba(200,169,110,0.6);font-style:italic;font-family:var(--ff-serif);">' + p.protocol_note + '</p></div>' : '');
+  }
+
+  // ═══ DASHBOARD ═══
+  function updateDashboard() {
+    var today = new Date().toISOString().slice(0,10);
+    var d = {};
+    try { d = JSON.parse(localStorage.getItem('wylde_dash_' + today) || '{}'); } catch(e) {}
+
+    var da = document.getElementById('dashAvatar');
+    if (da) { da.src = state.avatarUrl || (afterImages[state.gender] || afterImages['Male'])[0]; da.onerror = function(){ da.src = 'glow_neutral.png'; }; }
+
+    var el;
+    if ((el=document.getElementById('dashName'))) el.textContent = state.name || '—';
+    if ((el=document.getElementById('dashGoal'))) el.textContent = state.goal || '—';
+    if ((el=document.getElementById('dashLevel'))) el.textContent = state.level || '—';
+    if ((el=document.getElementById('dashWeight'))) el.textContent = state.weight ? state.weight + ' ' + state.weightUnit : '—';
+
+    var weeksIn = Math.max(1, Math.floor(state.sessions / (parseInt(state.days) || 4)));
+    if ((el=document.getElementById('dashWeekLabel'))) el.textContent = 'Week ' + weeksIn + ' of 12';
+    if ((el=document.getElementById('dashWeekBar'))) el.style.width = Math.min(weeksIn/12*100,100) + '%';
+
+    var greets = ['let\'s work','show up','close the gap','build evidence','stay consistent'];
+    if ((el=document.getElementById('dashGreet'))) el.textContent = greets[state.streak % greets.length];
+
+    if ((el=document.getElementById('dash_steps')) && d.steps !== undefined) el.value = d.steps;
+    if ((el=document.getElementById('dash_sleep')) && d.sleep !== undefined) el.value = d.sleep;
+    if ((el=document.getElementById('dash_water_val'))) el.textContent = (d.water || 0) + ' oz';
+
+    document.querySelectorAll('.dash-star').forEach(function(s,i){ s.classList.toggle('active', i < (d.energy||0)); });
+
+    var macros = state.macros || {};
+    var goalCal = macros.calories || 2000;
+    var circ = 2 * Math.PI * 36;
+    var loggedCal = parseInt(localStorage.getItem('wylde_loggedcal_' + today) || '0');
+    var offset = circ * (1 - Math.min(loggedCal/goalCal,1));
+    if ((el=document.getElementById('dashCalRing'))) { el.style.strokeDasharray = circ; el.style.strokeDashoffset = offset; }
+    if ((el=document.getElementById('dashCalConsumed'))) el.textContent = loggedCal;
+    if ((el=document.getElementById('dashCalGoal'))) el.textContent = goalCal;
+
+    if (macros.protein) {
+      setMacroBar('protein', macros.protein, d.protein_g || 0);
+      setMacroBar('carbs',   macros.carbs,   d.carbs_g   || 0);
+      setMacroBar('fat',     macros.fat,     d.fat_g     || 0);
+    }
+
+    var msgs = [
+      'Show up today. That\'s all it takes.',
+      'Day ' + (state.streak||1) + ' of building the version of you that doesn\'t quit.',
+      'The gap is closing. Keep going.',
+      'Every rep today is evidence. Stack it.',
+      'Your future self is watching. Don\'t let them down.'
+    ];
+    if ((el=document.getElementById('dashMotivation'))) el.textContent = msgs[(state.streak||0) % msgs.length];
+  }
+
+  function setMacroBar(name, goal, consumed) {
+    var pct = goal > 0 ? Math.min(consumed/goal*100, 100) : 0;
+    var bar = document.getElementById('dashBar_' + name);
+    if (bar) bar.style.width = pct + '%';
+    var lbl = document.getElementById('dashMacro_' + name);
+    if (lbl) lbl.textContent = consumed + 'g / ' + goal + 'g';
+  }
+
+  function saveDashStat(key, value) {
+    var today = new Date().toISOString().slice(0,10);
+    var d = {}; try { d = JSON.parse(localStorage.getItem('wylde_dash_' + today) || '{}'); } catch(e) {}
+    d[key] = value;
+    localStorage.setItem('wylde_dash_' + today, JSON.stringify(d));
+  }
+
+  function addWater(delta) {
+    var today = new Date().toISOString().slice(0,10);
+    var d = {}; try { d = JSON.parse(localStorage.getItem('wylde_dash_' + today) || '{}'); } catch(e) {}
+    d.water = Math.max(0, (d.water || 0) + delta);
+    localStorage.setItem('wylde_dash_' + today, JSON.stringify(d));
+    var el = document.getElementById('dash_water_val');
+    if (el) el.textContent = d.water + ' oz';
+  }
+
+  function setEnergy(level) {
+    saveDashStat('energy', level);
+    document.querySelectorAll('.dash-star').forEach(function(s,i){ s.classList.toggle('active', i < level); });
+  }
+
+  // ═══ EXERCISE ANIMATIONS ═══
+  var _exAnimCache = {};
+
+  var EXERCISE_ANIMS = {
+    squat: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" style="width:90px;height:126px;display:block;margin:0 auto 10px;background:#0d0d0d"><circle cx="50" cy="12" r="7" fill="#c8a96e"><animate attributeName="cy" values="12;26;12" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></circle><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="50" y1="19" x2="50" y2="68"><animate attributeName="y1" values="19;33;19" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="68;86;68" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="50" y1="29" x2="36" y2="50"><animate attributeName="y1" values="29;43;29" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="50;62;50" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="36" y1="50" x2="28" y2="64"><animate attributeName="x1" values="36;34;36" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y1" values="50;62;50" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="x2" values="28;26;28" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="64;74;64" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="50" y1="29" x2="64" y2="50"><animate attributeName="y1" values="29;43;29" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="50;62;50" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="64" y1="50" x2="72" y2="64"><animate attributeName="y1" values="50;62;50" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="x2" values="72;74;72" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="64;74;64" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="44" y1="68" x2="40" y2="98"><animate attributeName="y1" values="68;86;68" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="x2" values="40;26;40" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="98;106;98" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="40" y1="98" x2="38" y2="126"><animate attributeName="x1" values="40;26;40" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y1" values="98;106;98" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="56" y1="68" x2="60" y2="98"><animate attributeName="y1" values="68;86;68" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="x2" values="60;74;60" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="98;106;98" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="60" y1="98" x2="62" y2="126"><animate attributeName="x1" values="60;74;60" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y1" values="98;106;98" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line></svg>',
+
+    push: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 80" style="width:117px;height:72px;display:block;margin:0 auto 10px;background:#0d0d0d"><circle cx="14" cy="28" r="7" fill="#c8a96e"><animate attributeName="cy" values="28;22;28" dur="1.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></circle><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="21" y1="34" x2="80" y2="38"><animate attributeName="y1" values="34;28;34" dur="1.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="38;32;38" dur="1.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="30" y1="34" x2="18" y2="58"><animate attributeName="y1" values="34;28;34" dur="1.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="72" y1="38" x2="84" y2="58"><animate attributeName="y1" values="38;32;38" dur="1.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="80" y1="38" x2="90" y2="52"><animate attributeName="y1" values="38;32;38" dur="1.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="90" y1="52" x2="108" y2="56"/><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="18" y1="58" x2="18" y2="58" stroke-width="4"/><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="84" y1="58" x2="84" y2="58" stroke-width="4"/></svg>',
+
+    deadlift: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" style="width:90px;height:126px;display:block;margin:0 auto 10px;background:#0d0d0d"><circle cx="50" cy="12" r="7" fill="#c8a96e"><animate attributeName="cy" values="50;12;12;50" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"/></circle><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="50" y1="57" x2="50" y2="80"><animate attributeName="x1" values="50;50;50;50" dur="2s" repeatCount="indefinite"/><animate attributeName="y1" values="57;19;19;57" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="80;75;75;80" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="50" y1="68" x2="30" y2="90"><animate attributeName="y1" values="68;28;28;68" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="x2" values="30;36;36;30" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="90;48;48;90" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="50" y1="68" x2="70" y2="90"><animate attributeName="y1" values="68;28;28;68" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="x2" values="70;64;64;70" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="90;48;48;90" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="44" y1="80" x2="42" y2="110"><animate attributeName="y1" values="80;75;75;80" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="56" y1="80" x2="58" y2="110"><animate attributeName="y1" values="80;75;75;80" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="42" y1="110" x2="40" y2="130"/><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="58" y1="110" x2="60" y2="130"/><line stroke="#c8a96e" stroke-width="2" stroke-linecap="round" x1="20" y1="95" x2="80" y2="97" stroke-dasharray="4 3"/></svg>',
+
+    pull: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 150" style="width:90px;height:135px;display:block;margin:0 auto 10px;background:#0d0d0d"><line stroke="#c8a96e" stroke-width="3" x1="20" y1="10" x2="80" y2="10"/><circle cx="50" cy="38" r="7" fill="#c8a96e"><animate attributeName="cy" values="38;22;38" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></circle><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="50" y1="45" x2="50" y2="92"><animate attributeName="y1" values="45;29;45" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="92;76;92" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="50" y1="20" x2="34" y2="38"><animate attributeName="x2" values="34;38;34" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="38;28;38" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="34" y1="38" x2="30" y2="10"><animate attributeName="x1" values="34;38;34" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y1" values="38;28;38" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="50" y1="20" x2="66" y2="38"><animate attributeName="x2" values="66;62;66" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="38;28;38" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="66" y1="38" x2="70" y2="10"><animate attributeName="x1" values="66;62;66" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y1" values="38;28;38" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="44" y1="92" x2="42" y2="120"><animate attributeName="y1" values="92;76;92" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="120;104;120" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="56" y1="92" x2="58" y2="120"><animate attributeName="y1" values="92;76;92" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="120;104;120" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line></svg>',
+
+    plank: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 70" style="width:126px;height:63px;display:block;margin:0 auto 10px;background:#0d0d0d"><circle cx="16" cy="30" r="7" fill="#c8a96e"><animate attributeName="cy" values="30;28;30" dur="2.4s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></circle><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="23" y1="34" x2="96" y2="40"><animate attributeName="y1" values="34;32;34" dur="2.4s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="40;38;40" dur="2.4s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="34" y1="34" x2="26" y2="56"><animate attributeName="y1" values="34;32;34" dur="2.4s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="26" y1="56" x2="26" y2="56" stroke-width="4"/><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="96" y1="40" x2="106" y2="54"/><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="106" y1="54" x2="124" y2="56"/><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="84" y1="39" x2="88" y2="56"/></svg>',
+
+    lunge: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" style="width:108px;height:126px;display:block;margin:0 auto 10px;background:#0d0d0d"><circle cx="50" cy="12" r="7" fill="#c8a96e"><animate attributeName="cy" values="12;20;12" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></circle><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="50" y1="19" x2="50" y2="70"><animate attributeName="y1" values="19;27;19" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="70;78;70" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="50" y1="30" x2="34" y2="50"><animate attributeName="y1" values="30;38;30" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="34" y1="50" x2="28" y2="66"/><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="50" y1="30" x2="64" y2="52"><animate attributeName="y1" values="30;38;30" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="64" y1="52" x2="72" y2="66"/><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="44" y1="70" x2="30" y2="100"><animate attributeName="y1" values="70;78;70" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="x2" values="30;22;30" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y2" values="100;108;100" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="30" y1="100" x2="28" y2="128"><animate attributeName="x1" values="30;22;30" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/><animate attributeName="y1" values="100;108;100" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="56" y1="70" x2="82" y2="96"><animate attributeName="y1" values="70;78;70" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/></line><line stroke="#c8a96e" stroke-width="2.5" stroke-linecap="round" x1="82" y1="96" x2="96" y2="128"/></svg>'
+  };
+
+  function getExAnim(name) {
+    var n = name.toLowerCase();
+    var keys = ['squat','push','deadlift','pull','plank','lunge'];
+    for (var i = 0; i < keys.length; i++) {
+      if (n.indexOf(keys[i]) !== -1) return EXERCISE_ANIMS[keys[i]] || '';
+    }
+    return '';
   }
 
   // ═══ COACH SIDEBAR ═══
