@@ -140,6 +140,27 @@
     .log-check { width: 20px; height: 20px; border-radius: 50%; background: var(--gold-dim); border: 1px solid rgba(200,169,110,0.3); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--gold); }
     .streak-fire { font-size: 11px; letter-spacing: 0.08em; color: var(--gold); text-align: center; margin-top: 8px; }
 
+    /* PEPTIDE LIBRARY */
+    .peptide-card { background: #111; border: 1px solid var(--border); padding: 24px; margin-bottom: 8px; transition: border-color 0.2s; }
+    .peptide-card:hover { border-color: rgba(200,169,110,0.25); }
+    .peptide-name { font-family: var(--ff-serif); font-size: 20px; color: #f5f4f0; margin-bottom: 10px; }
+    .peptide-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .peptide-tag { font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(200,169,110,0.3); padding: 4px 10px; }
+    .peptide-summary { font-size: 13px; color: var(--muted); line-height: 1.75; margin-bottom: 18px; }
+    .partner-badge { display: flex; align-items: center; gap: 10px; background: rgba(200,169,110,0.05); border: 1px solid rgba(200,169,110,0.15); padding: 14px 18px; margin-bottom: 24px; }
+    .partner-badge-label { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 3px; }
+    .partner-badge-name { font-size: 13px; color: #f5f4f0; }
+
+    /* PROTOCOL MODAL */
+    .protocol-modal-inner { background: #111; border: 1px solid rgba(200,169,110,0.2); max-width: 600px; width: 100%; max-height: 88vh; overflow-y: auto; position: relative; }
+    .protocol-modal-inner::-webkit-scrollbar { width: 4px; }
+    .protocol-modal-inner::-webkit-scrollbar-thumb { background: rgba(200,169,110,0.2); }
+    .protocol-section { padding: 0 32px 20px; }
+    .protocol-section-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; margin-top: 20px; }
+    .protocol-section-body { font-size: 14px; color: #d8d7d0; line-height: 1.8; }
+    .protocol-section-body ul { padding-left: 18px; margin-top: 6px; }
+    .protocol-section-body li { margin-bottom: 4px; }
+
     /* MOBILE */
     @media (max-width: 600px) {
       .nav-tab { padding: 0 10px; font-size: 10px; }
@@ -1189,6 +1210,134 @@
     document.getElementById('foodLogTotals').style.display = 'block';
   }
 
+  // MODAL HELPERS
+  function closeModal(id) {
+    var el = document.getElementById(id);
+    if (el) { el.style.display = 'none'; }
+  }
+
+  function showUpgrade() {
+    var el = document.getElementById('upgradeModal');
+    if (el) { el.style.display = 'flex'; }
+  }
+
+  function bookConsult() {
+    closeModal('protocolModal');
+    var el = document.getElementById('consultModal');
+    if (el) { el.style.display = 'flex'; }
+  }
+
+  function showConsultInfo() {
+    var el = document.getElementById('consultModal');
+    if (el) { el.style.display = 'flex'; }
+  }
+
+  function handleLabUpload(e) {
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    var status = document.getElementById('labUploadStatus');
+    if (status) { status.style.display = 'block'; }
+  }
+
+  // PEPTIDE PROTOCOL BUILDER
+  function buildProtocol(peptideName, categories) {
+    var modal = document.getElementById('protocolModal');
+    var title = document.getElementById('protocolTitle');
+    var cats  = document.getElementById('protocolCategories');
+    var body  = document.getElementById('protocolBody');
+
+    title.textContent = peptideName;
+    cats.textContent  = categories;
+    body.innerHTML    = '<div style="padding:48px 32px;text-align:center;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);">Building your protocol...</p><div style="width:40px;height:1px;background:var(--gold);margin:16px auto 0;"></div></div>';
+    modal.style.display = 'flex';
+    modal.scrollTop = 0;
+
+    var profileSummary =
+      'Name: '          + (state.name   || 'Not set')   + '\n' +
+      'Age range: '     + (state.age    || 'Not set')   + '\n' +
+      'Goal: '          + (state.goal   || 'Not set')   + '\n' +
+      'Fitness level: ' + (state.level  || 'Not set')   + '\n' +
+      'Days per week: ' + (state.days   || 'Not set')   + '\n' +
+      'Health concerns: ' + (state.health && state.health.length ? state.health.join(', ') : 'None') + '\n' +
+      (state.healthNotes ? 'Additional notes: ' + state.healthNotes + '\n' : '');
+
+    var prompt =
+      'You are an elite performance coach and peptide protocol specialist. ' +
+      'A client is considering ' + peptideName + ' (' + categories + '). ' +
+      'Based on their profile below, create a personalized companion protocol that maximizes the benefits of this peptide.\n\n' +
+      'CLIENT PROFILE:\n' + profileSummary + '\n' +
+      'Return ONLY a JSON object with no markdown, no backticks:\n' +
+      '{\n' +
+      '  "overview": "2-3 sentence summary of why this peptide fits this client",\n' +
+      '  "training_style": "optimal training approach that synergizes with this peptide (3-4 sentences)",\n' +
+      '  "key_exercises": ["exercise 1", "exercise 2", "exercise 3", "exercise 4", "exercise 5"],\n' +
+      '  "nutrition_timing": "specific nutrition timing strategy for this peptide (2-3 sentences)",\n' +
+      '  "fasting": "fasting windows or meal timing if relevant, or null if not applicable",\n' +
+      '  "lifestyle": ["lifestyle recommendation 1", "lifestyle recommendation 2", "lifestyle recommendation 3"],\n' +
+      '  "protocol_note": "one sentence on when to discuss this peptide with a physician"\n' +
+      '}\n' +
+      'Be specific to the client\'s goal and health concerns. Return only the JSON object.';
+
+    fetch('/api/anthropic', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1024,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      var text = data.content && data.content[0] && data.content[0].text;
+      if (!text) throw new Error('No response');
+      text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
+      var start = text.indexOf('{');
+      var end   = text.lastIndexOf('}');
+      if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
+      var p = JSON.parse(text);
+      renderProtocol(p);
+    })
+    .catch(function(err) {
+      console.error('Protocol error:', err);
+      body.innerHTML = '<div style="padding:32px;text-align:center;"><p style="color:var(--muted);font-size:13px;">Could not generate protocol. Please try again.</p></div>';
+    });
+  }
+
+  function renderProtocol(p) {
+    var body = document.getElementById('protocolBody');
+    var exHTML = p.key_exercises ? p.key_exercises.map(function(e){ return '<li>' + e + '</li>'; }).join('') : '';
+    var lifeHTML = p.lifestyle ? p.lifestyle.map(function(l){ return '<li>' + l + '</li>'; }).join('') : '';
+    var fastingHTML = p.fasting ? '<div class="protocol-section"><p class="protocol-section-label">Fasting &amp; Meal Timing</p><p class="protocol-section-body">' + p.fasting + '</p></div>' : '';
+
+    body.innerHTML =
+      '<div class="protocol-section">' +
+        '<p class="protocol-section-label">Overview</p>' +
+        '<p class="protocol-section-body">' + (p.overview || '') + '</p>' +
+      '</div>' +
+      '<div style="height:1px;background:var(--border);margin:4px 32px;"></div>' +
+      '<div class="protocol-section">' +
+        '<p class="protocol-section-label">Training Style</p>' +
+        '<p class="protocol-section-body">' + (p.training_style || '') + '</p>' +
+      '</div>' +
+      '<div class="protocol-section">' +
+        '<p class="protocol-section-label">Key Exercises</p>' +
+        '<div class="protocol-section-body"><ul>' + exHTML + '</ul></div>' +
+      '</div>' +
+      '<div style="height:1px;background:var(--border);margin:4px 32px;"></div>' +
+      '<div class="protocol-section">' +
+        '<p class="protocol-section-label">Nutrition Timing</p>' +
+        '<p class="protocol-section-body">' + (p.nutrition_timing || '') + '</p>' +
+      '</div>' +
+      fastingHTML +
+      '<div style="height:1px;background:var(--border);margin:4px 32px;"></div>' +
+      '<div class="protocol-section">' +
+        '<p class="protocol-section-label">Lifestyle Recommendations</p>' +
+        '<div class="protocol-section-body"><ul>' + lifeHTML + '</ul></div>' +
+      '</div>' +
+      (p.protocol_note ? '<div class="protocol-section"><p style="font-size:12px;color:rgba(200,169,110,0.6);font-style:italic;font-family:var(--ff-serif);">' + p.protocol_note + '</p></div>' : '');
+  }
+
 </script>
 
 <!-- ═══ HEALTH OPTIMIZATION ═══ -->
@@ -1239,20 +1388,89 @@
       </div>
     </div>
 
-    <!-- PEPTIDE PARTNER -->
-    <div class="card" style="margin-bottom:16px;border-color:rgba(200,169,110,0.2);">
-      <div style="display:flex;align-items:flex-start;gap:20px;">
-        <div style="width:40px;height:40px;border:1px solid rgba(200,169,110,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">◎</div>
-        <div style="flex:1;">
-          <p style="font-family:var(--ff-serif);font-size:18px;color:#f5f4f0;margin-bottom:6px;">Peptide Protocols</p>
-          <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;">Based on your labs and goals, your naturopath can refer you to clinically optimized peptide protocols through our vetted partner provider.</p>
-          <div style="background:rgba(200,169,110,0.05);border:1px solid rgba(200,169,110,0.12);padding:16px;margin-bottom:16px;">
-            <p style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Vetted Partner</p>
-            <p style="font-size:13px;color:#f5f4f0;">Pharmaceutical-grade peptides. Prescriptions issued only through licensed naturopathic physicians after lab review.</p>
-          </div>
-          <button class="btn btn-outline" onclick="showPeptideInfo()" style="font-size:12px;padding:11px 24px;">Learn About Peptides</button>
-        </div>
+    <!-- PEPTIDE LIBRARY -->
+    <p class="section-label" style="margin-top:8px;">Peptide Library</p>
+    <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px;">Explore clinically studied peptides and build a personalized companion protocol based on your goals and profile.</p>
+
+    <!-- Partner badge -->
+    <div class="partner-badge" style="margin-bottom:20px;">
+      <div style="width:32px;height:32px;border:1px solid rgba(200,169,110,0.35);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--gold);flex-shrink:0;">◎</div>
+      <div>
+        <p class="partner-badge-label">In Partnership With</p>
+        <p class="partner-badge-name">Everwell USA — Newport Beach, CA</p>
       </div>
+    </div>
+
+    <!-- BPC-157 -->
+    <div class="peptide-card">
+      <p class="peptide-name">BPC-157</p>
+      <div class="peptide-tags">
+        <span class="peptide-tag">Healing</span>
+        <span class="peptide-tag">Recovery</span>
+        <span class="peptide-tag">Injury Protection</span>
+      </div>
+      <p class="peptide-summary">BPC-157 is a synthetic peptide derived from a protein found in gastric juice, shown to dramatically accelerate healing of tendons, ligaments, muscles, and gut tissue. It works by upregulating growth factors and promoting angiogenesis, making it the go-to protocol for active individuals recovering from chronic or acute injuries.</p>
+      <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('BPC-157','Healing / Recovery / Injury Protection')">Build My Protocol</button>
+    </div>
+
+    <!-- TB-500 -->
+    <div class="peptide-card">
+      <p class="peptide-name">TB-500</p>
+      <div class="peptide-tags">
+        <span class="peptide-tag">Wound Healing</span>
+        <span class="peptide-tag">Flexibility</span>
+        <span class="peptide-tag">Inflammation</span>
+      </div>
+      <p class="peptide-summary">TB-500 is a synthetic version of Thymosin Beta-4, a naturally occurring protein that plays a key role in tissue repair, cell migration, and anti-inflammatory response throughout the body. It is particularly valued for improving range of motion, reducing systemic inflammation, and accelerating recovery from muscle tears and joint damage.</p>
+      <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('TB-500','Wound Healing / Flexibility / Inflammation')">Build My Protocol</button>
+    </div>
+
+    <!-- Tesamorelin -->
+    <div class="peptide-card">
+      <p class="peptide-name">Tesamorelin</p>
+      <div class="peptide-tags">
+        <span class="peptide-tag">Growth Hormone</span>
+        <span class="peptide-tag">Fat Loss</span>
+        <span class="peptide-tag">Cognitive Function</span>
+      </div>
+      <p class="peptide-summary">Tesamorelin is a GHRH analogue that stimulates the pituitary gland to release growth hormone in a natural, pulsatile manner, making it one of the most effective peptides for reducing visceral fat and improving body composition. Emerging research also supports its role in enhancing cognitive clarity and verbal memory, particularly in adults over 40.</p>
+      <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('Tesamorelin','Growth Hormone / Fat Loss / Cognitive Function')">Build My Protocol</button>
+    </div>
+
+    <!-- Ipamorelin -->
+    <div class="peptide-card">
+      <p class="peptide-name">Ipamorelin</p>
+      <div class="peptide-tags">
+        <span class="peptide-tag">GH Release</span>
+        <span class="peptide-tag">Lean Muscle</span>
+        <span class="peptide-tag">Anti-Aging</span>
+      </div>
+      <p class="peptide-summary">Ipamorelin is a selective growth hormone secretagogue that triggers GH release with minimal impact on cortisol or prolactin, making it one of the cleanest GH-stimulating peptides available. It supports lean muscle development, improved sleep quality, accelerated fat metabolism, and is widely used in anti-aging protocols for its favorable side-effect profile.</p>
+      <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('Ipamorelin','GH Release / Lean Muscle / Anti-Aging')">Build My Protocol</button>
+    </div>
+
+    <!-- Thymosin Alpha-1 -->
+    <div class="peptide-card">
+      <p class="peptide-name">Thymosin Alpha-1</p>
+      <div class="peptide-tags">
+        <span class="peptide-tag">Immune System</span>
+        <span class="peptide-tag">T-Cell Regulation</span>
+      </div>
+      <p class="peptide-summary">Thymosin Alpha-1 is a naturally occurring thymic peptide that modulates and strengthens the immune system by enhancing T-cell differentiation, maturation, and activity. It is used clinically for immune deficiencies, chronic infections, and post-illness recovery, and is increasingly adopted by high-performers for baseline immune resilience and inflammation control.</p>
+      <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('Thymosin Alpha-1','Immune System / T-Cell Regulation')">Build My Protocol</button>
+    </div>
+
+    <!-- SEMAX -->
+    <div class="peptide-card">
+      <p class="peptide-name">SEMAX</p>
+      <div class="peptide-tags">
+        <span class="peptide-tag">Cognitive Enhancement</span>
+        <span class="peptide-tag">Memory</span>
+        <span class="peptide-tag">Mood</span>
+        <span class="peptide-tag">Performance</span>
+      </div>
+      <p class="peptide-summary">SEMAX is a synthetic analogue of ACTH that increases BDNF expression in the brain, leading to measurable improvements in focus, memory consolidation, and stress resilience. Originally developed in Russia for neurological rehabilitation, it is now widely used as a cognitive enhancer and mood stabilizer in performance-oriented wellness protocols.</p>
+      <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('SEMAX','Cognitive Enhancement / Memory / Mood / Performance')">Build My Protocol</button>
     </div>
 
     <!-- WHAT TO EXPECT -->
@@ -1281,9 +1499,13 @@
     </div>
 
     <!-- DISCLAIMER -->
-    <p style="font-size:11px;color:#444;margin-top:24px;line-height:1.7;font-style:italic;font-family:var(--ff-serif);">
-      Wylde Self does not prescribe medications. All peptide protocols are issued through licensed naturopathic physicians following consultation and lab review. This service is not available in all regions.
-    </p>
+    <div style="margin-top:32px;padding:18px 20px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);">
+      <p style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Educational Disclaimer</p>
+      <p style="font-size:12px;color:#555;line-height:1.75;font-style:italic;font-family:var(--ff-serif);">
+        Peptides are prescribed only through licensed physicians following consultation and lab review. The information presented in the Peptide Library is educational only and does not constitute medical advice. Wylde Self does not prescribe medications. All peptide protocols are issued through licensed naturopathic physicians following consultation and lab review. This service is not available in all regions.
+      </p>
+      <p style="font-size:11px;color:rgba(200,169,110,0.45);margin-top:10px;letter-spacing:0.06em;">In partnership with Everwell USA — Newport Beach, CA</p>
+    </div>
   </div>
 </div>
 
@@ -1318,6 +1540,33 @@
   </div>
 </div>
 
+
+<!-- PROTOCOL MODAL -->
+<div id="protocolModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:500;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto;">
+  <div class="protocol-modal-inner" style="margin:40px auto;">
+    <div style="padding:32px 32px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;">
+      <div>
+        <p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Personalized Protocol</p>
+        <h2 style="font-family:var(--ff-hero);font-size:32px;letter-spacing:0.03em;" id="protocolTitle">—</h2>
+        <p style="font-size:12px;color:var(--muted);margin-top:4px;" id="protocolCategories">—</p>
+      </div>
+      <button onclick="closeModal('protocolModal')" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;margin-left:16px;flex-shrink:0;">×</button>
+    </div>
+    <div id="protocolBody" style="padding:8px 0 32px;">
+      <div style="padding:48px 32px;text-align:center;">
+        <p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);">Building your protocol...</p>
+        <div style="width:40px;height:1px;background:var(--gold);margin:16px auto 0;"></div>
+      </div>
+    </div>
+    <div style="padding:16px 32px 28px;border-top:1px solid var(--border);">
+      <p style="font-size:11px;color:#444;line-height:1.7;font-style:italic;font-family:var(--ff-serif);">This protocol is educational and generated based on your profile. Peptides must be prescribed through a licensed physician. Consult your naturopath before beginning any protocol.</p>
+      <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="bookConsult()">Book Naturopath Consult</button>
+        <button class="btn btn-outline" style="font-size:11px;padding:11px 22px;" onclick="closeModal('protocolModal')">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ═══ NUTRITION ═══ -->
 <div class="screen" id="screen-nutrition">
