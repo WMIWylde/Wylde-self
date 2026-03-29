@@ -90,12 +90,19 @@
     .day-header { padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
     .day-name { font-family: var(--ff-hero); font-size: 18px; letter-spacing: 0.08em; color: #f5f4f0; }
     .day-focus { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
-    .day-body { padding: 0 24px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s; }
-    .day-body.open { max-height: 400px; padding: 0 24px 20px; }
+    .day-body { padding: 0 24px; max-height: 0; overflow: hidden; transition: max-height 0.5s ease, padding 0.3s; }
+    .day-body.open { max-height: 600px; padding: 0 24px 20px; }
     .exercise { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
     .exercise:last-child { border-bottom: none; }
     .ex-name { font-size: 14px; color: #f5f4f0; }
     .ex-sets { font-size: 12px; color: var(--gold); letter-spacing: 0.06em; }
+    .alt-workout-row { display: flex; gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+    .alt-workout-input { flex: 1; background: #161616; border: 1px solid var(--border); color: #f5f4f0; font-family: var(--ff-body); font-size: 13px; padding: 10px 14px; outline: none; transition: border-color 0.2s; }
+    .alt-workout-input:focus { border-color: var(--gold); }
+    .alt-workout-input::placeholder { color: #444; }
+    .alt-workout-btn { font-family: var(--ff-body); font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; background: transparent; color: var(--gold); border: 1px solid rgba(200,169,110,0.4); padding: 10px 16px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .alt-workout-btn:hover { background: var(--gold-dim); border-color: var(--gold); }
+    .alt-workout-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .typing-cursor { display: inline-block; width: 2px; height: 14px; background: var(--gold); margin-left: 2px; animation: blink 0.8s infinite; vertical-align: middle; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
@@ -794,7 +801,7 @@
         var exHTML = d.exercises.map(function(ex) {
           return '<div class="exercise"><span class="ex-name">' + ex[0] + '</span><span class="ex-sets">' + ex[1] + '</span></div>';
         }).join('');
-        card.innerHTML = '<div class="day-header" onclick="toggleDay(this)"><span class="day-name">' + d.day + '</span><span class="day-focus">' + d.focus + '</span></div><div class="day-body"><div style="padding-top:4px;">' + exHTML + '</div></div>';
+        card.innerHTML = '<div class="day-header" onclick="toggleDay(this)"><span class="day-name">' + d.day + '</span><span class="day-focus">' + d.focus + '</span></div><div class="day-body"><div class="ex-list" style="padding-top:4px;">' + exHTML + '</div><div class="alt-workout-row"><input class="alt-workout-input" placeholder="e.g. no gym, knee is sore, traveling..." /><button class="alt-workout-btn" onclick="requestAltWorkout(this)">Swap Workout</button></div></div>';
         container.appendChild(card);
         i++;
         setTimeout(addDay, 200);
@@ -816,7 +823,7 @@
         var exHTML = d.exercises.map(function(ex) {
           return '<div class="exercise"><span class="ex-name">' + ex[0] + '</span><span class="ex-sets">' + ex[1] + '</span></div>';
         }).join('');
-        card.innerHTML = '<div class="day-header" onclick="toggleDay(this)"><span class="day-name">' + d.day + '</span><span class="day-focus">' + d.focus + '</span></div><div class="day-body"><div style="padding-top:4px;">' + exHTML + '</div></div>';
+        card.innerHTML = '<div class="day-header" onclick="toggleDay(this)"><span class="day-name">' + d.day + '</span><span class="day-focus">' + d.focus + '</span></div><div class="day-body"><div class="ex-list" style="padding-top:4px;">' + exHTML + '</div><div class="alt-workout-row"><input class="alt-workout-input" placeholder="e.g. no gym, knee is sore, traveling..." /><button class="alt-workout-btn" onclick="requestAltWorkout(this)">Swap Workout</button></div></div>';
         container.appendChild(card);
         i++;
         setTimeout(addDay, 180);
@@ -828,6 +835,61 @@
   function toggleDay(header) {
     var body = header.nextElementSibling;
     body.classList.toggle('open');
+  }
+
+  function requestAltWorkout(btn) {
+    var dayBody = btn.closest('.day-body');
+    var dayHeader = dayBody.previousElementSibling;
+    var dayName = dayHeader.querySelector('.day-name').textContent;
+    var dayFocus = dayHeader.querySelector('.day-focus').textContent;
+    var constraint = btn.previousElementSibling.value.trim();
+    var exList = dayBody.querySelector('.ex-list');
+
+    btn.disabled = true;
+    btn.textContent = 'Finding alternative...';
+
+    var constraintNote = constraint ? 'User constraint: ' + constraint + '.' : 'No specific constraints.';
+    var prompt = 'You are an expert personal trainer. The user needs an alternative workout for ' + dayName + ' (originally: ' + dayFocus + ').\n\n' +
+      constraintNote + '\n' +
+      'User profile — Goal: ' + state.goal + ', Fitness level: ' + state.level + ', Health concerns: ' + (state.health.join(', ') || 'none') + '\n\n' +
+      'Return ONLY a JSON object with no markdown, no backticks:\n' +
+      '{"focus":"New Focus Label","exercises":[["exercise name","sets x reps"],...]}\n' +
+      'Include 5 exercises. Account for any constraints. Return only the JSON object.';
+
+    fetch('/api/anthropic', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 512,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      var text = data.content && data.content[0] && data.content[0].text;
+      if (!text) throw new Error('No response');
+      text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
+      var start = text.indexOf('{');
+      var end = text.lastIndexOf('}');
+      if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
+      var alt = JSON.parse(text);
+
+      dayHeader.querySelector('.day-focus').textContent = alt.focus;
+      var exHTML = alt.exercises.map(function(ex) {
+        return '<div class="exercise"><span class="ex-name">' + ex[0] + '</span><span class="ex-sets">' + ex[1] + '</span></div>';
+      }).join('');
+      exList.innerHTML = exHTML;
+
+      btn.textContent = 'Swap Again';
+      btn.disabled = false;
+      btn.previousElementSibling.value = '';
+    })
+    .catch(function(err) {
+      console.error('Alt workout error:', err);
+      btn.textContent = 'Try Again';
+      btn.disabled = false;
+    });
   }
 
   // COACH
