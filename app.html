@@ -91,7 +91,6 @@
     .day-name { font-family: var(--ff-hero); font-size: 18px; letter-spacing: 0.08em; color: #f5f4f0; }
     .day-focus { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
     .day-body { padding: 0 24px; max-height: 0; overflow: hidden; transition: max-height 0.5s ease, padding 0.3s; }
-    .day-body.open { max-height: 600px; padding: 0 24px 20px; }
     .exercise { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
     .exercise:last-child { border-bottom: none; }
     .ex-name { font-size: 14px; color: #f5f4f0; }
@@ -139,6 +138,27 @@
     .log-date { font-size: 11px; color: var(--muted); }
     .log-check { width: 20px; height: 20px; border-radius: 50%; background: var(--gold-dim); border: 1px solid rgba(200,169,110,0.3); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--gold); }
     .streak-fire { font-size: 11px; letter-spacing: 0.08em; color: var(--gold); text-align: center; margin-top: 8px; }
+
+    /* EXERCISE TRACKING & FORM GUIDE */
+    .ex-name-btn { background: none; border: none; color: #f5f4f0; font-size: 14px; font-family: var(--ff-body); cursor: pointer; text-align: left; padding: 0; text-decoration: underline; text-decoration-color: rgba(200,169,110,0.3); text-underline-offset: 3px; transition: color 0.2s; }
+    .ex-name-btn:hover { color: var(--gold); }
+    .ex-track { display: flex; gap: 6px; margin-top: 7px; }
+    .ex-track-col { display: flex; flex-direction: column; align-items: center; }
+    .ex-track-input { width: 54px; background: #161616; border: 1px solid var(--border); color: #f5f4f0; font-family: var(--ff-body); font-size: 12px; padding: 5px 6px; outline: none; text-align: center; transition: border-color 0.2s; -moz-appearance: textfield; }
+    .ex-track-input::-webkit-outer-spin-button, .ex-track-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .ex-track-input:focus { border-color: var(--gold); }
+    .ex-track-lbl { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: #444; margin-top: 3px; }
+    .day-body.open { max-height: 900px; padding: 0 24px 20px; }
+    .form-modal-inner { background: #111; border: 1px solid rgba(200,169,110,0.2); max-width: 540px; width: 100%; max-height: 85vh; overflow-y: auto; }
+    .form-modal-inner::-webkit-scrollbar { width: 4px; }
+    .form-modal-inner::-webkit-scrollbar-thumb { background: rgba(200,169,110,0.2); }
+
+    /* ALT PROGRAM REBUILD SECTION */
+    .alt-program-section { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); display: none; }
+    .alt-pills-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .alt-pill { font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; padding: 7px 14px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.2s; font-family: var(--ff-body); }
+    .alt-pill:hover { border-color: var(--gold); color: #f5f4f0; }
+    .alt-pill.active { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); }
 
     /* PEPTIDE LIBRARY */
     .peptide-card { background: #111; border: 1px solid var(--border); padding: 24px; margin-bottom: 8px; transition: border-color 0.2s; }
@@ -405,6 +425,25 @@
 
     <div class="program-output" id="programOutput" style="margin-top:32px;">
       <div id="programDays"></div>
+
+      <!-- ALT PROGRAM REBUILD -->
+      <div class="alt-program-section" id="altProgramSection">
+        <p class="section-label">Rebuild Program</p>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Pick a quick preset or describe what you need — we'll regenerate your full program.</p>
+        <div class="alt-pills-wrap">
+          <button class="alt-pill" onclick="setAltPill(this,'No equipment')">No equipment</button>
+          <button class="alt-pill" onclick="setAltPill(this,'More cardio')">More cardio</button>
+          <button class="alt-pill" onclick="setAltPill(this,'Avoid lower back')">Avoid lower back</button>
+          <button class="alt-pill" onclick="setAltPill(this,'Shorter sessions')">Shorter sessions</button>
+          <button class="alt-pill" onclick="setAltPill(this,'More intensity')">More intensity</button>
+          <button class="alt-pill" onclick="setAltPill(this,'Bodyweight only')">Bodyweight only</button>
+          <button class="alt-pill" onclick="setAltPill(this,'Add stretching')">Add stretching</button>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <input class="alt-workout-input" id="altProgramInput" placeholder="Or describe any other adjustments..." onkeydown="if(event.key==='Enter')rebuildProgram()" />
+          <button class="alt-workout-btn" id="rebuildProgramBtn" onclick="rebuildProgram()">Rebuild</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -759,18 +798,80 @@
     ]
   };
 
-  function generateProgram() {
+  // HTML escape helper
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  // Build exercise HTML with tracking inputs and clickable form guide
+  function buildExHTML(exercises, dayTag) {
+    return exercises.map(function(ex, idx) {
+      var name = ex[0], sets = ex[1];
+      var sk = 'wylde_' + dayTag + '_' + idx;
+      var saved = {};
+      try { saved = JSON.parse(localStorage.getItem(sk) || '{}'); } catch(e) {}
+      return '<div class="exercise">' +
+        '<div style="flex:1;">' +
+          '<button class="ex-name-btn" data-ex="' + esc(name) + '" onclick="showFormGuide(this.dataset.ex)">' + esc(name) + '</button>' +
+          '<div class="ex-track">' +
+            '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="—" value="' + esc(saved.sets || '') + '" data-sk="' + sk + '" data-field="sets" oninput="saveTracking(this)" /><p class="ex-track-lbl">Sets</p></div>' +
+            '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="—" value="' + esc(saved.reps || '') + '" data-sk="' + sk + '" data-field="reps" oninput="saveTracking(this)" /><p class="ex-track-lbl">Reps</p></div>' +
+            '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="—" value="' + esc(saved.weight || '') + '" data-sk="' + sk + '" data-field="weight" oninput="saveTracking(this)" /><p class="ex-track-lbl">lbs</p></div>' +
+          '</div>' +
+        '</div>' +
+        '<span class="ex-sets" style="margin-left:12px;flex-shrink:0;">' + esc(sets) + '</span>' +
+      '</div>';
+    }).join('');
+  }
+
+  // Save tracking data to localStorage
+  function saveTracking(input) {
+    var sk = input.dataset.sk, field = input.dataset.field;
+    var saved = {};
+    try { saved = JSON.parse(localStorage.getItem(sk) || '{}'); } catch(e) {}
+    saved[field] = input.value;
+    localStorage.setItem(sk, JSON.stringify(saved));
+  }
+
+  function renderPlan(plan, container, btn) {
+    container.innerHTML = '';
+    if (btn) btn.style.display = 'none';
+    var i = 0;
+    function addDay() {
+      if (i >= plan.length) {
+        document.getElementById('altProgramSection').style.display = 'block';
+        var rb = document.getElementById('rebuildProgramBtn');
+        if (rb) { rb.textContent = 'Rebuild'; rb.disabled = false; }
+        return;
+      }
+      var d = plan[i];
+      var dayTag = 'day' + i;
+      var card = document.createElement('div');
+      card.className = 'day-card';
+      var exHTML = buildExHTML(d.exercises, dayTag);
+      card.innerHTML =
+        '<div class="day-header" onclick="toggleDay(this)"><span class="day-name">' + esc(d.day) + '</span><span class="day-focus">' + esc(d.focus) + '</span></div>' +
+        '<div class="day-body" data-daytag="' + dayTag + '"><div class="ex-list" style="padding-top:4px;">' + exHTML + '</div>' +
+        '<div class="alt-workout-row"><input class="alt-workout-input" placeholder="e.g. no gym, knee is sore, traveling..." /><button class="alt-workout-btn" onclick="requestAltWorkout(this)">Swap Day</button></div></div>';
+      container.appendChild(card);
+      i++;
+      setTimeout(addDay, 200);
+    }
+    addDay();
+  }
+
+  function generateProgram(constraint) {
     var btn = document.getElementById('generateProgramBtn');
-    btn.textContent = 'Building your program...';
-    btn.disabled = true;
+    if (btn) { btn.textContent = 'Building your program...'; btn.disabled = true; }
     var output = document.getElementById('programOutput');
     var container = document.getElementById('programDays');
     output.classList.add('show');
     container.innerHTML = '<div style="padding:32px 0;text-align:center;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:16px;color:var(--muted);">Your AI coach is building your program...</p><div style="width:40px;height:1px;background:var(--gold);margin:16px auto;"></div></div>';
+    document.getElementById('altProgramSection').style.display = 'none';
 
-    // Build prompt from user profile
     var healthStr = state.health.length > 0 ? state.health.join(', ') : 'none';
-    var notesStr = state.healthNotes ? state.healthNotes : 'none';
+    var notesStr = state.healthNotes || 'none';
+    var constraintLine = constraint ? '\nAdjustment requested: ' + constraint : '';
 
     var prompt = 'You are an expert personal trainer and strength coach. Create a detailed ' + state.days + ' per week workout program for the following person:\n\n' +
       'Name: ' + state.name + '\n' +
@@ -779,77 +880,27 @@
       'Fitness level: ' + state.level + '\n' +
       'Days per week: ' + state.days + '\n' +
       'Health concerns: ' + healthStr + '\n' +
-      'Additional notes: ' + notesStr + '\n\n' +
-      'Return ONLY a JSON array with no markdown, no backticks, no extra text. Each element should be an object with:\n' +
-      '- "day": string (e.g. "Day 01")\n' +
-      '- "focus": string (e.g. "Chest & Triceps")\n' +
-      '- "exercises": array of [exercise_name, sets_and_reps] pairs\n\n' +
-      'Include 5-6 exercises per day. Account for any health concerns listed. Make the program progressive and appropriate for the fitness level. Return only the JSON array.';
+      'Additional notes: ' + notesStr + constraintLine + '\n\n' +
+      'Return ONLY a JSON array with no markdown, no backticks, no extra text. Each element: {"day":"Day 01","focus":"Focus Label","exercises":[["exercise name","sets x reps"],...]}\n' +
+      'Include 5-6 exercises per day. Account for health concerns and any adjustment requested. Return only the JSON array.';
 
     fetch('/api/anthropic', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2048,
-        messages: [{ role: 'user', content: prompt }]
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 2048, messages: [{ role: 'user', content: prompt }] })
     })
     .then(function(res) { return res.json(); })
     .then(function(data) {
       var text = data.content && data.content[0] && data.content[0].text;
       if (!text) throw new Error('No response');
-
-      // Clean JSON aggressively
-      text = text.replace(/```json/gi,'').replace(/```/g,'').replace(/^[^\[{]*/,'').replace(/[^\]})]*$/,'').trim();
-      // Find the JSON array
-      var start = text.indexOf('[');
-      var end = text.lastIndexOf(']');
+      text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
+      var start = text.indexOf('['), end = text.lastIndexOf(']');
       if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
-      var plan = JSON.parse(text);
-
-      container.innerHTML = '';
-      btn.style.display = 'none';
-
-      var i = 0;
-      function addDay() {
-        if (i >= plan.length) return;
-        var d = plan[i];
-        var card = document.createElement('div');
-        card.className = 'day-card';
-        var exHTML = d.exercises.map(function(ex) {
-          return '<div class="exercise"><span class="ex-name">' + ex[0] + '</span><span class="ex-sets">' + ex[1] + '</span></div>';
-        }).join('');
-        card.innerHTML = '<div class="day-header" onclick="toggleDay(this)"><span class="day-name">' + d.day + '</span><span class="day-focus">' + d.focus + '</span></div><div class="day-body"><div class="ex-list" style="padding-top:4px;">' + exHTML + '</div><div class="alt-workout-row"><input class="alt-workout-input" placeholder="e.g. no gym, knee is sore, traveling..." /><button class="alt-workout-btn" onclick="requestAltWorkout(this)">Swap Workout</button></div></div>';
-        container.appendChild(card);
-        i++;
-        setTimeout(addDay, 200);
-      }
-      addDay();
+      renderPlan(JSON.parse(text), container, btn);
     })
     .catch(function(err) {
-      console.error('Gemini error:', err);
-      // Fall back to static program
-      container.innerHTML = '';
-      btn.style.display = 'none';
-      var plan = programs[state.goal] || programs['default'];
-      var i = 0;
-      function addDay() {
-        if (i >= plan.length) return;
-        var d = plan[i];
-        var card = document.createElement('div');
-        card.className = 'day-card';
-        var exHTML = d.exercises.map(function(ex) {
-          return '<div class="exercise"><span class="ex-name">' + ex[0] + '</span><span class="ex-sets">' + ex[1] + '</span></div>';
-        }).join('');
-        card.innerHTML = '<div class="day-header" onclick="toggleDay(this)"><span class="day-name">' + d.day + '</span><span class="day-focus">' + d.focus + '</span></div><div class="day-body"><div class="ex-list" style="padding-top:4px;">' + exHTML + '</div><div class="alt-workout-row"><input class="alt-workout-input" placeholder="e.g. no gym, knee is sore, traveling..." /><button class="alt-workout-btn" onclick="requestAltWorkout(this)">Swap Workout</button></div></div>';
-        container.appendChild(card);
-        i++;
-        setTimeout(addDay, 180);
-      }
-      addDay();
+      console.error('Program error:', err);
+      renderPlan(programs[state.goal] || programs['default'], container, btn);
     });
   }
 
@@ -861,6 +912,7 @@
   function requestAltWorkout(btn) {
     var dayBody = btn.closest('.day-body');
     var dayHeader = dayBody.previousElementSibling;
+    var dayTag = dayBody.dataset.daytag || 'alt';
     var dayName = dayHeader.querySelector('.day-name').textContent;
     var dayFocus = dayHeader.querySelector('.day-focus').textContent;
     var constraint = btn.previousElementSibling.value.trim();
@@ -869,39 +921,26 @@
     btn.disabled = true;
     btn.textContent = 'Finding alternative...';
 
-    var constraintNote = constraint ? 'User constraint: ' + constraint + '.' : 'No specific constraints.';
-    var prompt = 'You are an expert personal trainer. The user needs an alternative workout for ' + dayName + ' (originally: ' + dayFocus + ').\n\n' +
-      constraintNote + '\n' +
-      'User profile — Goal: ' + state.goal + ', Fitness level: ' + state.level + ', Health concerns: ' + (state.health.join(', ') || 'none') + '\n\n' +
-      'Return ONLY a JSON object with no markdown, no backticks:\n' +
-      '{"focus":"New Focus Label","exercises":[["exercise name","sets x reps"],...]}\n' +
-      'Include 5 exercises. Account for any constraints. Return only the JSON object.';
+    var constraintNote = constraint ? 'Constraint: ' + constraint + '.' : 'No specific constraints.';
+    var prompt = 'You are an expert personal trainer. The user needs an alternative workout for ' + dayName + ' (originally: ' + dayFocus + ').\n' +
+      constraintNote + '\nUser: Goal: ' + state.goal + ', Level: ' + state.level + ', Health: ' + (state.health.join(', ') || 'none') + '\n' +
+      'Return ONLY a JSON object: {"focus":"Label","exercises":[["name","sets x reps"],...]}\nInclude 5 exercises. Return only the JSON.';
 
     fetch('/api/anthropic', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 512,
-        messages: [{ role: 'user', content: prompt }]
-      })
+      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 512, messages: [{ role: 'user', content: prompt }] })
     })
     .then(function(res) { return res.json(); })
     .then(function(data) {
       var text = data.content && data.content[0] && data.content[0].text;
       if (!text) throw new Error('No response');
       text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
-      var start = text.indexOf('{');
-      var end = text.lastIndexOf('}');
+      var start = text.indexOf('{'), end = text.lastIndexOf('}');
       if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
       var alt = JSON.parse(text);
-
       dayHeader.querySelector('.day-focus').textContent = alt.focus;
-      var exHTML = alt.exercises.map(function(ex) {
-        return '<div class="exercise"><span class="ex-name">' + ex[0] + '</span><span class="ex-sets">' + ex[1] + '</span></div>';
-      }).join('');
-      exList.innerHTML = exHTML;
-
+      exList.innerHTML = buildExHTML(alt.exercises, dayTag + '_alt' + Date.now());
       btn.textContent = 'Swap Again';
       btn.disabled = false;
       btn.previousElementSibling.value = '';
@@ -910,6 +949,65 @@
       console.error('Alt workout error:', err);
       btn.textContent = 'Try Again';
       btn.disabled = false;
+    });
+  }
+
+  // ALT PROGRAM REBUILD
+  function setAltPill(el, value) {
+    document.querySelectorAll('.alt-pill').forEach(function(p){ p.classList.remove('active'); });
+    el.classList.add('active');
+    document.getElementById('altProgramInput').value = value;
+  }
+
+  function rebuildProgram() {
+    var constraint = document.getElementById('altProgramInput').value.trim();
+    var btn = document.getElementById('rebuildProgramBtn');
+    btn.disabled = true;
+    btn.textContent = 'Rebuilding...';
+    generateProgram(constraint || undefined);
+  }
+
+  // EXERCISE FORM GUIDE
+  function showFormGuide(exerciseName) {
+    var modal = document.getElementById('formModal');
+    var title = document.getElementById('formModalTitle');
+    var body  = document.getElementById('formModalBody');
+    title.textContent = exerciseName;
+    body.innerHTML = '<div style="text-align:center;padding:32px 0;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);">Loading form guide...</p><div style="width:32px;height:1px;background:var(--gold);margin:14px auto 0;"></div></div>';
+    modal.style.display = 'flex';
+
+    var prompt = 'You are an expert strength coach. Give a clear, practical form guide for: ' + exerciseName + '.\n' +
+      'Return ONLY a JSON object:\n' +
+      '{"setup":"how to set up and position your body","execution":"step-by-step movement cues","breathing":"breathing pattern","common_mistakes":["mistake 1","mistake 2","mistake 3"],"pro_tip":"one expert cue that makes the biggest difference"}\n' +
+      'Be specific and actionable. No markdown, no backticks. Return only the JSON.';
+
+    fetch('/api/anthropic', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      var text = data.content && data.content[0] && data.content[0].text;
+      if (!text) throw new Error('No response');
+      text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
+      var start = text.indexOf('{'), end = text.lastIndexOf('}');
+      if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
+      var g = JSON.parse(text);
+      var mistakesHTML = (g.common_mistakes || []).map(function(m){ return '<li>' + esc(m) + '</li>'; }).join('');
+      body.innerHTML =
+        '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Setup</p><p>' + esc(g.setup||'') + '</p></div>' +
+        '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
+        '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Execution</p><p>' + esc(g.execution||'') + '</p></div>' +
+        '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
+        '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Breathing</p><p>' + esc(g.breathing||'') + '</p></div>' +
+        '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
+        '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Common Mistakes</p><ul style="padding-left:18px;line-height:2;">' + mistakesHTML + '</ul></div>' +
+        '<div style="background:rgba(200,169,110,0.06);border:1px solid rgba(200,169,110,0.2);padding:14px 16px;"><p style="font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Pro Tip</p><p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:#f5f4f0;">' + esc(g.pro_tip||'') + '</p></div>';
+    })
+    .catch(function(err) {
+      console.error('Form guide error:', err);
+      body.innerHTML = '<div style="padding:24px;text-align:center;"><p style="color:var(--muted);font-size:13px;">Could not load form guide. Please try again.</p></div>';
     });
   }
 
@@ -1540,6 +1638,22 @@
   </div>
 </div>
 
+
+<!-- FORM GUIDE MODAL -->
+<div id="formModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:500;align-items:center;justify-content:center;padding:24px;">
+  <div class="form-modal-inner">
+    <div style="padding:28px 28px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Form Guide</p>
+        <h2 style="font-family:var(--ff-hero);font-size:28px;letter-spacing:0.04em;line-height:1.1;" id="formModalTitle">—</h2>
+      </div>
+      <button onclick="closeModal('formModal')" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;margin-left:16px;flex-shrink:0;">×</button>
+    </div>
+    <div id="formModalBody" style="padding:20px 28px 28px;font-size:14px;color:#d8d7d0;line-height:1.85;">
+      <div style="text-align:center;padding:32px 0;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);">Loading form guide...</p><div style="width:32px;height:1px;background:var(--gold);margin:14px auto 0;"></div></div>
+    </div>
+  </div>
+</div>
 
 <!-- PROTOCOL MODAL -->
 <div id="protocolModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:500;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto;">
