@@ -774,8 +774,12 @@
       var text = data.content && data.content[0] && data.content[0].text;
       if (!text) throw new Error('No response');
 
-      // Clean JSON
-      text = text.replace(/```json/g,'').replace(/```/g,'').trim();
+      // Clean JSON aggressively
+      text = text.replace(/```json/gi,'').replace(/```/g,'').replace(/^[^\[{]*/,'').replace(/[^\]})]*$/,'').trim();
+      // Find the JSON array
+      var start = text.indexOf('[');
+      var end = text.lastIndexOf(']');
+      if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
       var plan = JSON.parse(text);
 
       container.innerHTML = '';
@@ -1015,7 +1019,10 @@
     .then(function(data) {
       var text = data.content && data.content[0] && data.content[0].text;
       if (!text) throw new Error('No response');
-      text = text.replace(/```json/g,'').replace(/```/g,'').trim();
+      text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
+      var start = text.indexOf('[');
+      var end = text.lastIndexOf(']');
+      if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
       var plan = JSON.parse(text);
       renderMealPlan(plan);
       btn.textContent = 'Regenerate';
@@ -1068,7 +1075,10 @@
     .then(function(data) {
       var text = data.content && data.content[0] && data.content[0].text;
       if (!text) throw new Error('No response');
-      text = text.replace(/```json/g,'').replace(/```/g,'').trim();
+      text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
+      var start = text.indexOf('[');
+      var end = text.lastIndexOf(']');
+      if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
       var recipes = JSON.parse(text);
       renderRecipes(recipes);
     })
