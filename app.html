@@ -564,10 +564,6 @@
   }
 
   // AI COACH CONFIG — paste your Anthropic API key here
-  var ANTHROPIC_KEY = 'PASTE_ANTHROPIC_KEY_HERE';
-
-  // FAL.AI CONFIG — paste your new key here before uploading to GitHub
-  var FAL_KEY = '33c7a34a-aad7-4ce2-8ddb-8bb7c4ac3802:761c0fd57246be209a8c918e46f43a95';
 
   // PHOTO UPLOAD
   function triggerUpload() { document.getElementById("photoInput").click(); }
@@ -604,7 +600,7 @@
     }, 60);
 
     // If no API key — fall back to glow placeholder
-    if (!FAL_KEY || FAL_KEY.includes('YOUR_KEY')) {
+    if (false) { // proxy handles auth
       clearInterval(interval);
       bar.style.width = '100%';
       setTimeout(function() { revealFutureSelf(); }, 400);
@@ -637,13 +633,12 @@
     var genderDesc = state.gender === 'Female' ? 'fit woman' : 'fit man';
     var prompt = genderDesc + ', ' + goalDesc + ', ' + timelineLabel + ' fitness transformation, same room same background same clothing, photorealistic, high quality photograph';
 
-    console.log('Calling fal.ai with key:', FAL_KEY.substring(0,8) + '...');
+    console.log('Calling fal.ai via proxy...');
     console.log('Prompt:', prompt);
 
     fetch('https://fal.run/fal-ai/fast-sdxl/image-to-image', {
       method: 'POST',
       headers: {
-        'Authorization': 'Key ' + FAL_KEY,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -763,13 +758,10 @@
       '- "exercises": array of [exercise_name, sets_and_reps] pairs\n\n' +
       'Include 5-6 exercises per day. Account for any health concerns listed. Make the program progressive and appropriate for the fitness level. Return only the JSON array.';
 
-    fetch('https://api.anthropic.com/v1/messages', {
+    fetch('/api/anthropic', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
@@ -1008,13 +1000,10 @@
       'Return ONLY a JSON array. Each element: {"day":"Monday","meals":[{"name":"Breakfast","foods":"description","calories":number,"protein":number},...]}\n' +
       'Include breakfast, lunch, dinner, snack per day. No markdown, no backticks, just the JSON array.';
 
-    fetch('https://api.anthropic.com/v1/messages', {
+    fetch('/api/anthropic', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
@@ -1064,13 +1053,10 @@
       'Return ONLY a JSON array. Each element: {"name":"Recipe Name","ingredients":"brief list","macros":"calories/protein/carbs/fat","prep":"X mins","difficulty":"Easy/Medium"}\n' +
       'No markdown, no backticks, just the JSON array.';
 
-    fetch('https://api.anthropic.com/v1/messages', {
+    fetch('/api/anthropic', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
