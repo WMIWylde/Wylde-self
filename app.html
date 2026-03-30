@@ -910,11 +910,28 @@
     clearInterval(interval);
     bar.style.width = '100%';
     label.textContent = 'Your future self is ready.';
+    state.avatarUrl = url;
+    var da = document.getElementById('dashAvatar');
+    if (da) da.src = url;
     var afterImg = document.getElementById('afterImg');
-    afterImg.onload = function() { afterImg.onload = null; revealFutureSelf(); };
-    afterImg.onerror = function() { revealFutureSelf(); };
+    var timeout = setTimeout(function() {
+      afterImg.onload = null;
+      afterImg.onerror = null;
+      revealFutureSelf();
+    }, 10000);
+    afterImg.onload = function() {
+      clearTimeout(timeout);
+      afterImg.onload = null;
+      afterImg.onerror = null;
+      revealFutureSelf();
+    };
+    afterImg.onerror = function() {
+      clearTimeout(timeout);
+      afterImg.onload = null;
+      afterImg.onerror = null;
+      revealFutureSelf();
+    };
     afterImg.src = url;
-    setTimeout(function() { revealFutureSelf(); }, 8000);
   }
 
   function pollFalResult(requestId, endpoint, interval, bar, label, attempts) {
@@ -949,16 +966,11 @@
 
   function revealFutureSelf() {
     document.getElementById('generateProgress').style.display = 'none';
-    var afterImg = document.getElementById('afterImg');
-    var src = afterImg.src || '';
-    var isReal = src && !src.includes('glow') && !src.endsWith('app.html') && !src.endsWith('/');
-    if (isReal) {
-      state.avatarUrl = src;
-      var da = document.getElementById('dashAvatar');
-      if (da) { da.src = src; }
-    } else if (!state.avatarUrl) {
-      // Only fall back to placeholder if we don't already have a real avatar
+    if (!state.avatarUrl) {
       setAfterImage();
+    } else {
+      var afterImg = document.getElementById('afterImg');
+      if (afterImg) afterImg.src = state.avatarUrl;
     }
     document.getElementById('comparison').classList.add('show');
     document.getElementById('futureActions').style.display = 'block';

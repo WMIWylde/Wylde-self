@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     if (req.method === 'GET' && requestId) {
       const model = endpoint || 'fal-ai/fast-sdxl/image-to-image';
       const response = await fetch(
-        `https://queue.fal.run/${model}/requests/${requestId}`,
+        `https://queue.fal.run/${model}/requests/${requestId}/status`,
         { headers: { 'Authorization': `Key ${process.env.FAL_API_KEY}` } }
       );
       const data = await response.json();
