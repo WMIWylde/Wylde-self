@@ -1546,7 +1546,7 @@
   // ═══ NUTRITION ═══
 
   var foodLogItems = [];
-  var totalLoggedCal = 0;
+  var foodLogTotals = { cal: 0, protein: 0, carbs: 0, fat: 0 };
 
   function calculateMacros() {
     // Estimate TDEE based on profile
@@ -1731,17 +1731,118 @@
     var food = input.value.trim();
     if (!food) return;
     input.value = '';
+    input.disabled = true;
+    input.placeholder = 'Analyzing macros...';
+
+    fetch('/api/anthropic', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 200,
+        system: 'You are a precise nutrition database. Given a food description, return ONLY a JSON object with these exact keys: name (string, clean food name), cal (number), protein (number, grams), carbs (number, grams), fat (number, grams). No explanation, no markdown, just the raw JSON object. Be accurate — use standard USDA nutrition values where possible.',
+        messages: [{ role: 'user', content: 'Food: ' + food }]
+      })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      input.disabled = false;
+      input.placeholder = 'e.g. 2 scrambled eggs, oatmeal with banana...';
+      var text = data.content && data.content[0] && data.content[0].text || '{}';
+      try {
+        var clean = text.replace(/```json|```/g, '').trim();
+        var macros = JSON.parse(clean);
+        appendFoodLogItem(macros.name || food, macros.cal || 0, macros.protein || 0, macros.carbs || 0, macros.fat || 0);
+      } catch(e) {
+        appendFoodLogItem(food, 0, 0, 0, 0);
+      }
+    })
+    .catch(function() {
+      input.disabled = false;
+      input.placeholder = 'e.g. 2 scrambled eggs, oatmeal with banana...';
+      appendFoodLogItem(food, 0, 0, 0, 0);
+    });
+  }
+
+  function logFoodPhoto(inputEl) {
+    var file = inputEl.files[0];
+    if (!file) return;
+    var status = document.getElementById('photoScanStatus');
+    status.style.display = 'inline';
+    status.textContent = 'Analyzing...';
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var base64 = e.target.result.split(',')[1];
+      var mediaType = file.type || 'image/jpeg';
+
+      fetch('/api/anthropic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 300,
+          system: 'You are a precise nutrition expert. Given an image of food or a nutrition facts label, return ONLY a JSON object with these exact keys: name (string), cal (number), protein (number, grams), carbs (number, grams), fat (number, grams). If it is a nutrition label read the values exactly. If it is a food photo estimate accurately. No explanation, no markdown, just raw JSON.',
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
+              { type: 'text', text: 'Extract the nutrition info from this image.' }
+            ]
+          }]
+        })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        status.style.display = 'none';
+        inputEl.value = '';
+        var text = data.content && data.content[0] && data.content[0].text || '{}';
+        try {
+          var clean = text.replace(/```json|```/g, '').trim();
+          var macros = JSON.parse(clean);
+          appendFoodLogItem(macros.name || 'Scanned item', macros.cal || 0, macros.protein || 0, macros.carbs || 0, macros.fat || 0);
+        } catch(e) {
+          appendFoodLogItem('Scanned item', 0, 0, 0, 0);
+        }
+      })
+      .catch(function() {
+        status.style.display = 'none';
+        inputEl.value = '';
+        appendFoodLogItem('Scanned item', 0, 0, 0, 0);
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function appendFoodLogItem(name, cal, protein, carbs, fat) {
+    var empty = document.getElementById('foodLogEmpty');
+    if (empty) empty.style.display = 'none';
+
+    foodLogTotals.cal += cal;
+    foodLogTotals.protein += protein;
+    foodLogTotals.carbs += carbs;
+    foodLogTotals.fat += fat;
 
     var log = document.getElementById('foodLog');
-    if (foodLogItems.length === 0) log.innerHTML = '';
-
-    foodLogItems.push(food);
     var item = document.createElement('div');
-    item.className = 'log-item';
-    item.innerHTML = '<span class="log-name">' + food + '</span><div class="log-check">✓</div>';
+    item.style.cssText = 'padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;';
+    item.innerHTML = '<span style="font-size:13px;color:var(--white);flex:1;">' + name + '</span>' +
+      '<div style="display:flex;gap:12px;flex-shrink:0;">' +
+        '<span style="font-size:11px;color:var(--gold);font-weight:500;">' + Math.round(cal) + ' cal</span>' +
+        '<span style="font-size:11px;color:var(--muted);">P ' + Math.round(protein) + 'g</span>' +
+        '<span style="font-size:11px;color:var(--muted);">C ' + Math.round(carbs) + 'g</span>' +
+        '<span style="font-size:11px;color:var(--muted);">F ' + Math.round(fat) + 'g</span>' +
+      '</div>';
     log.appendChild(item);
 
     document.getElementById('foodLogTotals').style.display = 'block';
+    document.getElementById('totalCalDisplay').textContent = Math.round(foodLogTotals.cal) + ' cal';
+    document.getElementById('totalProtDisplay').textContent = Math.round(foodLogTotals.protein) + 'g protein';
+    document.getElementById('totalCarbDisplay').textContent = Math.round(foodLogTotals.carbs) + 'g carbs';
+    document.getElementById('totalFatDisplay').textContent = Math.round(foodLogTotals.fat) + 'g fat';
+
+    var dc = document.getElementById('loggedCalories');
+    if (dc) dc.textContent = Math.round(foodLogTotals.cal) + ' cal';
   }
 
   // MODAL HELPERS
@@ -2286,20 +2387,41 @@
 
     <!-- FOOD LOG -->
     <div style="margin-top:32px;">
-      <p class="section-label">Today's Food Log</p>
-      <div style="display:flex;gap:8px;margin-bottom:12px;">
-        <input class="input" id="foodLogInput" placeholder="e.g. 2 eggs, oatmeal, chicken breast..." style="flex:1;" onkeydown="if(event.key==='Enter')logFood()" />
-        <button class="btn" onclick="logFood()" style="padding:13px 20px;font-size:12px;">Add</button>
+      <p class="section-label">Food Log</p>
+
+      <!-- Text input -->
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <input class="input" id="foodLogInput" placeholder="e.g. 2 scrambled eggs, oatmeal with banana..." style="flex:1;" onkeydown="if(event.key==='Enter')logFood()" />
+        <button class="btn" onclick="logFood()" style="padding:13px 20px;font-size:12px;white-space:nowrap;">+ Add</button>
       </div>
+
+      <!-- Photo upload -->
+      <div style="margin-bottom:16px;">
+        <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);border:1px dashed rgba(200,169,110,0.3);padding:10px 16px;transition:border-color 0.2s;" onmouseover="this.style.borderColor='rgba(200,169,110,0.6)'" onmouseout="this.style.borderColor='rgba(200,169,110,0.3)'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Scan food or nutrition label
+          <input type="file" accept="image/*" style="display:none;" onchange="logFoodPhoto(this)" />
+        </label>
+        <span id="photoScanStatus" style="display:none;font-size:11px;color:var(--gold);margin-left:12px;font-family:var(--ff-serif);font-style:italic;">Analyzing...</span>
+      </div>
+
+      <!-- Log list -->
       <div id="foodLog" style="background:#111;border:1px solid var(--border);">
-        <div style="padding:24px;text-align:center;">
+        <div id="foodLogEmpty" style="padding:24px;text-align:center;">
           <p style="font-family:var(--ff-serif);font-style:italic;font-size:14px;color:var(--muted);">Your food log is empty. Add your first meal above.</p>
         </div>
       </div>
-      <div id="foodLogTotals" style="display:none;background:#161616;border:1px solid rgba(200,169,110,0.2);padding:16px;margin-top:2px;">
-        <div style="display:flex;justify-content:space-between;">
-          <span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Logged today</span>
-          <span style="font-size:11px;color:var(--gold);" id="loggedCalories">0 cal</span>
+
+      <!-- Totals bar -->
+      <div id="foodLogTotals" style="display:none;background:#161616;border:1px solid rgba(200,169,110,0.2);padding:14px 16px;margin-top:2px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+          <span style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);">Today's totals</span>
+          <div style="display:flex;gap:20px;">
+            <span style="font-size:12px;color:var(--gold);" id="totalCalDisplay">0 cal</span>
+            <span style="font-size:12px;color:var(--muted);" id="totalProtDisplay">0g protein</span>
+            <span style="font-size:12px;color:var(--muted);" id="totalCarbDisplay">0g carbs</span>
+            <span style="font-size:12px;color:var(--muted);" id="totalFatDisplay">0g fat</span>
+          </div>
         </div>
       </div>
     </div>
