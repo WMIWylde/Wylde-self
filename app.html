@@ -24,16 +24,17 @@
     html, body { background: #080808 !important; color: #f5f4f0; font-family: var(--ff-body); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
     /* NAV */
-    nav { position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; background: #080808; border-right: 1px solid var(--border); width: 200px; display: flex; flex-direction: column; padding: 0; }
-    .nav-logo { font-family: var(--ff-hero); font-size: 18px; letter-spacing: 0.14em; color: #f5f4f0; text-decoration: none; padding: 28px 24px 24px; border-bottom: 1px solid var(--border); display: block; }
+    nav { position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; background: #0c0c0c; border-right: 1px solid var(--border); width: 200px; display: flex; flex-direction: column; padding: 0; }
+    .nav-logo { font-family: var(--ff-hero); font-size: 18px; letter-spacing: 0.14em; color: #f5f4f0; text-decoration: none; padding: 32px 24px 28px; border-bottom: 1px solid var(--border); display: block; }
     .nav-logo span { color: var(--gold); }
     .nav-tabs { display: flex; flex-direction: column; flex: 1; padding: 12px 0; overflow-y: auto; }
-    .nav-tab { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 12px 24px; display: flex; align-items: center; border-left: 2px solid transparent; cursor: pointer; transition: all 0.2s; background: none; border-top: none; border-bottom: none; border-right: none; font-family: var(--ff-body); text-align: left; width: 100%; }
+    .nav-tab { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 14px 24px; display: flex; align-items: center; border-left: 2px solid transparent; cursor: pointer; transition: all 0.2s; background: none; border-top: none; border-bottom: none; border-right: none; font-family: var(--ff-body); text-align: left; width: 100%; }
     .nav-tab:hover { color: #f5f4f0; background: rgba(255,255,255,0.03); }
     .nav-tab.active { color: var(--gold); border-left-color: var(--gold); background: rgba(200,169,110,0.06); }
+    .nav-tab.active::after { content: ''; display: inline-block; width: 4px; height: 4px; background: var(--gold); border-radius: 50%; margin-left: auto; }
     .nav-tab.locked { opacity: 0.3; cursor: not-allowed; }
     .nav-tab.locked:hover { color: var(--muted); background: none; }
-    .nav-footer { padding: 16px 24px; border-top: 1px solid var(--border); }
+    .nav-footer { padding: 20px 24px; border-top: 1px solid var(--border); }
     .nav-user { font-size: 11px; color: var(--muted); letter-spacing: 0.05em; }
     .nav-user span { display: block; color: var(--gold); font-family: var(--ff-hero); font-size: 14px; letter-spacing: 0.1em; margin-bottom: 2px; }
 
@@ -42,19 +43,19 @@
     .screen.active { display: block; }
 
     /* SHARED */
-    .container { max-width: 680px; margin: 0 auto; padding: 40px 24px; }
-    .section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
-    .screen-title { font-family: var(--ff-hero); font-size: clamp(36px, 7vw, 64px); letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px; }
-    .screen-sub { font-family: var(--ff-serif); font-style: italic; font-size: 17px; color: var(--muted); margin-bottom: 40px; line-height: 1.6; }
-    .gold-rule { width: 40px; height: 1px; background: var(--gold); margin-bottom: 32px; }
-    .btn { font-family: var(--ff-body); font-size: 13px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; background: var(--gold); color: #080808; border: none; padding: 14px 32px; cursor: pointer; transition: opacity 0.2s; display: inline-block; }
-    .btn:hover { opacity: 0.85; }
-    .btn-outline { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
-    .btn-outline:hover { background: var(--gold-dim); opacity: 1; }
-    .input { background: #161616; border: 1px solid var(--border); color: #f5f4f0; font-family: var(--ff-body); font-size: 14px; padding: 13px 16px; outline: none; width: 100%; transition: border-color 0.2s; border-radius: 0; -webkit-appearance: none; }
+    .container { max-width: 760px; margin: 0 auto; padding: 48px 40px; }
+    .section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+    .screen-title { font-family: var(--ff-hero); font-size: clamp(40px, 7vw, 72px); letter-spacing: 0.03em; line-height: 1; margin-bottom: 16px; }
+    .screen-sub { font-family: var(--ff-serif); font-style: italic; font-size: 18px; color: var(--muted); margin-bottom: 48px; line-height: 1.7; }
+    .gold-rule { width: 48px; height: 1px; background: var(--gold); margin-bottom: 48px; }
+    .btn { font-family: var(--ff-body); font-size: 13px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; background: var(--gold); color: #080808; border: none; padding: 14px 32px; cursor: pointer; transition: opacity 0.2s, transform 0.15s; display: inline-block; }
+    .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: var(--gold); border: 1px solid var(--gold); letter-spacing: 0.14em; }
+    .btn-outline:hover { background: var(--gold-dim); opacity: 1; transform: translateY(-1px); }
+    .input { background: #161616; border: 1px solid var(--border); color: #f5f4f0; font-family: var(--ff-body); font-size: 14px; padding: 14px 18px; outline: none; width: 100%; transition: border-color 0.2s; border-radius: 0; -webkit-appearance: none; }
     .input:focus { border-color: var(--gold); }
     .input::placeholder { color: #444; }
-    .card { background: #111; border: 1px solid var(--border); padding: 28px; margin-bottom: 12px; }
+    .card { background: #161616; border: 1px solid var(--border); padding: 36px; margin-bottom: 16px; }
 
     /* ONBOARDING */
     .onboard-form { display: flex; flex-direction: column; gap: 16px; }
@@ -130,8 +131,9 @@
     .chat-send:hover { opacity: 0.85; }
 
     /* PROGRESS */
-    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-bottom: 24px; }
-    .stat-box { background: #111; border: 1px solid var(--border); padding: 28px 20px; text-align: center; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-bottom: 32px; }
+    .stat-box { background: #161616; border: 1px solid var(--border); padding: 32px 20px; text-align: center; transition: border-color 0.2s; }
+    .stat-box:hover { border-color: rgba(200,169,110,0.25); }
     .stat-num { font-family: var(--ff-hero); font-size: 48px; color: var(--gold); letter-spacing: 0.04em; line-height: 1; margin-bottom: 8px; }
     .stat-label { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
     .complete-btn { width: 100%; padding: 18px; font-size: 14px; margin-bottom: 24px; }
@@ -196,7 +198,7 @@
     /* DASHBOARD */
     .dash-grid-top { display:grid; grid-template-columns:150px 1fr; gap:10px; margin-bottom:12px; }
     .dash-grid-mid { display:grid; grid-template-columns:130px 1fr; gap:10px; margin-bottom:16px; }
-    .dash-profile-card { background:#111; border:1px solid var(--border); padding:18px 14px; text-align:center; }
+    .dash-profile-card { background:#161616; border:1px solid var(--border); padding:18px 14px; text-align:center; }
     .dash-avatar { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; margin-bottom:10px; }
     .dash-badge { font-size:9px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(200,169,110,0.3); padding:3px 8px; display:inline-block; margin:2px 0; }
     .dash-badge-muted { color:var(--muted); border-color:var(--border); }
@@ -204,7 +206,7 @@
     .dash-week-lbl { font-size:10px; color:var(--muted); letter-spacing:0.06em; margin-bottom:4px; }
     .dash-week-track { background:#161616; height:3px; }
     .dash-week-fill { height:3px; background:var(--gold); width:0%; transition:width 0.6s ease; }
-    .dash-stat-row { display:flex; justify-content:space-between; align-items:center; background:#111; border:1px solid var(--border); padding:9px 13px; margin-bottom:2px; }
+    .dash-stat-row { display:flex; justify-content:space-between; align-items:center; background:#161616; border:1px solid var(--border); padding:9px 13px; margin-bottom:2px; }
     .dash-stat-lbl { font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); }
     .dash-stat-inp { background:transparent; border:none; border-bottom:1px solid var(--border); color:#f5f4f0; font-family:var(--ff-body); font-size:13px; width:72px; text-align:right; outline:none; padding:1px 2px; }
     .dash-stat-inp:focus { border-bottom-color:var(--gold); }
@@ -212,8 +214,8 @@
     .dash-pm:hover { border-color:var(--gold); background:var(--gold-dim); }
     .dash-star { background:none; border:none; font-size:18px; color:#2a2a2a; cursor:pointer; padding:0 1px; transition:color 0.15s; }
     .dash-star.active { color:var(--gold); }
-    .dash-ring-card { background:#111; border:1px solid var(--border); padding:16px; display:flex; flex-direction:column; align-items:center; }
-    .dash-macro-card { background:#111; border:1px solid var(--border); padding:18px; }
+    .dash-ring-card { background:#161616; border:1px solid var(--border); padding:16px; display:flex; flex-direction:column; align-items:center; }
+    .dash-macro-card { background:#161616; border:1px solid var(--border); padding:18px; }
     .dash-macro-row { margin-bottom:12px; }
     .dash-macro-row:last-child { margin-bottom:0; }
     .dash-macro-bar-track { background:#161616; height:4px; margin-top:5px; }
@@ -329,7 +331,7 @@
 </nav>
 
 <!-- DISCLAIMER BANNER -->
-<div style="background:rgba(200,169,110,0.06);border-bottom:1px solid rgba(200,169,110,0.15);padding:8px 24px;text-align:center;position:fixed;top:0;left:200px;right:0;z-index:199;">
+<div style="background:#0c0c0c;border-bottom:1px solid var(--border);padding:7px 24px 7px 224px;text-align:center;position:fixed;top:0;left:0;right:0;z-index:199;">
   <p style="font-size:11px;letter-spacing:0.08em;color:rgba(200,169,110,0.7);font-family:'DM Sans',sans-serif;">
     Early Access Demo — Some features are still being built and may not work as expected. We're improving things daily.
   </p>
@@ -571,7 +573,7 @@
         <button class="btn btn-outline" id="roadmapBtn" onclick="generateRoadmap()" style="font-size:11px;padding:10px 20px;">Generate My Plan</button>
       </div>
       <div id="roadmapOutput">
-        <div style="background:#111;border:1px solid var(--border);padding:32px;text-align:center;">
+        <div style="background:#161616;border:1px solid var(--border);padding:32px;text-align:center;">
           <p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);line-height:1.7;">Your personalised week-by-week roadmap will appear here.<br>It covers training phases, nutrition targets, and identity milestones.</p>
           <div style="width:40px;height:1px;background:var(--gold);margin:16px auto 0;"></div>
         </div>
@@ -604,17 +606,17 @@
 
     <!-- PHOTO TIPS -->
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:12px;">
-      <div style="background:#111;border:1px solid var(--border);padding:14px 12px;text-align:center;">
+      <div style="background:#161616;border:1px solid var(--border);padding:14px 12px;text-align:center;">
         <p style="font-size:18px;margin-bottom:6px;">☀️</p>
         <p style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Lighting</p>
         <p style="font-size:11px;color:var(--muted);line-height:1.5;">Natural light or bright indoor</p>
       </div>
-      <div style="background:#111;border:1px solid var(--border);padding:14px 12px;text-align:center;">
+      <div style="background:#161616;border:1px solid var(--border);padding:14px 12px;text-align:center;">
         <p style="font-size:18px;margin-bottom:6px;">🧍</p>
         <p style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Pose</p>
         <p style="font-size:11px;color:var(--muted);line-height:1.5;">Front-facing, full or half body</p>
       </div>
-      <div style="background:#111;border:1px solid var(--border);padding:14px 12px;text-align:center;">
+      <div style="background:#161616;border:1px solid var(--border);padding:14px 12px;text-align:center;">
         <p style="font-size:18px;margin-bottom:6px;">🏠</p>
         <p style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Background</p>
         <p style="font-size:11px;color:var(--muted);line-height:1.5;">Plain wall or simple room</p>
@@ -647,7 +649,7 @@
       </div>
     </div>
 
-    <div id="futureActions" style="margin-top:24px;display:none;">
+    <div id="futureActions" style="margin-top:36px;display:none;">
       <button class="btn" onclick="showScreen('program')" style="margin-right:12px;">Build My Program</button>
       <button class="btn btn-outline" onclick="resetPhoto()">Try Another Photo</button>
     </div>
@@ -664,7 +666,7 @@
 
     <button class="btn" id="generateProgramBtn" onclick="generateProgram()">Generate My Program</button>
 
-    <div class="program-output" id="programOutput" style="margin-top:32px;">
+    <div class="program-output" id="programOutput" style="margin-top:48px;">
       <div id="programDays"></div>
 
       <!-- ALT PROGRAM REBUILD -->
@@ -2355,24 +2357,24 @@
     </div>
 
     <!-- WHAT TO EXPECT -->
-    <p class="section-label" style="margin-top:32px;">The Process</p>
+    <p class="section-label" style="margin-top:48px;">The Process</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.07);">
-      <div style="background:#111;padding:24px 20px;">
+      <div style="background:#161616;padding:24px 20px;">
         <p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">01</p>
         <p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Complete your health profile</p>
         <p style="font-size:12px;color:var(--muted);">Goals, concerns, medications, history</p>
       </div>
-      <div style="background:#111;padding:24px 20px;">
+      <div style="background:#161616;padding:24px 20px;">
         <p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">02</p>
         <p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Upload your labs</p>
         <p style="font-size:12px;color:var(--muted);">Bloodwork reviewed before your consult</p>
       </div>
-      <div style="background:#111;padding:24px 20px;">
+      <div style="background:#161616;padding:24px 20px;">
         <p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">03</p>
         <p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Consult with your naturopath</p>
         <p style="font-size:12px;color:var(--muted);">Video call, inside the app</p>
       </div>
-      <div style="background:#111;padding:24px 20px;">
+      <div style="background:#161616;padding:24px 20px;">
         <p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">04</p>
         <p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Receive your protocol</p>
         <p style="font-size:12px;color:var(--muted);">Peptide referral + optimization plan</p>
@@ -2380,7 +2382,7 @@
     </div>
 
     <!-- DISCLAIMER -->
-    <div style="margin-top:32px;padding:18px 20px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);">
+    <div style="margin-top:48px;padding:18px 20px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);">
       <p style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Educational Disclaimer</p>
       <p style="font-size:12px;color:#555;line-height:1.75;font-style:italic;font-family:var(--ff-serif);">
         Peptides are prescribed only through licensed physicians following consultation and lab review. The information presented in the Peptide Library is educational only and does not constitute medical advice. Wylde Self does not prescribe medications. All peptide protocols are issued through licensed naturopathic physicians following consultation and lab review. This service is not available in all regions.
@@ -2392,7 +2394,7 @@
 
 <!-- CONSULT MODAL -->
 <div id="consultModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:500;align-items:center;justify-content:center;padding:24px;">
-  <div style="background:#111;border:1px solid rgba(200,169,110,0.2);max-width:540px;width:100%;padding:40px;position:relative;">
+  <div style="background:#161616;border:1px solid rgba(200,169,110,0.2);max-width:540px;width:100%;padding:40px;position:relative;">
     <button onclick="closeModal('consultModal')" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;">×</button>
     <p class="section-label">Book a Consultation</p>
     <h2 style="font-family:var(--ff-hero);font-size:36px;letter-spacing:0.03em;margin-bottom:16px;">Schedule Your Session</h2>
@@ -2405,7 +2407,7 @@
 
 <!-- UPGRADE MODAL -->
 <div id="upgradeModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:500;align-items:center;justify-content:center;padding:24px;">
-  <div style="background:#111;border:1px solid rgba(200,169,110,0.2);max-width:480px;width:100%;padding:40px;position:relative;">
+  <div style="background:#161616;border:1px solid rgba(200,169,110,0.2);max-width:480px;width:100%;padding:40px;position:relative;">
     <button onclick="closeModal('upgradeModal')" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;">×</button>
     <p class="section-label">Health+ Tier</p>
     <h2 style="font-family:var(--ff-hero);font-size:40px;letter-spacing:0.03em;margin-bottom:8px;">$99 / month</h2>
@@ -2512,7 +2514,7 @@
     <div id="mealPlanOutput"></div>
 
     <!-- RECIPE GUIDE -->
-    <div style="margin-top:32px;">
+    <div style="margin-top:48px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
         <p class="section-label" style="margin-bottom:0;">Recipe Guide</p>
         <button class="btn btn-outline" onclick="generateRecipes()" style="font-size:11px;padding:10px 20px;">Get Recipes</button>
@@ -2521,7 +2523,7 @@
     </div>
 
     <!-- FOOD LOG -->
-    <div style="margin-top:32px;">
+    <div style="margin-top:48px;">
       <p class="section-label">Food Log</p>
 
       <!-- Text input -->
@@ -2541,7 +2543,7 @@
       </div>
 
       <!-- Log list -->
-      <div id="foodLog" style="background:#111;border:1px solid var(--border);">
+      <div id="foodLog" style="background:#161616;border:1px solid var(--border);">
         <div id="foodLogEmpty" style="padding:24px;text-align:center;">
           <p style="font-family:var(--ff-serif);font-style:italic;font-size:14px;color:var(--muted);">Your food log is empty. Add your first meal above.</p>
         </div>
