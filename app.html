@@ -149,6 +149,14 @@
     .ex-track-input:focus { border-color: var(--gold); }
     .ex-track-lbl { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: #444; margin-top: 3px; }
     .day-body.open { max-height: 900px; padding: 0 24px 20px; }
+    .ex-anim-wrap { display: flex; justify-content: center; margin-bottom: 24px; }
+    .ex-anim-wrap svg { width: 120px; height: 120px; }
+    @keyframes squat-down { 0%,100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+    @keyframes pushup-body { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(6px) rotate(2deg); } }
+    @keyframes deadlift-hinge { 0%,100% { transform: rotate(0deg); transform-origin: bottom center; } 50% { transform: rotate(30deg); transform-origin: bottom center; } }
+    @keyframes pullup-rise { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+    @keyframes plank-hold { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+    @keyframes lunge-step { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
     .form-modal-inner { background: #111; border: 1px solid rgba(200,169,110,0.2); max-width: 540px; width: 100%; max-height: 85vh; overflow-y: auto; }
     .form-modal-inner::-webkit-scrollbar { width: 4px; }
     .form-modal-inner::-webkit-scrollbar-thumb { background: rgba(200,169,110,0.2); }
@@ -1175,12 +1183,106 @@
   }
 
   // EXERCISE FORM GUIDE
+  function getExerciseAnimation(name) {
+    var n = name.toLowerCase();
+    var gold = '#c8a96e';
+
+    if (n.includes('squat')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <g style="animation: squat-down 1.4s ease-in-out infinite;">
+        <circle cx="60" cy="22" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
+        <line x1="60" y1="30" x2="60" y2="62" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="38" x2="44" y2="52" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="38" x2="76" y2="52" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="62" x2="44" y2="88" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="62" x2="76" y2="88" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="44" y1="88" x2="40" y2="100" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="76" y1="88" x2="80" y2="100" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+    </svg>`;
+
+    if (n.includes('push')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <g style="animation: pushup-body 1.4s ease-in-out infinite;">
+        <circle cx="28" cy="52" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
+        <line x1="36" y1="52" x2="88" y2="60" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="28" y1="60" x2="20" y2="74" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="20" y1="74" x2="20" y2="88" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="88" y1="60" x2="96" y2="74" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="96" y1="74" x2="96" y2="88" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="16" y1="88" x2="100" y2="88" stroke="${gold}" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+      </g>
+    </svg>`;
+
+    if (n.includes('deadlift') || n.includes('dead lift')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <g style="animation: deadlift-hinge 1.6s ease-in-out infinite; transform-origin: 60px 90px;">
+        <circle cx="60" cy="22" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
+        <line x1="60" y1="30" x2="60" y2="64" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="40" x2="42" y2="56" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="40" x2="78" y2="56" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="64" x2="48" y2="90" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="64" x2="72" y2="90" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="48" y1="90" x2="44" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="72" y1="90" x2="76" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+    </svg>`;
+
+    if (n.includes('pull')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="10" x2="100" y2="10" stroke="${gold}" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+      <g style="animation: pullup-rise 1.4s ease-in-out infinite;">
+        <circle cx="60" cy="36" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
+        <line x1="60" y1="10" x2="60" y2="44" stroke="${gold}" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.5"/>
+        <line x1="60" y1="44" x2="60" y2="74" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="52" x2="42" y2="62" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="52" x2="78" y2="62" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="74" x2="50" y2="96" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="74" x2="70" y2="96" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+    </svg>`;
+
+    if (n.includes('plank')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <g style="animation: plank-hold 2s ease-in-out infinite;">
+        <circle cx="24" cy="56" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
+        <line x1="32" y1="56" x2="92" y2="64" stroke="${gold}" stroke-width="3" stroke-linecap="round"/>
+        <line x1="32" y1="64" x2="24" y2="80" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="24" y1="80" x2="24" y2="92" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="92" y1="64" x2="100" y2="80" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="100" y1="80" x2="100" y2="92" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="16" y1="92" x2="108" y2="92" stroke="${gold}" stroke-width="1.5" opacity="0.25"/>
+      </g>
+    </svg>`;
+
+    if (n.includes('lunge')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <g style="animation: lunge-step 1.4s ease-in-out infinite;">
+        <circle cx="56" cy="20" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
+        <line x1="56" y1="28" x2="56" y2="60" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="56" y1="38" x2="40" y2="52" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="56" y1="38" x2="72" y2="52" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="56" y1="60" x2="36" y2="88" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="56" y1="60" x2="72" y2="80" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="36" y1="88" x2="28" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="72" y1="80" x2="72" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+    </svg>`;
+
+    return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <g style="animation: squat-down 1.8s ease-in-out infinite;">
+        <circle cx="60" cy="22" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
+        <line x1="60" y1="30" x2="60" y2="64" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="40" x2="42" y2="54" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="40" x2="78" y2="54" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="64" x2="48" y2="90" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="64" x2="72" y2="90" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="48" y1="90" x2="44" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="72" y1="90" x2="76" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+    </svg>`;
+  }
+
   function showFormGuide(exerciseName) {
     var modal = document.getElementById('formModal');
     var title = document.getElementById('formModalTitle');
     var body  = document.getElementById('formModalBody');
     title.textContent = exerciseName;
-    body.innerHTML = '<div style="text-align:center;padding:32px 0;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);">Loading form guide...</p><div style="width:32px;height:1px;background:var(--gold);margin:14px auto 0;"></div></div>';
+    body.innerHTML = '<div class="ex-anim-wrap">' + getExerciseAnimation(exerciseName) + '</div><div style="text-align:center;padding:0 0 24px;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);">Loading form guide...</p><div style="width:32px;height:1px;background:var(--gold);margin:14px auto 0;"></div></div>';
     modal.style.display = 'flex';
 
     var prompt = 'You are an expert strength coach. Give a clear, practical form guide for: ' + exerciseName + '.\n' +
@@ -1202,9 +1304,7 @@
       if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
       var g = JSON.parse(text);
       var mistakesHTML = (g.common_mistakes || []).map(function(m){ return '<li>' + esc(m) + '</li>'; }).join('');
-      var animSVG = getExAnim(exerciseName);
-      var animBlock = animSVG ? '<div style="text-align:center;margin-bottom:20px;padding:16px 0;border-bottom:1px solid var(--border);">' + animSVG + '</div>' : '';
-      body.innerHTML = animBlock +
+      body.innerHTML = '<div class="ex-anim-wrap">' + getExerciseAnimation(exerciseName) + '</div>' +
         '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Setup</p><p>' + esc(g.setup||'') + '</p></div>' +
         '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
         '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Execution</p><p>' + esc(g.execution||'') + '</p></div>' +
