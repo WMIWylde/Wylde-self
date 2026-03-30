@@ -866,7 +866,7 @@
     var genderDesc = state.gender === 'Female' ? 'fit woman' : 'fit man';
     var prompt = genderDesc + ', ' + goalDesc + ', ' + timelineLabel + ' fitness transformation, same room same background same clothing, photorealistic, high quality photograph';
 
-    fetch('/api/fal?endpoint=fal-ai/fast-sdxl/image-to-image', {
+    fetch('/api/fal?endpoint=fal-ai/flux/dev/image-to-image', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -891,7 +891,7 @@
       // Queue response — poll for result
       var requestId = data.request_id;
       if (requestId) {
-        pollFalResult(requestId, 'fal-ai/fast-sdxl/image-to-image', interval, bar, label, 0);
+        pollFalResult(requestId, 'fal-ai/flux/dev/image-to-image', interval, bar, label, 0);
       } else {
         clearInterval(interval);
         bar.style.width = '100%';
