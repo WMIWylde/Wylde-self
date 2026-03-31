@@ -1685,6 +1685,7 @@
       uploadedImageBase64 = ev.target.result;
       document.getElementById('beforeImg').src = ev.target.result;
       document.getElementById('uploadZone').style.display = 'none';
+      console.log('Photo loaded, starting generation...');
       startGeneration();
     };
     reader.readAsDataURL(file);
@@ -1748,7 +1749,7 @@
         image_url: uploadedImageBase64,
         prompt: prompt,
         negative_prompt: 'ugly, deformed, blurry, low quality, text, watermark, cartoon, anime',
-        strength: 0.65,
+        strength: 0.75,
         num_inference_steps: 28,
         guidance_scale: 6.5
       })
@@ -1766,6 +1767,7 @@
       // Queue response — poll for result
       var requestId = data.request_id;
       if (requestId) {
+        console.log('Job queued: ' + requestId);
         pollFalResult(requestId, 'fal-ai/flux/dev/image-to-image', interval, bar, label, 0);
       } else {
         clearInterval(interval);
@@ -1782,6 +1784,7 @@
   }
 
   function falRevealImage(url, interval, bar, label) {
+    console.log('Image complete: ' + url);
     clearInterval(interval);
     bar.style.width = '100%';
     label.textContent = 'Your future self is ready.';
@@ -1819,6 +1822,7 @@
     fetch('/api/fal?requestId=' + encodeURIComponent(requestId) + '&endpoint=' + encodeURIComponent(endpoint))
       .then(function(res) { return res.json(); })
       .then(function(data) {
+        console.log('Poll status: ' + data.status);
         if (data.status === 'COMPLETED') {
           var out = data.output || data;
           var url = (out.images && out.images[0] && out.images[0].url)
@@ -1830,6 +1834,8 @@
           clearInterval(interval);
           bar.style.width = '100%';
           setTimeout(function() { revealFutureSelf(); }, 400);
+        } else if (data.status === 'IN_QUEUE' || data.status === 'IN_PROGRESS') {
+          setTimeout(function() { pollFalResult(requestId, endpoint, interval, bar, label, attempts + 1); }, 2000);
         } else {
           setTimeout(function() { pollFalResult(requestId, endpoint, interval, bar, label, attempts + 1); }, 2000);
         }
@@ -1840,6 +1846,7 @@
   }
 
   function revealFutureSelf() {
+    console.log('Revealing future self...');
     document.getElementById('generateProgress').style.display = 'none';
     if (!state.avatarUrl) {
       setAfterImage();
