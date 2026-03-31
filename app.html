@@ -306,6 +306,54 @@
   .roadmap-stat-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
   .roadmap-stat-value { font-size: 14px; font-weight: 500; color: var(--white); line-height: 1.4; }
   .roadmap-milestone { font-family: var(--ff-serif); font-style: italic; font-size: 13px; color: var(--gold); line-height: 1.6; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+
+  /* OVERVIEW SCREEN */
+  .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+  .ov-widget { background: var(--surface, #161616); border: 1px solid var(--border); overflow: hidden; transition: border-color 0.2s; }
+  .ov-widget:hover { border-color: rgba(200,169,110,0.2); }
+  .ov-widget-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; user-select: none; }
+  .ov-widget-label { font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); }
+  .ov-widget-expand { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); background: none; border: none; cursor: pointer; font-family: var(--ff-body); padding: 4px 8px; transition: color 0.2s; }
+  .ov-widget-expand:hover { color: var(--gold); }
+  .ov-widget-body { padding: 0 16px 16px; }
+  .ov-stars { display: flex; gap: 6px; margin-bottom: 12px; }
+  .ov-star { font-size: 22px; cursor: pointer; color: #333; transition: color 0.15s; line-height: 1; }
+  .ov-star.lit { color: var(--gold); }
+  .ov-star:hover { color: var(--gold); }
+  .ov-ai-response { font-family: var(--ff-serif); font-style: italic; font-size: 13px; color: var(--muted); line-height: 1.6; min-height: 20px; }
+  .ov-progress-bar-wrap { background: #1a1a1a; height: 3px; margin: 8px 0 12px; overflow: hidden; }
+  .ov-progress-bar { height: 100%; background: var(--gold); transition: width 0.4s ease; }
+  .ov-progress-bar.teal { background: #2dd4bf; }
+  .ov-macro-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 12px; }
+  .ov-macro-cell { background: #111; padding: 8px 6px; text-align: center; }
+  .ov-macro-val { font-family: var(--ff-hero); font-size: 16px; color: var(--white); letter-spacing: 0.04em; }
+  .ov-macro-lbl { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+  .ov-stepper { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .ov-stepper-btn { width: 32px; height: 32px; background: #1a1a1a; border: 1px solid var(--border); color: var(--white); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color 0.2s; font-family: var(--ff-body); }
+  .ov-stepper-btn:hover { border-color: var(--gold); }
+  .ov-stepper-val { font-family: var(--ff-hero); font-size: 26px; color: var(--gold); letter-spacing: 0.04em; }
+  .ov-stepper-unit { font-size: 11px; color: var(--muted); }
+  .ov-ex-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; color: var(--white); }
+  .ov-ex-row:last-child { border-bottom: none; }
+  .ov-ex-sets { font-size: 11px; color: var(--gold); }
+  .ov-timeline-tabs { display: flex; gap: 2px; margin-bottom: 12px; }
+  .ov-tl-btn { flex: 1; font-family: var(--ff-body); font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 7px 4px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+  .ov-tl-btn.active { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); }
+  .ov-stat-trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 12px; }
+  .ov-stat-cell { background: #111; padding: 10px 6px; text-align: center; }
+  .ov-stat-num { font-family: var(--ff-hero); font-size: 24px; color: var(--gold); letter-spacing: 0.04em; line-height: 1; }
+  .ov-stat-lbl { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
+  .ov-muscle-pills { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+  .ov-muscle-pill { font-size: 9px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; font-family: var(--ff-body); }
+  .ov-muscle-pill.active { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); }
+  .ov-coach-input { width: 100%; background: #111; border: 1px solid var(--border); color: var(--white); font-family: var(--ff-body); font-size: 13px; padding: 10px 12px; outline: none; resize: none; transition: border-color 0.2s; margin-bottom: 8px; }
+  .ov-coach-input:focus { border-color: rgba(200,169,110,0.4); }
+  .ov-coach-reply { font-family: var(--ff-serif); font-style: italic; font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 10px; min-height: 18px; }
+  .ov-streak-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(200,169,110,0.08); border: 1px solid rgba(200,169,110,0.2); padding: 5px 12px; font-size: 11px; letter-spacing: 0.08em; color: var(--gold); font-family: var(--ff-body); margin-bottom: 20px; }
+  .ov-daily-q { font-family: var(--ff-serif); font-size: 17px; font-style: italic; color: var(--muted); line-height: 1.6; margin-bottom: 32px; }
+  .ov-header-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+  .ov-meta-chip { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .ov-meta-chip span { color: var(--white); }
   </style>
 </head>
 <body style="background:#080808;">
@@ -314,6 +362,7 @@
   <a href="/" class="nav-logo">W<span>S</span></a>
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showScreen('onboard')">Start</button>
+    <button class="nav-tab locked" onclick="showScreen('overview')">Overview</button>
     <button class="nav-tab locked" onclick="showScreen('dashboard')">Dashboard</button>
     <button class="nav-tab locked" onclick="showScreen('future')">Future Self</button>
     <button class="nav-tab locked" onclick="showScreen('program')">Program</button>
@@ -582,6 +631,173 @@
   </div>
 </div>
 
+<!-- ═══ OVERVIEW ═══ -->
+<div class="screen" id="screen-overview">
+  <div class="container">
+
+    <!-- Header -->
+    <p class="section-label">Today's Protocol</p>
+    <h1 class="screen-title" style="color:var(--gold);margin-bottom:8px;">WYLDE SELF</h1>
+    <div class="ov-header-meta">
+      <span class="ov-meta-chip">Week <span id="ovWeek">—</span></span>
+      <span class="ov-meta-chip">Goal: <span id="ovGoal">—</span></span>
+      <span class="ov-meta-chip">Level: <span id="ovLevel">—</span></span>
+    </div>
+    <div class="ov-streak-badge">🔥 <span id="ovStreak">0</span> day streak — don't break it</div>
+    <p class="ov-daily-q" id="ovDailyQ"></p>
+
+    <!-- Widget Grid -->
+    <div class="overview-grid">
+
+      <!-- 1. ENERGY CHECK-IN -->
+      <div class="ov-widget">
+        <div class="ov-widget-header" onclick="ovToggle('wEnergy')">
+          <span class="ov-widget-label">Energy Check-in</span>
+          <button class="ov-widget-expand" onclick="event.stopPropagation();showScreen('dashboard')">Dashboard →</button>
+        </div>
+        <div class="ov-widget-body" id="wEnergy">
+          <div class="ov-stars" id="ovStars">
+            <span class="ov-star" onclick="ovRate(1)">★</span>
+            <span class="ov-star" onclick="ovRate(2)">★</span>
+            <span class="ov-star" onclick="ovRate(3)">★</span>
+            <span class="ov-star" onclick="ovRate(4)">★</span>
+            <span class="ov-star" onclick="ovRate(5)">★</span>
+          </div>
+          <p class="ov-ai-response" id="ovEnergyReply">Rate your energy to begin.</p>
+        </div>
+      </div>
+
+      <!-- 2. CALORIES -->
+      <div class="ov-widget">
+        <div class="ov-widget-header" onclick="ovToggle('wCalories')">
+          <span class="ov-widget-label">Calories</span>
+          <button class="ov-widget-expand" onclick="event.stopPropagation();showScreen('nutrition')">Nutrition →</button>
+        </div>
+        <div class="ov-widget-body" id="wCalories">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+            <span style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);letter-spacing:0.04em;" id="ovCalConsumed">0</span>
+            <span style="font-size:11px;color:var(--muted);">/ <span id="ovCalGoal">2000</span> cal</span>
+          </div>
+          <div class="ov-progress-bar-wrap"><div class="ov-progress-bar" id="ovCalBar" style="width:0%"></div></div>
+          <div class="ov-macro-row">
+            <div class="ov-macro-cell"><div class="ov-macro-val" id="ovMacroP">—</div><div class="ov-macro-lbl">Protein</div></div>
+            <div class="ov-macro-cell"><div class="ov-macro-val" id="ovMacroC">—</div><div class="ov-macro-lbl">Carbs</div></div>
+            <div class="ov-macro-cell"><div class="ov-macro-val" id="ovMacroF">—</div><div class="ov-macro-lbl">Fat</div></div>
+            <div class="ov-macro-cell"><div class="ov-macro-val" id="ovMacroPct">—</div><div class="ov-macro-lbl">Done</div></div>
+          </div>
+          <button class="btn btn-outline" style="font-size:10px;padding:8px 16px;" onclick="showScreen('nutrition')">+ Log Meal</button>
+        </div>
+      </div>
+
+      <!-- 3. HYDRATION -->
+      <div class="ov-widget">
+        <div class="ov-widget-header" onclick="ovToggle('wHydration')">
+          <span class="ov-widget-label">Hydration</span>
+          <button class="ov-widget-expand" onclick="event.stopPropagation();showScreen('dashboard')">Dashboard →</button>
+        </div>
+        <div class="ov-widget-body" id="wHydration">
+          <div class="ov-stepper">
+            <button class="ov-stepper-btn" onclick="ovWater(-8)">−</button>
+            <div><span class="ov-stepper-val" id="ovWaterVal">0</span> <span class="ov-stepper-unit">oz</span></div>
+            <button class="ov-stepper-btn" onclick="ovWater(8)">+</button>
+          </div>
+          <div class="ov-progress-bar-wrap"><div class="ov-progress-bar teal" id="ovWaterBar" style="width:0%"></div></div>
+          <p style="font-size:11px;color:var(--muted);margin-bottom:10px;" id="ovWaterPct">0% of daily goal</p>
+          <p class="ov-ai-response" id="ovHydroReply"></p>
+        </div>
+      </div>
+
+      <!-- 4. TODAY'S PROGRAM -->
+      <div class="ov-widget">
+        <div class="ov-widget-header" onclick="ovToggle('wProgram')">
+          <span class="ov-widget-label">Today's Program</span>
+          <button class="ov-widget-expand" onclick="event.stopPropagation();showScreen('program')">Program →</button>
+        </div>
+        <div class="ov-widget-body" id="wProgram">
+          <div id="ovExList"><p style="font-size:13px;color:var(--muted);font-family:var(--ff-serif);font-style:italic;margin-bottom:12px;">No program generated yet.</p></div>
+          <button class="btn" style="font-size:10px;padding:9px 18px;" id="ovProgramBtn" onclick="showScreen('program')">Build My Evolution Path</button>
+        </div>
+      </div>
+
+      <!-- 5. NUTRITION PLAN -->
+      <div class="ov-widget">
+        <div class="ov-widget-header" onclick="ovToggle('wNutrition')">
+          <span class="ov-widget-label">Nutrition Plan</span>
+          <button class="ov-widget-expand" onclick="event.stopPropagation();showScreen('nutrition')">Full Plan →</button>
+        </div>
+        <div class="ov-widget-body" id="wNutrition">
+          <div class="ov-macro-row" style="margin-bottom:12px;">
+            <div class="ov-macro-cell"><div class="ov-macro-val" id="ovNutCal">—</div><div class="ov-macro-lbl">Cal</div></div>
+            <div class="ov-macro-cell"><div class="ov-macro-val" id="ovNutP">—</div><div class="ov-macro-lbl">Protein</div></div>
+            <div class="ov-macro-cell"><div class="ov-macro-val" id="ovNutC">—</div><div class="ov-macro-lbl">Carbs</div></div>
+            <div class="ov-macro-cell"><div class="ov-macro-val" id="ovNutF">—</div><div class="ov-macro-lbl">Fat</div></div>
+          </div>
+          <button class="btn btn-outline" style="font-size:10px;padding:8px 16px;" onclick="showScreen('nutrition');setTimeout(function(){var b=document.getElementById('generateMealBtn');if(b)b.click();},400);">Generate This Week</button>
+        </div>
+      </div>
+
+      <!-- 6. FUTURE SELF -->
+      <div class="ov-widget">
+        <div class="ov-widget-header" onclick="ovToggle('wFuture')">
+          <span class="ov-widget-label">Future Self</span>
+          <button class="ov-widget-expand" onclick="event.stopPropagation();showScreen('future')">Generate →</button>
+        </div>
+        <div class="ov-widget-body" id="wFuture">
+          <div class="ov-timeline-tabs">
+            <button class="ov-tl-btn active" onclick="ovTimeline(this,'12weeks')">12 Weeks</button>
+            <button class="ov-tl-btn" onclick="ovTimeline(this,'6months')">6 Months</button>
+            <button class="ov-tl-btn" onclick="ovTimeline(this,'1year')">1 Year</button>
+          </div>
+          <p class="ov-ai-response" id="ovFutureDesc" style="margin-bottom:12px;">By 12 weeks your body starts to change. The identity shift happens first.</p>
+          <button class="btn" style="font-size:10px;padding:9px 18px;" onclick="showScreen('future')">Generate My Future Self</button>
+        </div>
+      </div>
+
+      <!-- 7. PROGRESS -->
+      <div class="ov-widget">
+        <div class="ov-widget-header" onclick="ovToggle('wProgress')">
+          <span class="ov-widget-label">Progress</span>
+          <button class="ov-widget-expand" onclick="event.stopPropagation();showScreen('progress')">Full Breakdown →</button>
+        </div>
+        <div class="ov-widget-body" id="wProgress">
+          <div class="ov-stat-trio">
+            <div class="ov-stat-cell"><div class="ov-stat-num" id="ovSessions">0</div><div class="ov-stat-lbl">Sessions</div></div>
+            <div class="ov-stat-cell"><div class="ov-stat-num" id="ovStreak2">0</div><div class="ov-stat-lbl">Streak</div></div>
+            <div class="ov-stat-cell"><div class="ov-stat-num" id="ovWeeks">0</div><div class="ov-stat-lbl">Weeks</div></div>
+          </div>
+          <div class="ov-muscle-pills" id="ovMusclePills">
+            <button class="ov-muscle-pill" onclick="ovToggleMuscle(this)">Chest</button>
+            <button class="ov-muscle-pill" onclick="ovToggleMuscle(this)">Back</button>
+            <button class="ov-muscle-pill" onclick="ovToggleMuscle(this)">Legs</button>
+            <button class="ov-muscle-pill" onclick="ovToggleMuscle(this)">Shoulders</button>
+            <button class="ov-muscle-pill" onclick="ovToggleMuscle(this)">Arms</button>
+            <button class="ov-muscle-pill" onclick="ovToggleMuscle(this)">Core</button>
+          </div>
+          <button class="btn btn-outline" style="font-size:10px;padding:8px 16px;" onclick="showScreen('progress')">Full Breakdown</button>
+        </div>
+      </div>
+
+      <!-- 8. AI COACH -->
+      <div class="ov-widget">
+        <div class="ov-widget-header" onclick="ovToggle('wCoach')">
+          <span class="ov-widget-label">AI Coach</span>
+          <button class="ov-widget-expand" onclick="event.stopPropagation();showScreen('coach')">Full Chat →</button>
+        </div>
+        <div class="ov-widget-body" id="wCoach">
+          <p class="ov-coach-reply" id="ovCoachReply">You showed up. That's already more than most. What do you need from me today?</p>
+          <textarea class="ov-coach-input" id="ovCoachInput" rows="2" placeholder="Ask your coach..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();ovSendCoach();}"></textarea>
+          <button class="btn" style="font-size:10px;padding:9px 18px;width:100%;" onclick="ovSendCoach()">Send</button>
+        </div>
+      </div>
+
+    </div><!-- /overview-grid -->
+
+    <!-- Footer -->
+    <p style="font-family:var(--ff-serif);font-style:italic;font-size:14px;color:var(--muted);opacity:0.5;text-align:center;margin-top:56px;line-height:1.7;">You're entering something bigger than a fitness app.<br>Wylde Mind · Coaching · Community — coming.</p>
+
+  </div>
+</div>
+
 <!-- ═══ FUTURE SELF ═══ -->
 <div class="screen" id="screen-future">
   <div class="container">
@@ -823,7 +1039,8 @@
     document.getElementById('screen-' + id).classList.add('active');
     if (id === 'nutrition' && state.weight) { calculateMacros(); }
     if (id === 'dashboard') { updateDashboard(); }
-    var tabs = { onboard:0, dashboard:1, future:2, program:3, coach:4, progress:5, nutrition:6, health:7 };
+    if (id === 'overview') { updateOverview(); }
+    var tabs = { onboard:0, overview:1, dashboard:2, future:3, program:4, coach:5, progress:6, nutrition:7, health:8 };
     document.querySelectorAll('.nav-tab')[tabs[id]].classList.add('active');
     currentScreen = id;
     if (sidebarOpen) updateCoachContext();
@@ -971,6 +1188,188 @@
       '</div>';
     });
     output.innerHTML = html;
+  }
+
+  // OVERVIEW SCREEN
+  var ovDailyQs = [
+    "What would the version of you that's already won do today?",
+    "What are you avoiding that you know you shouldn't be?",
+    "What would your future self thank you for right now?",
+    "Show up like the person you're becoming."
+  ];
+  var ovTimelineDescs = {
+    '12weeks': 'By 12 weeks your body starts to change. The identity shift happens first.',
+    '6months': 'Six months in, people notice. More importantly — you notice.',
+    '1year': 'One year. A completely different person standing in the mirror.'
+  };
+  var ovWaterGoal = 96; // oz
+  var ovCoachHistory = [];
+
+  function updateOverview() {
+    // Header meta
+    var wl = document.getElementById('dashWeekLabel');
+    document.getElementById('ovWeek').textContent = wl ? wl.textContent : '—';
+    var dg = document.getElementById('dashGoal');
+    document.getElementById('ovGoal').textContent = dg ? dg.textContent : (state.goal || '—');
+    var dl = document.getElementById('dashLevel');
+    document.getElementById('ovLevel').textContent = dl ? dl.textContent : (state.level || '—');
+
+    // Streak
+    var sc = document.getElementById('streakCount');
+    var streakVal = sc ? sc.textContent : (state.streak || 0);
+    document.getElementById('ovStreak').textContent = streakVal;
+    document.getElementById('ovStreak2').textContent = streakVal;
+
+    // Sessions/weeks
+    var sess = document.getElementById('sessionCount');
+    document.getElementById('ovSessions').textContent = sess ? sess.textContent : (state.sessions || 0);
+    var wks = document.getElementById('weekCount');
+    document.getElementById('ovWeeks').textContent = wks ? wks.textContent : '0';
+
+    // Daily question
+    var q = ovDailyQs[Math.floor(Date.now() / 86400000) % ovDailyQs.length];
+    document.getElementById('ovDailyQ').textContent = '"' + q + '"';
+
+    // Calories
+    var cc = document.getElementById('dashCalConsumed');
+    var cg = document.getElementById('dashCalGoal');
+    var consumed = cc ? parseInt(cc.textContent) || 0 : 0;
+    var goal = cg ? parseInt(cg.textContent) || 2000 : 2000;
+    document.getElementById('ovCalConsumed').textContent = consumed;
+    document.getElementById('ovCalGoal').textContent = goal;
+    var calPct = goal > 0 ? Math.min(100, Math.round(consumed / goal * 100)) : 0;
+    document.getElementById('ovCalBar').style.width = calPct + '%';
+    document.getElementById('ovMacroPct').textContent = calPct + '%';
+
+    // Macros from nutrition screen elements
+    var mp = document.getElementById('macroProtein');
+    var mc = document.getElementById('macroCarbs');
+    var mf = document.getElementById('macroFat');
+    var mcc = document.getElementById('macroCalories');
+    document.getElementById('ovMacroP').textContent = mp ? mp.textContent : '—';
+    document.getElementById('ovMacroC').textContent = mc ? mc.textContent : '—';
+    document.getElementById('ovMacroF').textContent = mf ? mf.textContent : '—';
+    document.getElementById('ovNutCal').textContent = mcc ? mcc.textContent : '—';
+    document.getElementById('ovNutP').textContent = mp ? mp.textContent : '—';
+    document.getElementById('ovNutC').textContent = mc ? mc.textContent : '—';
+    document.getElementById('ovNutF').textContent = mf ? mf.textContent : '—';
+
+    // Water
+    var today = new Date().toISOString().slice(0,10);
+    var d = {}; try { d = JSON.parse(localStorage.getItem('wylde_dash_' + today) || '{}'); } catch(e) {}
+    var waterOz = (d.water || 0) * 8;
+    document.getElementById('ovWaterVal').textContent = waterOz;
+    var wPct = Math.min(100, Math.round(waterOz / ovWaterGoal * 100));
+    document.getElementById('ovWaterBar').style.width = wPct + '%';
+    document.getElementById('ovWaterPct').textContent = wPct + '% of daily goal';
+    if (waterOz === 0) document.getElementById('ovHydroReply').textContent = 'Start with a glass. Hydration is the easiest win.';
+    else if (wPct < 40) document.getElementById('ovHydroReply').textContent = 'Keep drinking. Your performance depends on it.';
+    else if (wPct < 80) document.getElementById('ovHydroReply').textContent = 'Halfway there. Stay consistent.';
+    else document.getElementById('ovHydroReply').textContent = 'Dialled in. Hydration is locked.';
+
+    // Program exercises — read first day card
+    var exItems = document.querySelectorAll('#programOutput .ex-name-btn');
+    var exList = document.getElementById('ovExList');
+    if (exItems.length > 0) {
+      var html = '';
+      var count = Math.min(3, exItems.length);
+      for (var i = 0; i < count; i++) {
+        var sets = '';
+        var row = exItems[i].closest('.exercise');
+        if (row) { var sv = row.querySelector('.ex-sets'); if (sv) sets = sv.textContent; }
+        html += '<div class="ov-ex-row"><span>' + exItems[i].textContent + '</span><span class="ov-ex-sets">' + sets + '</span></div>';
+      }
+      exList.innerHTML = html;
+      document.getElementById('ovProgramBtn').style.display = 'none';
+    } else {
+      exList.innerHTML = '<p style="font-size:13px;color:var(--muted);font-family:var(--ff-serif);font-style:italic;margin-bottom:12px;">No program generated yet.</p>';
+      document.getElementById('ovProgramBtn').style.display = 'inline-block';
+    }
+  }
+
+  function ovToggle(id) {
+    var body = document.getElementById(id);
+    if (!body) return;
+    body.style.display = body.style.display === 'none' ? '' : 'none';
+  }
+
+  function ovRate(n) {
+    var stars = document.getElementById('ovStars').querySelectorAll('.ov-star');
+    stars.forEach(function(s, i) { s.classList.toggle('lit', i < n); });
+    var replies = {
+      1: "You showed up anyway. That's the whole game.",
+      2: "You showed up anyway. That's the whole game.",
+      3: "Neutral is fine. Let's make today count.",
+      4: "Good. Channel that. Don't waste it.",
+      5: "Locked in. This is what your future self feels like every morning."
+    };
+    document.getElementById('ovEnergyReply').textContent = replies[n] || '';
+    // Sync to dashboard energy
+    setEnergy(n <= 2 ? 'low' : n === 3 ? 'medium' : 'high');
+  }
+
+  function ovWater(delta) {
+    var today = new Date().toISOString().slice(0,10);
+    var d = {}; try { d = JSON.parse(localStorage.getItem('wylde_dash_' + today) || '{}'); } catch(e) {}
+    var glasses = Math.max(0, (d.water || 0) + delta / 8);
+    d.water = glasses;
+    localStorage.setItem('wylde_dash_' + today, JSON.stringify(d));
+    var waterOz = glasses * 8;
+    document.getElementById('ovWaterVal').textContent = waterOz;
+    var wPct = Math.min(100, Math.round(waterOz / ovWaterGoal * 100));
+    document.getElementById('ovWaterBar').style.width = wPct + '%';
+    document.getElementById('ovWaterPct').textContent = wPct + '% of daily goal';
+    // Sync dashboard water display
+    var dw = document.getElementById('dashWater');
+    if (dw) dw.textContent = glasses + ' glasses';
+  }
+
+  function ovTimeline(btn, key) {
+    document.querySelectorAll('.ov-tl-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('ovFutureDesc').textContent = ovTimelineDescs[key] || '';
+    // Also sync the main future self timeline
+    setTimeline(btn, key);
+  }
+
+  function ovToggleMuscle(btn) {
+    btn.classList.toggle('active');
+  }
+
+  function ovSendCoach() {
+    var input = document.getElementById('ovCoachInput');
+    var msg = input.value.trim();
+    if (!msg) return;
+    input.value = '';
+    var replyEl = document.getElementById('ovCoachReply');
+    replyEl.textContent = '...';
+
+    ovCoachHistory.push({ role: 'user', content: msg });
+    if (ovCoachHistory.length > 6) ovCoachHistory = ovCoachHistory.slice(ovCoachHistory.length - 6);
+
+    var profile = state.name
+      ? 'Client: ' + state.name + ', goal: ' + state.goal + ', level: ' + state.level + '.'
+      : 'Client has not set up profile yet.';
+
+    fetch('/api/anthropic', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 150,
+        system: 'You are the Wylde Coach — direct, grounded, world-class. Keep replies to 1-2 sentences max. ' + profile,
+        messages: ovCoachHistory.slice(0, -1).concat([{ role: 'user', content: msg }])
+      })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var reply = (data.content && data.content[0] && data.content[0].text) || "Keep going.";
+      ovCoachHistory.push({ role: 'assistant', content: reply });
+      replyEl.textContent = reply;
+    })
+    .catch(function() {
+      replyEl.textContent = "Connection dropped. Your commitment didn't. Try again.";
+    });
   }
 
   // COACH SIDEBAR
