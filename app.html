@@ -465,6 +465,7 @@
     <button class="nav-tab locked" onclick="showScreen('coach')">Coach</button>
     <button class="nav-tab locked" onclick="showScreen('progress')">Progress</button>
     <button class="nav-tab locked" onclick="showScreen('nutrition')">Nutrition</button>
+    <button class="nav-tab locked" onclick="showScreen('supplements')">Supplements</button>
     <button class="nav-tab locked" onclick="showScreen('health')">Health+</button>
   </div>
   <div class="nav-footer">
@@ -1257,7 +1258,7 @@
     if (id === 'nutrition' && state.weight) { calculateMacros(); }
     if (id === 'dashboard') { updateDashboard(); }
     if (id === 'overview') { updateOverview(); }
-    var tabs = { onboard:0, overview:1, dashboard:2, future:3, program:4, coach:5, progress:6, nutrition:7, health:8 };
+    var tabs = { onboard:0, overview:1, dashboard:2, future:3, program:4, coach:5, progress:6, nutrition:7, supplements:8, health:9 };
     document.querySelectorAll('.nav-tab')[tabs[id]].classList.add('active');
     currentScreen = id;
     if (sidebarOpen) updateCoachContext();
@@ -1641,17 +1642,17 @@
     });
   }
 
-  function renderStack(result) {
-    var output = document.getElementById('stackOutput');
+  function renderStack(result) { renderStackTo(result, 'stackOutput'); }
+
+  function renderStackTo(result, targetId) {
+    var output = document.getElementById(targetId);
     if (!result || !result.supplements || !result.supplements.length) {
       output.innerHTML = '<div style="padding:24px;text-align:center;"><p style="color:var(--muted);font-size:13px;">No data returned. Try again.</p></div>';
       return;
     }
 
-    var html = '';
-
-    html += '<div style="margin-bottom:20px;">' +
-      '<p style="font-family:var(--ff-hero);font-size:22px;letter-spacing:0.05em;color:var(--white);margin-bottom:6px;">' + (result.stack_name || 'Your Stack') + '</p>' +
+    var html = '<div style="margin-bottom:24px;">' +
+      '<p style="font-family:var(--ff-hero);font-size:24px;letter-spacing:0.05em;color:var(--white);margin-bottom:6px;">' + (result.stack_name || 'Your Stack') + '</p>' +
       '<p style="font-size:13px;color:var(--muted);line-height:1.6;">' + (result.stack_summary || '') + '</p>' +
     '</div>';
 
@@ -1678,15 +1679,62 @@
       html += '<div class="stack-total">' +
         '<div>' +
           '<p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;">Estimated Monthly Cost</p>' +
-          '<p style="font-size:16px;color:var(--gold);font-family:var(--ff-hero);letter-spacing:0.05em;">' + result.monthly_estimate + '</p>' +
+          '<p style="font-size:18px;color:var(--gold);font-family:var(--ff-hero);letter-spacing:0.05em;">' + result.monthly_estimate + '</p>' +
         '</div>' +
         '<p style="font-size:11px;color:var(--muted);max-width:280px;line-height:1.6;">Supplements purchased through Fullscript are practitioner-grade and independently tested for purity.</p>' +
       '</div>';
     }
 
-    html += '<p style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.7;font-family:var(--ff-serif);font-style:italic;">These recommendations are AI-generated based on your profile and are for informational purposes only. Consult your naturopath or healthcare provider before starting any new supplement protocol.</p>';
-
     output.innerHTML = html;
+  }
+
+  function generateStackMain() {
+    var btn = document.getElementById('stackBtnMain');
+    var output = document.getElementById('stackOutputMain');
+    btn.textContent = 'Analysing your profile...';
+    btn.disabled = true;
+
+    output.innerHTML = '<div style="padding:40px;text-align:center;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:14px;color:var(--muted);">Building your personalised stack...</p><div style="width:40px;height:1px;background:var(--gold);margin:16px auto 0;"></div></div>';
+
+    var profile = 'Name: ' + (state.name || 'User') +
+      '. Gender: ' + (state.gender || 'Not specified') +
+      '. Age: ' + (state.age || 'Not specified') +
+      '. Weight: ' + (state.weight || '?') + (state.weightUnit || 'lbs') +
+      '. Goal: ' + (state.goal || 'General health') +
+      '. Fitness level: ' + (state.level || 'Intermediate') +
+      '. Training days: ' + (state.days || '3-4 days') +
+      '. Health concerns: ' + (state.health && state.health.length ? state.health.join(', ') : 'none') +
+      '. Dietary restrictions: ' + (state.diet && state.diet.length ? state.diet.join(', ') : 'none') +
+      '. Health notes: ' + (state.healthNotes || 'none') + '.';
+
+    fetch('/api/anthropic', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1500,
+        system: 'You are an expert sports nutritionist and supplement specialist. Given a client profile, recommend a personalised supplement stack of 4-6 supplements. Return ONLY a valid JSON object with no markdown, no explanation. The object must have: "stack_name" (string, e.g. "Muscle Building Foundation Stack"), "stack_summary" (string, one sentence describing the overall stack goal), "monthly_estimate" (string, estimated monthly cost range e.g. "$120–$160/mo"), "supplements" (array of objects). Each supplement object must have: "name" (exact product-style name e.g. "Creatine Monohydrate"), "brand_suggestion" (string, a reputable brand available on Fullscript e.g. "Thorne, Pure Encapsulations, or Designs for Health"), "dose" (string e.g. "5g daily"), "timing" (string, when and how to take it), "why" (string, 2 sentences explaining why this specific person needs this based on their profile), "priority" (string, either "essential" or "recommended"), "fullscript_search" (string, search term to find this product on Fullscript e.g. "creatine monohydrate powder"). Be precise and evidence-based. Tailor every recommendation to the specific client profile provided.',
+        messages: [{ role: 'user', content: 'Build a supplement stack for this client: ' + profile }]
+      })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      btn.textContent = 'Regenerate Stack';
+      btn.disabled = false;
+      var text = (data.content && data.content[0] && data.content[0].text) || '{}';
+      try {
+        var clean = text.replace(/```json|```/g, '').trim();
+        var result = JSON.parse(clean);
+        renderStackTo(result, 'stackOutputMain');
+      } catch(e) {
+        output.innerHTML = '<div style="padding:24px;text-align:center;"><p style="color:var(--muted);font-size:13px;">Could not generate stack. Try again.</p></div>';
+      }
+    })
+    .catch(function() {
+      btn.textContent = 'Build My Stack';
+      btn.disabled = false;
+      output.innerHTML = '<div style="padding:24px;text-align:center;"><p style="color:var(--muted);font-size:13px;">Connection error. Try again.</p></div>';
+    });
   }
 
   // COACH SIDEBAR
@@ -2931,9 +2979,10 @@
       </div>
       <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px;">Your AI coach analyses your profile, goals, and health history to recommend the exact supplements you need — with dosing, timing, and why each one matters for you specifically.</p>
 
-      <button class="btn" id="stackBtn" onclick="generateStack()" style="margin-bottom:24px;">Build My Stack</button>
-
-      <div id="stackOutput"></div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
+        <button class="btn" onclick="showScreen('supplements')" style="margin-bottom:0;">Open Supplement Marketplace →</button>
+      </div>
+      <p style="font-size:12px;color:var(--muted);line-height:1.6;font-family:var(--ff-serif);font-style:italic;">Get your AI-personalised stack with dosing, timing, and direct Fullscript purchasing.</p>
     </div>
 
     <!-- PEPTIDE LIBRARY -->
@@ -3228,6 +3277,38 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- ═══ SUPPLEMENTS ═══ -->
+<div class="screen" id="screen-supplements">
+  <div class="container">
+    <p class="section-label">Supplement Marketplace</p>
+    <h1 class="screen-title">Stack built<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">for you</span></h1>
+    <p class="screen-sub">Your AI coach analyses your profile, goals, and health history to recommend the exact supplements you need — with dosing, timing, and why each one matters for you specifically.</p>
+    <div class="gold-rule"></div>
+
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:32px;padding:16px 20px;background:rgba(200,169,110,0.04);border:1px solid rgba(200,169,110,0.12);">
+      <div style="width:36px;height:36px;border:1px solid rgba(200,169,110,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">◎</div>
+      <div>
+        <p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:2px;">Powered by Fullscript</p>
+        <p style="font-size:12px;color:var(--muted);line-height:1.5;">Practitioner-grade supplements, independently tested for purity. Dispensed via Wylde Self Health.</p>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:32px;flex-wrap:wrap;">
+      <button class="btn" id="stackBtnMain" onclick="generateStackMain()">Build My Stack</button>
+      <p style="font-size:12px;color:var(--muted);font-family:var(--ff-serif);font-style:italic;">Personalised to your profile, goal &amp; health history</p>
+    </div>
+
+    <div id="stackOutputMain">
+      <div style="background:#161616;border:1px solid var(--border);padding:40px;text-align:center;">
+        <p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);line-height:1.7;">Your personalised supplement stack will appear here.<br>Hit the button above to get your AI recommendation.</p>
+        <div style="width:40px;height:1px;background:var(--gold);margin:20px auto 0;"></div>
+      </div>
+    </div>
+
+    <p style="font-size:11px;color:var(--muted);margin-top:24px;line-height:1.7;font-family:var(--ff-serif);font-style:italic;">These recommendations are AI-generated based on your profile and are for informational purposes only. Consult your naturopath or healthcare provider before starting any new supplement protocol.</p>
   </div>
 </div>
 
