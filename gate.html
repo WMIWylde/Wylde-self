@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wylde Self — Private Access</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--black:#080808;--surface:#161616;--surface2:#1c1c1c;
+--border:rgba(255,255,255,0.08);--border-gold:rgba(200,169,110,0.35);
+--white:#f5f4f0;--muted:#a0a098;--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.1);
+--ff-hero:'Bebas Neue',sans-serif;--ff-serif:'Cormorant Garamond',serif;--ff-body:'DM Sans',sans-serif;
+}
+html,body{height:100%;background:var(--black);color:var(--white);font-family:var(--ff-body);-webkit-font-smoothing:antialiased}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle at 50% 50%,rgba(200,169,110,0.03) 0%,transparent 70%);pointer-events:none;z-index:0}
+.card{position:relative;z-index:1;width:100%;max-width:400px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px 36px 36px;animation:fadeUp 0.6s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.brand{font-family:var(--ff-hero);font-size:22px;letter-spacing:0.16em;color:var(--gold);text-align:center;margin-bottom:6px}
+.tagline{font-family:var(--ff-serif);font-size:15px;font-style:italic;color:var(--muted);text-align:center;margin-bottom:36px;line-height:1.5}
+.divider{width:40px;height:1px;background:rgba(200,169,110,0.35);margin:0 auto 32px}
+label{display:block;font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+input[type="password"]{width:100%;padding:13px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-family:var(--ff-body);font-size:15px;color:var(--white);letter-spacing:0.2em;outline:none;transition:border-color 0.2s}
+input[type="password"]:focus{border-color:rgba(200,169,110,0.35)}
+input[type="password"]::placeholder{color:#3a3a38;letter-spacing:0.1em}
+.btn{width:100%;margin-top:16px;padding:13px;background:var(--gold);border:none;border-radius:8px;font-family:var(--ff-body);font-size:12px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--black);cursor:pointer;transition:opacity 0.2s,transform 0.1s}
+.btn:hover{opacity:0.88}.btn:active{transform:scale(0.98)}
+.error{font-family:var(--ff-serif);font-size:13px;font-style:italic;color:#c0614a;text-align:center;margin-top:14px;min-height:20px;opacity:0;transition:opacity 0.3s}
+.error.show{opacity:1}
+.hint{font-size:11px;color:var(--muted);text-align:center;margin-top:28px;line-height:1.6;opacity:0.6}
+.hint a{color:var(--gold);text-decoration:none;opacity:0.8}
+.hint a:hover{opacity:1}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.shake{animation:shake 0.4s ease}
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="brand">Wylde Self</div>
+  <div class="tagline">Private access only.<br>You were invited here.</div>
+  <div class="divider"></div>
+  <label for="pw">Access code</label>
+  <input type="password" id="pw" placeholder="· · · · · · · ·" autocomplete="off" autofocus>
+  <button class="btn" onclick="check()">Enter</button>
+  <div class="error" id="err">That's not it. Try again.</div>
+  <div class="hint">Don't have a code? <a href="https://www.wyldeself.com">Join the waitlist</a></div>
+</div>
+<script>
+var ACCESS_CODE='wylde2025';
+var DESTINATION='/app.html';
+var SESSION_KEY='wylde_gate';
+var MAX_ATTEMPTS=5;
+var attempts=0;
+if(sessionStorage.getItem(SESSION_KEY)==='1'){window.location.replace(DESTINATION)}
+function check(){
+  var val=document.getElementById('pw').value.trim();
+  var err=document.getElementById('err');
+  var card=document.getElementById('card');
+  if(val===ACCESS_CODE){
+    sessionStorage.setItem(SESSION_KEY,'1');
+    document.querySelector('.btn').textContent='Welcome.';
+    document.querySelector('.btn').style.background='#1D9E75';
+    setTimeout(function(){window.location.replace(DESTINATION)},600);
+  } else {
+    attempts++;
+    err.classList.add('show');
+    card.classList.remove('shake');
+    void card.offsetWidth;
+    card.classList.add('shake');
+    if(attempts>=MAX_ATTEMPTS){
+      err.textContent='Too many attempts. Request access below.';
+      document.getElementById('pw').disabled=true;
+      document.querySelector('.btn').disabled=true;
+      document.querySelector('.btn').style.opacity='0.4';
+    }
+    setTimeout(function(){err.classList.remove('show')},3000);
+  }
+}
+document.getElementById('pw').addEventListener('keydown',function(e){if(e.key==='Enter')check()});
+</script>
+</body>
+</html>

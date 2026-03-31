@@ -349,7 +349,7 @@
         <div class="form-success" id="heroSuccess">You're in. We'll be in touch.</div>
         <p class="form-note">No spam. Early access only.</p>
         <div style="margin-top:24px;">
-          <a href="/app.html" id="heroDemoBtn" onclick="return checkDemo(event)" style="display:inline-block;font-family:var(--ff-body);font-size:13px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);padding:13px 32px;text-decoration:none;transition:all 0.2s;background:transparent;" onmouseover="this.style.background='rgba(200,169,110,0.1)'" onmouseout="this.style.background='transparent'">
+          <a href="/gate.html" id="heroDemoBtn" onclick="return checkDemo(event)" style="display:inline-block;font-family:var(--ff-body);font-size:13px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);padding:13px 32px;text-decoration:none;transition:all 0.2s;background:transparent;" onmouseover="this.style.background='rgba(200,169,110,0.1)'" onmouseout="this.style.background='transparent'">
             Try the Early Demo →
           </a>
         </div>
@@ -456,7 +456,7 @@
         <div class="form-success" id="ctaSuccess">You're in. We'll be in touch soon.</div>
         <p class="form-note">Be part of the first release of Wylde Self.</p>
         <div style="margin-top:24px;">
-          <a href="/app.html" onclick="return checkDemo(event)" style="display:inline-block;font-family:var(--ff-body);font-size:13px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);padding:13px 32px;text-decoration:none;transition:all 0.2s;background:transparent;" onmouseover="this.style.background='rgba(200,169,110,0.1)'" onmouseout="this.style.background='transparent'">
+          <a href="/gate.html" onclick="return checkDemo(event)" style="display:inline-block;font-family:var(--ff-body);font-size:13px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);padding:13px 32px;text-decoration:none;transition:all 0.2s;background:transparent;" onmouseover="this.style.background='rgba(200,169,110,0.1)'" onmouseout="this.style.background='transparent'">
             Try the Early Demo →
           </a>
         </div>
@@ -549,7 +549,7 @@
       if (heroSuccess && heroSuccess.style.display === 'block') {
         // They submitted but page refreshed — let them through
         sessionStorage.setItem('wylde_submitted', '1');
-        window.location.href = '/app.html';
+        window.location.href = '/gate.html';
         return false;
       }
       // Scroll to hero form and highlight it
