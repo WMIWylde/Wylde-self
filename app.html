@@ -1759,29 +1759,31 @@
     var da = document.getElementById('dashAvatar');
     if (da) da.src = url;
     var afterImg = document.getElementById('afterImg');
+    var _revealed = false;
     var timeout = setTimeout(function() {
+      if (_revealed) return;
+      _revealed = true;
       afterImg.onload = null;
       afterImg.onerror = null;
-      revealFutureSelf();
+      revealFutureSelf(url);
     }, 10000);
     afterImg.onload = function() {
+      if (_revealed) return;
+      _revealed = true;
       afterImg.onload = null;
       afterImg.onerror = null;
       clearTimeout(timeout);
-      revealFutureSelf();
+      revealFutureSelf(url);
     };
     afterImg.onerror = function() {
+      if (_revealed) return;
+      _revealed = true;
       afterImg.onload = null;
       afterImg.onerror = null;
       clearTimeout(timeout);
-      revealFutureSelf();
+      revealFutureSelf(url);
     };
     afterImg.src = url;
-    var tag = document.getElementById('becomingTag');
-    if (tag) {
-      var tl = window.selectedTimeline || '12weeks';
-      tag.textContent = tl === '12weeks' ? '12 Weeks' : tl === '6months' ? '6 Months' : '1 Year';
-    }
   }
 
   function pollFalResult(requestId, attempts) {
@@ -1828,11 +1830,16 @@
       });
   }
 
-  function revealFutureSelf() {
+  function revealFutureSelf(imageUrl) {
     console.log('Revealing future self...');
     document.getElementById('generateProgress').style.display = 'none';
-    document.getElementById('comparison').classList.add('show');
-    document.getElementById('futureActions').style.display = 'block';
+    document.getElementById('comparison').style.display = 'grid';
+    document.getElementById('futureActions').style.display = 'flex';
+    var tag = document.getElementById('becomingTag');
+    if (tag) {
+      var tl = window.selectedTimeline || '12weeks';
+      tag.textContent = tl === '12weeks' ? '12 Weeks' : tl === '6months' ? '6 Months' : '1 Year';
+    }
   }
 
   function resetPhoto() {
