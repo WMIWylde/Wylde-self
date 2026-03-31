@@ -1798,15 +1798,15 @@
       revealFutureSelf();
     }, 10000);
     afterImg.onload = function() {
-      clearTimeout(timeout);
       afterImg.onload = null;
       afterImg.onerror = null;
+      clearTimeout(timeout);
       revealFutureSelf();
     };
     afterImg.onerror = function() {
-      clearTimeout(timeout);
       afterImg.onload = null;
       afterImg.onerror = null;
+      clearTimeout(timeout);
       revealFutureSelf();
     };
     afterImg.src = url;
@@ -1848,12 +1848,6 @@
   function revealFutureSelf() {
     console.log('Revealing future self...');
     document.getElementById('generateProgress').style.display = 'none';
-    if (!state.avatarUrl) {
-      setAfterImage();
-    } else {
-      var afterImg = document.getElementById('afterImg');
-      if (afterImg) afterImg.src = state.avatarUrl;
-    }
     document.getElementById('comparison').classList.add('show');
     document.getElementById('futureActions').style.display = 'block';
   }
