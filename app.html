@@ -1585,28 +1585,17 @@
   }
 
   // COACH
-  var coachResponses = [
-    "You already have what it takes. The question is whether you're willing to show up when it doesn't feel easy.",
-    "I didn't get here by being motivated every day. I got here by deciding who I was — and acting like it.",
-    "That feeling you get before a session — that resistance — that's exactly where the identity shift happens. Push through it.",
-    "Every rep you do is a vote for the person you're becoming. Small votes. Consistent votes. That's how you win.",
-    "Rest is part of the work. Don't confuse rest days with quitting. Recovery is how you come back stronger.",
-    "The version of you standing in the mirror six months from now is shaped by the decisions you make today.",
-    "Nutrition is the other half of this. You can't out-train a bad diet. What you eat is a statement about who you are.",
-    "Comparison is the enemy. The only person you're competing with is who you were yesterday.",
-    "Progress feels slow until you look back. Keep a log. You'll be surprised how far you've come.",
-    "I know it's hard. I was where you are. That's exactly why I know you can do this."
-  ];
-  var coachIdx = 0;
+  var chatHistory = [];
 
   function sendMessage() {
     var input = document.getElementById('chatInput');
     var msg = input.value.trim();
     if (!msg) return;
     input.value = '';
+
     var messages = document.getElementById('chatMessages');
 
-    // User message
+    // User bubble
     var userDiv = document.createElement('div');
     userDiv.className = 'msg msg-user';
     userDiv.innerHTML = '<div class="msg-label">' + (state.name || 'You') + '</div><div class="msg-bubble">' + msg + '</div>';
@@ -1616,31 +1605,46 @@
     // Typing indicator
     var typingDiv = document.createElement('div');
     typingDiv.className = 'msg msg-ai';
-    typingDiv.innerHTML = '<div class="msg-label">Wylde Coach</div><div class="msg-bubble"><span class="typing-cursor"></span></div>';
+    typingDiv.innerHTML = '<div class="msg-label">Wylde Coach</div><div class="msg-bubble" style="display:flex;gap:4px;align-items:center;"><span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:typing-dot 1.2s ease-in-out infinite;"></span><span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:typing-dot 1.2s ease-in-out infinite;animation-delay:0.2s;"></span><span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:typing-dot 1.2s ease-in-out infinite;animation-delay:0.4s;"></span></div>';
     messages.appendChild(typingDiv);
     messages.scrollTop = messages.scrollHeight;
 
-    // Response
-    var response = coachResponses[coachIdx % coachResponses.length];
-    coachIdx++;
-    setTimeout(function() {
+    chatHistory.push({ role: 'user', content: msg });
+    if (chatHistory.length > 8) chatHistory = chatHistory.slice(chatHistory.length - 8);
+
+    var profile = state.name
+      ? 'Client: ' + state.name + ', ' + state.gender + ', goal: ' + state.goal + ', level: ' + state.level + ', ' + state.days + '/week, weight: ' + state.weight + state.weightUnit + '.'
+      : 'Client has not set up profile yet.';
+
+    fetch('/api/anthropic', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 300,
+        system: 'You are the Wylde Coach — a direct, grounded, world-class personal coach inside the Wylde Self app. You speak like a trusted mentor who has already been where this person is going. You are motivating but never cheesy. Keep responses to 2-4 sentences max unless detail is specifically asked for. You know this person deeply. ' + profile,
+        messages: chatHistory.slice(0, -1).concat([{ role: 'user', content: msg }])
+      })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      typingDiv.remove();
+      var reply = (data.content && data.content[0] && data.content[0].text) || "I'm here. Keep going.";
+      chatHistory.push({ role: 'assistant', content: reply });
+      var aiDiv = document.createElement('div');
+      aiDiv.className = 'msg msg-ai';
+      aiDiv.innerHTML = '<div class="msg-label">Wylde Coach</div><div class="msg-bubble">' + reply.replace(/\n/g, '<br>') + '</div>';
+      messages.appendChild(aiDiv);
+      messages.scrollTop = messages.scrollHeight;
+    })
+    .catch(function() {
       typingDiv.remove();
       var aiDiv = document.createElement('div');
       aiDiv.className = 'msg msg-ai';
-      aiDiv.innerHTML = '<div class="msg-label">Wylde Coach</div><div class="msg-bubble"></div>';
+      aiDiv.innerHTML = '<div class="msg-label">Wylde Coach</div><div class="msg-bubble">Connection dropped. But your commitment didn\'t. Try again.</div>';
       messages.appendChild(aiDiv);
-      var bubble = aiDiv.querySelector('.msg-bubble');
-      var i = 0;
-      function typeChar() {
-        if (i < response.length) {
-          bubble.textContent += response[i];
-          i++;
-          messages.scrollTop = messages.scrollHeight;
-          setTimeout(typeChar, 18);
-        }
-      }
-      typeChar();
-    }, 900);
+      messages.scrollTop = messages.scrollHeight;
+    });
   }
 
   // PROGRESS
