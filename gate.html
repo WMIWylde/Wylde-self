@@ -74,7 +74,7 @@
       <p class="code-error" id="codeError">Invalid access code. Check your email or contact wilke@wyldeself.com</p>
     </div>
 
-    <button class="btn" id="enterBtn" onclick="enterDemo()" disabled>ENTER THE DEMO</button>
+    <button class="btn" id="enterBtn" onclick="enterDemo()">ENTER THE DEMO</button>
     <p class="skip-code" id="skipCode" onclick="skipCodeEntry()">I don't have a code yet — request access</p>
   </div>
 
@@ -103,14 +103,19 @@
     }
 
     function updateBtn() {
-      var btn = document.getElementById('enterBtn');
-      btn.disabled = !consented;
+      // Keep button always enabled — validate on submit instead
     }
 
     document.getElementById('accessCode').addEventListener('input', updateBtn);
 
     function enterDemo() {
-      if (!consented) return;
+      if (!consented) {
+        var checkEl = document.getElementById('customCheck');
+        checkEl.style.border = '1px solid rgba(220,80,80,0.6)';
+        setTimeout(function() { checkEl.style.border = '1px solid rgba(200,169,110,0.4)'; }, 2000);
+        return;
+      }
+      console.log('Gate: consented=' + consented + ' code=' + document.getElementById('accessCode').value);
       var code = document.getElementById('accessCode').value.trim().toUpperCase();
       var errorEl = document.getElementById('codeError');
 
