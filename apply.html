@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080808">
+<title>Apply — Wylde Self 30-Day Beta Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#080808;--surface:#161616;--surface2:#1c1c1c;
+  --border:rgba(255,255,255,0.08);--border-gold:rgba(200,169,110,0.4);
+  --white:#f5f4f0;--muted:#a0a098;
+  --gold:#c8a96e;--gold-dim:rgba(200,169,110,0.1);
+  --red:#c0614a;
+  --ff-hero:'Bebas Neue',sans-serif;
+  --ff-serif:'Cormorant Garamond',serif;
+  --ff-body:'DM Sans',sans-serif;
+}
+html,body{background:var(--black);color:var(--white);font-family:var(--ff-body);-webkit-font-smoothing:antialiased;line-height:1.6}
+
+/* NAV */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,8,8,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px}
+.nav-logo{font-family:var(--ff-hero);font-size:18px;letter-spacing:0.16em;color:var(--gold);text-decoration:none}
+.nav-tag{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);opacity:0.7}
+
+/* LAYOUT */
+.wrap{max-width:720px;margin:0 auto;padding:96px 24px 80px}
+
+/* HERO */
+.section-label{font-size:10px;font-weight:500;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+h1.hero{font-family:var(--ff-hero);font-size:clamp(52px,8vw,80px);letter-spacing:0.04em;color:var(--white);line-height:1;margin-bottom:12px}
+.hero-sub{font-family:var(--ff-serif);font-size:clamp(16px,2.5vw,20px);font-style:italic;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.gold-rule{width:48px;height:1px;background:var(--border-gold);margin:20px 0 24px}
+.hero-body{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:28px;max-width:600px}
+.stat-pills{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:48px}
+.stat-pill{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);border:1px solid var(--border-gold);padding:6px 16px}
+
+/* FORM SECTIONS */
+.form-section{margin-top:48px;padding-top:32px;border-top:1px solid var(--border)}
+.form-section-label{font-size:10px;font-weight:500;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;display:block}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+input[type="text"],input[type="email"],input[type="number"],input[type="tel"],select,textarea{
+  width:100%;padding:14px 18px;background:var(--surface);border:1px solid var(--border);
+  color:var(--white);font-family:var(--ff-body);font-size:14px;outline:none;
+  transition:border-color 0.2s;-webkit-appearance:none;appearance:none;border-radius:0
+}
+input:focus,select:focus,textarea:focus{border-color:var(--border-gold)}
+input::placeholder,textarea::placeholder{color:#3a3a38}
+input.error,select.error,textarea.error{border-color:var(--red)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23a0a098'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:36px;cursor:pointer}
+select option{background:var(--surface)}
+textarea{resize:vertical;min-height:80px;line-height:1.6}
+
+/* SIDE-BY-SIDE */
+.row{display:grid;gap:12px}
+.row-2{grid-template-columns:1fr 1fr}
+.row-weight{grid-template-columns:1fr 100px}
+@media(max-width:600px){.row-2,.row-weight{grid-template-columns:1fr}}
+
+/* PILL CHECKBOXES & RADIO */
+.pill-group{display:flex;flex-wrap:wrap;gap:8px}
+.pill-group input[type="checkbox"],.pill-group input[type="radio"]{display:none}
+.pill-group label{font-size:12px;letter-spacing:0.06em;padding:7px 14px;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all 0.15s;-webkit-user-select:none;user-select:none}
+.pill-group input[type="checkbox"]:checked+label,.pill-group input[type="radio"]:checked+label{border-color:var(--gold);color:var(--gold);background:var(--gold-dim)}
+.pill-group label:hover{border-color:rgba(200,169,110,0.3);color:var(--white)}
+
+/* RANGE SLIDERS */
+.range-wrap{display:flex;align-items:center;gap:16px;margin-top:4px}
+input[type="range"]{flex:1;-webkit-appearance:none;appearance:none;height:2px;background:rgba(255,255,255,0.1);outline:none;border:none;padding:0;cursor:pointer}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--black)}
+input[type="range"]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--black)}
+input[type="range"]::-webkit-slider-runnable-track{background:linear-gradient(to right,var(--gold) var(--pct,50%),rgba(255,255,255,0.1) var(--pct,50%))}
+.range-val{font-family:var(--ff-hero);font-size:22px;letter-spacing:0.04em;color:var(--gold);min-width:28px;text-align:right;line-height:1}
+.range-labels{display:flex;justify-content:space-between;margin-top:4px}
+.range-labels span{font-size:10px;color:var(--muted);letter-spacing:0.06em}
+
+/* CONSENT */
+.consent-row{display:flex;align-items:flex-start;gap:12px;margin-top:12px}
+.consent-row input[type="checkbox"]{width:18px;height:18px;margin-top:2px;accent-color:var(--gold);cursor:pointer;flex-shrink:0}
+.consent-row label{font-size:13px;color:var(--muted);line-height:1.6;cursor:pointer}
+
+/* SUBMIT BUTTON */
+.submit-btn{width:100%;margin-top:28px;padding:18px;background:var(--gold);border:none;color:var(--black);font-family:var(--ff-hero);font-size:18px;letter-spacing:0.2em;cursor:pointer;transition:opacity 0.2s,transform 0.1s}
+.submit-btn:hover{opacity:0.88}
+.submit-btn:active{transform:scale(0.99)}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed}
+.submit-note{font-family:var(--ff-serif);font-size:14px;font-style:italic;color:var(--muted);text-align:center;margin-top:14px;line-height:1.6}
+.form-error{font-size:13px;color:var(--red);text-align:center;margin-top:12px;min-height:18px;font-family:var(--ff-serif);font-style:italic}
+
+/* SUCCESS STATE */
+#successState{display:none;min-height:calc(100vh - 56px);align-items:center;justify-content:center;text-align:center;padding:40px 24px;flex-direction:column}
+.success-logo{font-family:var(--ff-hero);font-size:20px;letter-spacing:0.16em;color:var(--gold);margin-bottom:40px}
+.success-check{font-size:40px;color:var(--gold);margin-bottom:16px;line-height:1}
+.success-h2{font-family:var(--ff-hero);font-size:clamp(32px,6vw,52px);letter-spacing:0.08em;color:var(--white);margin-bottom:12px}
+.success-msg{font-family:var(--ff-serif);font-size:18px;font-style:italic;color:var(--muted);line-height:1.6;margin-bottom:10px;max-width:480px}
+.success-small{font-size:12px;color:var(--muted);letter-spacing:0.06em;opacity:0.7}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <a class="nav-logo" href="https://www.wyldeself.com">WS</a>
+  <span class="nav-tag">30-Day Beta Program</span>
+</nav>
+
+<!-- MAIN WRAP -->
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="section-label">Early Access</div>
+  <h1 class="hero">Join the First 30</h1>
+  <p class="hero-sub">Apply for the Wylde Self 30-day beta program. Limited spots. Real results.</p>
+  <div class="gold-rule"></div>
+  <p class="hero-body">We're selecting 30 founding members to test the full Wylde Self experience — AI coaching, personalised programs, Future Self image generation, functional medicine consultations, and supplement stacks. In exchange for your honest feedback, you get everything free for 30 days.</p>
+  <div class="stat-pills">
+    <div class="stat-pill">30 Spots</div>
+    <div class="stat-pill">30 Days</div>
+    <div class="stat-pill">100% Free</div>
+  </div>
+
+  <!-- SUCCESS STATE -->
+  <div id="successState">
+    <div class="success-logo">Wylde Self</div>
+    <div class="success-check">✓</div>
+    <h2 class="success-h2">Application Received</h2>
+    <p class="success-msg" id="successMsg">Thank you. We'll review your application and be in touch within 48 hours.</p>
+    <p class="success-small" id="successEmail"></p>
+  </div>
+
+  <!-- FORM -->
+  <form id="applyForm" novalidate>
+    <input type="hidden" name="_subject" value="New Wylde Self Beta Application">
+    <input type="hidden" name="form_source" value="apply.html">
+
+    <!-- SECTION 1 — ABOUT YOU -->
+    <div class="form-section">
+      <span class="form-section-label">About You</span>
+
+      <div class="field">
+        <label for="full_name">Full Name *</label>
+        <input type="text" id="full_name" name="full_name" required placeholder="Your full name">
+      </div>
+
+      <div class="row row-2">
+        <div class="field">
+          <label for="email">Email *</label>
+          <input type="email" id="email" name="email" required placeholder="you@email.com">
+        </div>
+        <div class="field">
+          <label for="phone">Phone *</label>
+          <input type="tel" id="phone" name="phone" required placeholder="+1 555 000 0000">
+        </div>
+      </div>
+
+      <div class="row row-2">
+        <div class="field">
+          <label for="age">Age *</label>
+          <input type="number" id="age" name="age" required placeholder="e.g. 28" min="16" max="80">
+        </div>
+        <div class="field">
+          <label for="gender">Gender</label>
+          <select id="gender" name="gender">
+            <option value="">Select...</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Non-binary</option>
+            <option>Prefer not to say</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="timezone">Timezone</label>
+        <input type="text" id="timezone" name="timezone" placeholder="e.g. PST, EST, GMT+10">
+      </div>
+    </div>
+
+    <!-- SECTION 2 — YOUR GOALS -->
+    <div class="form-section">
+      <span class="form-section-label">Your Goals</span>
+
+      <div class="field">
+        <label for="primary_goal">Primary Goal</label>
+        <select id="primary_goal" name="primary_goal">
+          <option value="">Select your goal...</option>
+          <option>Lose body fat</option>
+          <option>Build muscle</option>
+          <option>Body recomposition</option>
+          <option>Improve energy</option>
+          <option>Athletic performance</option>
+          <option>Get back into shape</option>
+          <option>General health</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="goal_description">Describe your goal in your own words</label>
+        <textarea id="goal_description" name="goal_description" rows="3" placeholder="What does success look like for you after 30 days?"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Motivation — how badly do you want this?</label>
+        <div class="range-wrap">
+          <input type="range" id="motivation" name="motivation" min="1" max="10" value="7" oninput="updateRange(this,'motivationVal')">
+          <div class="range-val" id="motivationVal">7</div>
+        </div>
+        <div class="range-labels"><span>Not really</span><span>Absolutely burning</span></div>
+      </div>
+
+      <div class="field">
+        <label for="why_now">Why now? What's changed?</label>
+        <textarea id="why_now" name="why_now" rows="3" placeholder="What's made this the right moment for you?"></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 3 — YOUR BODY -->
+    <div class="form-section">
+      <span class="form-section-label">Your Body</span>
+
+      <div class="field">
+        <label>Current Weight</label>
+        <div class="row row-weight">
+          <input type="number" id="current_weight" name="current_weight" placeholder="e.g. 185">
+          <select id="weight_unit" name="weight_unit">
+            <option value="lbs">lbs</option>
+            <option value="kg">kg</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row row-2">
+        <div class="field">
+          <label for="height">Height</label>
+          <input type="text" id="height" name="height" placeholder="e.g. 5'10&quot; or 178cm">
+        </div>
+        <div class="field">
+          <label for="goal_weight">Goal Weight</label>
+          <input type="number" id="goal_weight" name="goal_weight" placeholder="e.g. 170">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="body_fat">Estimated Body Fat %</label>
+        <input type="text" id="body_fat" name="body_fat" placeholder="e.g. 18% or unsure">
+      </div>
+    </div>
+
+    <!-- SECTION 4 — YOUR TRAINING -->
+    <div class="form-section">
+      <span class="form-section-label">Your Training</span>
+
+      <div class="row row-2">
+        <div class="field">
+          <label for="fitness_level">Current Fitness Level</label>
+          <select id="fitness_level" name="fitness_level">
+            <option value="">Select...</option>
+            <option>Beginner</option>
+            <option>Beginner-Intermediate</option>
+            <option>Intermediate</option>
+            <option>Advanced</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="training_days">Training Days Per Week</label>
+          <select id="training_days" name="training_days">
+            <option value="">Select...</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6+</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="workout_duration">Typical Workout Duration</label>
+        <select id="workout_duration" name="workout_duration">
+          <option value="">Select...</option>
+          <option>20-30 min</option>
+          <option>30-45 min</option>
+          <option>45-60 min</option>
+          <option>60+ min</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Where do you train?</label>
+        <div class="pill-group" id="training_location_group">
+          <input type="checkbox" id="tl_gym" name="training_location[]" value="Gym">
+          <label for="tl_gym">Gym</label>
+          <input type="checkbox" id="tl_home" name="training_location[]" value="Home gym">
+          <label for="tl_home">Home gym</label>
+          <input type="checkbox" id="tl_limited" name="training_location[]" value="Limited equipment">
+          <label for="tl_limited">Limited equipment</label>
+          <input type="checkbox" id="tl_outdoor" name="training_location[]" value="Outdoors">
+          <label for="tl_outdoor">Outdoors</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="has_injury">Any injuries or movement limitations?</label>
+        <select id="has_injury" name="has_injury" onchange="toggleInjuryDetail(this.value)">
+          <option value="No">No</option>
+          <option value="Yes">Yes</option>
+        </select>
+      </div>
+      <div class="field" id="injuryDetailField" style="display:none">
+        <label for="injury_detail">Please describe</label>
+        <textarea id="injury_detail" name="injury_detail" rows="2" placeholder="Location, duration, how it affects your training"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="equipment">Equipment available</label>
+        <textarea id="equipment" name="equipment" rows="2" placeholder="e.g. full gym, dumbbells only, bodyweight"></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 5 — YOUR NUTRITION -->
+    <div class="form-section">
+      <span class="form-section-label">Your Nutrition</span>
+
+      <div class="row row-2">
+        <div class="field">
+          <label for="nutrition_consistency">How consistent is your nutrition?</label>
+          <select id="nutrition_consistency" name="nutrition_consistency">
+            <option value="">Select...</option>
+            <option>Very consistent</option>
+            <option>Mostly good</option>
+            <option>Inconsistent</option>
+            <option>I know what to do but don't do it</option>
+            <option>Poor</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="nutrition_goal">Primary nutrition goal</label>
+          <select id="nutrition_goal" name="nutrition_goal">
+            <option value="">Select...</option>
+            <option>Fat loss</option>
+            <option>Muscle gain</option>
+            <option>More energy</option>
+            <option>Better consistency</option>
+            <option>Reduce cravings</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Diet style</label>
+        <div class="pill-group">
+          <input type="checkbox" id="diet_hp" name="diet_style[]" value="High protein"><label for="diet_hp">High protein</label>
+          <input type="checkbox" id="diet_lc" name="diet_style[]" value="Low carb"><label for="diet_lc">Low carb</label>
+          <input type="checkbox" id="diet_keto" name="diet_style[]" value="Keto"><label for="diet_keto">Keto</label>
+          <input type="checkbox" id="diet_paleo" name="diet_style[]" value="Paleo"><label for="diet_paleo">Paleo</label>
+          <input type="checkbox" id="diet_veg" name="diet_style[]" value="Vegetarian"><label for="diet_veg">Vegetarian</label>
+          <input type="checkbox" id="diet_vegan" name="diet_style[]" value="Vegan"><label for="diet_vegan">Vegan</label>
+          <input type="checkbox" id="diet_none" name="diet_style[]" value="No specific style"><label for="diet_none">No specific style</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="food_restrictions">Food restrictions or allergies</label>
+        <textarea id="food_restrictions" name="food_restrictions" rows="2" placeholder="e.g. gluten-free, nut allergy, lactose intolerant"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="typical_day_eating">Walk us through a typical day of eating</label>
+        <textarea id="typical_day_eating" name="typical_day_eating" rows="3" placeholder="Breakfast, lunch, dinner, snacks — be honest"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Biggest nutrition struggles</label>
+        <div class="pill-group">
+          <input type="checkbox" id="str_over" name="nutrition_struggles[]" value="Overeating"><label for="str_over">Overeating</label>
+          <input type="checkbox" id="str_crav" name="nutrition_struggles[]" value="Cravings"><label for="str_crav">Cravings</label>
+          <input type="checkbox" id="str_emo" name="nutrition_struggles[]" value="Emotional eating"><label for="str_emo">Emotional eating</label>
+          <input type="checkbox" id="str_inc" name="nutrition_struggles[]" value="Inconsistency"><label for="str_inc">Inconsistency</label>
+          <input type="checkbox" id="str_out" name="nutrition_struggles[]" value="Eating out too much"><label for="str_out">Eating out too much</label>
+          <input type="checkbox" id="str_alc" name="nutrition_struggles[]" value="Alcohol"><label for="str_alc">Alcohol</label>
+          <input type="checkbox" id="str_bin" name="nutrition_struggles[]" value="Binge eating"><label for="str_bin">Binge eating</label>
+        </div>
+      </div>
+
+      <div class="row row-2">
+        <div class="field">
+          <label for="current_supplements">Current supplements</label>
+          <textarea id="current_supplements" name="current_supplements" rows="2" placeholder="List anything you're currently taking"></textarea>
+        </div>
+        <div class="field">
+          <label for="medications">Any medications?</label>
+          <textarea id="medications" name="medications" rows="2" placeholder="Optional — helps us personalise your protocol"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6 — LIFESTYLE & READINESS -->
+    <div class="form-section">
+      <span class="form-section-label">Lifestyle &amp; Readiness</span>
+
+      <div class="row row-2">
+        <div class="field">
+          <label for="avg_sleep">Average sleep per night</label>
+          <select id="avg_sleep" name="avg_sleep">
+            <option value="">Select...</option>
+            <option>Less than 5hrs</option>
+            <option>5-6hrs</option>
+            <option>6-7hrs</option>
+            <option>7-8hrs</option>
+            <option>8+hrs</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="daily_activity">Daily activity outside training</label>
+          <select id="daily_activity" name="daily_activity">
+            <option value="">Select...</option>
+            <option>Sedentary</option>
+            <option>Light</option>
+            <option>Moderate</option>
+            <option>Very active</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Daily stress level</label>
+        <div class="range-wrap">
+          <input type="range" id="stress_level" name="stress_level" min="1" max="10" value="5" oninput="updateRange(this,'stressVal')">
+          <div class="range-val" id="stressVal">5</div>
+        </div>
+        <div class="range-labels"><span>Very low</span><span>Extremely high</span></div>
+      </div>
+
+      <div class="field">
+        <label for="daily_steps">Estimated daily steps</label>
+        <input type="text" id="daily_steps" name="daily_steps" placeholder="e.g. 3,000-5,000 or unsure">
+      </div>
+
+      <div class="field">
+        <label>Coaching style you respond best to</label>
+        <div class="pill-group">
+          <input type="checkbox" id="cs_str" name="coaching_style[]" value="Structure &amp; routine"><label for="cs_str">Structure &amp; routine</label>
+          <input type="checkbox" id="cs_enc" name="coaching_style[]" value="Encouragement"><label for="cs_enc">Encouragement</label>
+          <input type="checkbox" id="cs_acc" name="coaching_style[]" value="Accountability check-ins"><label for="cs_acc">Accountability check-ins</label>
+          <input type="checkbox" id="cs_tl" name="coaching_style[]" value="Tough love"><label for="cs_tl">Tough love</label>
+          <input type="checkbox" id="cs_edu" name="coaching_style[]" value="Education &amp; explanation"><label for="cs_edu">Education &amp; explanation</label>
+          <input type="checkbox" id="cs_flex" name="coaching_style[]" value="Flexibility"><label for="cs_flex">Flexibility</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Readiness to commit — how ready are you right now?</label>
+        <div class="range-wrap">
+          <input type="range" id="readiness" name="readiness" min="1" max="10" value="8" oninput="updateRange(this,'readinessVal')">
+          <div class="range-val" id="readinessVal">8</div>
+        </div>
+        <div class="range-labels"><span>Not ready</span><span>Fully committed</span></div>
+      </div>
+
+      <div class="field">
+        <label for="anything_else">Anything else we should know?</label>
+        <textarea id="anything_else" name="anything_else" rows="3" placeholder="Previous programs, context, questions — anything relevant"></textarea>
+      </div>
+    </div>
+
+    <!-- CONSENT & SUBMIT -->
+    <div class="form-section">
+      <div class="consent-row">
+        <input type="checkbox" id="consent" name="consent" required>
+        <label for="consent">I understand this is a beta program. I agree to provide honest feedback and engage with the program for the full 30 days.</label>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">SUBMIT MY APPLICATION</button>
+      <div class="form-error" id="formError"></div>
+      <p class="submit-note">We'll review your application and be in touch within 48 hours.</p>
+    </div>
+
+  </form>
+</div>
+
+<script>
+emailjs.init('nj1F_Dh0xYh31o_kS');
+
+// Range slider live update
+function updateRange(el, valId) {
+  var v = el.value;
+  document.getElementById(valId).textContent = v;
+  var pct = ((v - el.min) / (el.max - el.min)) * 100;
+  el.style.setProperty('--pct', pct + '%');
+}
+
+// Init range tracks on load
+['motivation','stress_level','readiness'].forEach(function(id) {
+  var el = document.getElementById(id);
+  if (el) updateRange(el, {motivation:'motivationVal',stress_level:'stressVal',readiness:'readinessVal'}[id]);
+});
+
+// Toggle injury detail
+function toggleInjuryDetail(val) {
+  document.getElementById('injuryDetailField').style.display = val === 'Yes' ? 'block' : 'none';
+}
+
+// Form submit
+document.getElementById('applyForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  // Clear previous errors
+  document.querySelectorAll('.error').forEach(function(el){ el.classList.remove('error'); });
+  document.getElementById('formError').textContent = '';
+
+  // Validate required fields
+  var required = [
+    { id: 'full_name', label: 'Full name' },
+    { id: 'email', label: 'Email' },
+    { id: 'phone', label: 'Phone' },
+    { id: 'age', label: 'Age' }
+  ];
+  var firstError = null;
+  required.forEach(function(f) {
+    var el = document.getElementById(f.id);
+    if (!el.value.trim()) {
+      el.classList.add('error');
+      if (!firstError) firstError = el;
+    }
+  });
+
+  var consent = document.getElementById('consent');
+  if (!consent.checked) {
+    consent.parentElement.style.outline = '1px solid var(--red)';
+    if (!firstError) firstError = consent;
+  }
+
+  if (firstError) {
+    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.getElementById('formError').textContent = 'Please fill in all required fields and accept the terms.';
+    return;
+  }
+
+  var btn = document.getElementById('submitBtn');
+  btn.textContent = 'Submitting...';
+  btn.disabled = true;
+
+  var formData = new FormData(document.getElementById('applyForm'));
+  var firstName = (document.getElementById('full_name').value.trim().split(' ')[0]) || 'there';
+  var userEmail = document.getElementById('email').value.trim();
+
+  fetch('https://formspree.io/f/mkoponoz', {
+    method: 'POST',
+    body: formData,
+    headers: { 'Accept': 'application/json' }
+  })
+  .then(function(res) {
+    if (!res.ok) throw new Error('Server error');
+    return res.json();
+  })
+  .then(function() {
+    // Hide form
+    document.getElementById('applyForm').style.display = 'none';
+
+    // Update success message
+    document.getElementById('successMsg').textContent = 'Thank you, ' + firstName + '. We\u2019ll review your application and be in touch within 48 hours.';
+    document.getElementById('successEmail').textContent = 'Keep an eye on ' + userEmail + ' for next steps.';
+
+    // Show success state
+    var ss = document.getElementById('successState');
+    ss.style.display = 'flex';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // EmailJS auto-reply
+    emailjs.send('Wylde_service', 'template_5th6z59', {
+      name: firstName,
+      email: userEmail
+    }).catch(function(){});
+  })
+  .catch(function() {
+    btn.textContent = 'SUBMIT MY APPLICATION';
+    btn.disabled = false;
+    document.getElementById('formError').textContent = 'Something went wrong. Please try again or email us directly.';
+  });
+});
+</script>
+</body>
+</html>
