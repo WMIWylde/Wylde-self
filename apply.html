@@ -186,17 +186,27 @@ input[type="range"]::-webkit-slider-runnable-track{background:linear-gradient(to
       <span class="form-section-label">Your Goals</span>
 
       <div class="field">
-        <label for="primary_goal">Primary Goal</label>
-        <select id="primary_goal" name="primary_goal">
-          <option value="">Select your goal...</option>
-          <option>Lose body fat</option>
-          <option>Build muscle</option>
-          <option>Body recomposition</option>
-          <option>Improve energy</option>
-          <option>Athletic performance</option>
-          <option>Get back into shape</option>
-          <option>General health</option>
-        </select>
+        <label>Primary Goal <span style="font-size:10px;color:var(--muted);letter-spacing:0.05em;font-weight:400;text-transform:none;">(select all that apply)</span></label>
+        <div class="pill-group" id="goal_group">
+          <input type="checkbox" id="goal_fat" name="primary_goal[]" value="Lose body fat">
+          <label for="goal_fat">Lose body fat</label>
+          <input type="checkbox" id="goal_muscle" name="primary_goal[]" value="Build muscle">
+          <label for="goal_muscle">Build muscle</label>
+          <input type="checkbox" id="goal_recomp" name="primary_goal[]" value="Body recomposition">
+          <label for="goal_recomp">Body recomposition</label>
+          <input type="checkbox" id="goal_energy" name="primary_goal[]" value="Improve energy">
+          <label for="goal_energy">Improve energy</label>
+          <input type="checkbox" id="goal_performance" name="primary_goal[]" value="Athletic performance">
+          <label for="goal_performance">Athletic performance</label>
+          <input type="checkbox" id="goal_shape" name="primary_goal[]" value="Get back into shape">
+          <label for="goal_shape">Get back into shape</label>
+          <input type="checkbox" id="goal_longevity" name="primary_goal[]" value="Longevity & healthspan">
+          <label for="goal_longevity">Longevity & healthspan</label>
+          <input type="checkbox" id="goal_mental" name="primary_goal[]" value="Mental clarity & focus">
+          <label for="goal_mental">Mental clarity & focus</label>
+          <input type="checkbox" id="goal_health" name="primary_goal[]" value="General health">
+          <label for="goal_health">General health</label>
+        </div>
       </div>
 
       <div class="field">
@@ -301,6 +311,16 @@ input[type="range"]::-webkit-slider-runnable-track{background:linear-gradient(to
           <label for="tl_limited">Limited equipment</label>
           <input type="checkbox" id="tl_outdoor" name="training_location[]" value="Outdoors">
           <label for="tl_outdoor">Outdoors</label>
+          <input type="checkbox" id="tl_yoga" name="training_location[]" value="Yoga studio">
+          <label for="tl_yoga">Yoga studio</label>
+          <input type="checkbox" id="tl_pilates" name="training_location[]" value="Pilates studio">
+          <label for="tl_pilates">Pilates studio</label>
+          <input type="checkbox" id="tl_crossfit" name="training_location[]" value="CrossFit / group classes">
+          <label for="tl_crossfit">CrossFit / group classes</label>
+          <input type="checkbox" id="tl_pool" name="training_location[]" value="Pool / aquatic">
+          <label for="tl_pool">Pool / aquatic</label>
+          <input type="checkbox" id="tl_sports" name="training_location[]" value="Sports court / field">
+          <label for="tl_sports">Sports court / field</label>
         </div>
       </div>
 
@@ -399,9 +419,10 @@ input[type="range"]::-webkit-slider-runnable-track{background:linear-gradient(to
       </div>
     </div>
 
-    <!-- SECTION 6 — LIFESTYLE & READINESS -->
+    <!-- SECTION 6 — HEALTH & LIFESTYLE -->
     <div class="form-section">
-      <span class="form-section-label">Lifestyle &amp; Readiness</span>
+      <span class="form-section-label">Health &amp; Lifestyle</span>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.7;">This data helps us build a complete health picture — not just your fitness level, but your recovery, stress load, and daily patterns.</p>
 
       <div class="row row-2">
         <div class="field">
@@ -426,6 +447,36 @@ input[type="range"]::-webkit-slider-runnable-track{background:linear-gradient(to
           </select>
         </div>
       </div>
+
+        <div class="field">
+          <label for="sleep_quality">How would you rate your sleep quality?</label>
+          <select id="sleep_quality" name="sleep_quality">
+            <option value="">Select...</option>
+            <option>Excellent — I wake up fully rested</option>
+            <option>Good — mostly rested, occasional off nights</option>
+            <option>Fair — often tired despite enough hours</option>
+            <option>Poor — regularly unrefreshed or broken sleep</option>
+            <option>Very poor — chronic sleep issues</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Sleep issues <span style="font-size:10px;color:var(--muted);letter-spacing:0.05em;font-weight:400;text-transform:none;">(select any that apply)</span></label>
+          <div class="pill-group">
+            <input type="checkbox" id="si_falling" name="sleep_issues[]" value="Difficulty falling asleep">
+            <label for="si_falling">Difficulty falling asleep</label>
+            <input type="checkbox" id="si_staying" name="sleep_issues[]" value="Difficulty staying asleep">
+            <label for="si_staying">Difficulty staying asleep</label>
+            <input type="checkbox" id="si_early" name="sleep_issues[]" value="Waking too early">
+            <label for="si_early">Waking too early</label>
+            <input type="checkbox" id="si_unrefreshed" name="sleep_issues[]" value="Waking unrefreshed">
+            <label for="si_unrefreshed">Waking unrefreshed</label>
+            <input type="checkbox" id="si_apnea" name="sleep_issues[]" value="Sleep apnea / snoring">
+            <label for="si_apnea">Sleep apnea / snoring</label>
+            <input type="checkbox" id="si_none" name="sleep_issues[]" value="No issues">
+            <label for="si_none">No issues</label>
+          </div>
+        </div>
 
       <div class="field">
         <label>Daily stress level</label>
