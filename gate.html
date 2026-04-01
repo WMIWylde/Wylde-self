@@ -1,355 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background:#080808;">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wylde Self — Request Access</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --black:#080808;--surface:#161616;--surface2:#1c1c1c;--surface3:#222;
-  --border:rgba(255,255,255,0.08);--border-gold:rgba(200,169,110,0.35);
-  --white:#f5f4f0;--muted:#a0a098;
-  --gold:#c8a96e;--gold-dim:rgba(200,169,110,0.1);
-  --green:#1D9E75;
-  --ff-hero:'Bebas Neue',sans-serif;
-  --ff-serif:'Cormorant Garamond',serif;
-  --ff-body:'DM Sans',sans-serif;
-}
-html,body{min-height:100%;background:var(--black);color:var(--white);font-family:var(--ff-body);-webkit-font-smoothing:antialiased}
-body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px}
-
-.card{width:100%;max-width:480px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px 36px 36px;animation:fadeUp 0.5s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-
-.brand{font-family:var(--ff-hero);font-size:20px;letter-spacing:0.16em;color:var(--gold);text-align:center;margin-bottom:6px}
-.tagline{font-family:var(--ff-serif);font-size:15px;font-style:italic;color:var(--muted);text-align:center;line-height:1.5}
-.divider{width:40px;height:1px;background:var(--border-gold);margin:20px auto}
-
-/* Step indicators */
-.steps{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:24px}
-.step-dot{width:8px;height:8px;border-radius:50%;background:var(--surface3);border:1px solid var(--border);transition:all 0.3s}
-.step-dot.active{background:var(--gold);border-color:var(--gold)}
-.step-dot.done{background:var(--green);border-color:var(--green)}
-.step-line{width:24px;height:1px;background:var(--border)}
-
-/* Step panels */
-.step-panel{display:none}
-.step-panel.active{display:block;animation:fadeUp 0.3s ease both}
-
-/* Form elements */
-.field{margin-bottom:16px}
-label{display:block;font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
-input[type="text"],input[type="email"],input[type="password"]{
-  width:100%;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);
-  border-radius:8px;font-family:var(--ff-body);font-size:14px;color:var(--white);outline:none;transition:border-color 0.2s
-}
-input:focus{border-color:var(--border-gold)}
-input::placeholder{color:#444}
-
-/* NDA scroll box */
-.nda-box{height:200px;overflow-y:auto;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:14px;font-size:12px;color:var(--muted);line-height:1.7;scroll-behavior:smooth}
-.nda-box h3{font-family:var(--ff-hero);font-size:14px;letter-spacing:0.08em;color:var(--gold);margin-bottom:8px}
-.nda-box h4{font-size:11px;font-weight:500;color:var(--white);margin:12px 0 4px;text-transform:uppercase;letter-spacing:0.08em}
-.nda-box p{margin-bottom:8px}
-.nda-scroll-hint{font-size:11px;color:var(--muted);text-align:center;margin-bottom:10px;opacity:0.6;transition:opacity 0.3s}
-.nda-scroll-hint.hidden{opacity:0}
-
-/* Checkbox */
-.check-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;cursor:pointer}
-.check-row input[type="checkbox"]{width:16px;height:16px;margin-top:2px;accent-color:var(--gold);cursor:pointer;flex-shrink:0}
-.check-label{font-size:12px;color:var(--muted);line-height:1.5}
-.check-label a{color:var(--gold);text-decoration:none}
-.check-label a:hover{text-decoration:underline}
-
-/* Buttons */
-.btn{width:100%;padding:13px;border-radius:8px;font-family:var(--ff-body);font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:opacity 0.2s,transform 0.1s;border:none}
-.btn:active{transform:scale(0.98)}
-.btn-gold{background:var(--gold);color:var(--black)}
-.btn-gold:hover{opacity:0.88}
-.btn-gold:disabled{opacity:0.4;cursor:not-allowed}
-.btn-outline{background:none;border:1px solid var(--border);color:var(--muted);margin-top:8px}
-.btn-outline:hover{border-color:var(--border-gold);color:var(--gold)}
-
-/* Error / success */
-.msg{font-family:var(--ff-serif);font-size:13px;font-style:italic;text-align:center;margin-top:12px;min-height:18px;opacity:0;transition:opacity 0.3s}
-.msg.show{opacity:1}
-.msg.error{color:#c0614a}
-.msg.success{color:var(--green)}
-
-/* Step 3 — code entry */
-.code-input{letter-spacing:0.3em;font-size:18px;text-align:center}
-
-/* Success state */
-.success-state{text-align:center;padding:10px 0}
-.success-icon{font-size:32px;margin-bottom:12px}
-.success-title{font-family:var(--ff-hero);font-size:24px;letter-spacing:0.08em;color:var(--gold);margin-bottom:8px}
-.success-text{font-family:var(--ff-serif);font-size:15px;font-style:italic;color:var(--muted);line-height:1.6}
-
-/* Footer */
-.gate-footer{margin-top:20px;font-size:11px;color:var(--muted);text-align:center;opacity:0.5;line-height:1.8}
-.gate-footer a{color:var(--gold);text-decoration:none;opacity:0.8}
-.gate-footer a:hover{opacity:1}
-
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
-.shake{animation:shake 0.35s ease}
-</style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#080808"/>
+  <title>Early Access — Wylde Self</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --gold: #c8a96e; --white: #f5f4f0; --muted: #a0a098; --border: rgba(255,255,255,0.08); --surface: #161616; }
+    body { background: #080808; color: var(--white); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
+    .wrap { max-width: 560px; width: 100%; }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.14em; color: var(--white); margin-bottom: 48px; }
+    .logo span { color: var(--gold); }
+    .label { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+    h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(36px, 8vw, 56px); letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px; }
+    .sub { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px; color: var(--muted); margin-bottom: 40px; line-height: 1.6; }
+    .rule { width: 40px; height: 1px; background: var(--gold); margin-bottom: 40px; }
+    .nda-box { background: var(--surface); border: 1px solid var(--border); padding: 24px 28px; margin-bottom: 28px; max-height: 200px; overflow-y: auto; font-size: 12px; color: var(--muted); line-height: 1.8; }
+    .nda-box::-webkit-scrollbar { width: 3px; }
+    .nda-box::-webkit-scrollbar-thumb { background: rgba(200,169,110,0.2); }
+    .nda-box h3 { font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--white); margin-bottom: 12px; }
+    .consent-row { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 32px; cursor: pointer; }
+    .consent-row input[type="checkbox"] { display: none; }
+    .custom-check { width: 18px; height: 18px; border: 1px solid rgba(200,169,110,0.4); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .custom-check.checked { background: var(--gold); border-color: var(--gold); }
+    .custom-check.checked::after { content: '✓'; font-size: 11px; color: #080808; font-weight: 700; }
+    .consent-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .consent-text strong { color: var(--white); }
+    .code-section { margin-bottom: 32px; }
+    .code-label { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; display: block; }
+    .code-input { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 18px; letter-spacing: 0.3em; text-align: center; padding: 16px; outline: none; text-transform: uppercase; transition: border-color 0.2s; }
+    .code-input:focus { border-color: rgba(200,169,110,0.4); }
+    .code-input::placeholder { font-size: 13px; letter-spacing: 0.1em; color: #444; text-transform: none; }
+    .code-error { font-size: 12px; color: rgba(220,80,80,0.8); margin-top: 8px; display: none; }
+    .btn { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; background: var(--gold); color: #080808; border: none; padding: 16px; cursor: pointer; transition: opacity 0.2s; }
+    .btn:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .skip-code { font-size: 11px; color: var(--muted); text-align: center; margin-top: 16px; cursor: pointer; text-decoration: underline; display: block; }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="logo">W<span>S</span></div>
 
-<div class="card" id="card">
-  <div class="brand">Wylde Self</div>
-  <div class="tagline">Private early access.<br>You were invited here.</div>
-  <div class="divider"></div>
+    <p class="label">Early Access</p>
+    <h1>YOU'RE IN.<br>ALMOST.</h1>
+    <p class="sub" id="welcomeMsg">Before you access the demo, please review and agree to our beta terms.</p>
+    <div class="rule"></div>
 
-  <!-- Step indicators -->
-  <div class="steps">
-    <div class="step-dot active" id="dot-1"></div>
-    <div class="step-line"></div>
-    <div class="step-dot" id="dot-2"></div>
-    <div class="step-line"></div>
-    <div class="step-dot" id="dot-3"></div>
-  </div>
-
-  <!-- STEP 1 — Identity -->
-  <div class="step-panel active" id="step-1">
-    <div class="field">
-      <label for="s1-name">Your name</label>
-      <input type="text" id="s1-name" placeholder="First and last name" autocomplete="name">
-    </div>
-    <div class="field">
-      <label for="s1-email">Email address</label>
-      <input type="email" id="s1-email" placeholder="you@email.com" autocomplete="email">
-    </div>
-    <button class="btn btn-gold" onclick="step1Next()">Continue</button>
-    <div class="msg error" id="msg-1"></div>
-  </div>
-
-  <!-- STEP 2 — NDA -->
-  <div class="step-panel" id="step-2">
-    <div style="font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Non-Disclosure Agreement</div>
-
-    <div class="nda-box" id="nda-scroll">
-      <h3>Wylde — Confidentiality & Non-Disclosure Agreement</h3>
-      <p>This Non-Disclosure Agreement ("Agreement") is entered into between <strong style="color:var(--white)" id="nda-name-display">you</strong> ("Recipient") and Wylde Self ("Discloser"), effective upon submission of this form.</p>
-
-      <h4>1. Confidential Information</h4>
-      <p>By accessing this early demo, Recipient acknowledges they may be exposed to confidential and proprietary information including but not limited to: product concepts, user interface design, AI systems and methodology, brand architecture (including Wylde Man, Wylde Woman, Wylde Self, and Wylde Child sub-brands), business strategy, technology stack, feature roadmap, pricing models, and any other non-public information disclosed by Discloser ("Confidential Information").</p>
-
-      <h4>2. Obligations</h4>
-      <p>Recipient agrees to: (a) hold all Confidential Information in strict confidence; (b) not disclose, reproduce, or distribute any Confidential Information to any third party without prior written consent from Discloser; (c) use Confidential Information solely to evaluate the product for personal use; (d) not use Confidential Information to develop, build, or assist in building any competing product, service, or business concept.</p>
-
-      <h4>3. Intellectual Property</h4>
-      <p>All intellectual property rights in and to the Wylde Self platform, including the concept of AI-powered identity transformation through fitness, the Future Self visualization mechanism, the Wylde brand and all sub-brands, all software, design, copy, and systems remain exclusively with Discloser. This Agreement grants no license or rights to Recipient.</p>
-
-      <h4>4. Non-Compete</h4>
-      <p>Recipient agrees not to, directly or indirectly, develop or commercialise any product or service that is substantially similar to or competitive with Wylde Self for a period of 24 months following access to this demo, without written consent from Discloser.</p>
-
-      <h4>5. No Reverse Engineering</h4>
-      <p>Recipient agrees not to reverse engineer, decompile, disassemble, or otherwise attempt to derive the source code, algorithms, or methodologies of any part of the Wylde Self platform.</p>
-
-      <h4>6. Term</h4>
-      <p>This Agreement remains in effect indefinitely with respect to trade secrets, and for 3 years from the date of signing with respect to all other Confidential Information.</p>
-
-      <h4>7. Remedies</h4>
-      <p>Recipient acknowledges that any breach of this Agreement may cause irreparable harm to Discloser for which monetary damages may be inadequate, and that Discloser shall be entitled to seek equitable relief, including injunction and specific performance, in addition to all other remedies available at law.</p>
-
-      <h4>8. Governing Law</h4>
-      <p>This Agreement shall be governed by and construed in accordance with the laws of the State of California, without regard to conflict of law principles.</p>
-
-      <h4>9. Entire Agreement</h4>
-      <p>This Agreement constitutes the entire agreement between the parties with respect to its subject matter and supersedes all prior discussions. By checking the box below and submitting this form, Recipient confirms they have read, understood, and agree to be bound by this Agreement.</p>
+    <!-- NDA / Beta Agreement -->
+    <div class="nda-box">
+      <h3>Wylde Self — Beta Participant Agreement</h3>
+      <p>By accessing the Wylde Self early demo, you agree to the following:</p><br>
+      <p><strong style="color:var(--white);">Confidentiality.</strong> The Wylde Self application, its features, design, and content are proprietary and confidential. You agree not to share screenshots, screen recordings, or descriptions of the product with third parties without written permission from Wylde Self.</p><br>
+      <p><strong style="color:var(--white);">Beta nature.</strong> This is an early-stage prototype. Features are incomplete, may not function as described, and are subject to change without notice. Wylde Self makes no guarantees about uptime, accuracy, or fitness for purpose.</p><br>
+      <p><strong style="color:var(--white);">Data.</strong> Information you enter during the demo may be used to improve the product. No personally identifiable information is shared with third parties without consent.</p><br>
+      <p><strong style="color:var(--white);">Feedback.</strong> As a beta participant, you agree to provide honest feedback when requested. Your input directly shapes the product.</p><br>
+      <p><strong style="color:var(--white);">No commercial use.</strong> You may not use the Wylde Self demo for commercial purposes or resell access to any third party.</p><br>
+      <p style="color:var(--muted);font-size:11px;">Last updated: April 2026 · Wylde Self Health Inc.</p>
     </div>
 
-    <div class="nda-scroll-hint" id="scroll-hint">Scroll to read full agreement</div>
-
-    <label class="check-row" for="chk-nda">
-      <input type="checkbox" id="chk-nda" onchange="checkNDA()">
-      <span class="check-label">I, <strong id="chk-name-display" style="color:var(--white)">—</strong>, have read and agree to the Non-Disclosure Agreement above, including the confidentiality, IP protection, and non-compete clauses.</span>
+    <!-- Consent checkbox -->
+    <label class="consent-row" onclick="toggleConsent()">
+      <input type="checkbox" id="consentCheck"/>
+      <div class="custom-check" id="customCheck"></div>
+      <span class="consent-text">I have read and agree to the <strong>Wylde Self Beta Participant Agreement</strong>. I understand this is a confidential early-access demo.</span>
     </label>
 
-    <label class="check-row" for="chk-terms">
-      <input type="checkbox" id="chk-terms" onchange="checkNDA()">
-      <span class="check-label">I agree to the <a href="/terms.html" target="_blank">Terms of Service</a> and <a href="/privacy.html" target="_blank">Privacy Policy</a>.</span>
-    </label>
+    <!-- Access code -->
+    <div class="code-section">
+      <span class="code-label">Beta Access Code</span>
+      <input class="code-input" id="accessCode" type="text" placeholder="Enter your access code" maxlength="12"/>
+      <p class="code-error" id="codeError">Invalid access code. Check your email or contact wilke@wyldeself.com</p>
+    </div>
 
-    <button class="btn btn-gold" id="nda-btn" onclick="step2Next()" disabled>I Agree — Request Access</button>
-    <div class="msg error" id="msg-2"></div>
+    <button class="btn" id="enterBtn" onclick="enterDemo()" disabled>ENTER THE DEMO</button>
+    <p class="skip-code" id="skipCode" onclick="skipCodeEntry()">I don't have a code yet — request access</p>
   </div>
 
-  <!-- STEP 3 — Access Code -->
-  <div class="step-panel" id="step-3">
-    <div style="font-family:var(--ff-serif);font-size:14px;font-style:italic;color:var(--muted);margin-bottom:20px;line-height:1.6;text-align:center">
-      Your request has been received.<br>Enter your access code below to continue.
-    </div>
-    <div class="field">
-      <label for="s3-code">Access code</label>
-      <input type="password" id="s3-code" class="code-input" placeholder="· · · · · · · ·" autocomplete="off">
-    </div>
-    <button class="btn btn-gold" onclick="step3Check()">Enter</button>
-    <div class="msg error" id="msg-3"></div>
-    <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:14px;opacity:0.6">
-      Don't have a code? <a href="/" style="color:var(--gold)">Return to waitlist</a>
-    </div>
-  </div>
+  <script>
+    // Valid access codes — add/remove as needed
+    var VALID_CODES = ['WYLDE30', 'BETA2026', 'FOUNDER', 'WILKE'];
 
-  <!-- SUCCESS -->
-  <div class="step-panel" id="step-success">
-    <div class="success-state">
-      <div class="success-icon">—</div>
-      <div class="success-title">Welcome, <span id="success-name">—</span></div>
-      <div class="success-text">You're in. Train with the person you're becoming.</div>
-    </div>
-  </div>
-
-</div>
-
-<div class="gate-footer">
-  <a href="/terms.html">Terms of Service</a> &nbsp;·&nbsp;
-  <a href="/privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
-  <a href="/">Wylde Self</a>
-</div>
-
-<script>
-// ── CONFIG ──────────────────────────────────────
-var ACCESS_CODE = 'wylde2025';
-var FORMSPREE   = 'https://formspree.io/f/mkoponoz';
-var SESSION_KEY = 'wylde_gate';
-var MAX_ATTEMPTS = 5;
-// ────────────────────────────────────────────────
-
-var userName  = '';
-var userEmail = '';
-var attempts  = 0;
-var ndaScrolled = false;
-
-if (sessionStorage.getItem(SESSION_KEY) === '1') {
-  window.location.replace('/app.html');
-}
-
-// ── NDA scroll detection ────────────────────────
-var ndaBox = document.getElementById('nda-scroll');
-ndaBox.addEventListener('scroll', function() {
-  var pct = ndaBox.scrollTop / (ndaBox.scrollHeight - ndaBox.clientHeight);
-  if (pct > 0.85) {
-    ndaScrolled = true;
-    document.getElementById('scroll-hint').classList.add('hidden');
-  }
-});
-
-// ── Step helpers ────────────────────────────────
-function showStep(n) {
-  document.querySelectorAll('.step-panel').forEach(function(p){ p.classList.remove('active'); });
-  document.getElementById('step-' + n).classList.add('active');
-  for (var i = 1; i <= 3; i++) {
-    var dot = document.getElementById('dot-' + i);
-    dot.classList.remove('active','done');
-    if (i < n) dot.classList.add('done');
-    else if (i === n) dot.classList.add('active');
-  }
-}
-
-function showMsg(id, text, type) {
-  var el = document.getElementById(id);
-  el.textContent = text;
-  el.className = 'msg ' + type + ' show';
-  setTimeout(function(){ el.classList.remove('show'); }, 3500);
-}
-
-function shake() {
-  var card = document.getElementById('card');
-  card.classList.remove('shake');
-  void card.offsetWidth;
-  card.classList.add('shake');
-}
-
-// ── Step 1 — Identity ───────────────────────────
-function step1Next() {
-  var name  = document.getElementById('s1-name').value.trim();
-  var email = document.getElementById('s1-email').value.trim();
-  if (!name) { showMsg('msg-1','Please enter your name.','error'); shake(); return; }
-  if (!email || !/\S+@\S+\.\S+/.test(email)) { showMsg('msg-1','Please enter a valid email.','error'); shake(); return; }
-  userName  = name;
-  userEmail = email;
-  document.getElementById('nda-name-display').textContent = name;
-  document.getElementById('chk-name-display').textContent = name;
-  document.getElementById('success-name').textContent = name.split(' ')[0];
-  showStep(2);
-}
-
-// ── Step 2 — NDA ────────────────────────────────
-function checkNDA() {
-  var c1 = document.getElementById('chk-nda').checked;
-  var c2 = document.getElementById('chk-terms').checked;
-  document.getElementById('nda-btn').disabled = !(c1 && c2);
-}
-
-function step2Next() {
-  var c1 = document.getElementById('chk-nda').checked;
-  var c2 = document.getElementById('chk-terms').checked;
-  if (!c1 || !c2) { showMsg('msg-2','Please agree to both before continuing.','error'); shake(); return; }
-
-  var btn = document.getElementById('nda-btn');
-  btn.textContent = 'Submitting...';
-  btn.disabled = true;
-
-  var timestamp = new Date().toISOString();
-  var ndaRecord = {
-    name: userName,
-    email: userEmail,
-    agreed_nda: true,
-    agreed_terms: true,
-    timestamp: timestamp,
-    _subject: 'Wylde NDA Signed — ' + userName
-  };
-
-  fetch(FORMSPREE, {
-    method: 'POST',
-    body: JSON.stringify(ndaRecord),
-    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
-  }).then(function(res) {
-    showStep(3);
-    document.getElementById('s3-code').focus();
-  }).catch(function() {
-    showStep(3);
-    document.getElementById('s3-code').focus();
-  });
-}
-
-// ── Step 3 — Access Code ────────────────────────
-function step3Check() {
-  var val = document.getElementById('s3-code').value.trim();
-  if (val === ACCESS_CODE) {
-    sessionStorage.setItem(SESSION_KEY, '1');
-    sessionStorage.setItem('wylde_user', JSON.stringify({ name: userName, email: userEmail }));
-    document.querySelectorAll('.step-panel').forEach(function(p){ p.classList.remove('active'); });
-    document.querySelectorAll('.step-dot').forEach(function(d){ d.classList.remove('active'); d.classList.add('done'); });
-    document.getElementById('step-success').classList.add('active');
-    setTimeout(function(){ window.location.replace('/app.html'); }, 1800);
-  } else {
-    attempts++;
-    shake();
-    if (attempts >= MAX_ATTEMPTS) {
-      showMsg('msg-3','Too many attempts. Return to waitlist to request access.','error');
-      document.getElementById('s3-code').disabled = true;
-      document.querySelectorAll('.btn-gold').forEach(function(b){ b.disabled = true; b.style.opacity = '0.4'; });
-    } else {
-      showMsg('msg-3','Incorrect code. ' + (MAX_ATTEMPTS - attempts) + ' attempt' + (MAX_ATTEMPTS - attempts === 1 ? '' : 's') + ' remaining.','error');
+    // Pre-fill welcome message with saved name
+    var savedName = localStorage.getItem('wylde_name');
+    if (savedName) {
+      document.getElementById('welcomeMsg').innerHTML =
+        'Welcome, <strong style="color:var(--gold);">' + savedName + '</strong>. Review and agree to the beta terms below to access the demo.';
     }
-  }
-}
 
-// Enter key support
-document.addEventListener('keydown', function(e) {
-  if (e.key !== 'Enter') return;
-  var active = document.querySelector('.step-panel.active');
-  if (!active) return;
-  if (active.id === 'step-1') step1Next();
-  if (active.id === 'step-3') step3Check();
-});
-</script>
+    // If already agreed and verified before, go straight in
+    if (localStorage.getItem('wylde_gate_passed')) {
+      window.location.href = '/app.html';
+    }
 
+    var consented = false;
+
+    function toggleConsent() {
+      consented = !consented;
+      document.getElementById('customCheck').classList.toggle('checked', consented);
+      updateBtn();
+    }
+
+    function updateBtn() {
+      var btn = document.getElementById('enterBtn');
+      btn.disabled = !consented;
+    }
+
+    document.getElementById('accessCode').addEventListener('input', updateBtn);
+
+    function enterDemo() {
+      if (!consented) return;
+      var code = document.getElementById('accessCode').value.trim().toUpperCase();
+      var errorEl = document.getElementById('codeError');
+
+      if (!code) {
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Please enter your beta access code.';
+        return;
+      }
+
+      if (!VALID_CODES.includes(code)) {
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Invalid access code. Check your email or contact wilke@wyldeself.com';
+        document.getElementById('accessCode').style.borderColor = 'rgba(220,80,80,0.6)';
+        return;
+      }
+
+      // All good — store gate pass and go
+      errorEl.style.display = 'none';
+      localStorage.setItem('wylde_gate_passed', '1');
+      localStorage.setItem('wylde_submitted', '1');
+      window.location.href = '/app.html';
+    }
+
+    function skipCodeEntry() {
+      window.location.href = '/apply.html';
+    }
+
+    // Allow Enter key on code input
+    document.getElementById('accessCode').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') enterDemo();
+    });
+  </script>
 </body>
 </html>

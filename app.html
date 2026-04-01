@@ -448,7 +448,7 @@
 <body style="background:#080808;">
 <script>
   (function() {
-    if (sessionStorage.getItem('wylde_gate') !== '1') {
+    if (!localStorage.getItem('wylde_gate_passed') && !localStorage.getItem('wylde_submitted')) {
       window.location.replace('/gate.html');
     }
   })();
@@ -1205,6 +1205,16 @@
         }
       }
     } catch(e) {}
+    // If no full profile but we have name from waitlist, pre-fill
+    if (!state.name) {
+      var waitlistName = localStorage.getItem('wylde_name');
+      if (waitlistName) {
+        state.name = waitlistName;
+        document.getElementById('navUserName').textContent = waitlistName.toUpperCase();
+        var nameInput = document.getElementById('userName');
+        if (nameInput) nameInput.value = waitlistName;
+      }
+    }
   })();
 
   // After images by gender — glowing silhouettes (placeholder until real AI generation)

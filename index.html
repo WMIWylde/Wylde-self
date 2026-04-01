@@ -541,7 +541,7 @@
 
     // DEMO GATE
     function checkDemo(e) {
-      if (sessionStorage.getItem('wylde_submitted')) {
+      if (localStorage.getItem('wylde_submitted')) {
         return true; // already submitted — let them through
       }
       e.preventDefault();
@@ -550,7 +550,7 @@
       var heroSuccess = document.getElementById('heroSuccess');
       if (heroSuccess && heroSuccess.style.display === 'block') {
         // They submitted but page refreshed — let them through
-        sessionStorage.setItem('wylde_submitted', '1');
+        localStorage.setItem('wylde_submitted', '1');
         window.location.href = '/gate.html';
         return false;
       }
@@ -611,7 +611,9 @@
             }).catch(function() {});
 
             // Mark as submitted — unlocks demo
-            sessionStorage.setItem('wylde_submitted', '1');
+            localStorage.setItem('wylde_submitted', '1');
+            localStorage.setItem('wylde_name', userName);
+            localStorage.setItem('wylde_email', userEmail);
 
             // 3 — Show success
             form.style.display = 'none';
