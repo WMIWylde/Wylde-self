@@ -1,21 +1,34 @@
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' });
+export const config = {
+  runtime: 'edge',
+};
+
+const cors = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+export default async function handler(req) {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 200, headers: cors });
+  }
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ success: false, error: 'Method not allowed' }), {
+      status: 405,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
+  }
 
   try {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error('GEMINI_API_KEY not configured');
 
-    const { image_base64, timeline, goal, gender } = req.body;
+    const { image_base64, timeline, goal, gender } = await req.json();
 
     const timelineLabel = timeline === '6months' ? '6 months' : timeline === '1year' ? '1 year' : '12 weeks';
     const goalLabel = goal || 'lean and athletic';
     const genderLabel = gender || 'male';
 
-    // Build prompt and contents array
     const prompt = `Generate a photorealistic fitness transformation image showing a ${genderLabel} person after ${timelineLabel} of consistent training toward a ${goalLabel} physique. Athletic, lean, confident posture. Natural lighting. No text or watermarks.`;
 
     let contents;
@@ -28,15 +41,8 @@ export default async function handler(req, res) {
         {
           role: 'user',
           parts: [
-            {
-              inlineData: {
-                mimeType,
-                data: base64Data
-              }
-            },
-            {
-              text: `Transform this person's physique to show ${timelineLabel} of consistent ${goalLabel} training. Keep the same face and identity. Athletic, lean, confident. Photorealistic.`
-            }
+            { inlineData: { mimeType, data: base64Data } },
+            { text: `Transform this person's physique to show ${timelineLabel} of consistent ${goalLabel} training. Keep the same face and identity. Athletic, lean, confident. Photorealistic.` }
           ]
         }
       ];
@@ -70,7 +76,6 @@ export default async function handler(req, res) {
       throw new Error(data?.error?.message || `Gemini error ${response.status}`);
     }
 
-    // Extract image from response
     const parts = data?.candidates?.[0]?.content?.parts || [];
     const imagePart = parts.find(p => p.inlineData);
 
@@ -79,13 +84,16 @@ export default async function handler(req, res) {
     }
 
     const { mimeType, data: imgData } = imagePart.inlineData;
-    return res.status(200).json({
-      success: true,
-      image_base64: `data:${mimeType};base64,${imgData}`
-    });
+    return new Response(
+      JSON.stringify({ success: true, image_base64: `data:${mimeType};base64,${imgData}` }),
+      { status: 200, headers: { ...cors, 'Content-Type': 'application/json' } }
+    );
 
   } catch (err) {
     console.error('generate-image error:', err.message);
-    return res.status(500).json({ success: false, error: err.message });
+    return new Response(
+      JSON.stringify({ success: false, error: err.message }),
+      { status: 500, headers: { ...cors, 'Content-Type': 'application/json' } }
+    );
   }
 }
