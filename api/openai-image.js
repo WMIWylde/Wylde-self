@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     }
 
     const pngBuffer = await sharp(imageBuffer)
-      .resize(1024, 1024, { fit: 'cover', position: 'centre' })
+      .resize(512, 512, { fit: 'cover', position: 'centre' })
       .png()
       .toBuffer();
 
@@ -38,14 +38,19 @@ export default async function handler(req, res) {
     form.append('size', '1024x1024');
     form.append('response_format', 'b64_json');
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 55000);
+
     const response = await fetch('https://api.openai.com/v1/images/edits', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         ...form.getHeaders()
       },
-      body: form.getBuffer()
+      body: form.getBuffer(),
+      signal: controller.signal
     });
+    clearTimeout(timeout);
 
     const data = await response.json();
 
