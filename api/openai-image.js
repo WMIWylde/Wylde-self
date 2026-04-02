@@ -1,6 +1,3 @@
-import FormData from 'form-data';
-import sharp from 'sharp';
-
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -10,36 +7,27 @@ export default async function handler(req, res) {
 
   try {
     const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) throw new Error('OPENAI_API_KEY is not configured');
+    if (!apiKey) throw new Error('OPENAI_API_KEY not configured');
 
-    const { image_base64, prompt: promptOverride, timeline } = req.body;
-    if (!image_base64) throw new Error('image_base64 is required');
+    const { image_base64, timeline } = req.body;
+    if (!image_base64) throw new Error('image_base64 required');
 
+    const timelineLabel = timeline === '6months' ? '6 months' : timeline === '1year' ? '1 year' : '12 weeks';
+    const prompt = `Athletic physique transformation after ${timelineLabel} of consistent training. Lean, strong, confident posture. Same face and identity. Photorealistic, natural lighting.`;
+
+    // Strip data URI prefix
     const base64Data = image_base64.replace(/^data:image\/\w+;base64,/, '');
     const imageBuffer = Buffer.from(base64Data, 'base64');
 
-    if (imageBuffer.length > 4 * 1024 * 1024) {
-      throw new Error('Image too large. Please use a photo under 4MB.');
-    }
-
-    const pngBuffer = await sharp(imageBuffer)
-      .resize(512, 512, { fit: 'cover', position: 'centre' })
-      .png()
-      .toBuffer();
-
-    const timelineLabel = timeline === '6months' ? '6 months' : timeline === '1year' ? '1 year' : '12 weeks';
-    const prompt = promptOverride || `Athletic physique transformation after ${timelineLabel} of consistent training. Lean, muscular, confident. Same face and identity. Photorealistic.`;
-
-    const form = new FormData();
-    form.append('image', pngBuffer, { filename: 'photo.png', contentType: 'image/png' });
+    // Fallback: use the form-data package
+    const FormDataPkg = (await import('form-data')).default;
+    const form = new FormDataPkg();
+    form.append('image', imageBuffer, { filename: 'image.png', contentType: 'image/png' });
     form.append('prompt', prompt);
     form.append('model', 'gpt-image-1');
     form.append('n', '1');
     form.append('size', '1024x1024');
-    form.append('response_format', 'b64_json');
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 55000);
+    form.append('quality', 'medium');
 
     const response = await fetch('https://api.openai.com/v1/images/edits', {
       method: 'POST',
@@ -47,24 +35,29 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${apiKey}`,
         ...form.getHeaders()
       },
-      body: form.getBuffer(),
-      signal: controller.signal
+      body: form.getBuffer()
     });
-    clearTimeout(timeout);
 
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data?.error?.message || `OpenAI error: ${response.status}`);
+      throw new Error(data?.error?.message || `OpenAI error ${response.status}`);
     }
 
+    // gpt-image-1 returns b64_json
     const b64 = data?.data?.[0]?.b64_json;
-    if (!b64) throw new Error('No image returned from OpenAI');
+    const url = data?.data?.[0]?.url;
 
-    return res.status(200).json({
-      success: true,
-      image_base64: `data:image/png;base64,${b64}`
-    });
+    if (b64) {
+      return res.status(200).json({ success: true, image_base64: `data:image/png;base64,${b64}` });
+    } else if (url) {
+      // fetch and convert URL to base64
+      const imgRes = await fetch(url);
+      const buf = Buffer.from(await imgRes.arrayBuffer());
+      return res.status(200).json({ success: true, image_base64: `data:image/png;base64,${buf.toString('base64')}` });
+    } else {
+      throw new Error('No image in response: ' + JSON.stringify(data));
+    }
 
   } catch (err) {
     console.error('openai-image error:', err.message);
