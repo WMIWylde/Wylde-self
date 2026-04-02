@@ -9,33 +9,28 @@ export default async function handler(req, res) {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) throw new Error('OPENAI_API_KEY not configured');
 
-    const { image_base64, timeline } = req.body;
-    if (!image_base64) throw new Error('image_base64 required');
+    const { timeline, goal, gender } = req.body;
 
     const timelineLabel = timeline === '6months' ? '6 months' : timeline === '1year' ? '1 year' : '12 weeks';
-    const prompt = `Athletic physique transformation after ${timelineLabel} of consistent training. Lean, strong, confident posture. Same face and identity. Photorealistic, natural lighting.`;
+    const goalLabel = goal || 'lean and athletic';
+    const genderLabel = gender || 'male';
 
-    // Strip data URI prefix
-    const base64Data = image_base64.replace(/^data:image\/\w+;base64,/, '');
-    const imageBuffer = Buffer.from(base64Data, 'base64');
+    const prompt = `A fit, confident ${genderLabel} person with a ${goalLabel} physique after ${timelineLabel} of dedicated training. Athletic build, natural lighting, standing confidently. Photorealistic fitness photography. No text, no watermarks.`;
 
-    // Fallback: use the form-data package
-    const FormDataPkg = (await import('form-data')).default;
-    const form = new FormDataPkg();
-    form.append('image', imageBuffer, { filename: 'image.png', contentType: 'image/png' });
-    form.append('prompt', prompt);
-    form.append('model', 'gpt-image-1');
-    form.append('n', '1');
-    form.append('size', '1024x1024');
-    form.append('quality', 'medium');
-
-    const response = await fetch('https://api.openai.com/v1/images/edits', {
+    const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
-        ...form.getHeaders()
+        'Content-Type': 'application/json'
       },
-      body: form.getBuffer()
+      body: JSON.stringify({
+        model: 'dall-e-3',
+        prompt,
+        n: 1,
+        size: '1024x1024',
+        quality: 'standard',
+        response_format: 'b64_json'
+      })
     });
 
     const data = await response.json();
@@ -44,20 +39,10 @@ export default async function handler(req, res) {
       throw new Error(data?.error?.message || `OpenAI error ${response.status}`);
     }
 
-    // gpt-image-1 returns b64_json
     const b64 = data?.data?.[0]?.b64_json;
-    const url = data?.data?.[0]?.url;
+    if (!b64) throw new Error('No image returned');
 
-    if (b64) {
-      return res.status(200).json({ success: true, image_base64: `data:image/png;base64,${b64}` });
-    } else if (url) {
-      // fetch and convert URL to base64
-      const imgRes = await fetch(url);
-      const buf = Buffer.from(await imgRes.arrayBuffer());
-      return res.status(200).json({ success: true, image_base64: `data:image/png;base64,${buf.toString('base64')}` });
-    } else {
-      throw new Error('No image in response: ' + JSON.stringify(data));
-    }
+    return res.status(200).json({ success: true, image_base64: `data:image/png;base64,${b64}` });
 
   } catch (err) {
     console.error('openai-image error:', err.message);

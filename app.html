@@ -1021,7 +1021,7 @@
   <div class="container">
     <p class="section-label">Future Self Generator</p>
     <h1 class="screen-title">See who you're<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">becoming</span></h1>
-    <p class="screen-sub">Upload a photo and we'll generate a future version of you based on your goals.</p>
+    <p class="screen-sub">Generate Your Future Self Vision — an AI image of the physique you're building toward.</p>
     <div class="gold-rule"></div>
 
     <!-- TIMELINE TOGGLE -->
@@ -1034,8 +1034,8 @@
     <div class="upload-zone" id="uploadZone" onclick="document.getElementById('photoInput').click()">
       <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handlePhoto(event.target.files[0])" />
       <div class="upload-icon">↑</div>
-      <p class="upload-label">Tap to upload your photo</p>
-      <p style="font-size:12px;color:#444;margin-top:8px;letter-spacing:0.06em;">Front-facing, good lighting works best</p>
+      <p class="upload-label">Upload a reference photo (optional)</p>
+      <p style="font-size:12px;color:#444;margin-top:8px;letter-spacing:0.06em;">Shown as "Today" in the before/after reveal</p>
     </div>
 
     <!-- PHOTO TIPS -->
@@ -1057,11 +1057,9 @@
       </div>
     </div>
 
-    <p style="font-size:11px;color:rgba(200,169,110,0.45);letter-spacing:0.06em;margin-top:12px;text-align:center;font-style:italic;font-family:'Cormorant Garamond',serif;">
-      Transformation previews are illustrative. Personalized AI generation is in development.
-    </p>
+    <button class="btn" onclick="generateFutureSelf()" style="width:100%;margin-top:20px;font-size:14px;letter-spacing:0.12em;">GENERATE MY FUTURE SELF</button>
 
-    <div style="text-align:center;margin-top:20px;">
+    <div style="text-align:center;margin-top:14px;">
       <button onclick="showScreen('program')" style="background:none;border:none;color:var(--muted);font-family:var(--ff-body);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;text-decoration:underline;text-underline-offset:3px;">Skip — go straight to my program →</button>
     </div>
 
@@ -1850,58 +1848,59 @@
 
   function handlePhoto(file) {
     if (!file) return;
-
     var reader = new FileReader();
     reader.onload = function(e) {
-      var base64 = e.target.result;
-
       var beforeImg = document.getElementById('beforeImg');
-      if (beforeImg) beforeImg.src = base64;
-
-      var prog    = document.getElementById('generateProgress');
-      var comp    = document.getElementById('comparison');
-      var actions = document.getElementById('futureActions');
-      if (prog)    prog.style.display = 'flex';
-      if (comp)    comp.style.display = 'none';
-      if (actions) actions.style.display = 'none';
-
-      var timeline = window.selectedTimeline || '12weeks';
-
-      var label = document.getElementById('progressLabel');
-      if (label) label.textContent = 'Generating your future self...';
-
-      console.log('Photo loaded, calling /api/openai-image...');
-
-      fetch('/api/openai-image', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          image_base64: base64,
-          timeline: timeline
-        })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        if (d.success && d.image_base64) {
-          state.avatarUrl = d.image_base64;
-          var da = document.getElementById('dashAvatar');
-          if (da) da.src = d.image_base64;
-          var afterImg = document.getElementById('afterImg');
-          if (afterImg) afterImg.src = d.image_base64;
-          revealFutureSelf();
-        } else {
-          console.error('Generation failed:', d.error);
-          if (label) label.textContent = 'Generation failed. Please try again.';
-          setTimeout(function() { if (prog) prog.style.display = 'none'; }, 2000);
-        }
-      })
-      .catch(function(err) {
-        console.error('/api/openai-image request failed:', err.message);
-        if (label) label.textContent = 'Generation failed. Please try again.';
-        setTimeout(function() { if (prog) prog.style.display = 'none'; }, 2000);
-      });
+      if (beforeImg) beforeImg.src = e.target.result;
+      // Photo is stored as "Today" reference only — generation is profile-based
     };
     reader.readAsDataURL(file);
+  }
+
+  function generateFutureSelf() {
+    var prog    = document.getElementById('generateProgress');
+    var comp    = document.getElementById('comparison');
+    var actions = document.getElementById('futureActions');
+    if (prog)    prog.style.display = 'flex';
+    if (comp)    comp.style.display = 'none';
+    if (actions) actions.style.display = 'none';
+
+    var timeline = window.selectedTimeline || '12weeks';
+    var profile = {};
+    try { profile = JSON.parse(localStorage.getItem('wylde_profile') || '{}'); } catch(ex) {}
+
+    var label = document.getElementById('progressLabel');
+    if (label) label.textContent = 'Generating your future self vision...';
+
+    fetch('/api/openai-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        timeline: timeline,
+        goal: profile.goal || 'lean and athletic',
+        gender: profile.gender || 'male'
+      })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.success && d.image_base64) {
+        state.avatarUrl = d.image_base64;
+        var da = document.getElementById('dashAvatar');
+        if (da) da.src = d.image_base64;
+        var afterImg = document.getElementById('afterImg');
+        if (afterImg) afterImg.src = d.image_base64;
+        revealFutureSelf();
+      } else {
+        console.error('Generation failed:', d.error);
+        if (label) label.textContent = 'Generation failed. Please try again.';
+        setTimeout(function() { if (prog) prog.style.display = 'none'; }, 2000);
+      }
+    })
+    .catch(function(err) {
+      console.error('/api/openai-image request failed:', err.message);
+      if (label) label.textContent = 'Generation failed. Please try again.';
+      setTimeout(function() { if (prog) prog.style.display = 'none'; }, 2000);
+    });
   }
 
   function revealFutureSelf() {

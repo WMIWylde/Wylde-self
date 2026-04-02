@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/openai-image.js": {
-      "maxDuration": 60
+      "maxDuration": 30
     }
   }
 }
