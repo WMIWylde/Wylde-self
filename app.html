@@ -1846,13 +1846,15 @@
   function triggerUpload() { document.getElementById("photoInput").click(); }
   var uploadedImageBase64 = null;
 
+  var uploadedPhotoBase64 = null;
+
   function handlePhoto(file) {
     if (!file) return;
     var reader = new FileReader();
     reader.onload = function(e) {
+      uploadedPhotoBase64 = e.target.result;
       var beforeImg = document.getElementById('beforeImg');
-      if (beforeImg) beforeImg.src = e.target.result;
-      // Photo is stored as "Today" reference only — generation is profile-based
+      if (beforeImg) beforeImg.src = uploadedPhotoBase64;
     };
     reader.readAsDataURL(file);
   }
@@ -1872,14 +1874,17 @@
     var label = document.getElementById('progressLabel');
     if (label) label.textContent = 'Generating your future self vision...';
 
-    fetch('/api/openai-image', {
+    var payload = {
+      timeline: timeline,
+      goal: profile.goal || 'lean and athletic',
+      gender: profile.gender || 'male'
+    };
+    if (uploadedPhotoBase64) payload.image_base64 = uploadedPhotoBase64;
+
+    fetch('/api/generate-image', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        timeline: timeline,
-        goal: profile.goal || 'lean and athletic',
-        gender: profile.gender || 'male'
-      })
+      body: JSON.stringify(payload)
     })
     .then(function(r) { return r.json(); })
     .then(function(d) {
@@ -1897,7 +1902,7 @@
       }
     })
     .catch(function(err) {
-      console.error('/api/openai-image request failed:', err.message);
+      console.error('/api/generate-image request failed:', err.message);
       if (label) label.textContent = 'Generation failed. Please try again.';
       setTimeout(function() { if (prog) prog.style.display = 'none'; }, 2000);
     });
