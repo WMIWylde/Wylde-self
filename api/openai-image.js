@@ -1,4 +1,5 @@
 import FormData from 'form-data';
+import sharp from 'sharp';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -17,11 +18,20 @@ export default async function handler(req, res) {
     const base64Data = image_base64.replace(/^data:image\/\w+;base64,/, '');
     const imageBuffer = Buffer.from(base64Data, 'base64');
 
+    if (imageBuffer.length > 4 * 1024 * 1024) {
+      throw new Error('Image too large. Please use a photo under 4MB.');
+    }
+
+    const pngBuffer = await sharp(imageBuffer)
+      .resize(512, 512, { fit: 'cover', position: 'centre' })
+      .png()
+      .toBuffer();
+
     const timelineLabel = timeline === '6months' ? '6 months' : timeline === '1year' ? '1 year' : '12 weeks';
     const prompt = promptOverride || `Athletic physique transformation after ${timelineLabel} of consistent training. Lean, muscular, confident. Same face and identity. Photorealistic.`;
 
     const form = new FormData();
-    form.append('image', imageBuffer, { filename: 'photo.png', contentType: 'image/png' });
+    form.append('image', pngBuffer, { filename: 'photo.png', contentType: 'image/png' });
     form.append('prompt', prompt);
     form.append('model', 'dall-e-2');
     form.append('n', '1');
