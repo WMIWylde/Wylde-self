@@ -20,7 +20,7 @@
 | App | wyldeself.com/app.html |
 | Beta gate | wyldeself.com/gate.html |
 | Apply form | wyldeself.com/apply.html |
-| Investor deck | wyldeself.com/investors.html ← TO BE BUILT |
+| Investor deck | wyldeself.com/investors.html |
 
 ---
 
@@ -33,10 +33,10 @@
 | Repo | github.com/WMIWylde/Wylde-self |
 | Claude Code | Installed at ~/Wylde-self |
 | AI — Coaching | Claude Haiku via /api/anthropic.js proxy |
-| AI — Image gen | fal.ai flux/dev/image-to-image via /api/fal.js proxy |
+| AI — Image gen | Google Gemini 3.1 Flash Image via /api/generate-image.js (Edge Runtime) |
 | Forms | Formspree (mkoponoz), EmailJS (service: Wylde_service, template: template_5th6z59) |
 | Supplements | Fullscript dispensary — Wylde Self Health |
-| Env vars | ANTHROPIC_API_KEY, FAL_API_KEY (stored in Vercel) |
+| Env vars | ANTHROPIC_API_KEY, GEMINI_API_KEY (stored in Vercel) |
 
 ---
 
@@ -187,25 +187,14 @@ fetch('/app.html').then(r => r.text()).then(html => {
 
 ## Pending / Next Up
 
-### Immediate
-- [ ] **Add investors.html to repo** — file is built and ready (download from chat, add via Claude Code)
-- [ ] **Add "Investors" link to index.html nav** — links to /investors.html, visible in main nav
-- [ ] Add "Apply for Beta" button to landing page linking to /apply.html
-- [ ] Confirm Fullscript dispensary setup and update Shop links in app.html
-
-### Short Term
-- [ ] Trademark "Wylde Self" and "Train with the person you're becoming" — file after first check closes
-- [ ] Buy wyldeself.ai domain (decided this session — on-brand, ~$50-80/yr)
-- [ ] Sign naturopath/functional medicine advisor agreement (Everwell contact)
-- [ ] Beta program — recruit 30 founding members via /apply.html
-- [ ] Collect beta feedback and NPS scores for VC deck traction slide
-
-### Longer Term
-- [ ] React Native mobile app (Expo) — scaffold when web app is polished
-- [ ] Supabase backend — user auth, data persistence, profile sync
-- [ ] Apple Health + Google Fit integration (HealthKit)
-- [ ] Community features — cohort challenges, leaderboard, social feed
-- [ ] Proprietary supplement line (Phase 3 post-funding)
+- [ ] iOS: paste PeptideView.swift Claude Code prompt
+- [ ] iOS: paste SupplementView.swift Claude Code prompt
+- [ ] Web + iOS: full design polish pass — make app look beautiful (Shred-level quality)
+- [ ] Before/after reveal UI polish on Future Self screen
+- [ ] Add "Investors" link to index.html nav
+- [ ] Confirm Fullscript dispensary setup and update Shop links
+- [ ] Buy wyldeself.ai domain
+- [ ] Update HANDOFF.md Live URLs — investors.html is now live
 
 ---
 
@@ -257,7 +246,38 @@ fetch('/app.html').then(r => r.text()).then(html => {
 
 ## Session Log
 
-### Session 3 — April 2026 (this chat)
+### Session 5 — April 2026
+- Switched image generation from fal.ai to OpenAI (gpt-image-1 / dall-e-2) — multiple failures due to model restrictions, billing limits, PNG format requirements
+- Verified OpenAI org as Individual — unlocked gpt-image-1
+- Switched to Google Gemini 3.1 Flash Image (Nano Banana) via Gemini API
+- Added GEMINI_API_KEY to Vercel environment variables
+- Fixed model name to gemini-3.1-flash-image-preview
+- Fixed generationConfig to use responseModalities: ["TEXT", "IMAGE"] (no responseMimeType)
+- Switched api/generate-image.js to Vercel Edge Runtime to get 30s timeout on Hobby plan
+- Future Self image generation now WORKING — realistic output confirmed live
+- Added photo preview to Future Self upload zone (shows TODAY label, X to clear)
+- Added consent flow (ConsentView.swift) — fixed duplicate body declaration
+- Added Future Self as special featured coach in coach roster
+- Designed PeptideView.swift and SupplementView.swift prompts (ready to build next session)
+- iOS: back button fix, workout tracker UI redesign prompts written
+- iOS: coach portrait images added (Adam, Marcus, Kai, Cole, Sage, Ren)
+
+### Session 4 — April 2026
+- Started native iOS app in Xcode/SwiftUI at ~/Documents/WyldeSelf
+- Scaffolded all core Swift files: Theme, APIService, UserProfile, OnboardingView, MainTabView, DashboardView, ProgramView, CoachView, NutritionView, ProgressView
+- Fixed UserProfile ObservableObject (import SwiftUI + Combine)
+- Fixed iOS simulator setup (iPhone 17 Pro Max)
+- Updated OnboardingView: multi-select goals up to 3, 12 goal options, rounded corners, "Your full name" label
+- Built CoachPersona.swift with 6 coaches: Adam, Marcus, Kai, Cole, Sage, Ren
+- Built full CoachView with roster screen and AI chat per coach
+- Built ProgramView: AI program generator, progression levels (Ember/Forge/Steel/Wylde), session logging with difficulty rating, custom program builder
+- Built NutritionView: macro tracking, AI food log estimation, AI meal plan generator
+- Built ExerciseDatabase.swift and WorkoutSession.swift
+- Fixed API: added model field to anthropic.js proxy
+- Extracted slide1_cover.jpg from investors.html, added as hero background on index.html
+- Known issues: ProgramBuilderSheet has no back button, coach portraits are initials placeholders pending AI-generated images
+
+### Session 3 — April 2026
 - Built full 13-slide VC pitch deck as self-contained HTML file
 - Embedded all 6 brand images (sacred geometry, neural head, transformation, app screens, gold chart, supplements)
 - Integrated SVG logo across all slides (vector, no quality loss, no background artifacts)
