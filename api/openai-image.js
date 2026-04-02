@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     }
 
     const pngBuffer = await sharp(imageBuffer)
-      .resize(512, 512, { fit: 'cover', position: 'centre' })
+      .resize(1024, 1024, { fit: 'cover', position: 'centre' })
       .png()
       .toBuffer();
 
@@ -33,9 +33,10 @@ export default async function handler(req, res) {
     const form = new FormData();
     form.append('image', pngBuffer, { filename: 'photo.png', contentType: 'image/png' });
     form.append('prompt', prompt);
-    form.append('model', 'dall-e-2');
+    form.append('model', 'gpt-image-1');
     form.append('n', '1');
-    form.append('size', '512x512');
+    form.append('size', '1024x1024');
+    form.append('response_format', 'b64_json');
 
     const response = await fetch('https://api.openai.com/v1/images/edits', {
       method: 'POST',
@@ -52,17 +53,12 @@ export default async function handler(req, res) {
       throw new Error(data?.error?.message || `OpenAI error: ${response.status}`);
     }
 
-    const imageUrl = data?.data?.[0]?.url;
-    if (!imageUrl) throw new Error('No image URL returned from OpenAI');
-
-    // Fetch the image and convert to base64 to return to client
-    const imgResponse = await fetch(imageUrl);
-    const imgBuffer = Buffer.from(await imgResponse.arrayBuffer());
-    const imgBase64 = imgBuffer.toString('base64');
+    const b64 = data?.data?.[0]?.b64_json;
+    if (!b64) throw new Error('No image returned from OpenAI');
 
     return res.status(200).json({
       success: true,
-      image_base64: `data:image/png;base64,${imgBase64}`
+      image_base64: `data:image/png;base64,${b64}`
     });
 
   } catch (err) {
