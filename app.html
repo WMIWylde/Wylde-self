@@ -1865,141 +1865,46 @@
       if (comp)    comp.style.display = 'none';
       if (actions) actions.style.display = 'none';
 
-      var profile = {};
-      try { profile = JSON.parse(localStorage.getItem('wylde_profile') || '{}'); } catch(ex) {}
-      var goal   = profile.goal   || 'build muscle';
-      var gender = profile.gender || 'person';
-
       var timeline = window.selectedTimeline || '12weeks';
-      var promptText, strength, steps;
-
-      if (timeline === '12weeks') {
-        strength   = 0.55;
-        steps      = 30;
-        promptText = 'The same ' + gender + ' after 12 weeks of dedicated training. Noticeably leaner, slightly more muscular definition visible, same face and body structure, same clothing style, standing in same pose. Subtle but clear physical improvement. Goal: ' + goal + '. Photorealistic, front facing, full body, white background.';
-      } else if (timeline === '6months') {
-        strength   = 0.72;
-        steps      = 35;
-        promptText = 'The same ' + gender + ' after 6 months of serious training and dieting. Significantly leaner body, clear muscle definition, visibly reduced body fat, tighter physique, same facial features, same pose. Goal: ' + goal + '. Dramatic but realistic transformation. Photorealistic, front facing, full body, white background.';
-      } else {
-        strength   = 0.85;
-        steps      = 40;
-        promptText = 'The same ' + gender + ' after 1 full year of dedicated training, nutrition, and lifestyle change. Athletic and lean physique, strong muscle definition throughout body, dramatically reduced body fat, confident posture, same facial features clearly recognisable. Goal: ' + goal + '. This is a major physical transformation — show it clearly. Photorealistic, front facing, full body, white background.';
-      }
 
       var label = document.getElementById('progressLabel');
-      if (label) label.textContent = 'Generating your ' + (timeline === '12weeks' ? '12-week' : timeline === '6months' ? '6-month' : '1-year') + ' transformation...';
+      if (label) label.textContent = 'Generating your future self...';
 
-      console.log('Photo loaded, starting generation...');
+      console.log('Photo loaded, calling /api/openai-image...');
 
-      fetch('/api/fal?endpoint=fal-ai/flux/dev/image-to-image', {
+      fetch('/api/openai-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          image_url: base64,
-          prompt: promptText,
-          negative_prompt: 'cartoon, anime, drawing, painting, different person, different face, ugly, deformed, blurry, watermark',
-          strength: strength,
-          num_inference_steps: steps,
-          guidance_scale: 7.5
+          image_base64: base64,
+          timeline: timeline
         })
       })
       .then(function(r) { return r.json(); })
       .then(function(d) {
-        console.log('Job queued:', d.request_id);
-        if (d.request_id) {
-          pollFalResult(d.request_id);
+        if (d.success && d.image_base64) {
+          state.avatarUrl = d.image_base64;
+          var da = document.getElementById('dashAvatar');
+          if (da) da.src = d.image_base64;
+          var afterImg = document.getElementById('afterImg');
+          if (afterImg) afterImg.src = d.image_base64;
+          revealFutureSelf();
         } else {
-          console.log('No request_id in response:', JSON.stringify(d));
-          if (prog) prog.style.display = 'none';
+          console.error('Generation failed:', d.error);
+          if (label) label.textContent = 'Generation failed. Please try again.';
+          setTimeout(function() { if (prog) prog.style.display = 'none'; }, 2000);
         }
       })
       .catch(function(err) {
-        console.log('fal.ai request failed:', err.message);
-        if (prog) prog.style.display = 'none';
+        console.error('/api/openai-image request failed:', err.message);
+        if (label) label.textContent = 'Generation failed. Please try again.';
+        setTimeout(function() { if (prog) prog.style.display = 'none'; }, 2000);
       });
     };
     reader.readAsDataURL(file);
   }
 
-  function falRevealImage(url) {
-    console.log('Image complete: ' + url);
-    state.avatarUrl = url;
-    var da = document.getElementById('dashAvatar');
-    if (da) da.src = url;
-    var afterImg = document.getElementById('afterImg');
-    var _revealed = false;
-    var timeout = setTimeout(function() {
-      if (_revealed) return;
-      _revealed = true;
-      afterImg.onload = null;
-      afterImg.onerror = null;
-      revealFutureSelf(url);
-    }, 10000);
-    afterImg.onload = function() {
-      if (_revealed) return;
-      _revealed = true;
-      afterImg.onload = null;
-      afterImg.onerror = null;
-      clearTimeout(timeout);
-      revealFutureSelf(url);
-    };
-    afterImg.onerror = function() {
-      if (_revealed) return;
-      _revealed = true;
-      afterImg.onload = null;
-      afterImg.onerror = null;
-      clearTimeout(timeout);
-      revealFutureSelf(url);
-    };
-    afterImg.src = url;
-  }
-
-  function pollFalResult(requestId, attempts) {
-    attempts = attempts || 0;
-    if (attempts > 40) {
-      var prog = document.getElementById('generateProgress');
-      if (prog) prog.style.display = 'none';
-      return;
-    }
-    fetch('/api/fal?requestId=' + encodeURIComponent(requestId) + '&endpoint=fal-ai%2Fflux%2Fdev%2Fimage-to-image')
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-        console.log('Poll status: ' + data.status);
-        var label = document.getElementById('progressLabel');
-        if (data.status === 'COMPLETED') {
-          if (label) label.textContent = 'Revealing your future self...';
-          var url = (data.images && data.images[0] && data.images[0].url)
-                 || (data.image && data.image.url)
-                 || (data.output && data.output.images && data.output.images[0] && data.output.images[0].url);
-          if (url) {
-            falRevealImage(url);
-          } else {
-            var prog = document.getElementById('generateProgress');
-            if (prog) prog.style.display = 'none';
-          }
-        } else if (data.status === 'FAILED') {
-          if (label) label.textContent = 'Generation failed. Please try again.';
-          setTimeout(function() {
-            var prog = document.getElementById('generateProgress');
-            if (prog) prog.style.display = 'none';
-          }, 2000);
-        } else if (data.status === 'IN_QUEUE') {
-          if (label) label.textContent = 'In queue — your transformation is being processed...';
-          setTimeout(function() { pollFalResult(requestId, attempts + 1); }, 3000);
-        } else if (data.status === 'IN_PROGRESS') {
-          if (label) label.textContent = 'Generating... this takes 20–40 seconds';
-          setTimeout(function() { pollFalResult(requestId, attempts + 1); }, 3000);
-        } else {
-          setTimeout(function() { pollFalResult(requestId, attempts + 1); }, 3000);
-        }
-      })
-      .catch(function() {
-        setTimeout(function() { pollFalResult(requestId, attempts + 1); }, 3000);
-      });
-  }
-
-  function revealFutureSelf(imageUrl) {
+  function revealFutureSelf() {
     console.log('Revealing future self...');
     document.getElementById('generateProgress').style.display = 'none';
     document.getElementById('comparison').style.display = 'grid';

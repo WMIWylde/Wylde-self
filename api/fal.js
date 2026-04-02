@@ -1,3 +1,6 @@
+// DEPRECATED — replaced by api/openai-image.js (OpenAI gpt-image-1)
+// Kept for reference only. Remove after confirming iOS and web app are fully migrated.
+
 export default async function handler(req, res) {
   // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
