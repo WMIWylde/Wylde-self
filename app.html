@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="theme-color" content="#080808"/>
   <title>Wylde Self — App</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Mono:wght@400;700&family=Montserrat:wght@800&family=Cormorant+Garamond:ital@1&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -20,11 +20,15 @@
       --accent: #ff6030;
       --accent-bg: rgba(220,90,30,0.15);
       --accent-border: rgba(220,90,30,0.45);
-      --ff-hero: 'Bebas Neue', sans-serif;
+      --ff-hero: 'Inter', system-ui, sans-serif;
       --ff-serif: 'Cormorant Garamond', serif;
-      --ff-body: 'DM Sans', sans-serif;
+      --ff-body: 'Inter', system-ui, sans-serif;
+      --font-ui: 'Inter', system-ui, sans-serif;
+      --font-mono: 'Space Mono', monospace;
+      --font-milestone: 'Montserrat', sans-serif;
+      --font-editorial: 'Cormorant Garamond', serif;
     }
-    html, body { background: #080808 !important; color: #f5f4f0; font-family: var(--ff-body); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    html, body { background: #080808 !important; color: #f5f4f0; font-family: var(--font-ui); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
     /* NAV */
     nav { position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; background: #0c0c0c; border-right: 1px solid var(--border); width: 200px; display: flex; flex-direction: column; padding: 0; }
@@ -32,6 +36,7 @@
     .nav-logo span { color: var(--gold); }
     .nav-tabs { display: flex; flex-direction: column; flex: 1; padding: 12px 0; overflow-y: auto; }
     .nav-tab { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 14px 24px; display: flex; align-items: center; border-left: 2px solid transparent; cursor: pointer; transition: all 0.2s; background: none; border-top: none; border-bottom: none; border-right: none; font-family: var(--ff-body); text-align: left; width: 100%; }
+    .nav-tab { font-family: var(--font-ui); }
     .nav-tab:hover { color: #f5f4f0; background: rgba(255,255,255,0.03); }
     .nav-tab.active { color: var(--gold); border-left-color: var(--gold); background: rgba(200,169,110,0.06); }
     .nav-tab.active::after { content: ''; display: inline-block; width: 4px; height: 4px; background: var(--gold); border-radius: 50%; margin-left: auto; }
@@ -51,8 +56,9 @@
     .screen-title { font-family: var(--ff-hero); font-size: clamp(40px, 7vw, 72px); letter-spacing: 0.03em; line-height: 1; margin-bottom: 16px; }
     .screen-sub { font-family: var(--ff-serif); font-style: italic; font-size: 18px; color: var(--muted); margin-bottom: 48px; line-height: 1.7; }
     .gold-rule { width: 48px; height: 1px; background: var(--gold); margin-bottom: 48px; }
-    .btn { font-family: var(--ff-body); font-size: 13px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; background: rgba(200,169,110,0.22); color: #f0c040; border: 1px solid rgba(200,169,110,0.55); padding: 14px 32px; cursor: pointer; transition: background 0.2s, transform 0.15s, opacity 0.2s; display: inline-block; border-radius: 9px; }
+    .btn { font-family: var(--font-ui); font-size: 13px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; background: rgba(200,169,110,0.22); color: #f0c040; border: 1px solid rgba(200,169,110,0.55); padding: 14px 32px; cursor: pointer; transition: all 0.2s; display: inline-block; border-radius: 9px; }
     .btn:hover { background: rgba(200,169,110,0.34); transform: translateY(-1px); }
+    .btn:active, .btn-ember:active, .btn-success:active, .btn-blue:active, .btn-purple:active { transform: scale(0.98); }
     .btn-outline { background: rgba(200,169,110,0.22); color: #f0c040; border: 1px solid rgba(200,169,110,0.55); border-radius: 9px; }
     .btn-outline:hover { background: rgba(200,169,110,0.34); transform: translateY(-1px); }
     .btn-ember { background: rgba(220,90,30,0.20) !important; border: 1px solid rgba(220,90,30,0.50) !important; color: #ff7040 !important; border-radius: 9px; }
@@ -63,8 +69,8 @@
     .btn-blue:hover { background: rgba(60,130,210,0.30) !important; }
     .btn-purple { background: rgba(184,158,224,0.12) !important; border: 1px solid rgba(184,158,224,0.40) !important; color: #c8aaf0 !important; border-radius: 9px; }
     .btn-purple:hover { background: rgba(184,158,224,0.24) !important; }
-    .input { background: #161616; border: 1px solid var(--border); color: #f5f4f0; font-family: var(--ff-body); font-size: 14px; padding: 14px 18px; outline: none; width: 100%; transition: border-color 0.2s; border-radius: 0; -webkit-appearance: none; }
-    .input:focus { border-color: var(--gold); }
+    .input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #f5f4f0; font-family: var(--font-ui); font-size: 14px; padding: 14px 18px; outline: none; width: 100%; transition: border-color 0.2s; border-radius: 9px; -webkit-appearance: none; }
+    .input:focus { border-color: var(--accent); }
     .input::placeholder { color: #444; }
     .card { background: #161616; border: 1px solid rgba(255,255,255,0.13); padding: 36px; margin-bottom: 16px; border-radius: 10px; }
 
@@ -74,16 +80,16 @@
     .pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
     .pill { font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 9px 18px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.2s; font-family: var(--ff-body); }
     .pill:hover { border-color: var(--gold); color: #f5f4f0; }
-    .pill.selected { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); }
+    .pill.selected { border-color: var(--accent-border); background: var(--accent-bg); color: var(--accent); }
 
     /* TIMELINE */
     .timeline-btn { flex:1; font-family:var(--ff-body); font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; padding:10px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.2s; }
     .timeline-btn:hover { border-color:var(--gold); color:#f5f4f0; }
-    .timeline-btn.active { border-color:var(--gold); background:var(--gold-dim); color:var(--gold); }
+    .timeline-btn.active { border-color: var(--accent-border); background: var(--accent-bg); color: var(--accent); }
 
     /* FUTURE SELF */
-    .upload-zone { border: 1px dashed rgba(200,169,110,0.3); background: #111; padding: 60px 24px; text-align: center; cursor: pointer; transition: all 0.25s; position: relative; }
-    .upload-zone:hover { border-color: var(--gold); background: var(--gold-dim); }
+    .upload-zone { border: 1px dashed rgba(255,255,255,0.2); background: rgba(255,255,255,0.03); padding: 60px 24px; text-align: center; cursor: pointer; transition: all 0.25s; position: relative; border-radius: 9px; }
+    .upload-zone:hover { border-color: var(--accent); background: var(--accent-bg); }
     .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
     .upload-icon { font-size: 32px; margin-bottom: 12px; color: var(--gold); opacity: 0.6; }
     .upload-label { font-family: var(--ff-serif); font-style: italic; font-size: 17px; color: var(--muted); }
@@ -92,7 +98,7 @@
     .comparison.show { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 24px; }
     .comp-side { position: relative; }
     .comp-side img { width: 100%; display: block; }
-    .comp-tag { position: absolute; top: 12px; left: 12px; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); padding: 5px 10px; border: 1px solid rgba(200,169,110,0.3); background: rgba(8,8,8,0.88); font-family: var(--ff-body); }
+    .comp-tag { position: absolute; top: 12px; left: 12px; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); padding: 5px 10px; border: 1px solid var(--accent-border); background: rgba(8,8,8,0.88); font-family: var(--font-mono); }
     .generate-progress { display: none; margin-top: 24px; }
     .progress-bar-wrap { background: #161616; height: 2px; margin-top: 16px; overflow: hidden; }
     .progress-bar { height: 100%; background: var(--gold); width: 0; transition: width 0.1s linear; }
@@ -122,6 +128,7 @@
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
     @keyframes pulse-dot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.7} }
     @keyframes breathe { 0%,100%{border-color:rgba(255,255,255,0.13)} 50%{border-color:rgba(255,255,255,0.28)} }
+    .day-card, .stack-card, .peptide-card, .stat-box, .session-log .log-item, .roadmap-phase, .msg-ai .msg-bubble, .msg-user .msg-bubble, .dash-ring-card, .dash-macro-card, .dash-profile-card { animation: breathe 4s ease-in-out infinite; }
     @keyframes heartbeat-bar { 0%,100%{transform:scaleX(1)} 50%{transform:scaleX(1.05)} }
     @keyframes rest-ring { to{stroke-dashoffset:339} }
     .pulse-dot { width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;animation:pulse-dot 2.2s ease-in-out infinite;flex-shrink:0; }
@@ -166,6 +173,10 @@
     .chat-input::placeholder { color: #444; }
     .chat-send { background: var(--gold); border: none; color: #080808; padding: 14px 20px; cursor: pointer; font-family: var(--ff-body); font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; transition: opacity 0.2s; }
     .chat-send:hover { opacity: 0.85; }
+    .msg-ai .msg-bubble { font-family: var(--font-editorial); font-style: italic; font-size: 15px; line-height: 1.75; }
+    .msg-user .msg-bubble { font-family: var(--font-ui); }
+    .stat-num, #sessionCount, #streakCount, #weekCount, #dashCalConsumed, #dash_water_val, #dc-streak-num, #dc-sleep-hrs, #macroCalories { font-family: var(--font-mono); }
+    .level-badge #navLevel, .level-badge #levelName, .streak-fire { font-family: var(--font-milestone); font-weight: 800; }
 
     /* PROGRESS */
     .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-bottom: 32px; }
@@ -480,6 +491,31 @@
   .stack-priority.essential { color: var(--gold); border-color: rgba(200,169,110,0.4); }
   .stack-priority.recommended { color: var(--muted); border-color: var(--border); }
   .stack-total { background: rgba(200,169,110,0.06); border: 1px solid rgba(200,169,110,0.15); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+
+  /* HEARTBEAT LINE */
+  .heartbeat-line { display:flex;align-items:center;gap:3px;padding:10px 20px;border-top:1px solid rgba(255,255,255,0.07);position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(8,8,8,0.95); }
+  .hb-seg { height:2px;border-radius:1px;background:rgba(200,169,110,0.28);animation:hb 1.5s ease-in-out infinite; }
+  @keyframes hb { 0%,100%{transform:scaleX(1)} 12%{transform:scaleX(1.05)} 24%{transform:scaleX(1)} }
+  .hb-live { font-family:var(--font-mono);font-size:9px;color:#444;margin-left:auto;letter-spacing:0.1em; }
+  /* Nutrition macro bar colors */
+  #dashBar_protein { background: #60b0ff !important; }
+  #dashBar_carbs { background: #f0c040 !important; }
+  #dashBar_fat { background: #ff7040 !important; }
+  /* Calorie total mono */
+  #macroCalories { font-family: var(--font-mono); font-size: 32px; }
+  /* Coach sidebar send button */
+  .coach-send, .coach-panel-send, .chat-send { background: rgba(220,90,30,0.20); border: 1px solid rgba(220,90,30,0.50); color: #ff7040; border-radius: 7px; }
+  .coach-send:hover, .coach-panel-send:hover, .chat-send:hover { background: rgba(220,90,30,0.32); opacity: 1; }
+  /* Screen padding for heartbeat line */
+  .screen { padding-bottom: 60px !important; }
+  /* Peptide tags purple */
+  .peptide-tag { color: #c8aaf0 !important; border-color: rgba(184,158,224,0.40) !important; background: rgba(184,158,224,0.08); }
+  /* Supplement card fullscript btn */
+  .fs-link-btn { background: rgba(200,169,110,0.22); border: 1px solid rgba(200,169,110,0.55); color: #f0c040; border-radius: 7px; font-family: var(--font-ui); font-size: 11px; font-weight: 500; letter-spacing: 0.07em; padding: 6px 14px; cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-block; }
+  .fs-link-btn:hover { background: rgba(200,169,110,0.34); }
+  /* PR flash animation */
+  @keyframes pr-flash { 0%,100%{border-color:var(--accent-border)} 50%{border-color:var(--accent)} }
+  .pr-badge { font-family: var(--font-milestone); font-weight: 800; color: #ff7040; border: 1px solid rgba(220,90,30,0.50); border-radius: 20px; padding: 3px 10px; font-size: 10px; animation: pr-flash 0.6s ease-in-out 3; }
   </style>
 </head>
 <body style="background:#080808;">
@@ -527,7 +563,7 @@
 <div class="screen active" id="screen-onboard">
   <div class="container">
     <p class="section-label">Welcome</p>
-    <h1 class="screen-title">Let's build<br>your profile</h1>
+    <h1 class="screen-title"><span class="pulse-dot" style="margin-right:8px;"></span>Let's build<br>your profile</h1>
     <p class="screen-sub">Tell us about yourself so we can generate your future self and build your program.</p>
     <div class="gold-rule"></div>
 
@@ -713,7 +749,7 @@
 <div class="screen" id="screen-overview">
 <div class="ov-shell">
   <div class="ov-brand">Wylde Self</div>
-  <div class="ov-title">Today's Protocol</div>
+  <div class="ov-title"><span class="pulse-dot" style="margin-right:8px;"></span>Today's Protocol</div>
   <div class="ov-sub" id="ov-sub">Week 1 of 12 · Build muscle · Intermediate</div>
   <div class="ov-streak"><span class="ov-streak-dot"></span><span id="ov-streak-text">0 day streak — don't break it</span></div>
   <div class="ov-q" id="ov-q">"What would the version of you that's already won do today?"</div>
@@ -1001,7 +1037,7 @@
 <div class="screen" id="screen-future">
   <div class="container">
     <p class="section-label">Future Self Generator</p>
-    <h1 class="screen-title">See who you're<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">becoming</span></h1>
+    <h1 class="screen-title"><span class="pulse-dot" style="margin-right:8px;"></span>See who you're<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">becoming</span></h1>
     <p class="screen-sub">Generate Your Future Self Vision — an AI image of the physique you're building toward.</p>
     <div class="gold-rule"></div>
 
@@ -1073,11 +1109,11 @@
 <div class="screen" id="screen-program">
   <div class="container">
     <p class="section-label">Your Program</p>
-    <h1 class="screen-title">Built for<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);" id="programName">you</span></h1>
+    <h1 class="screen-title"><span class="pulse-dot" style="margin-right:8px;"></span>Built for<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);" id="programName">you</span></h1>
     <p class="screen-sub" id="programSub">A personalized program designed around your goals and schedule.</p>
     <div class="gold-rule"></div>
 
-    <button class="btn" id="generateProgramBtn" onclick="generateProgram()">Generate My Program</button>
+    <button class="btn btn-ember" id="generateProgramBtn" onclick="generateProgram()">Generate My Program</button>
 
     <div class="program-output" id="programOutput" style="margin-top:48px;">
       <div id="programDays"></div>
@@ -1108,7 +1144,7 @@
 <div class="screen" id="screen-coach">
   <div class="container" style="padding-bottom:0;">
     <p class="section-label">AI Coach</p>
-    <h1 class="screen-title" style="margin-bottom:24px;">Your future self<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">is talking</span></h1>
+    <h1 class="screen-title" style="margin-bottom:24px;"><span class="pulse-dot" style="margin-right:8px;"></span>Your future self<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">is talking</span></h1>
 
     <div class="chat-wrap">
       <div class="chat-messages" id="chatMessages">
@@ -1129,7 +1165,7 @@
 <div class="screen" id="screen-progress">
   <div class="container">
     <p class="section-label">Your Progress</p>
-    <h1 class="screen-title">Closing<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">the gap</span></h1>
+    <h1 class="screen-title"><span class="pulse-dot" style="margin-right:8px;"></span>Closing<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">the gap</span></h1>
     <div class="gold-rule"></div>
 
     <div class="stats-grid">
@@ -1147,7 +1183,7 @@
       </div>
     </div>
 
-    <button class="btn complete-btn" onclick="completeSession()">✓ Complete Today's Session</button>
+    <button class="btn btn-ember complete-btn" onclick="completeSession()">✓ Complete Today's Session</button>
 
     <p class="section-label">Session Log</p>
     <div class="session-log" id="sessionLog">
@@ -3166,7 +3202,7 @@
 <div class="screen" id="screen-health">
   <div class="container">
     <p class="section-label">Health Optimization</p>
-    <h1 class="screen-title">Beyond<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">the workout</span></h1>
+    <h1 class="screen-title"><span class="pulse-dot" style="margin-right:8px;"></span>Beyond<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">the workout</span></h1>
     <p class="screen-sub">Connect with a functional medicine practitioner, review your labs, and access clinically optimized protocols — all inside Wylde Self.</p>
     <div class="gold-rule"></div>
 
@@ -3427,7 +3463,7 @@
 <div class="screen" id="screen-nutrition">
   <div class="container">
     <p class="section-label">Nutrition</p>
-    <h1 class="screen-title">Fuel your<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">becoming</span></h1>
+    <h1 class="screen-title"><span class="pulse-dot" style="margin-right:8px;"></span>Fuel your<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">becoming</span></h1>
     <p class="screen-sub" id="nutritionSub">Your personalized macro targets and meal plan.</p>
     <div class="gold-rule"></div>
 
@@ -3526,7 +3562,7 @@
 <div class="screen" id="screen-supplements">
   <div class="container">
     <p class="section-label">Supplement Marketplace</p>
-    <h1 class="screen-title">Stack built<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">for you</span></h1>
+    <h1 class="screen-title"><span class="pulse-dot" style="margin-right:8px;"></span>Stack built<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">for you</span></h1>
     <p class="screen-sub">Your AI coach analyses your profile, goals, and health history to recommend the exact supplements you need — with dosing, timing, and why each one matters for you specifically.</p>
     <div class="gold-rule"></div>
 
@@ -3894,6 +3930,25 @@
 
 })();
 </script>
+
+<!-- HEARTBEAT LINE -->
+<div class="heartbeat-line" id="heartbeatLine">
+  <div class="hb-seg" style="width:6px;animation-delay:0s"></div>
+  <div class="hb-seg" style="width:4px;animation-delay:0.04s"></div>
+  <div class="hb-seg" style="width:16px;animation-delay:0.08s"></div>
+  <div class="hb-seg" style="width:4px;animation-delay:0.12s"></div>
+  <div class="hb-seg" style="width:8px;animation-delay:0.16s"></div>
+  <div class="hb-seg" style="width:20px;animation-delay:0.20s"></div>
+  <div class="hb-seg" style="width:5px;animation-delay:0.24s"></div>
+  <div class="hb-seg" style="width:12px;animation-delay:0.28s"></div>
+  <div class="hb-seg" style="width:4px;animation-delay:0.32s"></div>
+  <div class="hb-seg" style="width:18px;animation-delay:0.36s"></div>
+  <div class="hb-seg" style="width:6px;animation-delay:0.40s"></div>
+  <div class="hb-seg" style="width:4px;animation-delay:0.44s"></div>
+  <div class="hb-seg" style="width:14px;animation-delay:0.48s"></div>
+  <div class="hb-seg" style="width:5px;animation-delay:0.52s"></div>
+  <span class="hb-live">LIVE</span>
+</div>
 
 </body>
 </html>
