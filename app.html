@@ -17,6 +17,9 @@
       --muted: #a0a098;
       --gold: #c8a96e;
       --gold-dim: rgba(200,169,110,0.12);
+      --accent: #ff6030;
+      --accent-bg: rgba(220,90,30,0.15);
+      --accent-border: rgba(220,90,30,0.45);
       --ff-hero: 'Bebas Neue', sans-serif;
       --ff-serif: 'Cormorant Garamond', serif;
       --ff-body: 'DM Sans', sans-serif;
@@ -48,14 +51,22 @@
     .screen-title { font-family: var(--ff-hero); font-size: clamp(40px, 7vw, 72px); letter-spacing: 0.03em; line-height: 1; margin-bottom: 16px; }
     .screen-sub { font-family: var(--ff-serif); font-style: italic; font-size: 18px; color: var(--muted); margin-bottom: 48px; line-height: 1.7; }
     .gold-rule { width: 48px; height: 1px; background: var(--gold); margin-bottom: 48px; }
-    .btn { font-family: var(--ff-body); font-size: 13px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; background: var(--gold); color: #080808; border: none; padding: 14px 32px; cursor: pointer; transition: opacity 0.2s, transform 0.15s; display: inline-block; }
-    .btn:hover { opacity: 0.85; transform: translateY(-1px); }
-    .btn-outline { background: transparent; color: var(--gold); border: 1px solid var(--gold); letter-spacing: 0.14em; }
-    .btn-outline:hover { background: var(--gold-dim); opacity: 1; transform: translateY(-1px); }
+    .btn { font-family: var(--ff-body); font-size: 13px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; background: rgba(200,169,110,0.22); color: #f0c040; border: 1px solid rgba(200,169,110,0.55); padding: 14px 32px; cursor: pointer; transition: background 0.2s, transform 0.15s, opacity 0.2s; display: inline-block; border-radius: 9px; }
+    .btn:hover { background: rgba(200,169,110,0.34); transform: translateY(-1px); }
+    .btn-outline { background: rgba(200,169,110,0.22); color: #f0c040; border: 1px solid rgba(200,169,110,0.55); border-radius: 9px; }
+    .btn-outline:hover { background: rgba(200,169,110,0.34); transform: translateY(-1px); }
+    .btn-ember { background: rgba(220,90,30,0.20) !important; border: 1px solid rgba(220,90,30,0.50) !important; color: #ff7040 !important; border-radius: 9px; }
+    .btn-ember:hover { background: rgba(220,90,30,0.32) !important; }
+    .btn-success { background: rgba(60,170,90,0.18) !important; border: 1px solid rgba(60,170,90,0.45) !important; color: #50e080 !important; border-radius: 9px; }
+    .btn-success:hover { background: rgba(60,170,90,0.30) !important; }
+    .btn-blue { background: rgba(60,130,210,0.18) !important; border: 1px solid rgba(60,130,210,0.45) !important; color: #60b0ff !important; border-radius: 9px; }
+    .btn-blue:hover { background: rgba(60,130,210,0.30) !important; }
+    .btn-purple { background: rgba(184,158,224,0.12) !important; border: 1px solid rgba(184,158,224,0.40) !important; color: #c8aaf0 !important; border-radius: 9px; }
+    .btn-purple:hover { background: rgba(184,158,224,0.24) !important; }
     .input { background: #161616; border: 1px solid var(--border); color: #f5f4f0; font-family: var(--ff-body); font-size: 14px; padding: 14px 18px; outline: none; width: 100%; transition: border-color 0.2s; border-radius: 0; -webkit-appearance: none; }
     .input:focus { border-color: var(--gold); }
     .input::placeholder { color: #444; }
-    .card { background: #161616; border: 1px solid var(--border); padding: 36px; margin-bottom: 16px; }
+    .card { background: #161616; border: 1px solid rgba(255,255,255,0.13); padding: 36px; margin-bottom: 16px; border-radius: 10px; }
 
     /* ONBOARDING */
     .onboard-form { display: flex; flex-direction: column; gap: 16px; }
@@ -109,6 +120,32 @@
     .alt-workout-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .typing-cursor { display: inline-block; width: 2px; height: 14px; background: var(--gold); margin-left: 2px; animation: blink 0.8s infinite; vertical-align: middle; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    @keyframes pulse-dot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.7} }
+    @keyframes breathe { 0%,100%{border-color:rgba(255,255,255,0.13)} 50%{border-color:rgba(255,255,255,0.28)} }
+    @keyframes heartbeat-bar { 0%,100%{transform:scaleX(1)} 50%{transform:scaleX(1.05)} }
+    @keyframes rest-ring { to{stroke-dashoffset:339} }
+    .pulse-dot { width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;animation:pulse-dot 2.2s ease-in-out infinite;flex-shrink:0; }
+    .screen-title-row { display:flex;align-items:center;gap:10px;margin-bottom:16px; }
+    .screen-title-row .screen-title { margin-bottom:0; }
+    .dash-card { background:#161616;border:1px solid rgba(255,255,255,0.13);border-radius:10px;padding:20px;margin-bottom:10px;animation:breathe 4s ease-in-out infinite;transition:opacity 0.2s,transform 0.2s,border-color 0.2s;cursor:grab;position:relative; }
+    .dash-card:active { cursor:grabbing; }
+    .dash-card.dragging { opacity:0.4;transform:scale(0.97); }
+    .dash-card.drag-over { border:1px dashed var(--accent);border-color:var(--accent) !important; }
+    .dash-drag-handle { display:flex;gap:4px;flex-wrap:wrap;width:18px;margin-bottom:12px;opacity:0.25; }
+    .dash-drag-handle span { width:3px;height:3px;border-radius:50%;background:#fff;display:block; }
+    .dash-card-label { font-size:9px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:8px; }
+    .dash-card-btn { font-family:var(--ff-body);font-size:11px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;cursor:pointer;transition:background 0.2s;border-radius:7px;display:inline-block;margin-top:10px; }
+    .heartbeat-row { display:flex;gap:3px;align-items:center;margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.05); }
+    .hb-bar { height:2px;border-radius:1px;animation:heartbeat-bar 1.5s ease-in-out infinite; }
+    .level-badge { display:inline-flex;align-items:center;gap:6px;background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:20px;padding:4px 12px;font-size:10px;font-weight:500;letter-spacing:0.1em;font-variant:small-caps;color:var(--accent); }
+    .rest-timer-wrap { display:none;flex-direction:column;align-items:center;padding:16px 0 8px;position:relative; }
+    .rest-timer-wrap.active { display:flex; }
+    .rest-status { font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px; }
+    .rest-skip { font-size:10px;letter-spacing:0.08em;color:#333;background:none;border:none;cursor:pointer;font-family:var(--ff-body);text-transform:uppercase;position:absolute;bottom:4px;right:0;padding:4px 8px;transition:color 0.2s; }
+    .rest-skip:hover { color:var(--muted); }
+    .log-set-btn { font-family:var(--ff-body);font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:6px 12px;cursor:pointer;border-radius:6px;background:rgba(60,170,90,0.18);border:1px solid rgba(60,170,90,0.45);color:#50e080;transition:background 0.2s;margin-top:6px; }
+    .log-set-btn:hover { background:rgba(60,170,90,0.30); }
+    .log-set-btn:disabled { opacity:0.3;cursor:not-allowed; }
 
     /* COACH */
     .chat-wrap { display: flex; flex-direction: column; height: calc(100vh - 160px); max-height: 600px; }
@@ -469,6 +506,9 @@
     <button class="nav-tab locked" onclick="showScreen('health')">Health+</button>
   </div>
   <div class="nav-footer">
+    <div id="levelBadgeWrap" style="margin-bottom:10px;">
+      <span class="level-badge"><span class="pulse-dot"></span><span id="navLevel">Ember</span></span>
+    </div>
     <div class="nav-user" id="navUser">
       <span id="navUserName">—</span>
       Wylde Self Member
@@ -615,101 +655,20 @@
 <div class="screen" id="screen-dashboard">
   <div class="container">
     <p class="section-label">Dashboard</p>
-    <h1 class="screen-title" style="margin-bottom:8px;">Today,<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);" id="dashGreet">let's work</span></h1>
+    <div class="screen-title-row">
+      <h1 class="screen-title" style="margin-bottom:0;">Today,<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);" id="dashGreet">let's work</span></h1>
+      <span class="pulse-dot" style="margin-top:8px;"></span>
+    </div>
     <div class="gold-rule"></div>
 
-    <!-- TOP: profile + stats -->
-    <div class="dash-grid-top">
-      <div class="dash-profile-card">
-        <img id="dashAvatar" class="dash-avatar" src="glow_neutral.png" alt="Avatar" onerror="this.src='glow_neutral.png'"/>
-        <p style="font-family:var(--ff-hero);font-size:16px;letter-spacing:0.06em;color:#f5f4f0;margin-bottom:6px;" id="dashName">—</p>
-        <span class="dash-badge" id="dashGoal">—</span><br>
-        <span class="dash-badge dash-badge-muted" id="dashLevel" style="margin-top:4px;">—</span>
-        <div class="dash-week-wrap">
-          <p class="dash-week-lbl" id="dashWeekLabel">Week 1 of 12</p>
-          <div class="dash-week-track"><div class="dash-week-fill" id="dashWeekBar"></div></div>
-        </div>
-      </div>
-      <div>
-        <div class="dash-stat-row">
-          <span class="dash-stat-lbl">Weight</span>
-          <span style="font-size:13px;color:#f5f4f0;" id="dashWeight">—</span>
-        </div>
-        <div class="dash-stat-row">
-          <span class="dash-stat-lbl">Steps</span>
-          <input class="dash-stat-inp" type="number" id="dash_steps" placeholder="0" oninput="saveDashStat('steps',this.value)"/>
-        </div>
-        <div class="dash-stat-row">
-          <span class="dash-stat-lbl">Sleep (hrs)</span>
-          <input class="dash-stat-inp" type="number" step="0.5" id="dash_sleep" placeholder="7.5" oninput="saveDashStat('sleep',this.value)"/>
-        </div>
-        <div class="dash-stat-row">
-          <span class="dash-stat-lbl">Water</span>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <button class="dash-pm" onclick="addWater(-8)">−</button>
-            <span id="dash_water_val" style="font-size:12px;color:#f5f4f0;min-width:40px;text-align:center;">0 oz</span>
-            <button class="dash-pm" onclick="addWater(8)">+</button>
-          </div>
-        </div>
-        <div class="dash-stat-row">
-          <span class="dash-stat-lbl">Energy</span>
-          <div>
-            <button class="dash-star" onclick="setEnergy(1)">★</button>
-            <button class="dash-star" onclick="setEnergy(2)">★</button>
-            <button class="dash-star" onclick="setEnergy(3)">★</button>
-            <button class="dash-star" onclick="setEnergy(4)">★</button>
-            <button class="dash-star" onclick="setEnergy(5)">★</button>
-          </div>
-        </div>
-      </div>
+    <!-- DRAGGABLE CARD GRID -->
+    <div id="dashCardGrid">
+      <!-- Cards rendered by JS from dashCardOrder -->
     </div>
 
-    <!-- MID: calorie ring + macro bars -->
-    <div class="dash-grid-mid">
-      <div class="dash-ring-card">
-        <p class="section-label" style="margin-bottom:10px;">Calories</p>
-        <svg width="86" height="86" viewBox="0 0 86 86">
-          <circle cx="43" cy="43" r="36" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="7"/>
-          <circle id="dashCalRing" cx="43" cy="43" r="36" fill="none" stroke="#c8a96e" stroke-width="7"
-            stroke-linecap="round" stroke-dasharray="226.19" stroke-dashoffset="226.19"
-            transform="rotate(-90 43 43)" style="transition:stroke-dashoffset 0.6s ease;"/>
-        </svg>
-        <p style="margin-top:8px;text-align:center;">
-          <span id="dashCalConsumed" style="color:var(--gold);font-size:18px;font-family:var(--ff-hero);">0</span>
-          <span style="font-size:11px;color:#444;"> / </span>
-          <span id="dashCalGoal" style="font-size:11px;color:var(--muted);">2000</span>
-        </p>
-        <p style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#444;text-align:center;">kcal</p>
-      </div>
-      <div class="dash-macro-card">
-        <p class="section-label" style="margin-bottom:14px;">Macros</p>
-        <div class="dash-macro-row">
-          <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);">Protein</span><span style="font-size:11px;color:var(--muted);" id="dashMacro_protein">—</span></div>
-          <div class="dash-macro-bar-track"><div class="dash-macro-bar-fill" id="dashBar_protein" style="background:var(--gold);"></div></div>
-        </div>
-        <div class="dash-macro-row">
-          <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(200,169,110,0.6);">Carbs</span><span style="font-size:11px;color:var(--muted);" id="dashMacro_carbs">—</span></div>
-          <div class="dash-macro-bar-track"><div class="dash-macro-bar-fill" id="dashBar_carbs" style="background:rgba(200,169,110,0.55);"></div></div>
-        </div>
-        <div class="dash-macro-row">
-          <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(200,169,110,0.4);">Fat</span><span style="font-size:11px;color:var(--muted);" id="dashMacro_fat">—</span></div>
-          <div class="dash-macro-bar-track"><div class="dash-macro-bar-fill" id="dashBar_fat" style="background:rgba(200,169,110,0.35);"></div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- motivational message -->
-    <div class="dash-motiv">
-      <p style="font-family:var(--ff-serif);font-style:italic;font-size:16px;color:#f5f4f0;line-height:1.6;" id="dashMotivation">Show up today. That's all it takes.</p>
-    </div>
-
-    <!-- quick actions -->
-    <p class="section-label">Quick Actions</p>
-    <div class="dash-quick-grid">
-      <button class="btn" style="font-size:11px;padding:13px;" onclick="completeSession();showScreen('progress')">Log Session</button>
-      <button class="btn btn-outline" style="font-size:11px;padding:13px;" onclick="showScreen('nutrition')">Log Food</button>
-      <button class="btn btn-outline" style="font-size:11px;padding:13px;" onclick="showScreen('program')">View Program</button>
-      <button class="btn btn-outline" style="font-size:11px;padding:13px;" onclick="toggleSidebar()">Ask Coach</button>
+    <!-- HEARTBEAT LINE -->
+    <div class="heartbeat-row" id="heartbeatRow">
+      <!-- rendered by JS -->
     </div>
 
     <!-- TRANSFORMATION ROADMAP -->
@@ -719,11 +678,33 @@
         <button class="btn btn-outline" id="roadmapBtn" onclick="generateRoadmap()" style="font-size:11px;padding:10px 20px;">Generate My Plan</button>
       </div>
       <div id="roadmapOutput">
-        <div style="background:#161616;border:1px solid var(--border);padding:32px;text-align:center;">
+        <div style="background:#161616;border:1px solid rgba(255,255,255,0.13);padding:32px;text-align:center;border-radius:10px;">
           <p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);line-height:1.7;">Your personalised week-by-week roadmap will appear here.<br>It covers training phases, nutrition targets, and identity milestones.</p>
           <div style="width:40px;height:1px;background:var(--gold);margin:16px auto 0;"></div>
         </div>
       </div>
+    </div>
+
+    <!-- Keep hidden elements for data sync -->
+    <div style="display:none;">
+      <span id="dashName"></span>
+      <span id="dashGoal"></span>
+      <span id="dashLevel"></span>
+      <span id="dashWeekLabel">Week 1 of 12</span>
+      <span id="dashWeekBar"></span>
+      <span id="dashWeight"></span>
+      <span id="dashCalConsumed">0</span>
+      <span id="dashCalGoal">2000</span>
+      <span id="dashMacro_protein">—</span>
+      <span id="dashMacro_carbs">—</span>
+      <span id="dashMacro_fat">—</span>
+      <span id="dashCalRing"></span>
+      <span id="dashBar_protein"></span>
+      <span id="dashBar_carbs"></span>
+      <span id="dashBar_fat"></span>
+      <input id="dash_steps" type="number" />
+      <input id="dash_sleep" type="number" />
+      <span id="dash_water_val">0 oz</span>
     </div>
   </div>
 </div>
@@ -1974,6 +1955,61 @@
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
 
+  function isCompound(name) {
+    var n = name.toLowerCase();
+    return /bench|squat|deadlift|press|row|pull/.test(n);
+  }
+
+  function startRestTimer(btn, exName) {
+    var exercise = btn.closest('.exercise');
+    var timerWrap = exercise.querySelector('.rest-timer-wrap');
+    if (!timerWrap) return;
+    var duration = isCompound(exName) ? 90 : 60;
+    var remaining = duration;
+    var ring = timerWrap.querySelector('.rest-ring');
+    var statusEl = timerWrap.querySelector('.rest-status');
+    var circum = 339;
+
+    btn.disabled = true;
+    timerWrap.classList.add('active');
+
+    ring.style.stroke = '#5a9ecf';
+    ring.style.strokeDashoffset = '0';
+
+    var interval = setInterval(function() {
+      remaining--;
+      var progress = (duration - remaining) / duration;
+      ring.style.strokeDashoffset = String(Math.round(progress * circum));
+
+      if (remaining <= 0) {
+        clearInterval(interval);
+        ring.style.stroke = '#50a064';
+        statusEl.textContent = 'Go!';
+        exercise.style.backgroundColor = 'rgba(50,160,90,0.08)';
+        setTimeout(function() {
+          exercise.style.backgroundColor = '';
+          timerWrap.classList.remove('active');
+          btn.disabled = false;
+        }, 2000);
+      } else if (remaining <= 10) {
+        ring.style.stroke = '#d4622a';
+        ring.classList.add('pulse-ring');
+        statusEl.textContent = 'Almost ready...';
+      } else {
+        statusEl.textContent = 'Resting... ' + remaining + 's';
+      }
+    }, 1000);
+
+    timerWrap._restInterval = interval;
+
+    timerWrap.querySelector('.rest-skip').onclick = function() {
+      clearInterval(interval);
+      timerWrap.classList.remove('active');
+      btn.disabled = false;
+      exercise.style.backgroundColor = '';
+    };
+  }
+
   // Build exercise HTML with tracking inputs and clickable form guide
   function buildExHTML(exercises, dayTag) {
     return exercises.map(function(ex, idx) {
@@ -1981,16 +2017,27 @@
       var sk = 'wylde_' + dayTag + '_' + idx;
       var saved = {};
       try { saved = JSON.parse(localStorage.getItem(sk) || '{}'); } catch(e) {}
-      return '<div class="exercise">' +
-        '<div style="flex:1;">' +
-          '<button class="ex-name-btn" data-ex="' + esc(name) + '" onclick="showFormGuide(this.dataset.ex)">' + esc(name) + '</button>' +
-          '<div class="ex-track">' +
-            '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="—" value="' + esc(saved.sets || '') + '" data-sk="' + sk + '" data-field="sets" oninput="saveTracking(this)" /><p class="ex-track-lbl">Sets</p></div>' +
-            '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="—" value="' + esc(saved.reps || '') + '" data-sk="' + sk + '" data-field="reps" oninput="saveTracking(this)" /><p class="ex-track-lbl">Reps</p></div>' +
-            '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="—" value="' + esc(saved.weight || '') + '" data-sk="' + sk + '" data-field="weight" oninput="saveTracking(this)" /><p class="ex-track-lbl">lbs</p></div>' +
+      return '<div class="exercise" style="flex-direction:column;align-items:flex-start;">' +
+        '<div style="display:flex;justify-content:space-between;width:100%;align-items:flex-start;">' +
+          '<div style="flex:1;">' +
+            '<button class="ex-name-btn" data-ex="' + esc(name) + '" onclick="showFormGuide(this.dataset.ex)">' + esc(name) + '</button>' +
+            '<div class="ex-track">' +
+              '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="—" value="' + esc(saved.sets || '') + '" data-sk="' + sk + '" data-field="sets" oninput="saveTracking(this)" /><p class="ex-track-lbl">Sets</p></div>' +
+              '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="—" value="' + esc(saved.reps || '') + '" data-sk="' + sk + '" data-field="reps" oninput="saveTracking(this)" /><p class="ex-track-lbl">Reps</p></div>' +
+              '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="—" value="' + esc(saved.weight || '') + '" data-sk="' + sk + '" data-field="weight" oninput="saveTracking(this)" /><p class="ex-track-lbl">lbs</p></div>' +
+            '</div>' +
+            '<button class="log-set-btn" data-exname="' + esc(name) + '" onclick="startRestTimer(this, this.dataset.exname)">Log Set \u2713</button>' +
           '</div>' +
+          '<span class="ex-sets" style="margin-left:12px;flex-shrink:0;">' + esc(sets) + '</span>' +
         '</div>' +
-        '<span class="ex-sets" style="margin-left:12px;flex-shrink:0;">' + esc(sets) + '</span>' +
+        '<div class="rest-timer-wrap">' +
+          '<div class="rest-status">Resting...</div>' +
+          '<svg width="120" height="120" viewBox="0 0 120 120">' +
+            '<circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>' +
+            '<circle class="rest-ring" cx="60" cy="60" r="54" fill="none" stroke="#5a9ecf" stroke-width="6" stroke-linecap="round" stroke-dasharray="339" stroke-dashoffset="0" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 0.9s linear,stroke 0.5s;"/>' +
+          '</svg>' +
+          '<button class="rest-skip">Skip rest</button>' +
+        '</div>' +
       '</div>';
     }).join('');
   }
@@ -2337,6 +2384,256 @@
       messages.appendChild(aiDiv);
       messages.scrollTop = messages.scrollHeight;
     });
+  }
+
+  // ═══ LEVEL COLOR SYSTEM ═══
+  function initLevelColors() {
+    try {
+      var p = JSON.parse(localStorage.getItem('wylde_profile') || '{}');
+      var level = (p.level || 'Ember').toLowerCase();
+      var r = document.documentElement;
+      if (level.includes('ember')) {
+        r.style.setProperty('--accent','#ff6030');
+        r.style.setProperty('--accent-bg','rgba(220,90,30,0.15)');
+        r.style.setProperty('--accent-border','rgba(220,90,30,0.45)');
+      } else if (level.includes('root') || level.includes('begin')) {
+        r.style.setProperty('--accent','#50c870');
+        r.style.setProperty('--accent-bg','rgba(60,170,90,0.15)');
+        r.style.setProperty('--accent-border','rgba(60,170,90,0.45)');
+      } else if (level.includes('rise') || level.includes('inter')) {
+        r.style.setProperty('--accent','#f0c040');
+        r.style.setProperty('--accent-bg','rgba(200,169,110,0.15)');
+        r.style.setProperty('--accent-border','rgba(200,169,110,0.45)');
+      } else if (level.includes('wylde') || level.includes('advan') || level.includes('elite')) {
+        r.style.setProperty('--accent','#b89ee0');
+        r.style.setProperty('--accent-bg','rgba(184,158,224,0.15)');
+        r.style.setProperty('--accent-border','rgba(184,158,224,0.45)');
+      }
+      // Update level badge
+      var nb = document.getElementById('navLevel');
+      if (nb && p.level) nb.textContent = p.level;
+    } catch(e) {}
+  }
+  initLevelColors();
+
+  // ═══ DASHBOARD CARDS ═══
+  var dashCardDefs = [
+    { id: 'workout',     label: 'Workout',     full: true },
+    { id: 'macros',      label: 'Macros',      full: false },
+    { id: 'streak',      label: 'Streak',      full: false },
+    { id: 'coach',       label: 'Coach',       full: false },
+    { id: 'future',      label: 'Future Self', full: false },
+    { id: 'water',       label: 'Hydration',   full: false },
+    { id: 'supplements', label: 'Supplements', full: false },
+    { id: 'sleep',       label: 'Sleep',       full: false },
+    { id: 'health',      label: 'Health+',     full: false }
+  ];
+
+  function dashCardContent(id) {
+    switch(id) {
+      case 'workout': return (
+        '<p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Today\'s session ready to start.</p>' +
+        '<div id="dc-workout-list" style="font-size:12px;color:#f5f4f0;line-height:2;margin-bottom:12px;"></div>' +
+        '<button class="dash-card-btn btn-ember" onclick="showScreen(\'program\')">Resume Workout \u2192</button>'
+      );
+      case 'macros': return (
+        '<div style="display:flex;align-items:center;gap:12px;">' +
+          '<svg width="54" height="54" viewBox="0 0 54 54"><circle cx="27" cy="27" r="21" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="5"/><circle cx="27" cy="27" r="21" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-dasharray="132" stroke-dashoffset="132" transform="rotate(-90 27 27)" id="dc-cal-ring" style="transition:stroke-dashoffset 0.6s;"/></svg>' +
+          '<div><p style="font-size:20px;font-family:var(--ff-hero);color:var(--accent);" id="dc-cal-num">0</p><p style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);">kcal</p></div>' +
+        '</div>' +
+        '<div style="margin-top:10px;">' +
+          '<div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:var(--gold);">Protein</span><span id="dc-protein" style="color:var(--muted);">—</span></div>' +
+          '<div style="height:3px;background:rgba(255,255,255,0.05);border-radius:2px;"><div id="dc-bar-p" style="height:100%;background:var(--gold);border-radius:2px;width:0%;transition:width 0.5s;"></div></div>' +
+        '</div>' +
+        '<button class="dash-card-btn btn-outline" onclick="showScreen(\'nutrition\')" style="font-size:10px;padding:6px 12px;margin-top:8px;">Log Food \u2192</button>'
+      );
+      case 'streak': return (
+        '<p style="font-family:var(--ff-hero);font-size:48px;color:var(--accent);letter-spacing:0.04em;line-height:1;" id="dc-streak-num">0</p>' +
+        '<p style="font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Day Streak</p>' +
+        '<div style="display:flex;gap:3px;align-items:flex-end;" id="dc-streak-grid"></div>'
+      );
+      case 'coach': return (
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">' +
+          '<div style="width:36px;height:36px;border-radius:50%;background:rgba(200,169,110,0.15);border:1px solid rgba(200,169,110,0.35);display:flex;align-items:center;justify-content:center;font-family:var(--ff-hero);font-size:14px;color:var(--gold);">W</div>' +
+          '<div><p style="font-size:11px;font-weight:500;color:#f5f4f0;">Wylde Coach</p><p style="font-size:10px;color:var(--muted);">AI \u00b7 Always on</p></div>' +
+        '</div>' +
+        '<p style="font-family:var(--ff-serif);font-style:italic;font-size:13px;color:var(--muted);line-height:1.6;">You showed up. That means something.</p>' +
+        '<button class="dash-card-btn btn-blue" onclick="showScreen(\'coach\')">Open Coach \u2192</button>'
+      );
+      case 'future': return (
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:10px;">' +
+          '<div style="background:#111;border:1px solid rgba(255,255,255,0.08);height:70px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#333;">Today</div>' +
+          '<div style="background:#111;border:1px solid rgba(200,169,110,0.15);height:70px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(200,169,110,0.4);">Future</div>' +
+        '</div>' +
+        '<button class="dash-card-btn btn-outline" onclick="showScreen(\'future\')">Generate Image \u2192</button>'
+      );
+      case 'water': return (
+        '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:10px;" id="dc-water-grid"></div>' +
+        '<button class="dash-card-btn btn-blue" onclick="dashAddGlass()">+ Add Glass</button>'
+      );
+      case 'supplements': return (
+        '<div id="dc-supp-list" style="margin-bottom:10px;"></div>' +
+        '<button class="dash-card-btn btn-success" onclick="showScreen(\'supplements\')">View Stack \u2192</button>'
+      );
+      case 'sleep': return (
+        '<div style="display:flex;gap:3px;align-items:flex-end;margin-bottom:10px;" id="dc-sleep-bars"></div>' +
+        '<p style="font-size:28px;font-family:var(--ff-hero);color:rgba(184,158,224,0.8);margin-bottom:2px;" id="dc-sleep-hrs">—</p>' +
+        '<p style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">hrs last night</p>'
+      );
+      case 'health': return (
+        '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">' +
+          '<span style="font-size:10px;padding:3px 10px;border:1px solid rgba(184,158,224,0.35);border-radius:20px;color:rgba(184,158,224,0.8);">BPC-157</span>' +
+          '<span style="font-size:10px;padding:3px 10px;border:1px solid rgba(184,158,224,0.35);border-radius:20px;color:rgba(184,158,224,0.8);">NAD+</span>' +
+        '</div>' +
+        '<button class="dash-card-btn btn-purple" onclick="showScreen(\'health\')">View Protocols \u2192</button>'
+      );
+      default: return '';
+    }
+  }
+
+  var dashDragSrc = null;
+
+  function renderDashCards() {
+    var grid = document.getElementById('dashCardGrid');
+    if (!grid) return;
+    var order;
+    try { order = JSON.parse(localStorage.getItem('dashCardOrder')); } catch(e) {}
+    if (!order || !Array.isArray(order)) order = dashCardDefs.map(function(d){ return d.id; });
+
+    grid.innerHTML = '';
+    order.forEach(function(cardId) {
+      var def = dashCardDefs.find(function(d){ return d.id === cardId; });
+      if (!def) return;
+      var card = document.createElement('div');
+      card.className = 'dash-card';
+      card.dataset.id = cardId;
+      card.draggable = true;
+      if (def.full) card.style.gridColumn = '1 / -1';
+      card.innerHTML =
+        '<div class="dash-drag-handle"><span></span><span></span><span></span><span></span><span></span><span></span></div>' +
+        '<div class="dash-card-label">' + def.label + '</div>' +
+        dashCardContent(cardId);
+
+      card.addEventListener('dragstart', function(e) {
+        dashDragSrc = card;
+        card.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      card.addEventListener('dragend', function() {
+        card.classList.remove('dragging');
+        document.querySelectorAll('.dash-card').forEach(function(c){ c.classList.remove('drag-over'); });
+      });
+      card.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (card !== dashDragSrc) card.classList.add('drag-over');
+      });
+      card.addEventListener('dragleave', function() { card.classList.remove('drag-over'); });
+      card.addEventListener('drop', function(e) {
+        e.preventDefault();
+        card.classList.remove('drag-over');
+        if (dashDragSrc && dashDragSrc !== card) {
+          var cards = Array.from(grid.querySelectorAll('.dash-card'));
+          var srcIdx = cards.indexOf(dashDragSrc);
+          var tgtIdx = cards.indexOf(card);
+          if (srcIdx < tgtIdx) card.after(dashDragSrc);
+          else card.before(dashDragSrc);
+          var newOrder = Array.from(grid.querySelectorAll('.dash-card')).map(function(c){ return c.dataset.id; });
+          try { localStorage.setItem('dashCardOrder', JSON.stringify(newOrder)); } catch(e2) {}
+        }
+      });
+      grid.appendChild(card);
+    });
+
+    renderDashCardData();
+    renderHeartbeat();
+  }
+
+  function renderDashCardData() {
+    // Streak
+    var streakEl = document.getElementById('dc-streak-num');
+    if (streakEl) streakEl.textContent = state.streak || 0;
+    var streakGrid = document.getElementById('dc-streak-grid');
+    if (streakGrid) {
+      var s = state.streak || 0;
+      var html = '';
+      for (var i = 0; i < 7; i++) {
+        var active = i < (s % 7);
+        var isCurrent = i === (s % 7 === 0 ? 6 : (s % 7) - 1);
+        var h = [16,20,28,20,24,32,18][i];
+        html += '<div style="width:16px;height:'+h+'px;border-radius:2px;' + (isCurrent ? 'border:1px dashed var(--accent);background:transparent;' : active ? 'background:var(--accent);' : 'background:rgba(255,255,255,0.06);') + '"></div>';
+      }
+      streakGrid.innerHTML = html;
+    }
+    // Water
+    var waterGrid = document.getElementById('dc-water-grid');
+    if (waterGrid) {
+      var today = new Date().toISOString().slice(0,10);
+      var dw = {}; try { dw = JSON.parse(localStorage.getItem('wylde_dash_'+today)||'{}'); } catch(e) {}
+      var glasses = dw.water || 0;
+      var html2 = '';
+      for (var j = 0; j < 10; j++) {
+        html2 += '<div style="height:28px;border-radius:4px;' + (j < glasses ? 'background:rgba(60,130,210,0.5);border:1px solid rgba(60,130,210,0.6);' : 'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);') + '"></div>';
+      }
+      waterGrid.innerHTML = html2;
+    }
+    // Sleep bars (mock data with slight variation)
+    var sleepBars = document.getElementById('dc-sleep-bars');
+    if (sleepBars) {
+      var sleepVals = [7.5,6.5,8,7,7.5,6,8];
+      var html3 = '';
+      sleepVals.forEach(function(v,i){
+        html3 += '<div style="width:16px;height:'+Math.round(v/9*60)+'px;border-radius:2px;background:' + (i===6?'rgba(184,158,224,0.7)':'rgba(184,158,224,0.25)') + ';"></div>';
+      });
+      var dc_sleep = document.getElementById('dc-sleep-hrs');
+      if (dc_sleep) dc_sleep.textContent = '7.5';
+      sleepBars.innerHTML = html3;
+    }
+    // Supplements checklist
+    var suppList = document.getElementById('dc-supp-list');
+    if (suppList) {
+      var supps = ['Creatine','Vitamin D','Omega-3','Protein'];
+      var taken = [true, true, false, false];
+      suppList.innerHTML = supps.map(function(s,i){
+        return '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;color:' + (taken[i] ? '#50e080' : 'var(--muted)') + ';">' +
+          '<span style="width:6px;height:6px;border-radius:50%;background:' + (taken[i] ? '#50e080' : 'rgba(255,255,255,0.15)') + ';flex-shrink:0;"></span>' + s + '</div>';
+      }).join('');
+    }
+    // Workout exercises
+    var wrkList = document.getElementById('dc-workout-list');
+    if (wrkList) {
+      var exItems = document.querySelectorAll('#programOutput .ex-name-btn');
+      if (exItems.length > 0) {
+        var html4 = '';
+        for (var k = 0; k < Math.min(4, exItems.length); k++) {
+          html4 += '<div style="display:flex;justify-content:space-between;"><span>' + exItems[k].textContent + '</span></div>';
+        }
+        wrkList.innerHTML = html4;
+      } else {
+        wrkList.innerHTML = '<span style="color:#444;font-size:11px;">Generate your program first</span>';
+      }
+    }
+  }
+
+  function renderHeartbeat() {
+    var row = document.getElementById('heartbeatRow');
+    if (!row) return;
+    var widths = [4,8,16,6,20,8,12,4,18,6,14,10,20,4,8];
+    var delays = ['0s','0.1s','0.2s','0.15s','0.3s','0.25s','0.4s','0.1s','0.35s','0.2s','0.45s','0.3s','0.15s','0.4s','0.25s'];
+    var opacities = [0.25,0.35,0.45,0.25,0.40,0.30,0.35,0.25,0.45,0.28,0.38,0.32,0.42,0.26,0.34];
+    var html = '';
+    widths.forEach(function(w,i){
+      html += '<div class="hb-bar" style="width:'+w+'px;background:rgba(200,169,110,'+opacities[i]+');animation-delay:'+delays[i]+'"></div>';
+    });
+    row.innerHTML = html;
+  }
+
+  function dashAddGlass() {
+    var today = new Date().toISOString().slice(0,10);
+    var d = {}; try { d = JSON.parse(localStorage.getItem('wylde_dash_'+today)||'{}'); } catch(e) {}
+    d.water = Math.min(10, (d.water || 0) + 1);
+    try { localStorage.setItem('wylde_dash_'+today, JSON.stringify(d)); } catch(e) {}
+    renderDashCardData();
   }
 
   // PROGRESS
@@ -2797,6 +3094,12 @@
       'Your future self is watching. Don\'t let them down.'
     ];
     if ((el=document.getElementById('dashMotivation'))) el.textContent = msgs[(state.streak||0) % msgs.length];
+
+    renderDashCards();
+    // Update level badge
+    var nb = document.getElementById('navLevel');
+    if (nb && state.level) nb.textContent = state.level;
+    initLevelColors();
   }
 
   function setMacroBar(name, goal, consumed) {
