@@ -516,6 +516,42 @@
   /* PR flash animation */
   @keyframes pr-flash { 0%,100%{border-color:var(--accent-border)} 50%{border-color:var(--accent)} }
   .pr-badge { font-family: var(--font-milestone); font-weight: 800; color: #ff7040; border: 1px solid rgba(220,90,30,0.50); border-radius: 20px; padding: 3px 10px; font-size: 10px; animation: pr-flash 0.6s ease-in-out 3; }
+  /* ═══ REVEAL SLIDER ═══ */
+  .reveal-wrap { width:100%; margin-top:24px; }
+  .reveal-tabs { display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px; }
+  .reveal-tab { background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.13);border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;transition:all 0.2s;font-family:var(--font-ui);display:flex;flex-direction:column;align-items:center;gap:3px;position:relative; }
+  .reveal-tab:hover { border-color:rgba(200,169,110,0.35); }
+  .reveal-tab.active { background:rgba(200,169,110,0.15);border-color:rgba(200,169,110,0.5); }
+  .reveal-tab.ready { border-color:rgba(80,200,120,0.25); }
+  .reveal-tab.active.ready { background:rgba(200,169,110,0.15);border-color:rgba(200,169,110,0.5); }
+  .tab-label { font-size:12px;font-weight:500;color:#fff;display:block; }
+  .reveal-tab.active .tab-label { color:#f0c040; }
+  .tab-sub { font-family:var(--font-mono);font-size:9px;color:#555;font-style:italic;display:block; }
+  .reveal-tab.active .tab-sub { color:#888; }
+  .tab-status { margin-top:4px;height:14px;display:flex;align-items:center;justify-content:center; }
+  .tab-loader { width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);border-top-color:#c8a96e;animation:spin 0.8s linear infinite; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  .tab-check { width:10px;height:10px;border-radius:50%;background:rgba(80,200,120,0.2);border:1px solid rgba(80,200,120,0.5);display:flex;align-items:center;justify-content:center; }
+  .tab-check::after { content:'';width:4px;height:6px;border-right:1.5px solid #50e080;border-bottom:1.5px solid #50e080;transform:rotate(45deg) translate(-1px,-1px);display:block; }
+  .tab-error { width:10px;height:10px;border-radius:50%;background:rgba(220,80,50,0.2);border:1px solid rgba(220,80,50,0.4);display:flex;align-items:center;justify-content:center;font-size:8px;color:#ff6040;font-weight:700; }
+  .reveal-slider { position:relative;width:100%;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.13);cursor:ew-resize;user-select:none;touch-action:none;aspect-ratio:3/4;background:#111; }
+  .reveal-before, .reveal-after { position:absolute;inset:0; }
+  .reveal-before img, .reveal-after img { width:100%;height:100%;object-fit:cover;display:block; }
+  .reveal-after { clip-path:inset(0 50% 0 0); }
+  .reveal-label { position:absolute;top:12px;font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;padding:3px 9px;border-radius:10px;pointer-events:none; }
+  .label-before { left:12px;background:rgba(0,0,0,0.6);color:#888;border:1px solid rgba(255,255,255,0.12); }
+  .label-after { right:12px;background:rgba(200,169,110,0.2);color:#f0c040;border:1px solid rgba(200,169,110,0.4); }
+  .reveal-line { position:absolute;top:0;bottom:0;left:50%;width:2px;background:#c8a96e;transform:translateX(-50%);z-index:10;pointer-events:none; }
+  .reveal-handle { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:#0a0a0a;border:2px solid #c8a96e;display:flex;align-items:center;justify-content:center;z-index:11;box-shadow:0 0 0 5px rgba(200,169,110,0.15);pointer-events:none; }
+  .handle-inner { display:flex;gap:4px;align-items:center; }
+  .arr-l { width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:6px solid #c8a96e; }
+  .arr-r { width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:6px solid #c8a96e; }
+  .after-loading { position:absolute;inset:0;background:rgba(10,10,10,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:5;transition:opacity 0.4s; }
+  .after-loading.hidden { opacity:0;pointer-events:none; }
+  .loading-ring { width:36px;height:36px;border-radius:50%;border:2px solid rgba(200,169,110,0.2);border-top-color:#c8a96e;animation:spin 1s linear infinite; }
+  .loading-text { font-family:var(--font-mono);font-size:11px;color:#888;letter-spacing:0.08em; }
+  @keyframes slideIn { from{opacity:0;transform:scale(0.97)} to{opacity:1;transform:scale(1)} }
+  .reveal-wrap.visible { animation:slideIn 0.35s ease-out; }
   </style>
 </head>
 <body style="background:#080808;">
@@ -1041,22 +1077,6 @@
     <p class="screen-sub">Generate Your Future Self Vision — an AI image of the physique you're building toward.</p>
     <div class="gold-rule"></div>
 
-    <!-- TIMELINE TOGGLE -->
-    <div style="display:flex;gap:2px;margin-bottom:16px;" id="timelineToggle">
-      <button class="timeline-btn active" onclick="setTimeline(this,'12weeks')">
-        12 Weeks
-        <span style="display:block;font-family:var(--font-mono);font-size:9px;color:#666;font-style:italic;font-weight:400;letter-spacing:0.04em;margin-top:3px;text-transform:none;">Leaner, more athletic</span>
-      </button>
-      <button class="timeline-btn" onclick="setTimeline(this,'6months')">
-        6 Months
-        <span style="display:block;font-family:var(--font-mono);font-size:9px;color:#666;font-style:italic;font-weight:400;letter-spacing:0.04em;margin-top:3px;text-transform:none;">Clear recomposition</span>
-      </button>
-      <button class="timeline-btn" onclick="setTimeline(this,'1year')">
-        1 Year
-        <span style="display:block;font-family:var(--font-mono);font-size:9px;color:#666;font-style:italic;font-weight:400;letter-spacing:0.04em;margin-top:3px;text-transform:none;">Full transformation</span>
-      </button>
-    </div>
-
     <div class="upload-zone" id="uploadZone" onclick="document.getElementById('photoInput').click()">
       <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handlePhoto(event.target.files[0])" />
       <div class="upload-icon">↑</div>
@@ -1083,34 +1103,63 @@
       </div>
     </div>
 
-    <button class="btn" onclick="generateFutureSelf()" style="width:100%;margin-top:20px;font-size:14px;letter-spacing:0.12em;">GENERATE MY FUTURE SELF</button>
+    <button class="btn btn-ember" id="generateBtn" onclick="generateAllTimelines()" style="width:100%;margin-top:20px;font-size:14px;letter-spacing:0.12em;">GENERATE MY FUTURE SELF</button>
 
     <div style="text-align:center;margin-top:14px;">
-      <button onclick="showScreen('program')" style="background:none;border:none;color:var(--muted);font-family:var(--ff-body);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;text-decoration:underline;text-underline-offset:3px;">Skip — go straight to my program →</button>
+      <button onclick="showScreen('program')" style="background:none;border:none;color:var(--muted);font-family:var(--font-ui);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;text-decoration:underline;text-underline-offset:3px;">Skip — go straight to my program →</button>
     </div>
 
-    <div class="generate-progress" id="generateProgress">
-      <p class="progress-label" id="progressLabel">Analyzing your photo...</p>
-      <div class="progress-bar-wrap">
-        <div class="progress-bar" id="progressBar"></div>
+    <!-- REVEAL SLIDER -->
+    <div class="reveal-wrap" id="revealWrap" style="display:none;">
+
+      <div class="reveal-tabs" id="revealTabs">
+        <button class="reveal-tab active" data-timeline="12weeks" onclick="switchTimeline('12weeks')">
+          <span class="tab-label">12 weeks</span>
+          <span class="tab-sub">Leaner, more athletic</span>
+          <div class="tab-status" id="status-12weeks"><div class="tab-loader"></div></div>
+        </button>
+        <button class="reveal-tab" data-timeline="6months" onclick="switchTimeline('6months')">
+          <span class="tab-label">6 months</span>
+          <span class="tab-sub">Clear recomposition</span>
+          <div class="tab-status" id="status-6months"><div class="tab-loader"></div></div>
+        </button>
+        <button class="reveal-tab" data-timeline="1year" onclick="switchTimeline('1year')">
+          <span class="tab-label">1 year</span>
+          <span class="tab-sub">Full transformation</span>
+          <div class="tab-status" id="status-1year"><div class="tab-loader"></div></div>
+        </button>
+      </div>
+
+      <div class="reveal-slider" id="revealSlider">
+        <div class="reveal-before" id="revealBefore">
+          <img id="beforeImg" src="" alt="Before"/>
+          <span class="reveal-label label-before">BEFORE</span>
+        </div>
+        <div class="reveal-after" id="revealAfter">
+          <img id="afterImg" src="" alt="After"/>
+          <span class="reveal-label label-after" id="afterTimelineLabel">12 WKS</span>
+          <div class="after-loading" id="afterLoading">
+            <div class="loading-ring"></div>
+            <div class="loading-text" id="loadingText">Generating...</div>
+          </div>
+        </div>
+        <div class="reveal-line" id="revealLine"></div>
+        <div class="reveal-handle" id="revealHandle">
+          <div class="handle-inner">
+            <div class="arr-l"></div>
+            <div class="arr-r"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button class="btn" onclick="showScreen('program')" style="flex:1;">Build My Program</button>
+        <button class="btn btn-outline" onclick="resetFutureSelf()" style="flex:1;">Reset</button>
       </div>
     </div>
 
-    <div class="comparison" id="comparison">
-      <div class="comp-side">
-        <img id="beforeImg" src="" alt="You — Now" />
-        <div class="comp-tag">You — Now</div>
-      </div>
-      <div class="comp-side">
-        <img id="afterImg" src="glow_neutral.png" alt="You — Becoming" />
-        <div class="comp-tag" id="becomingTag" style="left:auto;right:12px;">12 Weeks</div>
-      </div>
-    </div>
-
-    <div id="futureActions" style="margin-top:36px;display:none;">
-      <button class="btn" onclick="showScreen('program')" style="margin-right:12px;">Build My Program</button>
-      <button class="btn btn-outline" onclick="resetPhoto()">Try Another Photo</button>
-    </div>
+    <!-- Keep for dashboard avatar sync -->
+    <div style="display:none;"><span id="becomingTag"></span></div>
   </div>
 </div>
 
@@ -1868,22 +1917,21 @@
     });
   }
 
-  // PHOTO UPLOAD
-  function triggerUpload() { document.getElementById("photoInput").click(); }
-  var futurePhotoBase64 = null;
+  // ═══ FUTURE SELF — REVEAL SLIDER ═══
+
+  function triggerUpload() { document.getElementById('photoInput').click(); }
+  var futurePhotoBase64 = null; // kept for compatibility
 
   function handlePhoto(file) {
     if (!file) return;
     var reader = new FileReader();
     reader.onload = function(e) {
       futurePhotoBase64 = e.target.result;
-
-      // Show preview in upload zone
       var zone = document.getElementById('uploadZone');
       zone.innerHTML = '<div style="position:relative;width:100%;height:100%;min-height:200px;">' +
         '<img src="' + e.target.result + '" style="width:100%;height:100%;min-height:200px;object-fit:cover;border-radius:12px;display:block;">' +
         '<button onclick="clearFuturePhoto(event)" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);border:1.5px solid #c8a96e;color:#c8a96e;font-size:18px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">×</button>' +
-        '<div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-family:\'Bebas Neue\',sans-serif;color:#c8a96e;font-size:13px;letter-spacing:3px;background:rgba(0,0,0,0.5);padding:3px 10px;border-radius:4px;">TODAY</div>' +
+        '<div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-family:var(--font-mono);color:#c8a96e;font-size:11px;letter-spacing:3px;background:rgba(0,0,0,0.5);padding:3px 10px;border-radius:4px;">TODAY</div>' +
         '</div>';
       zone.style.padding = '0';
       zone.style.border = '1.5px solid #c8a96e';
@@ -1897,82 +1945,165 @@
     var zone = document.getElementById('uploadZone');
     zone.style.padding = '';
     zone.style.border = '';
-    zone.innerHTML = '<div style="text-align:center;">' +
-      '<div style="font-size:2rem;margin-bottom:12px;">↑</div>' +
-      '<div style="font-family:\'Bebas Neue\',sans-serif;color:#c8a96e;font-size:1.1rem;letter-spacing:2px;">Upload Your Photo</div>' +
-      '<div style="color:#a0a098;font-size:0.85rem;margin-top:6px;">Front-facing, good lighting works best</div>' +
-      '</div>';
-    document.getElementById('photoInput').value = '';
+    zone.innerHTML = '<input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handlePhoto(event.target.files[0])" />' +
+      '<div class="upload-icon">↑</div>' +
+      '<p class="upload-label">Upload a reference photo (optional)</p>' +
+      '<p style="font-size:12px;color:#444;margin-top:8px;letter-spacing:0.06em;">Shown as "Today" in the before/after reveal</p>';
   }
 
-  function generateFutureSelf() {
-    var prog    = document.getElementById('generateProgress');
-    var comp    = document.getElementById('comparison');
-    var actions = document.getElementById('futureActions');
-    if (prog)    prog.style.display = 'flex';
-    if (comp)    comp.style.display = 'none';
-    if (actions) actions.style.display = 'none';
+  // Timeline state
+  var _generatedImages = { '12weeks': null, '6months': null, '1year': null };
+  var _activeTimeline = '12weeks';
+  var _sliderPct = 50;
+  var _timelineLabels = { '12weeks': '12 WKS', '6months': '6 MO', '1year': '1 YR' };
 
-    var timeline = window.selectedTimeline || '12weeks';
-    var profile = {};
-    try { profile = JSON.parse(localStorage.getItem('wylde_profile') || '{}'); } catch(ex) {}
-
-    var label = document.getElementById('progressLabel');
-    if (label) label.textContent = 'Generating your future self vision...';
-
-    var payload = {
-      timeline: timeline,
-      goal: profile.goal || 'lean and athletic',
-      userGoal: profile.goal || '',
-      gender: profile.gender || 'male'
-    };
-    if (futurePhotoBase64) payload.image_base64 = futurePhotoBase64;
-
-    fetch('/api/generate-image', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-      if (d.success && d.image_base64) {
-        state.avatarUrl = d.image_base64;
-        var da = document.getElementById('dashAvatar');
-        if (da) da.src = d.image_base64;
-        var afterImg = document.getElementById('afterImg');
-        if (afterImg) afterImg.src = d.image_base64;
-        revealFutureSelf();
-      } else {
-        console.error('Generation failed:', d.error);
-        if (label) label.textContent = 'Generation failed. Please try again.';
-        setTimeout(function() { if (prog) prog.style.display = 'none'; }, 2000);
-      }
-    })
-    .catch(function(err) {
-      console.error('/api/generate-image request failed:', err.message);
-      if (label) label.textContent = 'Generation failed. Please try again.';
-      setTimeout(function() { if (prog) prog.style.display = 'none'; }, 2000);
+  function switchTimeline(tl) {
+    _activeTimeline = tl;
+    document.querySelectorAll('.reveal-tab').forEach(function(t) {
+      t.classList.toggle('active', t.dataset.timeline === tl);
     });
-  }
-
-  function revealFutureSelf() {
-    console.log('Revealing future self...');
-    document.getElementById('generateProgress').style.display = 'none';
-    document.getElementById('comparison').style.display = 'grid';
-    document.getElementById('futureActions').style.display = 'flex';
-    var tag = document.getElementById('becomingTag');
-    if (tag) {
-      var tl = window.selectedTimeline || '12weeks';
-      tag.textContent = tl === '12weeks' ? '12 Weeks' : tl === '6months' ? '6 Months' : '1 Year';
+    var labelEl = document.getElementById('afterTimelineLabel');
+    if (labelEl) labelEl.textContent = _timelineLabels[tl];
+    var afterImg = document.getElementById('afterImg');
+    var loading = document.getElementById('afterLoading');
+    var loadingText = document.getElementById('loadingText');
+    var img = _generatedImages[tl];
+    if (img) {
+      if (afterImg) afterImg.src = img;
+      if (loading) loading.classList.add('hidden');
+    } else {
+      if (afterImg) afterImg.src = '';
+      if (loading) loading.classList.remove('hidden');
+      if (loadingText) loadingText.textContent = 'Generating ' + _timelineLabels[tl] + '...';
     }
   }
 
-  function resetPhoto() {
-    document.getElementById('uploadZone').style.display = 'block';
-    document.getElementById('comparison').classList.remove('show');
-    document.getElementById('futureActions').style.display = 'none';
-    document.getElementById('photoInput').value = '';
+  function generateAllTimelines() {
+    var profile = {};
+    try { profile = JSON.parse(localStorage.getItem('wylde_profile') || '{}'); } catch(ex) {}
+    var userGoal = profile.goal || 'balanced';
+    var gender = profile.gender || 'male';
+
+    // Reset stored images
+    _generatedImages = { '12weeks': null, '6months': null, '1year': null };
+
+    // Reset tab statuses
+    ['12weeks','6months','1year'].forEach(function(tl) {
+      var s = document.getElementById('status-' + tl);
+      if (s) s.innerHTML = '<div class="tab-loader"></div>';
+      var tab = document.querySelector('[data-timeline="' + tl + '"]');
+      if (tab) tab.classList.remove('ready');
+    });
+
+    // Show wrap and set before image
+    var wrap = document.getElementById('revealWrap');
+    if (wrap) { wrap.style.display = 'block'; wrap.classList.add('visible'); }
+    var beforeImg = document.getElementById('beforeImg');
+    if (beforeImg) beforeImg.src = futurePhotoBase64 || '';
+    switchTimeline('12weeks');
+
+    // Disable generate button
+    var genBtn = document.getElementById('generateBtn');
+    if (genBtn) genBtn.disabled = true;
+
+    // Fire all three in parallel
+    var timelines = ['12weeks', '6months', '1year'];
+    var promises = timelines.map(function(tl) {
+      var payload = { timeline: tl, goal: userGoal, userGoal: userGoal, gender: gender };
+      if (futurePhotoBase64) payload.image_base64 = futurePhotoBase64;
+
+      return fetch('/api/generate-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (!d.success || !d.image_base64) throw new Error(d.error || 'No image');
+        _generatedImages[tl] = d.image_base64;
+
+        // Mark tab ready
+        var s = document.getElementById('status-' + tl);
+        if (s) s.innerHTML = '<div class="tab-check"></div>';
+        var tab = document.querySelector('[data-timeline="' + tl + '"]');
+        if (tab) tab.classList.add('ready');
+
+        // If this is the active tab, show immediately
+        if (_activeTimeline === tl) switchTimeline(tl);
+
+        // Sync dashboard avatar with 1year image
+        if (tl === '1year') {
+          state.avatarUrl = d.image_base64;
+          var da = document.getElementById('dashAvatar');
+          if (da) da.src = d.image_base64;
+        }
+      })
+      .catch(function(err) {
+        console.error(tl + ' failed:', err.message);
+        var s = document.getElementById('status-' + tl);
+        if (s) s.innerHTML = '<div class="tab-error">!</div>';
+        if (_activeTimeline === tl) {
+          var lt = document.getElementById('loadingText');
+          if (lt) lt.textContent = 'Generation failed. Try again.';
+        }
+      });
+    });
+
+    Promise.allSettled(promises).then(function() {
+      if (genBtn) genBtn.disabled = false;
+      var wrap = document.getElementById('revealWrap');
+      if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
   }
+
+  function resetFutureSelf() {
+    _generatedImages = { '12weeks': null, '6months': null, '1year': null };
+    _activeTimeline = '12weeks';
+    var wrap = document.getElementById('revealWrap');
+    if (wrap) wrap.style.display = 'none';
+    clearFuturePhoto(null);
+  }
+
+  // Keep old name as alias for any remaining references
+  function generateFutureSelf() { generateAllTimelines(); }
+  function revealFutureSelf() {}  // no-op, slider handles reveal
+  function resetPhoto() { resetFutureSelf(); }
+
+  // Drag slider
+  (function initSlider() {
+    var _dragging = false;
+    function setPos(clientX) {
+      var slider = document.getElementById('revealSlider');
+      if (!slider) return;
+      var rect = slider.getBoundingClientRect();
+      var pct = Math.max(5, Math.min(95, ((clientX - rect.left) / rect.width) * 100));
+      _sliderPct = pct;
+      var line = document.getElementById('revealLine');
+      var handle = document.getElementById('revealHandle');
+      var after = document.getElementById('revealAfter');
+      if (line) line.style.left = pct + '%';
+      if (handle) handle.style.left = pct + '%';
+      if (after) after.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
+    }
+    document.addEventListener('mousedown', function(e) {
+      if (e.target.closest && e.target.closest('#revealSlider')) {
+        _dragging = true; setPos(e.clientX); e.preventDefault();
+      }
+    });
+    window.addEventListener('mousemove', function(e) { if (_dragging) setPos(e.clientX); });
+    window.addEventListener('mouseup', function() { _dragging = false; });
+    document.addEventListener('touchstart', function(e) {
+      if (e.target.closest && e.target.closest('#revealSlider')) {
+        _dragging = true; setPos(e.touches[0].clientX); e.preventDefault();
+      }
+    }, { passive: false });
+    window.addEventListener('touchmove', function(e) {
+      if (_dragging) setPos(e.touches[0].clientX);
+    }, { passive: false });
+    window.addEventListener('touchend', function() { _dragging = false; });
+  })();
+
+  // revealFutureSelf and resetPhoto aliased above near generateAllTimelines
 
   // PROGRAM GENERATOR
   var programs = {
