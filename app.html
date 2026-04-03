@@ -1043,9 +1043,18 @@
 
     <!-- TIMELINE TOGGLE -->
     <div style="display:flex;gap:2px;margin-bottom:16px;" id="timelineToggle">
-      <button class="timeline-btn active" onclick="setTimeline(this,'12weeks')">12 Weeks</button>
-      <button class="timeline-btn" onclick="setTimeline(this,'6months')">6 Months</button>
-      <button class="timeline-btn" onclick="setTimeline(this,'1year')">1 Year</button>
+      <button class="timeline-btn active" onclick="setTimeline(this,'12weeks')">
+        12 Weeks
+        <span style="display:block;font-family:var(--font-mono);font-size:9px;color:#666;font-style:italic;font-weight:400;letter-spacing:0.04em;margin-top:3px;text-transform:none;">Leaner, more athletic</span>
+      </button>
+      <button class="timeline-btn" onclick="setTimeline(this,'6months')">
+        6 Months
+        <span style="display:block;font-family:var(--font-mono);font-size:9px;color:#666;font-style:italic;font-weight:400;letter-spacing:0.04em;margin-top:3px;text-transform:none;">Clear recomposition</span>
+      </button>
+      <button class="timeline-btn" onclick="setTimeline(this,'1year')">
+        1 Year
+        <span style="display:block;font-family:var(--font-mono);font-size:9px;color:#666;font-style:italic;font-weight:400;letter-spacing:0.04em;margin-top:3px;text-transform:none;">Full transformation</span>
+      </button>
     </div>
 
     <div class="upload-zone" id="uploadZone" onclick="document.getElementById('photoInput').click()">
@@ -1914,6 +1923,7 @@
     var payload = {
       timeline: timeline,
       goal: profile.goal || 'lean and athletic',
+      userGoal: profile.goal || '',
       gender: profile.gender || 'male'
     };
     if (futurePhotoBase64) payload.image_base64 = futurePhotoBase64;
