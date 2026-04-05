@@ -5,30 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="theme-color" content="#080808"/>
   <title>Wylde Self — App</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Mono:wght@400;700&family=Montserrat:wght@800&family=Cormorant+Garamond:ital@1&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Montserrat:wght@600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --black: #080808;
-      --charcoal: #111;
-      --surface: #161616;
-      --border: rgba(255,255,255,0.08);
-      --white: #f5f4f0;
-      --muted: #a0a098;
-      --gold: #c8a96e;
-      --gold-dim: rgba(200,169,110,0.12);
-      --accent: #ff6030;
-      --accent-bg: rgba(220,90,30,0.15);
-      --accent-border: rgba(220,90,30,0.45);
-      --ff-hero: 'Inter', system-ui, sans-serif;
-      --ff-serif: 'Cormorant Garamond', serif;
-      --ff-body: 'Inter', system-ui, sans-serif;
-      --font-ui: 'Inter', system-ui, sans-serif;
-      --font-mono: 'Space Mono', monospace;
+      /* ── Base palette ── */
+      --bg:         #131210;
+      --surface:    #1c1a17;
+      --surface2:   #242220;
+      --border:     rgba(255,245,220,0.08);
+      --border2:    rgba(255,245,220,0.14);
+      --text:       #f0ece4;
+      --text2:      #b8b4aa;
+      --text3:      #6e6a62;
+      /* ── Brand colors ── */
+      --gold:       #c8a96e;
+      --ember:      #e85d20;
+      --green:      #3dba6e;
+      --blue:       #4a9eff;
+      --purple:     #a87edd;
+      /* ── Accent system (ember-based) ── */
+      --accent:        #e85d20;
+      --accent-bg:     rgba(232,93,32,0.12);
+      --accent-border: rgba(232,93,32,0.40);
+      /* ── Fonts ── */
+      --font-ui:        'Inter', system-ui, sans-serif;
+      --font-mono:      'Space Mono', monospace;
       --font-milestone: 'Montserrat', sans-serif;
+      --font-serif:     'Cormorant Garamond', serif;
+      /* ── Legacy aliases ── */
+      --black:       #131210;
+      --charcoal:    #1c1a17;
+      --white:       #f0ece4;
+      --muted:       #b8b4aa;
+      --gold-dim:    rgba(200,169,110,0.12);
+      --ff-hero:     'Inter', system-ui, sans-serif;
+      --ff-serif:    'Cormorant Garamond', serif;
+      --ff-body:     'Inter', system-ui, sans-serif;
       --font-editorial: 'Cormorant Garamond', serif;
+      /* ── Radius ── */
+      --r-sm:  6px;
+      --r-md:  10px;
+      --r-lg:  14px;
+      --r-xl:  20px;
     }
-    html, body { background: #080808 !important; color: #f5f4f0; font-family: var(--font-ui); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    html, body { background: var(--bg) !important; color: var(--text); font-family: var(--font-ui); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
     /* NAV */
     nav { position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; background: #0c0c0c; border-right: 1px solid var(--border); width: 200px; display: flex; flex-direction: column; padding: 0; }
@@ -552,16 +573,203 @@
   .loading-text { font-family:var(--font-mono);font-size:11px;color:#888;letter-spacing:0.08em; }
   @keyframes slideIn { from{opacity:0;transform:scale(0.97)} to{opacity:1;transform:scale(1)} }
   .reveal-wrap.visible { animation:slideIn 0.35s ease-out; }
+
+  /* AUTH SCREEN */
+  #screen-auth { position:fixed;inset:0;z-index:2000;background:#080808;display:flex;align-items:center;justify-content:center; }
+  .auth-box { width:100%;max-width:420px;padding:40px; }
+  .auth-tab-bar { display:flex;border-bottom:1px solid var(--border);margin-bottom:28px; }
+  .auth-tab-bar button { flex:1;background:none;border:none;padding:12px;font-family:var(--font-ui);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:color 0.2s; }
+
+  /* XP TOAST */
+  #xp-toast { position:fixed;bottom:80px;right:24px;z-index:3000;background:rgba(200,169,110,0.15);border:1px solid rgba(200,169,110,0.5);color:var(--gold);font-family:var(--font-mono);font-size:12px;letter-spacing:0.05em;padding:10px 18px;border-radius:20px;pointer-events:none;opacity:0;transform:translateY(8px);transition:opacity 0.3s,transform 0.3s; }
+  #xp-toast.xp-toast-show { opacity:1;transform:translateY(0); }
+  #xp-toast.xp-toast-hide { opacity:0;transform:translateY(8px); }
+
+  /* LEVEL-UP OVERLAY */
+  #level-up-overlay { position:fixed;inset:0;z-index:3100;background:rgba(0,0,0,0.82);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px; }
+  .level-up-inner { text-align:center;animation:slideIn 0.4s ease-out; }
+  .level-up-label { font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:8px; }
+  .level-up-name { font-family:var(--ff-hero);font-size:52px;font-weight:900;color:var(--gold);letter-spacing:0.04em; }
+  .level-up-sub { font-family:var(--ff-serif);font-style:italic;font-size:18px;color:var(--muted);margin-top:6px; }
+
+  /* COMMUNITY SCREEN */
+  .comm-tab-bar { display:flex;border-bottom:1px solid var(--border);margin-bottom:28px; }
+  .comm-tab-bar button { background:none;border:none;padding:12px 20px;font-family:var(--font-ui);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:color 0.2s; }
+  .feed-post { background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;transition:border-color 0.2s; }
+  .feed-post:hover { border-color:rgba(255,255,255,0.18); }
+  .lb-row { background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;align-items:center;gap:14px; }
+
+  /* ══════════════════════════════════════════
+     NEW DESIGN SYSTEM — ADDED
+  ══════════════════════════════════════════ */
+
+  /* Extra animations */
+  @keyframes shimmer { 0%{left:-100%} 100%{left:200%} }
+  @keyframes fadein  { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeout { from{opacity:1} to{opacity:0;transform:translateY(-6px)} }
+  @keyframes glow-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(200,169,110,0)} 50%{box-shadow:0 0 18px 3px rgba(200,169,110,0.18)} }
+  @keyframes aura { 0%,100%{opacity:0.55} 50%{opacity:1} }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+  @keyframes pdot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:0.6} }
+
+  /* wcard */
+  .wcard {
+    background: linear-gradient(145deg, var(--surface) 0%, var(--surface2) 100%);
+    border: 1px solid var(--border2);
+    border-radius: var(--r-lg);
+    padding: 22px 24px;
+    margin-bottom: 12px;
+    animation: breathe 5s ease-in-out infinite;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+  }
+  .wcard:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(0,0,0,0.4); border-color: rgba(200,169,110,0.22); }
+
+  /* btn system */
+  .btn { position:relative; overflow:hidden; }
+  .btn::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.07),transparent); animation:shimmer 2.8s ease-in-out infinite; pointer-events:none; }
+  .btn-ember  { background:rgba(232,93,32,0.18)  !important; border:1px solid rgba(232,93,32,0.45)  !important; color:#ff7048 !important; border-radius:var(--r-sm) !important; }
+  .btn-gold   { background:rgba(200,169,110,0.18) !important; border:1px solid rgba(200,169,110,0.55) !important; color:var(--gold) !important; border-radius:var(--r-sm) !important; }
+  .btn-green  { background:rgba(61,186,110,0.18)  !important; border:1px solid rgba(61,186,110,0.45)  !important; color:#50e080 !important; border-radius:var(--r-sm) !important; }
+  .btn-blue   { background:rgba(74,158,255,0.18)  !important; border:1px solid rgba(74,158,255,0.45)  !important; color:#70c0ff !important; border-radius:var(--r-sm) !important; }
+  .btn-purple { background:rgba(168,126,221,0.15) !important; border:1px solid rgba(168,126,221,0.40) !important; color:#c09af0 !important; border-radius:var(--r-sm) !important; }
+  .btn-sm { font-size:11px !important; padding:8px 18px !important; }
+  .btn-inline { display:inline-flex; align-items:center; gap:6px; }
+
+  /* pdot */
+  .pdot { width:7px; height:7px; border-radius:50%; display:inline-block; animation:pdot 2s ease-in-out infinite; flex-shrink:0; }
+  .pdot-ember  { background:var(--ember); }
+  .pdot-gold   { background:var(--gold); }
+  .pdot-green  { background:var(--green); }
+
+  /* level-badge enhancements */
+  .level-badge-name { font-family:var(--font-milestone); font-weight:800; font-size:11px; letter-spacing:0.08em; }
+
+  /* xp-toast (floating, auto-remove) */
+  .xp-toast {
+    position:fixed; bottom:90px; right:24px; z-index:3200;
+    background:rgba(200,169,110,0.15); border:1px solid rgba(200,169,110,0.55);
+    color:var(--gold); font-family:var(--font-mono); font-size:12px;
+    letter-spacing:0.05em; padding:10px 20px; border-radius:var(--r-xl);
+    pointer-events:none; animation:fadein 0.3s ease-out;
+    box-shadow:0 4px 20px rgba(200,169,110,0.15);
+  }
+  .xp-toast.removing { animation:fadeout 0.4s ease-in forwards; }
+
+  /* wfield */
+  .wfield {
+    background:rgba(255,255,255,0.04); border:1px solid var(--border2);
+    color:var(--text); font-family:var(--font-ui); font-size:14px;
+    padding:12px 16px; outline:none; width:100%; border-radius:var(--r-sm);
+    transition:border-color 0.2s; -webkit-appearance:none;
+  }
+  .wfield:focus { border-color:rgba(200,169,110,0.5); }
+  .wfield::placeholder { color:var(--text3); }
+
+  /* wtag variants */
+  .wtag { display:inline-block; font-size:10px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; padding:4px 11px; border-radius:var(--r-xl); border:1px solid var(--border2); color:var(--text2); }
+  .wtag-ember  { color:#ff7048; border-color:rgba(232,93,32,0.45);  background:rgba(232,93,32,0.1); }
+  .wtag-green  { color:#50e080; border-color:rgba(61,186,110,0.45); background:rgba(61,186,110,0.1); }
+  .wtag-gold   { color:var(--gold); border-color:rgba(200,169,110,0.5); background:rgba(200,169,110,0.1); }
+  .wtag-purple { color:#c09af0; border-color:rgba(168,126,221,0.45); background:rgba(168,126,221,0.1); }
+  .wtag-blue   { color:#70c0ff; border-color:rgba(74,158,255,0.45);  background:rgba(74,158,255,0.1); }
+  .wtag-muted  { color:var(--text3); border-color:var(--border); background:transparent; }
+
+  /* stat-block */
+  .stat-block { display:flex; flex-direction:column; align-items:center; padding:16px 12px; }
+  .stat-num   { font-family:var(--font-mono); font-size:36px; color:var(--gold); letter-spacing:0.04em; line-height:1; }
+  .stat-label { font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--text2); margin-top:4px; }
+
+  /* momentum-bar */
+  .momentum-bar   { margin:16px 0 8px; }
+  .momentum-track { height:4px; background:rgba(255,255,255,0.07); border-radius:2px; overflow:hidden; position:relative; }
+  .momentum-fill  { height:100%; border-radius:2px; background:linear-gradient(90deg,var(--ember),var(--gold)); transition:width 0.6s ease; }
+  .momentum-days  { display:flex; gap:4px; margin-top:8px; }
+  .mday { width:28px; height:6px; border-radius:2px; background:rgba(255,255,255,0.07); transition:background 0.3s; }
+  .mday.done { background:var(--gold); }
+  .mday.today { background:var(--ember); animation:glow-pulse 1.5s infinite; }
+
+  /* wdivider */
+  .wdivider { width:40px; height:1px; background:rgba(200,169,110,0.35); margin:20px 0; }
+
+  /* heartbeat-line new classes */
+  .heartbeat-line { display:flex; align-items:center; gap:3px; padding:10px 20px; border-top:1px solid rgba(255,255,255,0.06); position:fixed; bottom:0; left:0; right:0; z-index:100; background:rgba(19,18,16,0.96); backdrop-filter:blur(6px); }
+  .hbseg { height:2px; border-radius:1px; background:rgba(200,169,110,0.22); animation:hb 1.5s ease-in-out infinite; }
+  .live-tag { font-family:var(--font-mono); font-size:9px; color:var(--text3); margin-left:auto; letter-spacing:0.1em; }
+
+  /* DASH HEADER */
+  .dash-header { margin-bottom:24px; }
+  .dash-greeting-line { font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--text2); margin-bottom:4px; }
+  .dash-name { font-family:var(--font-milestone); font-size:26px; font-weight:800; color:var(--text); letter-spacing:0.04em; }
+  .dash-day-line { font-family:var(--font-serif); font-style:italic; font-size:15px; color:var(--text2); margin-top:2px; }
+  .dash-header-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:10px 0; }
+
+  /* forum styles */
+  #forumThreadList  { display:none; }
+  #forumThreadDetail{ display:none; }
+  #newPostModal     { display:none; }
+  .forum-reply { padding:14px 0; border-bottom:1px solid var(--border); }
+  .forum-reply:last-child { border-bottom:none; }
+
+  /* Community new tabs */
+  .ctab-bar { display:flex; gap:2px; border-bottom:1px solid var(--border); margin-bottom:24px; }
+  .ctab { background:none; border:none; padding:12px 18px; font-family:var(--font-ui); font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--text2); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; }
+  .ctab:hover { color:var(--text); }
+  .ctab.active { color:var(--gold); border-bottom-color:var(--gold); }
+
+  /* Forum section cards */
+  .forum-section-card { background:linear-gradient(145deg,var(--surface),var(--surface2)); border:1px solid var(--border2); border-radius:var(--r-lg); padding:20px 22px; margin-bottom:10px; cursor:pointer; transition:all 0.2s; }
+  .forum-section-card:hover { border-color:rgba(200,169,110,0.35); transform:translateY(-1px); }
+  .forum-section-card-title { font-family:var(--font-milestone); font-weight:700; font-size:16px; color:var(--text); margin-bottom:4px; }
+  .forum-section-card-sub { font-size:12px; color:var(--text2); }
+
+  /* Thread cards */
+  .thread-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); padding:16px 18px; margin-bottom:8px; cursor:pointer; transition:all 0.2s; }
+  .thread-card:hover { border-color:rgba(200,169,110,0.3); background:var(--surface2); }
+  .thread-card-title { font-size:14px; font-weight:500; color:var(--text); margin-bottom:6px; }
+  .thread-card-meta  { font-size:11px; color:var(--text2); display:flex; gap:14px; }
+
+  /* Leaderboard new */
+  .lb-item { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); padding:14px 18px; display:flex; align-items:center; gap:14px; margin-bottom:8px; transition:border-color 0.2s; }
+  .lb-item.is-you { border-color:rgba(200,169,110,0.35); background:rgba(200,169,110,0.06); }
+  .lb-rank { font-family:var(--font-mono); font-size:13px; color:var(--text3); width:28px; flex-shrink:0; }
+  .lb-name { flex:1; font-size:13px; color:var(--text); }
+  .lb-score { font-family:var(--font-mono); font-size:13px; color:var(--gold); }
+
+  /* Feed new */
+  .feed-item { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); padding:18px 20px; margin-bottom:10px; transition:border-color 0.2s; }
+  .feed-item:hover { border-color:var(--border2); }
+  .feed-item-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .feed-item-author { font-size:12px; font-weight:600; color:var(--gold); letter-spacing:0.07em; }
+  .feed-item-time { font-size:11px; color:var(--text3); }
+  .feed-item-body { font-size:14px; color:var(--text); line-height:1.65; }
   </style>
 </head>
 <body style="background:#080808;">
-<script>
-  (function() {
-    if (!localStorage.getItem('wylde_gate_passed') && !localStorage.getItem('wylde_submitted')) {
-      window.location.replace('/gate.html');
-    }
-  })();
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
+<!-- AUTH SCREEN -->
+<div id="screen-auth" style="display:none;">
+  <div class="auth-box">
+    <div style="text-align:center;margin-bottom:36px;">
+      <a href="/" style="font-family:var(--ff-hero);font-size:24px;letter-spacing:0.14em;color:#f5f4f0;text-decoration:none;">W<span style="color:var(--gold)">S</span></a>
+      <p style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-top:10px;">Wylde Self</p>
+    </div>
+    <div class="auth-tab-bar">
+      <button id="authTabSignIn" onclick="switchAuthTab('signin')" style="color:var(--gold);border-bottom:2px solid var(--gold);">Sign In</button>
+      <button id="authTabCreate" onclick="switchAuthTab('create')" style="color:var(--muted);border-bottom:2px solid transparent;">Create Account</button>
+    </div>
+    <div id="authError" style="display:none;background:rgba(220,90,30,0.1);border:1px solid rgba(220,90,30,0.4);color:#ff7040;font-size:12px;padding:12px 16px;margin-bottom:16px;border-radius:8px;"></div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <input id="authEmail" class="input" type="email" placeholder="Email address" autocomplete="email"/>
+      <input id="authPassword" class="input" type="password" placeholder="Password" autocomplete="current-password"/>
+      <button id="authSubmitBtn" class="btn" style="width:100%;margin-top:4px;" onclick="submitAuth()">SIGN IN</button>
+    </div>
+    <p style="text-align:center;margin-top:20px;font-size:12px;color:var(--muted);">
+      <span onclick="continueAsGuest()" style="color:var(--gold);cursor:pointer;text-decoration:underline;text-decoration-color:rgba(200,169,110,0.4);">Continue as guest</span>
+    </p>
+  </div>
+</div>
 
 <nav>
   <a href="/" class="nav-logo">W<span>S</span></a>
@@ -576,6 +784,7 @@
     <button class="nav-tab locked" onclick="showScreen('nutrition')">Nutrition</button>
     <button class="nav-tab locked" onclick="showScreen('supplements')">Supplements</button>
     <button class="nav-tab locked" onclick="showScreen('health')">Health+</button>
+    <button class="nav-tab locked" onclick="showScreen('community')">Community</button>
   </div>
   <div class="nav-footer">
     <div id="levelBadgeWrap" style="margin-bottom:10px;">
@@ -585,6 +794,7 @@
       <span id="navUserName">—</span>
       Wylde Self Member
     </div>
+    <button id="navSignOutBtn" onclick="signOut()" style="display:none;margin-top:10px;background:none;border:1px solid rgba(255,255,255,0.1);color:var(--muted);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:7px 12px;cursor:pointer;border-radius:6px;width:100%;font-family:var(--font-ui);">Sign Out</button>
   </div>
 </nav>
 
@@ -593,6 +803,12 @@
   <p style="font-size:11px;letter-spacing:0.08em;color:rgba(200,169,110,0.7);font-family:'DM Sans',sans-serif;">
     Early Access Demo — Some features are still being built and may not work as expected. We're improving things daily.
   </p>
+</div>
+
+<!-- ═══ INTRO VIDEO ═══ -->
+<div id="screen-intro" style="display:none;position:fixed;inset:0;z-index:9999;background:#080808;display:none;align-items:center;justify-content:center;flex-direction:column;">
+  <video id="introVideo" src="intro.mp4" playsinline webkit-playsinline style="width:100%;max-width:500px;border-radius:16px;"></video>
+  <button onclick="skipIntro()" style="margin-top:24px;background:transparent;border:1px solid rgba(200,169,110,0.3);color:var(--gold,#c8a96e);padding:10px 32px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer;">SKIP</button>
 </div>
 
 <!-- ═══ ONBOARDING ═══ -->
@@ -732,6 +948,24 @@
       <span class="pulse-dot" style="margin-top:8px;"></span>
     </div>
     <div class="gold-rule"></div>
+
+    <!-- DASH HEADER -->
+    <div class="dash-header wcard" style="padding:20px 24px;">
+      <div class="dash-greeting-line">Good to see you,</div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:2px;">
+        <div class="dash-name" id="dashHeaderName">—</div>
+        <span class="level-badge" id="headerLevelBadge"><span class="pdot pdot-ember"></span><span class="level-badge-name" id="headerLevelName">Ember</span></span>
+      </div>
+      <div class="dash-day-line" id="dashDayLine" style="margin-top:6px;">Day 1 of your journey</div>
+      <div class="momentum-bar" id="momentumBarWrap">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text2);">Momentum</span>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--gold);" id="momentumValue">0%</span>
+        </div>
+        <div class="momentum-track"><div class="momentum-fill" id="momentumFill" style="width:0%;"></div></div>
+        <div class="momentum-days" id="momentumDays"></div>
+      </div>
+    </div>
 
     <!-- DRAGGABLE CARD GRID -->
     <div id="dashCardGrid">
@@ -1254,6 +1488,706 @@
 </div>
 
 <script>
+  // ═══ SUPABASE CLIENT ═══
+  // TODO: Replace with your Supabase project URL and anon key from https://supabase.com/dashboard
+  var SUPABASE_URL = 'YOUR_SUPABASE_URL';
+  var SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+  var _supabase = null;
+  var currentUser = null;
+  var _authMode = 'signin';
+
+  function _getSupabase() {
+    if (!_supabase && window.supabase && SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+      _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+    return _supabase;
+  }
+
+  function _showAuthScreen() {
+    var el = document.getElementById('screen-auth');
+    if (el) el.style.display = 'flex';
+  }
+  function _hideAuthScreen() {
+    var el = document.getElementById('screen-auth');
+    if (el) el.style.display = 'none';
+  }
+
+  function initAuth() {
+    var sb = _getSupabase();
+    if (!sb) {
+      // No Supabase — use legacy gate check
+      if (!localStorage.getItem('wylde_gate_passed') && !localStorage.getItem('wylde_submitted')) {
+        window.location.replace('/gate.html');
+      }
+      return;
+    }
+    sb.auth.getSession().then(function(res) {
+      if (res.data && res.data.session) {
+        currentUser = res.data.session.user;
+        _hideAuthScreen();
+        var signOutBtn = document.getElementById('navSignOutBtn');
+        if (signOutBtn) signOutBtn.style.display = 'block';
+      } else {
+        _showAuthScreen();
+      }
+    });
+    sb.auth.onAuthStateChange(function(event, session) {
+      if (event === 'SIGNED_IN' && session) {
+        currentUser = session.user;
+        _hideAuthScreen();
+        var signOutBtn = document.getElementById('navSignOutBtn');
+        if (signOutBtn) signOutBtn.style.display = 'block';
+        _loadProfileFromSupabase();
+      } else if (event === 'SIGNED_OUT') {
+        currentUser = null;
+        var signOutBtn = document.getElementById('navSignOutBtn');
+        if (signOutBtn) signOutBtn.style.display = 'none';
+        _showAuthScreen();
+      }
+    });
+  }
+
+  function switchAuthTab(mode) {
+    _authMode = mode;
+    var si = document.getElementById('authTabSignIn');
+    var ca = document.getElementById('authTabCreate');
+    var btn = document.getElementById('authSubmitBtn');
+    if (mode === 'signin') {
+      si.style.color = 'var(--gold)'; si.style.borderBottomColor = 'var(--gold)';
+      ca.style.color = 'var(--muted)'; ca.style.borderBottomColor = 'transparent';
+      if (btn) btn.textContent = 'SIGN IN';
+    } else {
+      ca.style.color = 'var(--gold)'; ca.style.borderBottomColor = 'var(--gold)';
+      si.style.color = 'var(--muted)'; si.style.borderBottomColor = 'transparent';
+      if (btn) btn.textContent = 'CREATE ACCOUNT';
+    }
+    var err = document.getElementById('authError');
+    if (err) err.style.display = 'none';
+  }
+
+  function submitAuth() {
+    var sb = _getSupabase();
+    if (!sb) { continueAsGuest(); return; }
+    var email = (document.getElementById('authEmail').value || '').trim();
+    var password = (document.getElementById('authPassword').value || '').trim();
+    var err = document.getElementById('authError');
+    var btn = document.getElementById('authSubmitBtn');
+    if (!email || !password) {
+      if (err) { err.textContent = 'Please enter email and password.'; err.style.display = 'block'; }
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = _authMode === 'signin' ? 'Signing in...' : 'Creating account...';
+    if (err) err.style.display = 'none';
+    var p = _authMode === 'signin'
+      ? sb.auth.signInWithPassword({ email: email, password: password })
+      : sb.auth.signUp({ email: email, password: password });
+    p.then(function(result) {
+      if (result.error) {
+        if (err) { err.textContent = result.error.message; err.style.display = 'block'; }
+        btn.disabled = false;
+        btn.textContent = _authMode === 'signin' ? 'SIGN IN' : 'CREATE ACCOUNT';
+      }
+    }).catch(function(e) {
+      if (err) { err.textContent = e.message || 'Authentication failed.'; err.style.display = 'block'; }
+      btn.disabled = false;
+      btn.textContent = _authMode === 'signin' ? 'SIGN IN' : 'CREATE ACCOUNT';
+    });
+  }
+
+  function continueAsGuest() {
+    _hideAuthScreen();
+  }
+
+  function signOut() {
+    var sb = _getSupabase();
+    var doSignOut = function() {
+      Object.assign(state, { name:'', gender:'', age:'', height:'', weight:'', goal:'', level:'', days:'', sessions:0, streak:0, log:[], avatarUrl:'', xp:0, badges:[] });
+      try { localStorage.removeItem('wylde_profile'); } catch(e) {}
+      document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.add('locked'); });
+      var tabs = document.querySelectorAll('.nav-tab');
+      if (tabs[0]) { tabs[0].classList.remove('locked'); tabs[0].classList.add('active'); }
+      _showAuthScreen();
+    };
+    if (sb) sb.auth.signOut().then(doSignOut);
+    else doSignOut();
+  }
+
+  function _loadProfileFromSupabase() {
+    var sb = _getSupabase();
+    if (!sb || !currentUser) return;
+    sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle().then(function(result) {
+      if (result.data) {
+        var pd = result.data.profile_data || {};
+        Object.assign(state, pd);
+        if (result.data.xp !== undefined) state.xp = result.data.xp;
+        if (result.data.streak !== undefined) state.streak = result.data.streak;
+        if (state.name) {
+          document.getElementById('navUserName').textContent = state.name.toUpperCase();
+          document.querySelectorAll('.nav-tab.locked').forEach(function(t){ t.classList.remove('locked'); });
+          if (!localStorage.getItem('wylde_intro_seen')) {
+            setTimeout(function(){ playIntro(function(){ showScreen('dashboard'); }); }, 100);
+          } else {
+            setTimeout(function(){ showScreen('dashboard'); }, 100);
+          }
+        }
+        _updateLevelDisplay();
+      }
+    });
+  }
+
+  async function saveProfile() {
+    try { localStorage.setItem('wylde_profile', JSON.stringify(state)); } catch(e) {}
+    var sb = _getSupabase();
+    if (!sb || !currentUser) return;
+    sb.from('profiles').upsert({
+      id: currentUser.id,
+      email: currentUser.email,
+      profile_data: state,
+      xp: state.xp || 0,
+      streak: state.streak || 0,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'id' }).catch(function(){});
+  }
+
+  // ═══ XP ENGINE ═══
+  var _xpThresholds = [0, 1000, 3500, 8000];
+  var _levelNames = ['Ember', 'Root', 'Rise', 'Wylde'];
+
+  function _xpLevel(xp) {
+    var level = 0;
+    for (var i = 0; i < _xpThresholds.length; i++) { if (xp >= _xpThresholds[i]) level = i; }
+    return level;
+  }
+
+  function _updateLevelDisplay() {
+    var nb = document.getElementById('navLevel');
+    if (nb) nb.textContent = _levelNames[_xpLevel(state.xp || 0)];
+  }
+
+  function awardXP(amount, reason) {
+    if (!amount) return;
+    var oldLevel = _xpLevel(state.xp || 0);
+    state.xp = (state.xp || 0) + amount;
+    var newLevel = _xpLevel(state.xp);
+    _updateLevelDisplay();
+    showXPToast('+' + amount + ' XP' + (reason ? '  ' + reason : ''));
+    if (newLevel > oldLevel) showLevelUpAnimation(_levelNames[newLevel]);
+    checkBadges();
+    try { localStorage.setItem('wylde_profile', JSON.stringify(state)); } catch(e) {}
+    var sb = _getSupabase();
+    if (sb && currentUser) {
+      sb.from('profiles').upsert({ id: currentUser.id, xp: state.xp, updated_at: new Date().toISOString() }, { onConflict: 'id' }).catch(function(){});
+    }
+  }
+
+  function showXPToast(message) {
+    var toast = document.getElementById('xp-toast');
+    if (!toast) return;
+    toast.textContent = message;
+    toast.className = 'xp-toast-show';
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(function() { toast.className = 'xp-toast-hide'; }, 2500);
+  }
+
+  function showLevelUpAnimation(levelName) {
+    var overlay = document.getElementById('level-up-overlay');
+    var lbl = document.getElementById('level-up-name');
+    if (lbl) lbl.textContent = levelName;
+    if (overlay) {
+      overlay.style.display = 'flex';
+      setTimeout(function() { overlay.style.display = 'none'; }, 3500);
+    }
+  }
+
+  function checkBadges() {
+    var xp = state.xp || 0, streak = state.streak || 0, sessions = state.sessions || 0;
+    var existing = state.badges || [];
+    var checks = [
+      { id: 'first_session', label: 'First Session 🏅', condition: sessions >= 1 },
+      { id: 'streak_7',      label: '7-Day Streak 🔥',  condition: streak >= 7 },
+      { id: 'sessions_10',   label: '10 Sessions 💪',   condition: sessions >= 10 },
+      { id: 'xp_1000',       label: 'Root Level ⚡',    condition: xp >= 1000 }
+    ];
+    var sb = _getSupabase();
+    checks.forEach(function(c) {
+      if (c.condition && existing.indexOf(c.id) === -1) {
+        existing.push(c.id);
+        showXPToast('Badge: ' + c.label);
+        if (sb && currentUser) {
+          sb.from('badges').insert({ user_id: currentUser.id, badge_id: c.id, earned_at: new Date().toISOString() }).catch(function(){});
+        }
+      }
+    });
+    state.badges = existing;
+  }
+
+  // ═══ WORKOUT LOGGING ═══
+  function logWorkoutSession(sessionName, durationMin) {
+    var sb = _getSupabase();
+    if (!sb || !currentUser) return;
+    sb.from('workout_sessions').insert({
+      user_id: currentUser.id,
+      name: sessionName,
+      duration_min: durationMin || 0,
+      completed_at: new Date().toISOString()
+    }).catch(function(){});
+  }
+
+  function logSet(exerciseName, weight, reps, sessionId) {
+    var sb = _getSupabase();
+    if (!sb || !currentUser) return;
+    sb.from('workout_sets').insert({
+      user_id: currentUser.id,
+      session_id: sessionId || null,
+      exercise: exerciseName,
+      weight: weight || 0,
+      reps: reps || 0,
+      logged_at: new Date().toISOString()
+    }).catch(function(){});
+    var volume = (weight || 0) * (reps || 0);
+    sb.from('personal_bests').upsert({
+      user_id: currentUser.id,
+      exercise: exerciseName,
+      best_weight: weight || 0,
+      best_reps: reps || 0,
+      best_volume: volume,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id,exercise' }).catch(function(){});
+  }
+
+  // ═══ COMMUNITY ═══
+  var _activeCommunityTab = 'feed';
+  var _feedRealtime = null;
+
+  function switchCommunityTab(tab) {
+    _activeCommunityTab = tab;
+    ['feed','leaderboard','events'].forEach(function(t) {
+      var panel = document.getElementById('commPanel-' + t);
+      var btn = document.getElementById('commTab-' + t);
+      if (panel) panel.style.display = t === tab ? 'block' : 'none';
+      if (btn) { btn.style.color = t === tab ? 'var(--gold)' : 'var(--muted)'; btn.style.borderBottomColor = t === tab ? 'var(--gold)' : 'transparent'; }
+    });
+    if (tab === 'feed') loadFeed();
+    if (tab === 'leaderboard') loadLeaderboard('xp');
+  }
+
+  function loadFeed() {
+    var sb = _getSupabase();
+    var list = document.getElementById('feedList');
+    var empty = document.getElementById('feedEmpty');
+    var composer = document.getElementById('feedPostComposer');
+    if (!sb) {
+      if (empty) { empty.textContent = 'Sign in to see the community feed.'; empty.style.display = 'block'; }
+      if (list) list.innerHTML = '';
+      return;
+    }
+    if (composer && currentUser) composer.style.display = 'block';
+    sb.from('feed_posts').select('id, body, reactions, created_at, user_id, profiles(profile_data)').order('created_at', { ascending: false }).limit(30).then(function(result) {
+      if (result.error || !result.data || result.data.length === 0) {
+        if (empty) { empty.textContent = 'No posts yet. Be the first to share.'; empty.style.display = 'block'; }
+        if (list) list.innerHTML = '';
+        return;
+      }
+      if (empty) empty.style.display = 'none';
+      if (list) list.innerHTML = result.data.map(function(post) {
+        var authorName = (post.profiles && post.profiles.profile_data && post.profiles.profile_data.name) || 'Member';
+        var date = new Date(post.created_at).toLocaleDateString('en-US', {month:'short',day:'numeric'});
+        var fireCount = (post.reactions && post.reactions['🔥']) || 0;
+        return '<div class="feed-post">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
+            '<span style="font-size:11px;font-weight:500;color:var(--gold);letter-spacing:0.08em;">' + authorName.toUpperCase() + '</span>' +
+            '<span style="font-size:11px;color:var(--muted);">' + date + '</span>' +
+          '</div>' +
+          '<p style="font-size:14px;color:var(--white);line-height:1.6;margin-bottom:12px;">' + (post.body || '') + '</p>' +
+          '<div style="display:flex;gap:10px;">' +
+            '<button onclick="addReaction(\'' + post.id + '\',\'🔥\')" style="background:none;border:1px solid var(--border);color:var(--muted);padding:4px 12px;font-size:12px;cursor:pointer;border-radius:20px;font-family:var(--font-ui);">🔥 ' + fireCount + '</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+      if (!_feedRealtime) {
+        _feedRealtime = sb.channel('community-feed').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'feed_posts' }, function() { loadFeed(); }).subscribe();
+      }
+    });
+  }
+
+  function submitFeedPost() {
+    var sb = _getSupabase();
+    if (!sb || !currentUser) return;
+    var textarea = document.getElementById('feedPostText');
+    var body = (textarea && textarea.value || '').trim();
+    if (!body) return;
+    sb.from('feed_posts').insert({ user_id: currentUser.id, body: body }).then(function() {
+      if (textarea) textarea.value = '';
+      awardXP(50, 'Community post');
+      loadFeed();
+    });
+  }
+
+  function addReaction(postId, emoji) {
+    var sb = _getSupabase();
+    if (!sb || !currentUser) return;
+    sb.from('feed_posts').select('reactions').eq('id', postId).maybeSingle().then(function(result) {
+      if (!result.data) return;
+      var reactions = result.data.reactions || {};
+      reactions[emoji] = (reactions[emoji] || 0) + 1;
+      sb.from('feed_posts').update({ reactions: reactions }).eq('id', postId).then(function() { loadFeed(); });
+    });
+  }
+
+  function loadLeaderboard(tab) {
+    var sb = _getSupabase();
+    var list = document.getElementById('leaderboardList');
+    ['xp','streak','weekly'].forEach(function(t) {
+      var btn = document.getElementById('lbTab-' + t);
+      if (btn) btn.className = 'btn' + (t === tab ? '' : ' btn-outline');
+    });
+    if (!sb) {
+      if (list) list.innerHTML = '<p style="color:var(--muted);font-size:14px;text-align:center;padding:40px 0;">Sign in to see the leaderboard.</p>';
+      return;
+    }
+    if (list) list.innerHTML = '<p style="color:var(--muted);font-size:14px;text-align:center;padding:40px 0;">Loading...</p>';
+    var col = tab === 'streak' ? 'streak' : tab === 'weekly' ? 'weekly_sessions' : 'xp';
+    sb.from('profiles').select('id, profile_data, xp, streak, weekly_sessions').order(col, { ascending: false }).limit(20).then(function(result) {
+      if (result.error || !result.data) {
+        if (list) list.innerHTML = '<p style="color:var(--muted);font-size:14px;text-align:center;padding:40px 0;">Could not load leaderboard.</p>';
+        return;
+      }
+      var medals = ['🥇','🥈','🥉'];
+      if (list) list.innerHTML = result.data.map(function(row, i) {
+        var name = (row.profile_data && row.profile_data.name) || 'Member';
+        var value = tab === 'streak' ? (row.streak || 0) + ' days' : tab === 'weekly' ? (row.weekly_sessions || 0) + ' sessions' : (row.xp || 0) + ' XP';
+        var medal = medals[i] || (i + 1) + '.';
+        var isYou = currentUser && row.id === currentUser.id;
+        return '<div class="lb-row" style="border-color:' + (isYou ? 'rgba(200,169,110,0.35)' : 'var(--border)') + ';background:' + (isYou ? 'rgba(200,169,110,0.07)' : 'var(--surface)') + ';">' +
+          '<span style="font-size:18px;width:28px;">' + medal + '</span>' +
+          '<span style="flex:1;font-size:13px;color:var(--white);">' + name + (isYou ? ' <span style="font-size:10px;color:var(--gold)">(you)</span>' : '') + '</span>' +
+          '<span style="font-size:13px;font-weight:500;color:var(--gold);font-family:var(--font-mono);">' + value + '</span>' +
+        '</div>';
+      }).join('');
+    });
+  }
+
+  // ═══ NEW COMMUNITY & DASHBOARD FUNCTIONS ═══
+
+  // Alias for new code that references supabase / userProfile directly
+  var userProfile = null; // set after state loads
+
+  // ── Community tab switcher ──
+  function showCommunityTab(tab) {
+    ['feed','forums','leaderboard','events'].forEach(function(t) {
+      var panel = document.getElementById('comm-' + t);
+      var btn   = document.getElementById('ctab-' + t);
+      if (panel) panel.style.display = t === tab ? 'block' : 'none';
+      if (btn) btn.classList.toggle('active', t === tab);
+    });
+    if (tab === 'feed')        loadFeedUI();
+    if (tab === 'leaderboard') loadLeaderboardUI();
+  }
+
+  // ── Momentum bar ──
+  function updateMomentumBar() {
+    var s = state;
+    var streak  = s.streak || 0;
+    var maxDays = 7;
+    var pct     = Math.min(Math.round((streak / maxDays) * 100), 100);
+    var fill = document.getElementById('momentumFill');
+    var val  = document.getElementById('momentumValue');
+    var days = document.getElementById('momentumDays');
+    if (fill) fill.style.width = pct + '%';
+    if (val)  val.textContent  = pct + '%';
+    if (days) {
+      var html = '';
+      for (var i = 0; i < maxDays; i++) {
+        if (i < streak - 1)      html += '<div class="mday done"></div>';
+        else if (i === streak - 1) html += '<div class="mday today"></div>';
+        else                      html += '<div class="mday"></div>';
+      }
+      days.innerHTML = html;
+    }
+    var hname = document.getElementById('dashHeaderName');
+    if (hname) hname.textContent = s.name || '—';
+    // Update header level badge
+    var hln = document.getElementById('headerLevelName');
+    if (hln) {
+      var lvlName = (s.xp >= 8000) ? 'Wylde' : (s.xp >= 3500) ? 'Rise' : (s.xp >= 1000) ? 'Root' : 'Ember';
+      hln.textContent = lvlName;
+    }
+  }
+
+  // ── Day line ──
+  function updateDayLine() {
+    var s = state;
+    var el = document.getElementById('dashDayLine');
+    if (!el) return;
+    var joined = s.joinedDate || null;
+    var dayNum = 1;
+    if (joined) {
+      var diff = Date.now() - new Date(joined).getTime();
+      dayNum = Math.max(1, Math.floor(diff / 86400000) + 1);
+    } else if (s.sessions) {
+      dayNum = s.sessions + 1;
+    }
+    el.textContent = 'Day ' + dayNum + ' of your journey';
+  }
+
+  // ── XP Toast (new floating version) ──
+  function showXPToast(text) {
+    var t = document.createElement('div');
+    t.className = 'xp-toast';
+    t.textContent = text;
+    document.body.appendChild(t);
+    setTimeout(function() {
+      t.classList.add('removing');
+      setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, 400);
+    }, 2200);
+  }
+
+  // ── Forum helpers ──
+  function levelToVariant(level) {
+    var map = { 'Ember':'ember', 'Root':'gold', 'Rise':'blue', 'Wylde':'purple' };
+    return map[level] || 'muted';
+  }
+  function timeAgo(dateStr) {
+    if (!dateStr) return '';
+    var diff = (Date.now() - new Date(dateStr).getTime()) / 1000;
+    if (diff < 60)   return 'just now';
+    if (diff < 3600) return Math.floor(diff/60)   + 'm ago';
+    if (diff < 86400)return Math.floor(diff/3600)  + 'h ago';
+    return Math.floor(diff/86400) + 'd ago';
+  }
+
+  var _activeForum = null;
+  var _activeThread = null;
+
+  function openForum(section) {
+    _activeForum = section;
+    var titles = { wylde_man:'Wylde Man', wylde_woman:'Wylde Woman', wylde_self:'Wylde Self' };
+    var titleEl = document.getElementById('forumSectionTitle');
+    if (titleEl) titleEl.textContent = titles[section] || section;
+    document.getElementById('forumSections').style.display   = 'none';
+    document.getElementById('forumThreadList').style.display = 'block';
+    loadAndRenderThreads(section);
+  }
+
+  function closeForumSection() {
+    _activeForum = null;
+    document.getElementById('forumSections').style.display   = 'block';
+    document.getElementById('forumThreadList').style.display = 'none';
+    document.getElementById('forumThreadDetail').style.display = 'none';
+  }
+
+  function renderThreadCard(thread) {
+    return '<div class="thread-card" onclick="openThread(\'' + thread.id + '\')">' +
+      '<div class="thread-card-title">' + (thread.title || 'Untitled') + '</div>' +
+      '<div class="thread-card-meta">' +
+        '<span>' + (thread.author_name || 'Member') + '</span>' +
+        '<span>' + timeAgo(thread.created_at) + '</span>' +
+        '<span>' + (thread.reply_count || 0) + ' replies</span>' +
+      '</div>' +
+    '</div>';
+  }
+
+  async function loadAndRenderThreads(section) {
+    var inner = document.getElementById('threadListInner');
+    if (!inner) return;
+    inner.innerHTML = '<p style="color:var(--text2);padding:20px 0;text-align:center;font-size:13px;">Loading threads...</p>';
+    var sb = _getSupabase();
+    if (!sb) { inner.innerHTML = '<p style="color:var(--text2);padding:20px 0;text-align:center;font-size:13px;">Sign in to view forums.</p>'; return; }
+    try {
+      var result = await sb.from('forum_threads')
+        .select('id, title, body, created_at, reply_count, user_id, profiles(profile_data)')
+        .eq('section', section)
+        .order('created_at', { ascending: false })
+        .limit(30);
+      if (result.error || !result.data || result.data.length === 0) {
+        inner.innerHTML = '<p style="color:var(--text2);padding:20px 0;text-align:center;font-size:13px;font-style:italic;">No posts yet. Be the first to start a conversation.</p>';
+        return;
+      }
+      inner.innerHTML = result.data.map(function(t) {
+        t.author_name = (t.profiles && t.profiles.profile_data && t.profiles.profile_data.name) || 'Member';
+        return renderThreadCard(t);
+      }).join('');
+    } catch(e) {
+      inner.innerHTML = '<p style="color:var(--text2);padding:20px 0;text-align:center;font-size:13px;">Could not load threads.</p>';
+    }
+  }
+
+  function openThread(threadId) {
+    _activeThread = threadId;
+    document.getElementById('forumThreadList').style.display   = 'none';
+    document.getElementById('forumThreadDetail').style.display = 'block';
+    loadAndRenderThread(threadId);
+  }
+
+  function closeThread() {
+    _activeThread = null;
+    document.getElementById('forumThreadDetail').style.display = 'none';
+    document.getElementById('forumThreadList').style.display   = 'block';
+  }
+
+  async function loadAndRenderThread(threadId) {
+    var titleEl   = document.getElementById('threadDetailTitle');
+    var bodyEl    = document.getElementById('threadBody');
+    var repliesEl = document.getElementById('threadReplies');
+    if (bodyEl) bodyEl.innerHTML = '<p style="color:var(--text2);font-size:13px;">Loading...</p>';
+    var sb = _getSupabase();
+    if (!sb) { if (bodyEl) bodyEl.innerHTML = '<p style="color:var(--text2);">Sign in to read threads.</p>'; return; }
+    try {
+      var r = await sb.from('forum_threads').select('id, title, body, created_at, user_id, profiles(profile_data)').eq('id', threadId).maybeSingle();
+      if (r.error || !r.data) { if (bodyEl) bodyEl.innerHTML = '<p style="color:var(--text2);">Thread not found.</p>'; return; }
+      var thread = r.data;
+      if (titleEl) titleEl.textContent = thread.title || 'Thread';
+      var authorName = (thread.profiles && thread.profiles.profile_data && thread.profiles.profile_data.name) || 'Member';
+      if (bodyEl) bodyEl.innerHTML =
+        '<div style="font-size:11px;color:var(--text2);margin-bottom:10px;">' + authorName + ' · ' + timeAgo(thread.created_at) + '</div>' +
+        '<div style="font-size:14px;color:var(--text);line-height:1.7;">' + (thread.body || '') + '</div>';
+
+      // Load replies
+      var rr = await sb.from('forum_replies').select('id, body, created_at, user_id, profiles(profile_data)').eq('thread_id', threadId).order('created_at', { ascending: true });
+      if (repliesEl) {
+        if (rr.error || !rr.data || rr.data.length === 0) {
+          repliesEl.innerHTML = '<p style="color:var(--text2);font-size:13px;font-style:italic;padding:12px 0;">No replies yet. Start the conversation.</p>';
+        } else {
+          repliesEl.innerHTML = rr.data.map(function(rep) {
+            var rName = (rep.profiles && rep.profiles.profile_data && rep.profiles.profile_data.name) || 'Member';
+            return '<div class="forum-reply">' +
+              '<div style="font-size:11px;color:var(--gold);margin-bottom:6px;">' + rName + ' <span style="color:var(--text3)">· ' + timeAgo(rep.created_at) + '</span></div>' +
+              '<div style="font-size:13px;color:var(--text);line-height:1.65;">' + (rep.body || '') + '</div>' +
+            '</div>';
+          }).join('');
+        }
+      }
+    } catch(e) {
+      if (bodyEl) bodyEl.innerHTML = '<p style="color:var(--text2);">Could not load thread.</p>';
+    }
+  }
+
+  async function submitReply() {
+    var sb = _getSupabase();
+    if (!sb || !currentUser || !_activeThread) return;
+    var bodyEl = document.getElementById('replyBody');
+    var body = (bodyEl && bodyEl.value || '').trim();
+    if (!body) return;
+    try {
+      await sb.from('forum_replies').insert({ thread_id: _activeThread, user_id: currentUser.id, body: body });
+      if (bodyEl) bodyEl.value = '';
+      awardXP(20, 'Forum reply');
+      loadAndRenderThread(_activeThread);
+    } catch(e) {}
+  }
+
+  var _newPostForSection = null;
+
+  function openNewPostModal() {
+    _newPostForSection = _activeForum;
+    var m = document.getElementById('newPostModal');
+    if (m) { m.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+  }
+
+  function closeNewPostModal() {
+    var m = document.getElementById('newPostModal');
+    if (m) { m.style.display = 'none'; document.body.style.overflow = ''; }
+    var t = document.getElementById('newPostTitle'); if (t) t.value = '';
+    var b = document.getElementById('newPostBody');  if (b) b.value = '';
+  }
+
+  async function submitNewPost() {
+    var sb = _getSupabase();
+    if (!sb || !currentUser) return;
+    var title = (document.getElementById('newPostTitle') && document.getElementById('newPostTitle').value || '').trim();
+    var body  = (document.getElementById('newPostBody')  && document.getElementById('newPostBody').value  || '').trim();
+    if (!title || !body) return;
+    var section = _newPostForSection || 'wylde_self';
+    try {
+      await sb.from('forum_threads').insert({ section: section, user_id: currentUser.id, title: title, body: body, reply_count: 0 });
+      closeNewPostModal();
+      awardXP(50, 'Forum post');
+      loadAndRenderThreads(section);
+    } catch(e) {}
+  }
+
+  // ── Leaderboard new ──
+  var _lbType = 'xp';
+  function setLbType(type) {
+    _lbType = type;
+    ['xp','streak','weekly'].forEach(function(t) {
+      var btn = document.getElementById('lb-btn-' + t);
+      if (btn) { btn.className = 'btn btn-sm' + (t === type ? ' btn-gold' : ''); }
+    });
+    loadLeaderboardUI();
+  }
+
+  async function loadLeaderboardUI() {
+    var list = document.getElementById('leaderboardListNew');
+    if (!list) return;
+    list.innerHTML = '<p style="color:var(--text2);font-size:13px;text-align:center;padding:30px 0;">Loading...</p>';
+    var sb = _getSupabase();
+    if (!sb) { list.innerHTML = '<p style="color:var(--text2);font-size:13px;text-align:center;padding:30px 0;">Sign in to see the leaderboard.</p>'; return; }
+    var type = _lbType;
+    try {
+      var colMap = { xp:'xp_rank', streak:'streak_rank', weekly:'weekly_rank' };
+      var col = colMap[type] || 'xp_rank';
+      var r = await sb.from('leaderboard').select('user_id, name, level, xp_rank, streak_rank, weekly_rank').order(col, { ascending: true }).limit(20);
+      if (r.error || !r.data || r.data.length === 0) {
+        list.innerHTML = '<p style="color:var(--text2);font-size:13px;text-align:center;padding:30px 0;">No leaderboard data yet.</p>';
+        return;
+      }
+      var medals = ['🥇','🥈','🥉'];
+      list.innerHTML = r.data.map(function(row, i) {
+        var isYou = currentUser && row.user_id === currentUser.id;
+        var valMap = { xp: (row.xp_rank || 0) + ' XP', streak: (row.streak_rank || 0) + ' days', weekly: (row.weekly_rank || 0) + ' sessions' };
+        return '<div class="lb-item' + (isYou ? ' is-you' : '') + '">' +
+          '<span class="lb-rank">' + (medals[i] || (i+1) + '.') + '</span>' +
+          '<span class="lb-name">' + (row.name || 'Member') + (isYou ? ' <span class="wtag wtag-gold" style="font-size:9px;padding:2px 7px;">you</span>' : '') + '</span>' +
+          '<span class="lb-score">' + (valMap[type] || '') + '</span>' +
+        '</div>';
+      }).join('');
+    } catch(e) {
+      list.innerHTML = '<p style="color:var(--text2);font-size:13px;text-align:center;padding:30px 0;">Could not load leaderboard.</p>';
+    }
+  }
+
+  // ── Feed new UI ──
+  async function loadFeedUI() {
+    var list  = document.getElementById('feedList');
+    var empty = document.getElementById('feedEmpty');
+    var composer = document.getElementById('feedPostComposer');
+    var sb = _getSupabase();
+    if (!sb) {
+      if (empty) { empty.textContent = 'Sign in to see the community feed.'; empty.style.display = 'block'; }
+      if (list) list.innerHTML = '';
+      return;
+    }
+    if (composer && currentUser) composer.style.display = 'block';
+    try {
+      var r = await sb.from('activity_feed').select('id, body, created_at, user_id, users(name, level)').order('created_at', { ascending: false }).limit(30);
+      if (r.error || !r.data || r.data.length === 0) {
+        // Fallback to feed_posts table
+        loadFeed();
+        return;
+      }
+      if (empty) empty.style.display = 'none';
+      if (list) list.innerHTML = r.data.map(function(item) {
+        var name  = (item.users && item.users.name)  || 'Member';
+        var level = (item.users && item.users.level) || 'Ember';
+        var variant = levelToVariant(level);
+        return '<div class="feed-item">' +
+          '<div class="feed-item-header">' +
+            '<span class="feed-item-author">' + name + '</span>' +
+            '<div style="display:flex;align-items:center;gap:8px;">' +
+              '<span class="wtag wtag-' + variant + '">' + level + '</span>' +
+              '<span class="feed-item-time">' + timeAgo(item.created_at) + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="feed-item-body">' + (item.body || '') + '</div>' +
+        '</div>';
+      }).join('');
+    } catch(e) {
+      loadFeed();
+    }
+  }
+
   // STATE
   var state = {
     name: '', gender: '', age: '', height: '', weight: '', weightUnit: 'lbs',
@@ -1261,10 +2195,13 @@
     health: [], healthNotes: '', diet: [], dietNotes: '',
     sessions: 0, streak: 0,
     log: [],
-    avatarUrl: ''
+    avatarUrl: '',
+    joinedDate: null
   };
+  // alias for new functions
+  userProfile = state;
 
-  // Load saved profile from localStorage on startup
+  // Load saved profile from localStorage (immediate, offline-first)
   (function loadProfile() {
     try {
       var saved = localStorage.getItem('wylde_profile');
@@ -1274,11 +2211,11 @@
         if (state.name) {
           document.getElementById('navUserName').textContent = state.name.toUpperCase();
           document.querySelectorAll('.nav-tab.locked').forEach(function(t){ t.classList.remove('locked'); });
+          _updateLevelDisplay();
           setTimeout(function(){ showScreen('dashboard'); }, 100);
         }
       }
     } catch(e) {}
-    // If no full profile but we have name from waitlist, pre-fill
     if (!state.name) {
       var waitlistName = localStorage.getItem('wylde_name');
       if (waitlistName) {
@@ -1288,6 +2225,8 @@
         if (nameInput) nameInput.value = waitlistName;
       }
     }
+    // Auth check (Supabase if configured, else localStorage gate)
+    initAuth();
   })();
 
   // After images by gender — glowing silhouettes (placeholder until real AI generation)
@@ -1341,7 +2280,8 @@
     if (id === 'nutrition' && state.weight) { calculateMacros(); }
     if (id === 'dashboard') { updateDashboard(); }
     if (id === 'overview') { updateOverview(); }
-    var tabs = { onboard:0, overview:1, dashboard:2, future:3, program:4, coach:5, progress:6, nutrition:7, supplements:8, health:9 };
+    var tabs = { onboard:0, overview:1, dashboard:2, future:3, program:4, coach:5, progress:6, nutrition:7, supplements:8, health:9, community:10 };
+    if (id === 'community') { showCommunityTab('feed'); }
     document.querySelectorAll('.nav-tab')[tabs[id]].classList.add('active');
     currentScreen = id;
     if (sidebarOpen) updateCoachContext();
@@ -1399,13 +2339,37 @@
     // Update nav user display
     document.getElementById('navUserName').textContent = state.name.toUpperCase();
 
-    // Persist profile
-    try { localStorage.setItem('wylde_profile', JSON.stringify(state)); } catch(e) {}
+    // Set joined date on first profile creation
+    if (!state.joinedDate) state.joinedDate = new Date().toISOString();
+
+    // Persist profile (localStorage + Supabase)
+    saveProfile();
+    awardXP(100, 'Profile created');
 
     // Set after image based on gender
     setAfterImage();
 
-    showScreen('future');
+    // Play intro animation for first-time users
+    playIntro(function(){ showScreen('future'); });
+  }
+
+  function playIntro(callback) {
+    var intro = document.getElementById('screen-intro');
+    var vid = document.getElementById('introVideo');
+    intro.style.display = 'flex';
+    window._introCallback = callback;
+    vid.currentTime = 0;
+    vid.play().catch(function(){ /* autoplay blocked — show skip */ });
+    vid.onended = function() { skipIntro(); };
+  }
+
+  function skipIntro() {
+    var intro = document.getElementById('screen-intro');
+    var vid = document.getElementById('introVideo');
+    vid.pause();
+    intro.style.display = 'none';
+    localStorage.setItem('wylde_intro_seen', '1');
+    if (window._introCallback) { window._introCallback(); window._introCallback = null; }
   }
 
   // TIMELINE
@@ -1714,6 +2678,7 @@
         var clean = text.replace(/```json|```/g, '').trim();
         var result = JSON.parse(clean);
         renderStack(result);
+        awardXP(25, 'Supplement stack generated');
       } catch(e) {
         output.innerHTML = '<div style="padding:24px;text-align:center;"><p style="color:var(--muted);font-size:13px;">Could not generate stack. Try again.</p></div>';
       }
@@ -2021,6 +2986,7 @@
       .then(function(d) {
         if (!d.success || !d.image_base64) throw new Error(d.error || 'No image');
         _generatedImages[tl] = d.image_base64;
+        if (tl === '12weeks') awardXP(50, 'Future Self generated');
 
         // Mark tab ready
         var s = document.getElementById('status-' + tl);
@@ -2682,7 +3648,7 @@
       var def = dashCardDefs.find(function(d){ return d.id === cardId; });
       if (!def) return;
       var card = document.createElement('div');
-      card.className = 'dash-card';
+      card.className = 'dash-card wcard';
       card.dataset.id = cardId;
       card.draggable = true;
       if (def.full) card.style.gridColumn = '1 / -1';
@@ -2848,6 +3814,13 @@
       btn.style.color = '#080808';
       btn.style.border = 'none';
     }, 2000);
+
+    // XP + logging
+    awardXP(100, 'Workout complete');
+    if (state.streak > 0 && state.streak % 7 === 0) awardXP(200, '7-day streak bonus!');
+    var sessionNames = ['Full Body Burn','Chest & Triceps','Athletic Conditioning','Legs & Core','Power Session','Hypertrophy','Back & Biceps'];
+    logWorkoutSession(sessionNames[state.sessions % sessionNames.length], 45);
+    saveProfile();
   }
 
   // ═══ NUTRITION ═══
@@ -3150,6 +4123,8 @@
 
     var dc = document.getElementById('loggedCalories');
     if (dc) dc.textContent = Math.round(foodLogTotals.cal) + ' cal';
+
+    awardXP(10, 'Food logged');
   }
 
   // MODAL HELPERS
@@ -3277,6 +4252,8 @@
     var nb = document.getElementById('navLevel');
     if (nb && state.level) nb.textContent = state.level;
     initLevelColors();
+    updateMomentumBar();
+    updateDayLine();
   }
 
   function setMacroBar(name, goal, consumed) {
@@ -3290,17 +4267,21 @@
   function saveDashStat(key, value) {
     var today = new Date().toISOString().slice(0,10);
     var d = {}; try { d = JSON.parse(localStorage.getItem('wylde_dash_' + today) || '{}'); } catch(e) {}
+    var isFirst = d[key] === undefined;
     d[key] = value;
     localStorage.setItem('wylde_dash_' + today, JSON.stringify(d));
+    if (key === 'sleep' && isFirst) awardXP(15, 'Sleep logged');
   }
 
   function addWater(delta) {
     var today = new Date().toISOString().slice(0,10);
     var d = {}; try { d = JSON.parse(localStorage.getItem('wylde_dash_' + today) || '{}'); } catch(e) {}
-    d.water = Math.max(0, (d.water || 0) + delta);
+    var prev = d.water || 0;
+    d.water = Math.max(0, prev + delta);
     localStorage.setItem('wylde_dash_' + today, JSON.stringify(d));
     var el = document.getElementById('dash_water_val');
     if (el) el.textContent = d.water + ' oz';
+    if (delta > 0 && prev < 8 && d.water >= 8) awardXP(25, 'Hydration goal hit!');
   }
 
   function setEnergy(level) {
@@ -3790,6 +4771,120 @@
   </div>
 </div>
 
+<!-- ═══ COMMUNITY ═══ -->
+<div class="screen" id="screen-community">
+  <div class="container">
+    <p class="section-label">Community</p>
+    <h1 class="screen-title">Your <span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">tribe</span></h1>
+    <p class="screen-sub">Connect with others on the same mission. Share progress, compete, and show up together.</p>
+    <div class="gold-rule"></div>
+
+    <!-- New 4-tab nav -->
+    <div class="ctab-bar">
+      <button class="ctab active" id="ctab-feed"        onclick="showCommunityTab('feed')">Feed</button>
+      <button class="ctab"        id="ctab-forums"      onclick="showCommunityTab('forums')">Forums</button>
+      <button class="ctab"        id="ctab-leaderboard" onclick="showCommunityTab('leaderboard')">Leaderboard</button>
+      <button class="ctab"        id="ctab-events"      onclick="showCommunityTab('events')">Events</button>
+    </div>
+
+    <!-- ── Feed ── -->
+    <div id="comm-feed">
+      <div id="feedPostComposer" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:18px 20px;margin-bottom:18px;">
+        <textarea id="feedPostText" class="wfield" rows="3" placeholder="Share your win, progress, or check-in..." style="resize:none;margin-bottom:12px;"></textarea>
+        <div style="display:flex;justify-content:flex-end;">
+          <button class="btn btn-ember btn-sm" onclick="submitFeedPost()">Post</button>
+        </div>
+      </div>
+      <div id="feedList" style="display:flex;flex-direction:column;gap:0;">
+        <p id="feedEmpty" style="color:var(--text2);font-size:14px;font-style:italic;text-align:center;padding:40px 0;">Loading feed...</p>
+      </div>
+    </div>
+
+    <!-- ── Forums ── -->
+    <div id="comm-forums" style="display:none;">
+      <!-- Section selector -->
+      <div id="forumSections">
+        <div class="forum-section-card" onclick="openForum('wylde_man')">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+            <span class="wtag wtag-ember">Wylde Man</span>
+          </div>
+          <div class="forum-section-card-title">Wylde Man</div>
+          <div class="forum-section-card-sub">Training, performance, and brotherhood</div>
+        </div>
+        <div class="forum-section-card" onclick="openForum('wylde_woman')">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+            <span class="wtag" style="color:#f472b6;border-color:rgba(244,114,182,0.45);background:rgba(244,114,182,0.1);">Wylde Woman</span>
+          </div>
+          <div class="forum-section-card-title">Wylde Woman</div>
+          <div class="forum-section-card-sub">Strength, wellness, and sisterhood</div>
+        </div>
+        <div class="forum-section-card" onclick="openForum('wylde_self')">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+            <span class="wtag wtag-gold">Wylde Self</span>
+          </div>
+          <div class="forum-section-card-title">Wylde Self</div>
+          <div class="forum-section-card-sub">Mindset, identity, and transformation</div>
+        </div>
+      </div>
+
+      <!-- Thread list (shown after section selected) -->
+      <div id="forumThreadList" style="display:none;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+          <button class="btn btn-sm" onclick="closeForumSection()" style="padding:7px 14px;font-size:11px;">← Back</button>
+          <span id="forumSectionTitle" style="font-family:var(--font-milestone);font-weight:700;font-size:15px;color:var(--text);"></span>
+          <button class="btn btn-ember btn-sm" onclick="openNewPostModal()" style="margin-left:auto;">+ New Post</button>
+        </div>
+        <div id="threadListInner" style="display:flex;flex-direction:column;gap:0;"></div>
+      </div>
+
+      <!-- Thread detail (shown after thread selected) -->
+      <div id="forumThreadDetail" style="display:none;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+          <button class="btn btn-sm" onclick="closeThread()" style="padding:7px 14px;font-size:11px;">← Back</button>
+          <span id="threadDetailTitle" style="font-family:var(--font-milestone);font-weight:700;font-size:15px;color:var(--text);flex:1;"></span>
+        </div>
+        <div id="threadBody" style="font-size:14px;color:var(--text);line-height:1.7;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:18px 20px;margin-bottom:16px;"></div>
+        <div id="threadReplies" style="display:flex;flex-direction:column;gap:0;margin-bottom:20px;"></div>
+        <div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-md);padding:16px 18px;">
+          <textarea id="replyBody" class="wfield" rows="3" placeholder="Write a reply..." style="resize:none;margin-bottom:10px;"></textarea>
+          <button class="btn btn-ember btn-sm" onclick="submitReply()">Reply</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Leaderboard ── -->
+    <div id="comm-leaderboard" style="display:none;">
+      <div style="display:flex;gap:6px;margin-bottom:20px;">
+        <button id="lb-btn-xp"     class="btn btn-gold  btn-sm" onclick="setLbType('xp')"     style="flex:1;">XP</button>
+        <button id="lb-btn-streak" class="btn btn-sm"           onclick="setLbType('streak')"  style="flex:1;">Streak</button>
+        <button id="lb-btn-weekly" class="btn btn-sm"           onclick="setLbType('weekly')"  style="flex:1;">This Week</button>
+      </div>
+      <div id="leaderboardListNew" style="display:flex;flex-direction:column;gap:0;"></div>
+    </div>
+
+    <!-- ── Events ── -->
+    <div id="comm-events" style="display:none;">
+      <div class="wcard" style="text-align:center;padding:40px 24px;">
+        <p style="font-family:var(--ff-serif);font-style:italic;font-size:20px;color:var(--gold);margin-bottom:10px;">Coming Soon</p>
+        <p style="font-size:14px;color:var(--text2);">Community challenges and group events are being built. Stay consistent — they'll be worth it.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- XP TOAST -->
+<div id="xp-toast"></div>
+
+<!-- LEVEL-UP OVERLAY -->
+<div id="level-up-overlay">
+  <div class="level-up-inner">
+    <p class="level-up-label">Level Up</p>
+    <p class="level-up-name" id="level-up-name">Root</p>
+    <p class="level-up-sub">You're evolving. Keep going.</p>
+  </div>
+</div>
+
 <script>
 (function() {
 
@@ -4071,6 +5166,22 @@
 
 })();
 </script>
+
+<!-- NEW POST MODAL -->
+<div id="newPostModal" style="position:fixed;inset:0;z-index:3500;background:rgba(0,0,0,0.75);display:none;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-lg);width:100%;max-width:500px;padding:28px 28px 24px;animation:fadein 0.25s ease-out;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <span style="font-family:var(--font-milestone);font-weight:700;font-size:16px;color:var(--text);" id="newPostModalTitle">New Post</span>
+      <button onclick="closeNewPostModal()" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;line-height:1;padding:2px 6px;">×</button>
+    </div>
+    <input id="newPostTitle" class="wfield" type="text" placeholder="Post title..." style="margin-bottom:12px;" />
+    <textarea id="newPostBody" class="wfield" rows="5" placeholder="What's on your mind? Share your experience, question, or insight..." style="resize:none;margin-bottom:16px;"></textarea>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn btn-sm" onclick="closeNewPostModal()" style="color:var(--text2);">Cancel</button>
+      <button class="btn btn-ember btn-sm" onclick="submitNewPost()">Post to Forum</button>
+    </div>
+  </div>
+</div>
 
 <!-- HEARTBEAT LINE -->
 <div class="heartbeat-line" id="heartbeatLine">
