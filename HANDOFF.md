@@ -1,314 +1,509 @@
-# WYLDE SELF — Project Handoff
-> Last updated: April 2026 · Update this file at the end of every chat session.
+# WYLDE SELF — Cowork Handoff
+> Last updated: April 2026
+> Use this document at the start of every Cowork and Claude chat session.
 
 ---
 
-## Project Overview
+## What This App Is
 
-**Wylde Self** is an AI-powered identity transformation fitness app. The core thesis: identity precedes behaviour. People don't quit fitness because they lack discipline — they quit because they can't see who they're becoming. Wylde Self is built around closing that gap.
+**Wylde Self** is an AI-powered identity transformation platform.
+Tagline: "Train with the person you're becoming."
+Core thesis: identity precedes behaviour. People quit fitness apps not from lack of discipline but from lack of vision of who they're becoming.
 
-**Founder:** Wilke — background in men's coaching, yoga, somatic work, real estate, and entrepreneurship.
-**Mastermind:** Mentor Collective (Chris & Lori Harder) — coaching across AI, marketing, social funnels.
+**Founder:** Wilke — men's coaching, yoga, somatic work, real estate, entrepreneurship.
+**Mastermind:** Mentor Collective (Chris & Lori Harder).
 
 ---
 
 ## Live URLs
 
-| Page | URL |
-|------|-----|
-| Landing page | wyldeself.com |
+| | URL |
+|---|---|
+| Landing | wyldeself.com |
 | App | wyldeself.com/app.html |
-| Beta gate | wyldeself.com/gate.html |
-| Apply form | wyldeself.com/apply.html |
-| Investor deck | wyldeself.com/investors.html |
+| Gate | wyldeself.com/gate.html |
+| Apply | wyldeself.com/apply.html |
+| Investors | wyldeself.com/investors.html |
+
+---
+
+## Repositories & Access
+
+| | Detail |
+|---|---|
+| GitHub repo | github.com/WMIWylde/Wylde-self |
+| Vercel | Auto-deploys from GitHub main branch |
+| Deploy time | ~30 seconds after push |
+| Claude Code (web) | `cd ~/Wylde-self && claude` |
+| Claude Code (iOS) | `cd ~/Documents/WyldeSelf && claude` |
 
 ---
 
 ## Tech Stack
 
 | Layer | Detail |
-|-------|--------|
-| Frontend | Single HTML file (app.html ~200KB) |
-| Hosting | Vercel — auto-deploy from GitHub |
-| Repo | github.com/WMIWylde/Wylde-self |
-| Claude Code | Installed at ~/Wylde-self |
-| AI — Coaching | Claude Haiku via /api/anthropic.js proxy |
-| AI — Image gen | Google Gemini 3.1 Flash Image via /api/generate-image.js (Edge Runtime) |
-| Forms | Formspree (mkoponoz), EmailJS (service: Wylde_service, template: template_5th6z59) |
+|---|---|
+| Web frontend | Single file: app.html (~200KB) |
+| Web hosting | Vercel (Hobby plan, Edge Runtime for image gen) |
+| iOS | SwiftUI, Xcode, ~/Documents/WyldeSelf |
+| Database | Supabase — postgres.huclolzxzpitdpyogolu.supabase.co |
+| Auth | Supabase email/password (Apple Sign In pending) |
+| AI coaching | Claude Haiku via /api/anthropic.js |
+| AI image gen | Gemini 3.1 Flash via /api/generate-image.js |
+| AI video | Grok Imagine API — api.x.ai (planned) |
+| Forms | Formspree (mkoponoz) + EmailJS |
 | Supplements | Fullscript dispensary — Wylde Self Health |
-| Env vars | ANTHROPIC_API_KEY, GEMINI_API_KEY (stored in Vercel) |
+
+---
+
+## Environment Variables (Vercel)
+
+```
+ANTHROPIC_API_KEY
+GEMINI_API_KEY
+SUPABASE_URL        = https://huclolzxzpitdpyogolu.supabase.co
+SUPABASE_ANON_KEY   = sb_publishable_VFZ0Yd0PhqAh3AgZF1TcXQ... (wylde_self key)
+SUPABASE_SERVICE_KEY = sb_secret_8YaBq... (secret key)
+```
 
 ---
 
 ## File Structure
 
 ```
-~/Wylde-self/
-├── index.html          # Landing page — waitlist form, before/after slider
-├── gate.html           # Beta access gate — NDA + access code (WYLDE2025)
-├── app.html            # Main app — all 10 screens in one file
-├── apply.html          # 30-day beta intake form
-├── investors.html      # VC pitch deck — TO BE ADDED (file ready in chat)
+~/Wylde-self/                     WEB APP
+├── index.html                    Landing page
+├── gate.html                     Beta gate (NDA + code: WYLDE2025)
+├── app.html                      Main app — ALL screens in one file
+├── apply.html                    Beta intake form
+├── investors.html                VC pitch deck (live)
 ├── api/
-│   ├── anthropic.js    # Claude Haiku proxy
-│   └── fal.js          # fal.ai image gen proxy (POST submit + GET poll)
-└── HANDOFF.md          # This file
+│   ├── anthropic.js              Claude Haiku proxy
+│   └── generate-image.js        Gemini image gen (Edge Runtime)
+└── HANDOFF.md
+
+~/Documents/WyldeSelf/            iOS SwiftUI APP
+├── Theme.swift                   WyldeTheme colors + level system
+├── WyldeButton.swift             5-variant button component
+├── WyldeCard.swift               Base card + breathing border
+├── CollapsibleWyldeCard.swift    Collapsible card with header summary
+├── PulseDot.swift                Alive pulse animation (6px)
+├── HeartbeatLine.swift           Bottom heartbeat bar
+├── LevelBadge.swift              Level badge with pulse dot
+├── SupabaseService.swift         All Supabase auth + data calls
+├── AuthView.swift                Sign in / create account screen
+├── APIService.swift              Claude API calls
+├── UserProfile.swift             ObservableObject profile
+├── CoachPersona.swift            6 coach definitions
+├── OnboardingView.swift
+├── MainTabView.swift
+├── DashboardView.swift           Draggable + collapsible card grid
+├── ProgramView.swift             Workout + rest timer
+├── CoachView.swift
+├── NutritionView.swift
+├── ProgressView.swift
+├── CommunityView.swift           Feed + leaderboard + events + forums
+├── WorkoutCompleteView.swift     Celebration animation
+├── RestTimerView.swift           Circular rest timer
+├── HealthKitService.swift        HealthKit read/write
+├── ScheduleService.swift         Calendar + reminders (EKEventKit)
+├── WorkoutSchedulerView.swift    Schedule workouts UI
+├── FutureSelfRevealView.swift    3-image parallel gen + drag slider
+└── ConsentView.swift
 ```
 
 ---
 
-## App Screens (Nav Order)
+## Supabase Database
 
-1. **Start** — Onboarding: name, gender, age, height, weight, goal, fitness level, days/week, health concerns, dietary restrictions
-2. **Overview** — (stub)
-3. **Dashboard** — Profile card, stats (weight/steps/sleep/water/energy), calorie ring, macro bars, motivational quote, transformation roadmap
-4. **Future Self** — Photo upload → fal.ai image-to-image → before/after reveal. Timeline: 12 weeks / 6 months / 1 year
-5. **Program** — AI workout generator via Claude Haiku. Day cards with exercises. Alt program rebuild section with quick pills
-6. **Coach** — Full AI chat screen wired to Claude Haiku. Context-aware, profile-personalised
-7. **Progress** — Session counter, streak, week tracker, session log
-8. **Nutrition** — Macro calculator (Mifflin-St Jeor), AI meal plan, recipe guide, food log with AI macro estimation, photo scan of nutrition labels
-9. **Supplements** — AI supplement stack generator via Claude + Fullscript deep-links. Personalised to profile
-10. **Health+** — Functional medicine consultation (Everwell USA partnership), lab upload, peptide library (BPC-157, Ipamorelin, TB-500, NAD+, Tesamorelin, Thymosin Alpha-1, SEMAX), supplement marketplace shortcut
+**Project:** huclolzxzpitdpyogolu.supabase.co
+**RLS:** Enabled on all tables
 
----
+### Tables (16)
 
-## Key Features Built
+| Table | Purpose |
+|---|---|
+| users | Profile, level, XP, streak, goals |
+| workout_sessions | Completed workouts |
+| workout_sets | Sets logged (weight × reps) |
+| nutrition_logs | Daily macro totals |
+| food_entries | Individual food items |
+| progress_metrics | Weight, sleep, steps, HR |
+| personal_bests | PR per exercise |
+| xp_transactions | XP audit log |
+| badges | 10 badge definitions |
+| user_badges | Badges earned |
+| activity_feed | Community stream (realtime) |
+| feed_reactions | Emoji reactions (realtime) |
+| events | Upcoming events |
+| event_registrations | Event signups |
+| challenges | Group challenges (realtime) |
+| challenge_participants | Challenge progress |
+| forum_threads | Forum posts (3 sections) |
+| forum_replies | Forum replies |
 
-### AI Features (all via /api/anthropic.js → Claude Haiku)
-- Workout program generation
-- Alternative workout rebuild (pills + text input)
-- Meal plan generation
-- Recipe guide
-- Food macro estimation by text
-- Food macro estimation by photo (vision)
-- Peptide protocol builder
-- Coach sidebar (floating gold button, slide-in panel, 4-message history, context-aware opening)
-- Coach screen (full chat, real Claude API)
-- Transformation roadmap (phased 12-week plan with nutrition targets per phase)
-- Supplement stack generation (4-6 supplements, Fullscript links)
-- Exercise form guide modals (AI-generated instructions per exercise)
+### Views
+- `leaderboard` — XP rank, streak rank, weekly rank
 
-### Image Generation (via /api/fal.js → fal.ai)
-- Future Self transformation — uploads photo, generates physique transformation
-- Endpoint: fal-ai/flux/dev/image-to-image
-- Flow: POST → queued → poll GET until COMPLETED → fetch response_url for image
-- Fixed: GET poll handler fetches both status URL and response URL when COMPLETED
+### Functions
+- `award_xp(user_id, amount, reason)` — adds XP, logs transaction, auto-levels user
 
-### Access Flow
-- Landing page: name + email → localStorage (persists forever)
-- gate.html: pre-fills name from localStorage, NDA checkbox, access code WYLDE2025 (case insensitive)
-- app.html: gate check on load, pre-fills name from localStorage
-- Returning users: skip gate entirely (wylde_gate_passed in localStorage)
-
-### Gamification (designed, partial implementation)
-- Identity levels: Ember → Forge → Steel → Wylde
-- Streak tracking
-- Session log
-- Future Self Gap concept (Current Self → Future Self progress ring)
-- FORGE LEVEL badge (in mockups, partial in app)
+### Level Thresholds
+- Ember: 0 XP
+- Root: 1,000 XP
+- Rise: 3,500 XP
+- Wylde: 8,000 XP
 
 ---
 
-## Brand
+## Design System
 
-| Token | Value |
-|-------|-------|
-| Background | #080808 |
-| Surface | #161616 |
-| Gold accent | #c8a96e |
-| White text | #f5f4f0 |
-| Muted text | #a0a098 |
-| Border | rgba(255,255,255,0.08) |
-| Header font | Bebas Neue |
-| Serif font | Cormorant Garamond italic |
-| Body font | DM Sans |
+### Core Aesthetic
+Pure black background (#000000). Gold (#c8a96e) as the ONLY accent color at varying opacities. No cards with heavy fills — sections separated by hairline gold lines (0.5px). Vast negative space. The human figure (logo) is center of identity.
 
-**Tagline:** "Train with the person you're becoming."
-**Logo:** SVG file (logo.svg) — Vitruvian man figure in sacred geometry circle + WYLDE SELF wordmark
+### Brand Reference
+The logo image: gold human figure inside sacred geometry circles on pure black. This IS the design language. Everything in the app derives from this.
+
+### Color Tokens
+
+```css
+--bg:       #000000        /* pure black */
+--surface:  #0d0c0a        /* barely lifted surface */
+--gold:     #c8a96e        /* primary accent */
+--gold-hi:  rgba(200,169,110,0.85)   /* high emphasis */
+--gold-mid: rgba(200,169,110,0.55)   /* medium emphasis */
+--gold-lo:  rgba(200,169,110,0.35)   /* low emphasis */
+--gold-dim: rgba(200,169,110,0.15)   /* backgrounds */
+--text-hi:  rgba(255,245,220,0.95)   /* primary text */
+--text-mid: rgba(255,245,220,0.75)   /* secondary text */
+--text-lo:  rgba(200,169,110,0.55)   /* labels (MINIMUM) */
+```
+
+**Text brightness rule:** No text element below rgba(200,169,110,0.40). Labels minimum 0.45. Secondary text minimum 0.65.
+
+### Typography
+
+| Role | Font | Size |
+|---|---|---|
+| UI / body | Inter 300–500 | 11–16px |
+| Numbers / timers | Space Mono 400/700 | varies |
+| Milestones / wins | Montserrat 800 | varies |
+| Editorial / coach | Cormorant Garamond italic 300 | 13–18px |
+
+### Button Style
+```css
+/* All buttons — outline only, no fill */
+border: 0.5px solid rgba(200,169,110,0.28);
+background: transparent;
+color: rgba(200,169,110,0.78);
+font-size: 9px;
+letter-spacing: .2em;
+text-transform: uppercase;
+padding: 11px 16px;
+border-radius: 0; /* sharp corners */
+
+/* Primary variant */
+border-color: rgba(200,169,110,0.45);
+color: rgba(200,169,110,0.9);
+```
+
+### Section Anatomy
+No card blocks. Sections separated by:
+```css
+border-top: 0.5px solid rgba(200,169,110,0.09);
+padding: 16px 0 0;
+margin-bottom: 16px;
+```
+
+### Alive Elements
+- Pulse dot: 4px circle, gold 0.7, scale 1→1.8 over 2.5s
+- Heartbeat line: 1px segments, varying widths, gold 0.1–0.36
+- Progress fills: gold gradient with shimmer animation
+- Momentum bar: 0.5px track, filled with gold glow
 
 ---
 
-## External Partnerships & Integrations
+## Identity Level System
 
-| Partner | Status | Detail |
-|---------|--------|--------|
-| Everwell USA (Newport Beach) | Active | Peptide protocols featured in Health+ |
-| Fullscript | Setting up | Dispensary name: Wylde Self Health. API access applied for. Code: WYLDE2025 |
-| Mentor Collective Mastermind | Active | Chris & Lori Harder — coaching, AI, marketing, sales funnels |
+| Level | XP | Accent note |
+|---|---|---|
+| Ember | 0 | Fire energy |
+| Root | 1,000 | Earth/growth |
+| Rise | 3,500 | Gold/visible |
+| Wylde | 8,000 | Prismatic/iridescent |
+
+In the pure black aesthetic, level changes manifest through:
+- Badge text brightness increase
+- Pulse dot intensity
+- Subtle glow on key elements
+
+---
+
+## Coach Roster
+
+| Name | Energy | Specialty |
+|---|---|---|
+| Adam | Masc | Strength |
+| Marcus | Masc | Performance |
+| Zara | Fem | Movement |
+| Nadia | Fem | Restoration |
+| Sage | Neutral | Mindset |
+| Ren | Neutral | Integration |
+
+---
+
+## XP Actions
+
+| Action | XP |
+|---|---|
+| Complete workout | +50 |
+| Log a set | +5 |
+| Log meal | +20 |
+| Hit water goal | +15 |
+| Log sleep | +10 |
+| Complete supplement stack | +15 |
+| Generate Future Self | +25 |
+| 7-day streak bonus | +200 |
+| Forum post | +15 |
+| Forum reply | +5 |
+| Attend event | +100 |
+| Refer member | +250 |
+
+---
+
+## App Screens (app.html)
+
+1. **Auth** — email/password sign in + create account. Guest mode fallback.
+2. **Start (Onboarding)** — name, gender, age, height, weight, goals (up to 3), fitness level, days/week, health concerns, dietary restrictions
+3. **Dashboard** — draggable + collapsible sections. Momentum bar. All 9 data modules.
+4. **Future Self** — photo upload → 3 parallel Gemini calls → drag-reveal slider with timeline tabs
+5. **Program** — AI workout generator. Rest timer. Set logging with inline history. Finish → celebration.
+6. **Coach** — 6 coaches, roster + AI chat (Claude Haiku)
+7. **Progress** — streak, session log, personal bests, sleep chart
+8. **Nutrition** — macros, AI meal plan, food log (text + photo), water tracker
+9. **Supplements** — AI stack generator + Fullscript links
+10. **Health+** — Everwell peptide protocols, lab upload, clinical records
+11. **Community** — Feed | Forums (Wylde Man / Wylde Woman / Wylde Self) | Leaderboard | Events
+
+---
+
+## iOS App Screens
+
+Same as above plus:
+- WorkoutCompleteView (celebration fullscreen)
+- RestTimerView (sheet, 90s/60s)
+- WorkoutSchedulerView (calendar + reminders)
+- FutureSelfRevealView (3-image parallel + drag slider)
+
+---
+
+## Community Forums
+
+Three sections in the Forums tab:
+
+| Section | Accent | Tagline |
+|---|---|---|
+| Wylde Man | ember #ff6030 | "Iron sharpens iron." |
+| Wylde Woman | blush #e88a9a | "She remembered who she was." |
+| Wylde Self | gold #f0c040 | "Become who you were always becoming." |
+
+Supabase tables: forum_threads, forum_replies
+XP: +15 for post, +5 for reply
+
+---
+
+## Future Self — Image Generation
+
+**Provider:** Gemini 3.1 Flash Image via /api/generate-image.js (Edge Runtime, 30s timeout)
+**Flow:** Upload photo → 3 parallel API calls → each timeline resolves independently → drag slider reveal
+
+**Timeline prompts:**
+- 12 weeks: leaner, more athletic, 4-6% fat reduction
+- 6 months: significant recomposition, 8-12% fat reduction, clear muscle
+- 1 year: dramatic transformation, athletic/performance physique
+
+**Goal modifiers:** fat_loss / muscle / athletic / toning
+
+---
+
+## Planned Features (Not Yet Built)
+
+### HIGH PRIORITY
+1. **Design overhaul** — apply pure black / gold hairline system to ALL screens in app.html. Currently only partially applied.
+2. **Workout flow fix** — make workout logging feel seamless. Quick-tap weight/reps adjusters (+5/-5 lbs, +1/-1 rep). Inline exercise video. Swap exercise button.
+3. **Inline exercise history** — show last session's weight × reps on each exercise so user knows what to beat.
+4. **Wylde Strength Score** — proprietary metric. Compounds volume + consistency + progression. Shows on dashboard + leaderboard.
+5. **Shareable workout card** — after completing workout, generates branded card: logo, workout name, sets/time/streak/score. Share to Instagram Stories.
+6. **Muscle map** — SVG body diagram, trained muscles highlight in gold. Shows in workout completion + progress screen.
+7. **Text brightness fix** — all secondary/label text too dark. Minimum opacity 0.45 throughout.
+8. **Opening sequence** — logo animation on first launch. Logo image already in repo. Progress line fills. Then onboarding starts.
+
+### MEDIUM PRIORITY
+9. **Exercise video player** — Grok Imagine generated videos per exercise. Cloudflare Stream hosting. Plays inline during set logging.
+10. **PeptideView.swift** — iOS peptide protocol screen (prompt designed, not built)
+11. **SupplementView.swift** — iOS supplement screen (prompt designed, not built)
+12. **Apple Watch companion** — basic watchOS app: start workout, log set, rest timer on wrist
+13. **Supabase full verification** — confirm auth screen live on wyldeself.com, verify all data flows
+
+### LOWER PRIORITY
+14. **Apple Sign In** — waiting on Apple Developer verification (48+ hrs pending, contact support)
+15. **Clinical Health Records** — HealthKit, requires separate Apple review. Everwell partnership justifies it.
+16. **wyldeself.ai domain** — buy (~$50-80/yr)
+17. **Trademark** — file post-funding (~$350)
+18. **Fullscript links** — update from placeholder to real dispensary URL
+
+---
+
+## Competitive Intelligence (Fitbod)
+
+**What they do well:**
+- Exercise database + video demos alongside set logging
+- Clean set logging UI (quick-tap increments)
+- Muscle recovery table (which muscles need rest)
+- Apple Watch integration
+
+**What we do better:**
+- AI program generation (they have zero AI)
+- Identity system / XP / levels
+- Coach AI chat
+- Future Self transformation
+- Community + forums
+- Nutrition integration
+- Brand / emotional resonance
+- Shareable cards
+
+**Specific Fitbod features to replicate and exceed:**
+- Inline video during set logging → we do this with Grok-generated videos
+- Muscle map → we have SVG body diagram
+- Swap exercise → one tap, our AI picks contextually better replacement
+- Quick weight/rep input → +5/-5 buttons, no keyboard required
 
 ---
 
 ## Claude Code Workflow
 
 ```bash
+# Web app
 cd ~/Wylde-self && claude
+
+# iOS app  
+cd ~/Documents/WyldeSelf && claude
 ```
 
-1. Describe the change in this chat
-2. Claude writes the exact Claude Code prompt
-3. Paste into Terminal
-4. Claude Code edits files and pushes
-5. Vercel deploys in ~30 seconds
-6. Claude in Chrome extension used to test live at wyldeself.com
+**Standard flow:**
+1. Design / plan in Claude chat
+2. Claude writes exact prompt
+3. Paste into Claude Code terminal or Cowork
+4. Vercel auto-deploys in ~30s
+5. Verify on wyldeself.com
 
-**If Claude Code asks to re-authenticate:**
+**If Claude Code needs re-auth:**
 ```bash
 claude auth
 ```
-Follow the browser prompt.
 
 ---
 
-## Debugging Workflow (Claude in Chrome)
+## Known Issues
 
-```javascript
-// Read source
-fetch('/app.html').then(r => r.text()).then(html => {
-  const idx = html.indexOf('functionName');
-  console.log('LABEL:', html.substring(idx, idx + 1000));
-});
-
-// Clear console between reads
-// Use pattern matching: read_console_messages({ pattern: 'LABEL' })
-```
-
----
-
-## Known Issues / To Fix
-
-- [ ] Alternative workout section rendering after program generates (needs verification)
-- [ ] CSS exercise animations — figure shows but limited motion accuracy
-- [ ] Coach sidebar context update when screen changes (stub only)
-- [ ] OVERVIEW nav tab is a stub — no screen content yet
-- [ ] Apple Health integration — web only (manual entry). Full HealthKit needs React Native
-- [ ] Fullscript links still placeholder — update with real dispensary URL once live
+- [ ] app.html design system only partially applied — needs full pass
+- [ ] All secondary text too dark (below 0.40 opacity)
+- [ ] Workout flow feels clunky — too many taps to get to action
+- [ ] Overview screen is a stub — no content
+- [ ] Coach sidebar doesn't update context on screen change
+- [ ] Alternative workout section rendering needs verification
+- [ ] Fullscript links are placeholder URLs
+- [ ] iOS: ProgramBuilderSheet has no back button
+- [ ] iOS: coach portraits are initials only (pending AI-generated images)
+- [ ] Apple Developer enrollment pending 48+ hrs — contact Apple support
 
 ---
 
-## Pending / Next Up
+## Immediate Next Actions for Cowork
 
-- [ ] iOS: paste PeptideView.swift Claude Code prompt
-- [ ] iOS: paste SupplementView.swift Claude Code prompt
-- [ ] Web + iOS: full design polish pass — make app look beautiful (Shred-level quality)
-- [ ] Before/after reveal UI polish on Future Self screen
-- [ ] Add "Investors" link to index.html nav
-- [ ] Confirm Fullscript dispensary setup and update Shop links
-- [ ] Buy wyldeself.ai domain
-- [ ] Update HANDOFF.md Live URLs — investors.html is now live
+Run these in order:
 
----
+### 1. Design system pass — app.html
+Apply pure black / gold hairline aesthetic to ALL screens. Fix text brightness. Opening sequence with logo. This is the highest priority.
 
-## VC Pitch Deck Status
+### 2. Workout flow overhaul — app.html
+- Dashboard "Today's session" taps directly into active workout
+- Quick-tap +5/-5 weight, +1/-1 rep buttons
+- Inline exercise history (last session weight × reps)
+- Swap exercise button (AI picks replacement)
+- Workout state persists across screen navigation
+- Rest timer floats as persistent element during active workout
 
-**File:** investors.html — fully built, self-contained HTML file
-**Tool:** Built in Claude chat (not Pitch.com — HTML deck is better quality)
-**Status:** Complete, needs to be added to repo at /investors.html
-**Stage:** Pre-seed SAFE
-**Ask:** $1M (initial close $750K)
+### 3. Wylde Score + Shareable Card — app.html
+- Calculate Wylde Strength Score (volume × consistency × progression index)
+- Show on dashboard + leaderboard
+- Post-workout shareable card with logo, stats, score
 
-### Deck Structure (13 slides)
-1. Cover — Logo strip top, WYLDE SELF display, sacred geometry background
-2. Problem — Two col, 4 bullets, 4× stat (Norcross et al.)
-3. Insight — Neural head background, identity science, 66-day + 2-3× callouts (Lally/UCL, Bem)
-4. Solution — 4-step flow grid (Fitness / Nutrition / Mindset / Integration)
-5. Product — Two col, app screen mockup image right
-6. Transformation — Full-width before/during/after photo
-7. Market — Two col, 4 bar charts ($5.6T / $27B / $44B / $2.1B)
-8. Business Model — 2×2 revenue grid (Subscription / Coaching / Products / Data)
-9. Traction — 2×2 stats (200 waitlist / 20 beta / Live product / $0 spend)
-10. Unfair Advantage — 2×2 pillars (Lived experience / Community / Philosophy+Tech / Category)
-11. The Ask — $1M display, SAFE structure, 4-way fund allocation
-12. Vision — Two col, 4 arrow statements, logo decorative right
-13. Roadmap — 4-phase timeline (Validate / Launch / Scale / Expand)
+### 4. iOS design match — WyldeSelf Xcode
+After web is verified, apply same design tokens to iOS SwiftUI files.
 
-### Science Citations Used
-- **4×** habit attempt rate — Norcross et al., Journal of Clinical Psychology
-- **66 days** habit formation average — Lally et al., University College London
-- **2–3×** follow-through with identity anchoring — Bem Self-Perception Theory + Implementation Intentions research
-
-### Assets Embedded in Deck
-- Sacred geometry background (cover)
-- Neural head image (insight slide)
-- Transformation before/during/after photo
-- App screen mockups
-- Gold chart graphic (market slide)
-- Wylde Self SVG logo (all slides, top-left; large strip on cover)
-
----
-
-## Domain Notes
-- Primary: wyldeself.com (live, Vercel)
-- To buy: wyldeself.ai — decided April 2026, ~$50-80/yr, on-brand for AI product
-- WHOIS privacy: low urgency, turn on when convenient
-- Trademark: file after first funding close (~$350, use a lawyer)
+### 5. Grok video integration
+- Set up api.x.ai account + key
+- Build /api/grok-video.js proxy
+- Pre-generate 30 core exercises
+- Upload to Cloudflare Stream
+- Wire video player into Program screen
 
 ---
 
 ## Session Log
 
+### Session 7 — April 2026 (current)
+- Competitive analysis vs Fitbod — identified gaps and advantages
+- Decided on pure black / gold hairline design system (derived from logo image)
+- Built dashboard mockup with actual logo embedded (dashboard_preview.html)
+- Identified 8 high-priority build items
+- Planned muscle map, Wylde Score, shareable card, inline exercise history
+- Grok Imagine researched for exercise video — API live, $0.05/sec
+- Moved build operations to Claude Cowork for structured execution
+- This HANDOFF.md written for Cowork transition
+
+### Session 6 — April 2026
+- Gender-neutral rebrand — Ember/Root/Rise/Wylde arc
+- Balanced coach roster (2M/2F/2N)
+- Living color system per identity level
+- New typography system (Inter/Space Mono/Montserrat/Cormorant)
+- Draggable dashboard (web + iOS)
+- Collapsible cards with header summary values
+- Rest timer (90s/60s, 3-phase color journey)
+- Future Self: 3 parallel Gemini, drag-reveal slider, timeline tabs
+- Supabase: 16 tables, leaderboard view, award_xp function, RLS
+- Supabase wired to web + iOS
+- Community screen: feed, leaderboard, events (web + iOS)
+- Forum system: Wylde Man / Wylde Woman / Wylde Self
+- XP engine + badge system
+- WorkoutCompleteView celebration
+- HealthKitService read/write + Clinical Health Records
+- ScheduleService calendar + reminders
+- FutureSelfRevealView 3-image parallel + drag slider
+- Xcode errors fixed: Combine imports, MainActor, deprecations
+- Supabase Swift package added to Xcode
+
 ### Session 5 — April 2026
-- Switched image generation from fal.ai to OpenAI (gpt-image-1 / dall-e-2) — multiple failures due to model restrictions, billing limits, PNG format requirements
-- Verified OpenAI org as Individual — unlocked gpt-image-1
-- Switched to Google Gemini 3.1 Flash Image (Nano Banana) via Gemini API
-- Added GEMINI_API_KEY to Vercel environment variables
-- Fixed model name to gemini-3.1-flash-image-preview
-- Fixed generationConfig to use responseModalities: ["TEXT", "IMAGE"] (no responseMimeType)
-- Switched api/generate-image.js to Vercel Edge Runtime to get 30s timeout on Hobby plan
-- Future Self image generation now WORKING — realistic output confirmed live
-- Added photo preview to Future Self upload zone (shows TODAY label, X to clear)
-- Added consent flow (ConsentView.swift) — fixed duplicate body declaration
-- Added Future Self as special featured coach in coach roster
-- Designed PeptideView.swift and SupplementView.swift prompts (ready to build next session)
-- iOS: back button fix, workout tracker UI redesign prompts written
-- iOS: coach portrait images added (Adam, Marcus, Kai, Cole, Sage, Ren)
+- Switched image gen to Gemini 3.1 Flash Image
+- Future Self image gen working end-to-end
+- ConsentView, Future Self coach added
+- PeptideView + SupplementView prompts designed
 
 ### Session 4 — April 2026
-- Started native iOS app in Xcode/SwiftUI at ~/Documents/WyldeSelf
-- Scaffolded all core Swift files: Theme, APIService, UserProfile, OnboardingView, MainTabView, DashboardView, ProgramView, CoachView, NutritionView, ProgressView
-- Fixed UserProfile ObservableObject (import SwiftUI + Combine)
-- Fixed iOS simulator setup (iPhone 17 Pro Max)
-- Updated OnboardingView: multi-select goals up to 3, 12 goal options, rounded corners, "Your full name" label
-- Built CoachPersona.swift with 6 coaches: Adam, Marcus, Kai, Cole, Sage, Ren
-- Built full CoachView with roster screen and AI chat per coach
-- Built ProgramView: AI program generator, progression levels (Ember/Forge/Steel/Wylde), session logging with difficulty rating, custom program builder
-- Built NutritionView: macro tracking, AI food log estimation, AI meal plan generator
-- Built ExerciseDatabase.swift and WorkoutSession.swift
-- Fixed API: added model field to anthropic.js proxy
-- Extracted slide1_cover.jpg from investors.html, added as hero background on index.html
-- Known issues: ProgramBuilderSheet has no back button, coach portraits are initials placeholders pending AI-generated images
+- Native iOS SwiftUI app scaffolded at ~/Documents/WyldeSelf
+- All core Swift files built
+- CoachPersona, CoachView, ProgramView, NutritionView
+- ExerciseDatabase, WorkoutSession
 
 ### Session 3 — April 2026
-- Built full 13-slide VC pitch deck as self-contained HTML file
-- Embedded all 6 brand images (sacred geometry, neural head, transformation, app screens, gold chart, supplements)
-- Integrated SVG logo across all slides (vector, no quality loss, no background artifacts)
-- Added identity science callouts (Norcross 4×, Lally 66 days, Bem 2-3×)
-- Iterative design fixes: layout cramping, text brightness, slide label overlaps, transformation image crop
-- Decided on investors.html as separate page linked from main nav
-- Decided to buy wyldeself.ai domain
-- Discussed trademark timing (post-funding)
-- Discussed HANDOFF.md workflow for persistent context across chat sessions
-- OS reset on Wilke's machine mid-session — Chrome extension and Terminal need to be reconnected
+- 13-slide VC pitch deck (investors.html live)
+- Pre-seed SAFE $1M ask
 
 ### Session 2 — April 2026
-- Fixed fal.ai image generation end-to-end (proxy GET poll, reveal race condition)
-- Built coach sidebar from scratch (Claude Haiku, typing indicator, opening message)
-- Fixed coach screen sendMessage() from pre-written responses to real Claude API
-- Added SVG exercise animations to form modals
-- Built transformation roadmap feature on Dashboard
-- Built AI food log with text + photo macro estimation
-- Built AI supplement stack marketplace (Health+ and Supplements tab)
-- Added Supplements as dedicated nav tab
-- Converted top nav to left side nav
-- Added localStorage profile persistence
-- Rebuilt gate.html with NDA + access code flow
-- Fixed gate.html checkbox double-fire bug
-- Updated all "naturopath" copy to "functional medicine practitioner"
-- Built /apply.html — 30-day beta intake form (Formspree + EmailJS)
-- Updated apply.html — multi-select goals, sleep quality, expanded training locations
-- Moved Health+ to last nav position
-- Updated disclaimer banner copy
-- Completed full design pass (spacing, surface contrast, nav polish)
-- Discussed VC pitch strategy, founder story, deck structure
-- Generated 9 app mockup screens via ChatGPT prompts
-- Discussed React Native path (solo buildable with Claude Code + Expo)
-- Set up Pitch.com account for deck building
+- Image gen, coach sidebar, food log, supplement stack
+- gate.html, apply.html rebuilt
+- Full design pass
+
+### Session 1 — April 2026
+- Initial build — all 10 screens, Claude API, localStorage, nav
