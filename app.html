@@ -1,59 +1,62 @@
 <!DOCTYPE html>
-<html lang="en" style="background:#080808;">
+<html lang="en" style="background:#000000;">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="theme-color" content="#080808"/>
+  <meta name="theme-color" content="#000000"/>
   <title>Wylde Self — App</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Montserrat:wght@600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      /* ── Base palette ── */
-      --bg:         #131210;
-      --surface:    #1c1a17;
-      --surface2:   #242220;
-      --border:     rgba(255,245,220,0.08);
-      --border2:    rgba(255,245,220,0.14);
-      --text:       #f0ece4;
-      --text2:      #b8b4aa;
-      --text3:      #6e6a62;
-      /* ── Brand colors ── */
+      /* ── Pure Black + Gold Hairline Design System ── */
+      --bg:         #000000;
+      --surface:    #0d0c0a;
+      --surface2:   #0d0c0a;
+      --border:     rgba(200,169,110,0.09);
+      --border2:    rgba(200,169,110,0.14);
+      --text:       rgba(255,245,220,0.95);
+      --text2:      rgba(255,245,220,0.75);
+      --text3:      rgba(200,169,110,0.55);
+      /* ── Brand — gold is the ONLY accent ── */
       --gold:       #c8a96e;
-      --ember:      #e85d20;
+      --gold-hi:    rgba(200,169,110,0.85);
+      --gold-mid:   rgba(200,169,110,0.55);
+      --gold-lo:    rgba(200,169,110,0.35);
+      --gold-dim:   rgba(200,169,110,0.15);
+      --ember:      #c8a96e;
       --green:      #3dba6e;
       --blue:       #4a9eff;
       --purple:     #a87edd;
-      /* ── Accent system (ember-based) ── */
-      --accent:        #e85d20;
-      --accent-bg:     rgba(232,93,32,0.12);
-      --accent-border: rgba(232,93,32,0.40);
+      /* ── Accent system (gold-based) ── */
+      --accent:        #c8a96e;
+      --accent-bg:     rgba(200,169,110,0.08);
+      --accent-border: rgba(200,169,110,0.35);
       /* ── Fonts ── */
       --font-ui:        'Inter', system-ui, sans-serif;
       --font-mono:      'Space Mono', monospace;
       --font-milestone: 'Montserrat', sans-serif;
       --font-serif:     'Cormorant Garamond', serif;
       /* ── Legacy aliases ── */
-      --black:       #131210;
-      --charcoal:    #1c1a17;
-      --white:       #f0ece4;
-      --muted:       #b8b4aa;
-      --gold-dim:    rgba(200,169,110,0.12);
+      --black:       #000000;
+      --charcoal:    #0d0c0a;
+      --white:       rgba(255,245,220,0.95);
+      --muted:       rgba(255,245,220,0.75);
       --ff-hero:     'Inter', system-ui, sans-serif;
       --ff-serif:    'Cormorant Garamond', serif;
       --ff-body:     'Inter', system-ui, sans-serif;
       --font-editorial: 'Cormorant Garamond', serif;
-      /* ── Radius ── */
-      --r-sm:  6px;
-      --r-md:  10px;
-      --r-lg:  14px;
-      --r-xl:  20px;
+      /* ── Radius — sharp corners ── */
+      --r-sm:  0px;
+      --r-md:  0px;
+      --r-lg:  0px;
+      --r-xl:  0px;
     }
-    html, body { background: var(--bg) !important; color: var(--text); font-family: var(--font-ui); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    html, body { background: #000000 !important; color: var(--text); font-family: var(--font-ui); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
     /* NAV */
-    nav { position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; background: #0c0c0c; border-right: 1px solid var(--border); width: 200px; display: flex; flex-direction: column; padding: 0; }
-    .nav-logo { font-family: var(--ff-hero); font-size: 18px; letter-spacing: 0.14em; color: #f5f4f0; text-decoration: none; padding: 32px 24px 28px; border-bottom: 1px solid var(--border); display: block; }
+    nav { position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; background: #000000; border-right: 0.5px solid rgba(200,169,110,0.09); width: 200px; display: flex; flex-direction: column; padding: 0; }
+    .nav-logo { font-family: var(--ff-hero); font-size: 18px; letter-spacing: 0.14em; color: rgba(255,245,220,0.95); text-decoration: none; padding: 32px 24px 28px; border-bottom: 0.5px solid rgba(200,169,110,0.09); display: block; }
     .nav-logo span { color: var(--gold); }
     .nav-tabs { display: flex; flex-direction: column; flex: 1; padding: 12px 0; overflow-y: auto; }
     .nav-tab { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 14px 24px; display: flex; align-items: center; border-left: 2px solid transparent; cursor: pointer; transition: all 0.2s; background: none; border-top: none; border-bottom: none; border-right: none; font-family: var(--ff-body); text-align: left; width: 100%; }
@@ -77,40 +80,41 @@
     .screen-title { font-family: var(--ff-hero); font-size: clamp(40px, 7vw, 72px); letter-spacing: 0.03em; line-height: 1; margin-bottom: 16px; }
     .screen-sub { font-family: var(--ff-serif); font-style: italic; font-size: 18px; color: var(--muted); margin-bottom: 48px; line-height: 1.7; }
     .gold-rule { width: 48px; height: 1px; background: var(--gold); margin-bottom: 48px; }
-    .btn { font-family: var(--font-ui); font-size: 13px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; background: rgba(200,169,110,0.22); color: #f0c040; border: 1px solid rgba(200,169,110,0.55); padding: 14px 32px; cursor: pointer; transition: all 0.2s; display: inline-block; border-radius: 9px; }
-    .btn:hover { background: rgba(200,169,110,0.34); transform: translateY(-1px); }
+    .btn { font-family: var(--font-ui); font-size: 9px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; background: transparent; color: rgba(200,169,110,0.78); border: 0.5px solid rgba(200,169,110,0.28); padding: 11px 16px; cursor: pointer; transition: all 0.2s; display: inline-block; border-radius: 0; }
+    .btn:hover { border-color: rgba(200,169,110,0.55); color: rgba(200,169,110,0.9); background: rgba(200,169,110,0.06); }
     .btn:active, .btn-ember:active, .btn-success:active, .btn-blue:active, .btn-purple:active { transform: scale(0.98); }
-    .btn-outline { background: rgba(200,169,110,0.22); color: #f0c040; border: 1px solid rgba(200,169,110,0.55); border-radius: 9px; }
-    .btn-outline:hover { background: rgba(200,169,110,0.34); transform: translateY(-1px); }
-    .btn-ember { background: rgba(220,90,30,0.20) !important; border: 1px solid rgba(220,90,30,0.50) !important; color: #ff7040 !important; border-radius: 9px; }
-    .btn-ember:hover { background: rgba(220,90,30,0.32) !important; }
-    .btn-success { background: rgba(60,170,90,0.18) !important; border: 1px solid rgba(60,170,90,0.45) !important; color: #50e080 !important; border-radius: 9px; }
-    .btn-success:hover { background: rgba(60,170,90,0.30) !important; }
-    .btn-blue { background: rgba(60,130,210,0.18) !important; border: 1px solid rgba(60,130,210,0.45) !important; color: #60b0ff !important; border-radius: 9px; }
-    .btn-blue:hover { background: rgba(60,130,210,0.30) !important; }
-    .btn-purple { background: rgba(184,158,224,0.12) !important; border: 1px solid rgba(184,158,224,0.40) !important; color: #c8aaf0 !important; border-radius: 9px; }
-    .btn-purple:hover { background: rgba(184,158,224,0.24) !important; }
-    .input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #f5f4f0; font-family: var(--font-ui); font-size: 14px; padding: 14px 18px; outline: none; width: 100%; transition: border-color 0.2s; border-radius: 9px; -webkit-appearance: none; }
-    .input:focus { border-color: var(--accent); }
-    .input::placeholder { color: #444; }
-    .card { background: #161616; border: 1px solid rgba(255,255,255,0.13); padding: 36px; margin-bottom: 16px; border-radius: 10px; }
+    .btn-outline { background: transparent; color: rgba(200,169,110,0.78); border: 0.5px solid rgba(200,169,110,0.28); border-radius: 0; }
+    .btn-outline:hover { border-color: rgba(200,169,110,0.55); color: rgba(200,169,110,0.9); }
+    .btn-primary { border-color: rgba(200,169,110,0.45); color: rgba(200,169,110,0.9); }
+    .btn-ember { background: transparent !important; border: 0.5px solid rgba(200,169,110,0.28) !important; color: rgba(200,169,110,0.78) !important; border-radius: 0 !important; }
+    .btn-ember:hover { border-color: rgba(200,169,110,0.55) !important; background: rgba(200,169,110,0.06) !important; }
+    .btn-success { background: transparent !important; border: 0.5px solid rgba(61,186,110,0.35) !important; color: rgba(61,186,110,0.78) !important; border-radius: 0 !important; }
+    .btn-success:hover { background: rgba(61,186,110,0.06) !important; }
+    .btn-blue { background: transparent !important; border: 0.5px solid rgba(74,158,255,0.35) !important; color: rgba(74,158,255,0.78) !important; border-radius: 0 !important; }
+    .btn-blue:hover { background: rgba(74,158,255,0.06) !important; }
+    .btn-purple { background: transparent !important; border: 0.5px solid rgba(168,126,221,0.35) !important; color: rgba(168,126,221,0.78) !important; border-radius: 0 !important; }
+    .btn-purple:hover { background: rgba(168,126,221,0.06) !important; }
+    .input { background: rgba(200,169,110,0.04); border: 0.5px solid rgba(200,169,110,0.15); color: rgba(255,245,220,0.95); font-family: var(--font-ui); font-size: 14px; padding: 14px 18px; outline: none; width: 100%; transition: border-color 0.2s; border-radius: 0; -webkit-appearance: none; }
+    .input:focus { border-color: rgba(200,169,110,0.45); }
+    .input::placeholder { color: rgba(200,169,110,0.35); }
+    .card { background: transparent; border-top: 0.5px solid rgba(200,169,110,0.09); padding: 36px 0; margin-bottom: 16px; border-radius: 0; }
 
     /* ONBOARDING */
     .onboard-form { display: flex; flex-direction: column; gap: 16px; }
-    .form-group label { display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .form-group label { display: block; font-size: 11px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(200,169,110,0.4); margin-bottom: 10px; }
     .pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
-    .pill { font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 9px 18px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.2s; font-family: var(--ff-body); }
-    .pill:hover { border-color: var(--gold); color: #f5f4f0; }
-    .pill.selected { border-color: var(--accent-border); background: var(--accent-bg); color: var(--accent); }
+    .pill { font-size: 9px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; padding: 9px 18px; border: 0.5px solid rgba(200,169,110,0.15); background: transparent; color: rgba(200,169,110,0.55); cursor: pointer; transition: all 0.2s; font-family: var(--ff-body); border-radius: 0; }
+    .pill:hover { border-color: rgba(200,169,110,0.35); color: rgba(255,245,220,0.95); }
+    .pill.selected { border-color: rgba(200,169,110,0.45); background: rgba(200,169,110,0.08); color: var(--gold); }
 
     /* TIMELINE */
-    .timeline-btn { flex:1; font-family:var(--ff-body); font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; padding:10px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.2s; }
-    .timeline-btn:hover { border-color:var(--gold); color:#f5f4f0; }
-    .timeline-btn.active { border-color: var(--accent-border); background: var(--accent-bg); color: var(--accent); }
+    .timeline-btn { flex:1; font-family:var(--ff-body); font-size:9px; font-weight:500; letter-spacing:0.15em; text-transform:uppercase; padding:10px; border:0.5px solid rgba(200,169,110,0.15); background:transparent; color:rgba(200,169,110,0.55); cursor:pointer; transition:all 0.2s; border-radius:0; }
+    .timeline-btn:hover { border-color:rgba(200,169,110,0.35); color:rgba(255,245,220,0.95); }
+    .timeline-btn.active { border-color:rgba(200,169,110,0.45); background:rgba(200,169,110,0.08); color:var(--gold); }
 
     /* FUTURE SELF */
-    .upload-zone { border: 1px dashed rgba(255,255,255,0.2); background: rgba(255,255,255,0.03); padding: 60px 24px; text-align: center; cursor: pointer; transition: all 0.25s; position: relative; border-radius: 9px; }
-    .upload-zone:hover { border-color: var(--accent); background: var(--accent-bg); }
+    .upload-zone { border: 0.5px dashed rgba(200,169,110,0.25); background: transparent; padding: 60px 24px; text-align: center; cursor: pointer; transition: all 0.25s; position: relative; border-radius: 0; }
+    .upload-zone:hover { border-color: rgba(200,169,110,0.55); background: rgba(200,169,110,0.04); }
     .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
     .upload-icon { font-size: 32px; margin-bottom: 12px; color: var(--gold); opacity: 0.6; }
     .upload-label { font-family: var(--ff-serif); font-style: italic; font-size: 17px; color: var(--muted); }
@@ -152,16 +156,16 @@
     .day-card, .stack-card, .peptide-card, .stat-box, .session-log .log-item, .roadmap-phase, .msg-ai .msg-bubble, .msg-user .msg-bubble, .dash-ring-card, .dash-macro-card, .dash-profile-card { animation: breathe 4s ease-in-out infinite; }
     @keyframes heartbeat-bar { 0%,100%{transform:scaleX(1)} 50%{transform:scaleX(1.05)} }
     @keyframes rest-ring { to{stroke-dashoffset:339} }
-    .pulse-dot { width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;animation:pulse-dot 2.2s ease-in-out infinite;flex-shrink:0; }
+    .pulse-dot { width:4px;height:4px;border-radius:50%;background:rgba(200,169,110,0.7);display:inline-block;animation:pulse-dot 2.5s ease-in-out infinite;flex-shrink:0; }
     .screen-title-row { display:flex;align-items:center;gap:10px;margin-bottom:16px; }
     .screen-title-row .screen-title { margin-bottom:0; }
-    .dash-card { background:#161616;border:1px solid rgba(255,255,255,0.13);border-radius:10px;padding:20px;margin-bottom:10px;animation:breathe 4s ease-in-out infinite;transition:opacity 0.2s,transform 0.2s,border-color 0.2s;cursor:grab;position:relative; }
+    .dash-card { background:transparent;border:none;border-top:0.5px solid rgba(200,169,110,0.09);border-radius:0;padding:20px 0;margin-bottom:0;animation:none;transition:opacity 0.2s,transform 0.2s,border-color 0.2s;cursor:grab;position:relative; }
     .dash-card:active { cursor:grabbing; }
     .dash-card.dragging { opacity:0.4;transform:scale(0.97); }
-    .dash-card.drag-over { border:1px dashed var(--accent);border-color:var(--accent) !important; }
+    .dash-card.drag-over { border-top:0.5px dashed var(--gold) !important; }
     .dash-drag-handle { display:flex;gap:4px;flex-wrap:wrap;width:18px;margin-bottom:12px;opacity:0.25; }
     .dash-drag-handle span { width:3px;height:3px;border-radius:50%;background:#fff;display:block; }
-    .dash-card-label { font-size:9px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:8px; }
+    .dash-card-label { font-size:9px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,169,110,0.7);margin-bottom:8px; }
     .dash-card-btn { font-family:var(--ff-body);font-size:11px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;cursor:pointer;transition:background 0.2s;border-radius:7px;display:inline-block;margin-top:10px; }
     .heartbeat-row { display:flex;gap:3px;align-items:center;margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.05); }
     .hb-bar { height:2px;border-radius:1px;animation:heartbeat-bar 1.5s ease-in-out infinite; }
@@ -546,7 +550,7 @@
   .reveal-tab.ready { border-color:rgba(80,200,120,0.25); }
   .reveal-tab.active.ready { background:rgba(200,169,110,0.15);border-color:rgba(200,169,110,0.5); }
   .tab-label { font-size:12px;font-weight:500;color:#fff;display:block; }
-  .reveal-tab.active .tab-label { color:#f0c040; }
+  .reveal-tab.active .tab-label { color:var(--gold); }
   .tab-sub { font-family:var(--font-mono);font-size:9px;color:#555;font-style:italic;display:block; }
   .reveal-tab.active .tab-sub { color:#888; }
   .tab-status { margin-top:4px;height:14px;display:flex;align-items:center;justify-content:center; }
@@ -561,7 +565,7 @@
   .reveal-after { clip-path:inset(0 50% 0 0); }
   .reveal-label { position:absolute;top:12px;font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;padding:3px 9px;border-radius:10px;pointer-events:none; }
   .label-before { left:12px;background:rgba(0,0,0,0.6);color:#888;border:1px solid rgba(255,255,255,0.12); }
-  .label-after { right:12px;background:rgba(200,169,110,0.2);color:#f0c040;border:1px solid rgba(200,169,110,0.4); }
+  .label-after { right:12px;background:rgba(200,169,110,0.2);color:var(--gold);border:1px solid rgba(200,169,110,0.4); }
   .reveal-line { position:absolute;top:0;bottom:0;left:50%;width:2px;background:#c8a96e;transform:translateX(-50%);z-index:10;pointer-events:none; }
   .reveal-handle { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:#0a0a0a;border:2px solid #c8a96e;display:flex;align-items:center;justify-content:center;z-index:11;box-shadow:0 0 0 5px rgba(200,169,110,0.15);pointer-events:none; }
   .handle-inner { display:flex;gap:4px;align-items:center; }
@@ -743,9 +747,494 @@
   .feed-item-author { font-size:12px; font-weight:600; color:var(--gold); letter-spacing:0.07em; }
   .feed-item-time { font-size:11px; color:var(--text3); }
   .feed-item-body { font-size:14px; color:var(--text); line-height:1.65; }
+
+  /* ═══════════════════════════════════════════════════════════
+     ORGANIC CALM SYSTEM — whitespace as separator, minimal UI
+  ═══════════════════════════════════════════════════════════ */
+
+  /* ── PHILOSOPHY ──
+     1. Whitespace IS the separator. No borders unless essential.
+     2. Gold appears sparingly — only for data, active states, and CTAs.
+     3. Large breathing room between sections.
+     4. Fewer visible elements = premium feel.
+     5. Soft transitions, no abrupt edges.
+  */
+
+  /* ── GLOBAL RESET — remove all visual noise ── */
+  * { animation-duration: 0s !important; animation: none !important; }
+  /* Re-enable only the opening sequence animations */
+  #opening-sequence, #opening-sequence * { animation: revert !important; animation-duration: revert !important; }
+  .os-progress-fill { transition: width 1.8s ease !important; }
+
+  /* ── SPACING — generous breathing room ── */
+  .container { max-width: 640px !important; padding: 60px 32px !important; }
+  .screen { padding-bottom: 80px !important; }
+  .section-label { font-size: 10px !important; font-weight: 400 !important; letter-spacing: 0.2em !important; color: rgba(200,169,110,0.4) !important; margin-bottom: 32px !important; }
+  .screen-title { font-size: clamp(32px, 5vw, 48px) !important; font-weight: 300 !important; letter-spacing: 0.02em !important; line-height: 1.15 !important; margin-bottom: 12px !important; color: rgba(255,245,220,0.88) !important; }
+  .screen-sub { font-size: 15px !important; line-height: 1.8 !important; margin-bottom: 56px !important; color: rgba(255,245,220,0.5) !important; }
+  .gold-rule { width: 32px !important; height: 0.5px !important; background: rgba(200,169,110,0.25) !important; margin-bottom: 56px !important; }
+
+  /* ── CARDS — no borders, just space ── */
+  .day-card, .stat-box, .session-log, .peptide-card, .stack-card,
+  .roadmap-phase, .dash-ring-card, .dash-macro-card, .dash-profile-card,
+  .dash-stat-row, .ov-w, .ov-widget, .feed-post, .feed-item,
+  .lb-row, .lb-item, .thread-card, .forum-section-card,
+  .chat-messages, .form-modal-inner, .protocol-modal-inner,
+  .roadmap-stat, .ov-mc, .ov-pg, .ov-stat-cell,
+  .wcard, .dash-card {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Sections separated by whitespace, not lines */
+  .day-card, .peptide-card, .stack-card, .roadmap-phase,
+  .feed-item, .lb-item, .thread-card, .forum-section-card {
+    padding: 24px 0 !important;
+    margin-bottom: 0 !important;
+  }
+  /* Only use a faint line between repeating list items */
+  .day-card + .day-card, .feed-item + .feed-item,
+  .lb-item + .lb-item, .thread-card + .thread-card,
+  .peptide-card + .peptide-card, .stack-card + .stack-card,
+  .log-item + .log-item, .exercise + .exercise {
+    border-top: 0.5px solid rgba(255,245,220,0.04) !important;
+  }
+
+  /* Stat boxes — clean grid, no borders */
+  .stat-box { padding: 28px 16px !important; text-align: center !important; }
+  .stats-grid { gap: 24px !important; }
+  .stat-num { font-size: 40px !important; font-weight: 300 !important; color: rgba(200,169,110,0.7) !important; }
+  .stat-label { font-size: 10px !important; font-weight: 400 !important; letter-spacing: 0.12em !important; color: rgba(255,245,220,0.35) !important; margin-top: 8px !important; }
+
+  /* ── DASHBOARD — calm, airy ── */
+  .dash-card { padding: 28px 0 !important; border: none !important; }
+  .dash-card + .dash-card { border-top: 0.5px solid rgba(255,245,220,0.04) !important; }
+  .dash-card-label { font-size: 10px !important; font-weight: 400 !important; letter-spacing: 0.15em !important; color: rgba(200,169,110,0.4) !important; margin-bottom: 12px !important; }
+  .dash-drag-handle { display: none !important; } /* hide drag dots — visual noise */
+  .wcard { padding: 28px 0 !important; border: none !important; box-shadow: none !important; }
+  .wcard:hover { transform: none !important; box-shadow: none !important; }
+  .dash-header .wcard, .dash-header.wcard { padding: 0 !important; }
+  .dash-greeting-line { font-weight: 300 !important; color: rgba(255,245,220,0.35) !important; }
+  .dash-name { font-weight: 300 !important; font-size: 28px !important; color: rgba(255,245,220,0.85) !important; }
+  .dash-day-line { color: rgba(255,245,220,0.4) !important; }
+
+  /* Momentum — subtle, not loud */
+  .momentum-bar { margin: 20px 0 4px !important; }
+  .momentum-track { height: 2px !important; background: rgba(255,245,220,0.04) !important; border-radius: 1px !important; }
+  .momentum-fill { border-radius: 1px !important; background: rgba(200,169,110,0.4) !important; }
+  .mday { height: 3px !important; border-radius: 1px !important; background: rgba(255,245,220,0.04) !important; }
+  .mday.done { background: rgba(200,169,110,0.35) !important; }
+  .mday.today { background: rgba(200,169,110,0.6) !important; box-shadow: none !important; }
+
+  /* ── BUTTONS — quieter, taller touch targets ── */
+  .btn { font-size: 10px !important; font-weight: 400 !important; letter-spacing: 0.15em !important; padding: 14px 24px !important; border: 0.5px solid rgba(255,245,220,0.08) !important; color: rgba(255,245,220,0.55) !important; transition: all 0.3s ease !important; }
+  .btn:hover { border-color: rgba(200,169,110,0.25) !important; color: rgba(200,169,110,0.75) !important; background: transparent !important; }
+  .btn::after { display: none !important; }
+
+  /* Primary CTA — slightly more visible */
+  .btn-primary, .btn-gold, .ov-btn-g { border-color: rgba(200,169,110,0.2) !important; color: rgba(200,169,110,0.65) !important; }
+  .btn-primary:hover, .btn-gold:hover, .ov-btn-g:hover { border-color: rgba(200,169,110,0.4) !important; color: rgba(200,169,110,0.85) !important; }
+
+  .btn-ember, .btn-success, .btn-blue, .btn-purple {
+    background: transparent !important; border-radius: 0 !important;
+  }
+
+  /* ── INPUTS — minimal ── */
+  .input, .wfield, .intake-textarea, .ov-cin, .alt-workout-input, .coach-input {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 0.5px solid rgba(255,245,220,0.06) !important;
+    border-radius: 0 !important;
+    padding: 14px 0 !important;
+    font-size: 15px !important;
+    font-weight: 300 !important;
+    color: rgba(255,245,220,0.85) !important;
+    transition: border-color 0.3s ease !important;
+  }
+  .input:focus, .wfield:focus, .intake-textarea:focus, .ov-cin:focus, .coach-input:focus {
+    border-bottom-color: rgba(200,169,110,0.3) !important;
+    outline: none !important;
+  }
+  .input::placeholder, .wfield::placeholder, .intake-textarea::placeholder,
+  .ov-cin::placeholder, .coach-input::placeholder,
+  .chat-input::placeholder, .coach-panel-input::placeholder,
+  .alt-workout-input::placeholder { color: rgba(255,245,220,0.2) !important; }
+
+  /* ── PILLS / TAGS — softer ── */
+  .pill, .timeline-btn, .alt-pill, .intake-opt, .intake-scale-btn,
+  .intake-yn-btn, .ov-tag, .ov-ft, .ov-muscle-pill, .ov-tl-btn {
+    font-size: 11px !important; font-weight: 400 !important; letter-spacing: 0.06em !important;
+    border: 0.5px solid rgba(255,245,220,0.06) !important;
+    color: rgba(255,245,220,0.4) !important;
+    padding: 10px 16px !important;
+    border-radius: 20px !important; /* organic, soft shape */
+    transition: all 0.3s ease !important;
+  }
+  .pill:hover, .timeline-btn:hover, .alt-pill:hover, .intake-opt:hover,
+  .ov-tag:hover, .ov-ft:hover { border-color: rgba(200,169,110,0.2) !important; color: rgba(255,245,220,0.65) !important; }
+  .pill.selected, .timeline-btn.active, .alt-pill.active,
+  .intake-opt.selected, .intake-scale-btn.selected, .intake-yn-btn.selected,
+  .ov-tag.ov-sel, .ov-ft.ov-on, .ov-tl-btn.active {
+    border-color: rgba(200,169,110,0.3) !important;
+    background: rgba(200,169,110,0.06) !important;
+    color: rgba(200,169,110,0.7) !important;
+  }
+
+  /* ── NAV — quieter ── */
+  nav { border-right: none !important; background: #000000 !important; width: 180px !important; }
+  .nav-logo { border-bottom: none !important; padding: 40px 24px 32px !important; font-weight: 300 !important; font-size: 16px !important; letter-spacing: 0.18em !important; }
+  .nav-tab { font-size: 11px !important; font-weight: 300 !important; letter-spacing: 0.08em !important; padding: 12px 24px !important; color: rgba(255,245,220,0.3) !important; border-left: none !important; text-transform: none !important; }
+  .nav-tab:hover { color: rgba(255,245,220,0.6) !important; background: transparent !important; }
+  .nav-tab.active { color: rgba(200,169,110,0.65) !important; background: transparent !important; border-left: none !important; }
+  .nav-tab.active::after { display: none !important; } /* remove the dot */
+  .nav-footer { border-top: none !important; }
+  .screen { padding-left: 180px !important; }
+
+  /* Level badge — barely visible */
+  .level-badge { border: none !important; background: transparent !important; padding: 0 !important; font-size: 10px !important; color: rgba(200,169,110,0.4) !important; border-radius: 0 !important; }
+  .pulse-dot { width: 3px !important; height: 3px !important; background: rgba(200,169,110,0.4) !important; }
+
+  /* ── HEARTBEAT LINE — hide it, too busy ── */
+  .heartbeat-line, .heartbeat-row { display: none !important; }
+  .screen { padding-bottom: 40px !important; }
+
+  /* ── COACH SIDEBAR — clean ── */
+  .coach-panel, .coach-sidebar { background: #000000 !important; border-left: 0.5px solid rgba(255,245,220,0.04) !important; }
+  .coach-header { border-bottom: none !important; }
+  .coach-fab, .coach-btn { background: transparent !important; border: 0.5px solid rgba(200,169,110,0.15) !important; box-shadow: none !important; }
+  .coach-fab svg, .coach-btn svg { fill: rgba(200,169,110,0.5) !important; }
+  .chat-send, .coach-send, .coach-panel-send { background: transparent !important; border: 0.5px solid rgba(200,169,110,0.2) !important; color: rgba(200,169,110,0.55) !important; border-radius: 0 !important; }
+  .msg-ai .msg-bubble, .coach-msg-ai .coach-msg-bubble, .coach-msg.assistant .coach-msg-bubble {
+    background: transparent !important; border: none !important; border-radius: 0 !important;
+    padding-left: 0 !important; border-left: 0.5px solid rgba(200,169,110,0.12) !important;
+  }
+  .msg-user .msg-bubble, .coach-msg-user .coach-msg-bubble, .coach-msg.user .coach-msg-bubble {
+    background: rgba(200,169,110,0.04) !important; border: none !important; border-radius: 0 !important;
+    color: rgba(255,245,220,0.85) !important;
+  }
+  .chat-messages { background: transparent !important; border: none !important; }
+  .chat-input-row { border: none !important; border-top: 0.5px solid rgba(255,245,220,0.04) !important; }
+  .chat-input, .coach-panel-input { background: transparent !important; }
+  .coach-input-wrap { border-top: 0.5px solid rgba(255,245,220,0.04) !important; }
+  .coach-typing { background: transparent !important; border: none !important; border-radius: 0 !important; }
+
+  /* ── OVERVIEW — spacious ── */
+  .ov-w { border: none !important; padding: 20px 0 !important; }
+  .ov-w + .ov-w { border-top: 0.5px solid rgba(255,245,220,0.03) !important; }
+  .ov-wh { border-bottom: none !important; padding: 8px 0 !important; }
+  .ov-wb { padding: 8px 0 20px !important; }
+  .ov-wt { color: rgba(200,169,110,0.45) !important; font-weight: 400 !important; }
+  .ov-btn { border-radius: 0 !important; background: transparent !important; border: 0.5px solid rgba(255,245,220,0.06) !important; color: rgba(255,245,220,0.45) !important; font-size: 10px !important; }
+  .ov-btn-g { border-color: rgba(200,169,110,0.15) !important; color: rgba(200,169,110,0.55) !important; }
+  .ov-mc, .ov-pg, .ov-stat-cell { background: transparent !important; border: none !important; border-radius: 0 !important; }
+  .ov-track { background: rgba(255,245,220,0.03) !important; border-radius: 1px !important; height: 2px !important; }
+  .ov-fill { border-radius: 1px !important; }
+  .ov-sb { border-radius: 0 !important; background: transparent !important; border: 0.5px solid rgba(255,245,220,0.06) !important; }
+  .ov-streak { border-radius: 20px !important; background: transparent !important; border: 0.5px solid rgba(200,169,110,0.12) !important; }
+  .ov-ai, .ov-cbub { background: transparent !important; border-radius: 0 !important; border: none !important; border-left: 0.5px solid rgba(200,169,110,0.15) !important; }
+  .ov-q { border-left: 0.5px solid rgba(200,169,110,0.15) !important; }
+  .ov-grid { gap: 0 !important; }
+  .ov-big { font-weight: 300 !important; color: rgba(255,245,220,0.75) !important; }
+  .ov-dim { color: rgba(255,245,220,0.3) !important; }
+  .ov-brand { font-weight: 300 !important; font-size: 14px !important; letter-spacing: 0.2em !important; color: rgba(200,169,110,0.35) !important; }
+  .ov-title { font-weight: 300 !important; font-size: 28px !important; color: rgba(255,245,220,0.8) !important; }
+
+  /* ── PROGRAM — clean exercise list ── */
+  .day-header { padding: 20px 0 !important; }
+  .day-body.open { padding: 0 0 24px !important; }
+  .day-name { font-weight: 400 !important; font-size: 16px !important; color: rgba(255,245,220,0.8) !important; }
+  .day-focus { font-size: 11px !important; color: rgba(200,169,110,0.45) !important; }
+  .exercise { border-bottom: none !important; padding: 8px 0 !important; }
+  .ex-name, .log-name { color: rgba(255,245,220,0.75) !important; font-weight: 400 !important; }
+  .ex-sets, .ov-ex-s { color: rgba(200,169,110,0.5) !important; }
+  .log-set-btn { border-radius: 0 !important; }
+
+  /* ── PROGRESS ── */
+  .log-item { border-bottom: none !important; padding: 12px 0 !important; }
+  .log-check { background: transparent !important; border: 0.5px solid rgba(200,169,110,0.15) !important; border-radius: 50% !important; }
+  .session-log { border: none !important; background: transparent !important; }
+
+  /* ── SUPPLEMENTS/PEPTIDES — organic ── */
+  .peptide-tag { color: rgba(200,169,110,0.5) !important; border-color: rgba(200,169,110,0.12) !important; background: transparent !important; border-radius: 20px !important; }
+  .stack-priority { border-radius: 20px !important; }
+  .partner-badge { background: transparent !important; border: none !important; border-top: 0.5px solid rgba(255,245,220,0.04) !important; border-radius: 0 !important; }
+
+  /* ── REVEAL SLIDER ── */
+  .reveal-slider { border-radius: 8px !important; border: none !important; }
+  .reveal-tab { border-radius: 8px !important; background: transparent !important; border: 0.5px solid rgba(255,245,220,0.04) !important; }
+  .reveal-tab.active { background: rgba(200,169,110,0.04) !important; border-color: rgba(200,169,110,0.15) !important; }
+
+  /* ── AUTH ── */
+  #screen-auth { background: #000000 !important; }
+  .auth-tab-bar { border-bottom: 0.5px solid rgba(255,245,220,0.04) !important; }
+
+  /* ── COMMUNITY — clean ── */
+  .comm-tab-bar, .ctab-bar { border-bottom: 0.5px solid rgba(255,245,220,0.04) !important; }
+  .ctab { font-weight: 300 !important; color: rgba(255,245,220,0.3) !important; }
+  .ctab.active { color: rgba(200,169,110,0.55) !important; }
+  .forum-section-card { padding: 24px 0 !important; }
+  .forum-section-card:hover { transform: none !important; border-color: transparent !important; }
+  .forum-section-card-title { font-weight: 400 !important; }
+
+  /* ── XP TOAST — subtle ── */
+  #xp-toast { border-radius: 20px !important; background: rgba(0,0,0,0.9) !important; border: 0.5px solid rgba(200,169,110,0.15) !important; }
+  .level-up-name { color: rgba(200,169,110,0.7) !important; font-weight: 300 !important; }
+
+  /* ── ROADMAP ── */
+  .roadmap-phase { padding: 28px 0 !important; }
+  .roadmap-phase::before { background: rgba(200,169,110,0.2) !important; width: 1px !important; }
+  .roadmap-stat { background: transparent !important; border: none !important; border-radius: 0 !important; }
+  .dash-motiv { background: transparent !important; border: none !important; border-radius: 0 !important; }
+
+  /* ── PROGRESS BARS — thin, quiet ── */
+  .progress-bar-wrap, .dash-week-track, .dash-macro-bar-track { background: rgba(255,245,220,0.03) !important; height: 2px !important; }
+  .momentum-fill, .progress-bar, .dash-week-fill, .ov-fill { background: rgba(200,169,110,0.35) !important; }
+
+  /* ── PR BADGE ── */
+  .pr-badge { border-radius: 20px !important; color: rgba(200,169,110,0.6) !important; border-color: rgba(200,169,110,0.2) !important; }
+
+  /* ── FORM MODALS ── */
+  .form-modal-inner, .protocol-modal-inner { background: #000000 !important; border: 0.5px solid rgba(255,245,220,0.04) !important; border-radius: 0 !important; }
+
+  /* ── DISCLAIMER BANNER — barely there ── */
+  [style*="padding:7px 24px 7px 224px"] p { color: rgba(255,245,220,0.25) !important; font-size: 10px !important; }
+
+  /* ── MOBILE ── */
+  @media (max-width: 700px) {
+    nav { border-bottom: none !important; border-right: none !important; background: #000000 !important; width: 100% !important; }
+    .nav-logo { border-right: none !important; }
+    .screen { padding-left: 0 !important; }
+    .container { padding: 40px 20px !important; }
+  }
+
+  /* ═══ TEXT BRIGHTNESS — organic warmth ═══ */
+  /* Labels — whisper quiet */
+  .stat-label, .section-label, .dash-card-label, .protocol-section-label,
+  .stack-card-dose, .roadmap-phase-weeks, .msg-label,
+  .rest-status, .ex-track-lbl, .ov-mc-l, .ov-pg-l, .ov-stat-lbl,
+  .ov-macro-lbl, .dash-week-lbl, .dash-stat-lbl,
+  .form-group label, .intake-label, .comp-tag, .reveal-tab .tab-sub,
+  .hb-live, .live-tag, .coach-panel-context p { color: rgba(255,245,220,0.3) !important; }
+
+  /* Secondary text — readable but soft */
+  .screen-sub, .upload-label, .peptide-summary, .stack-card-why,
+  .coach-subtitle, .ov-sub, .ov-fd, .ov-ai, .ov-coach-reply,
+  .ov-q, .dash-day-line, .ov-daily-q, .roadmap-milestone,
+  .stack-card-timing, .log-date, .msg-ai .msg-label,
+  .thread-card-meta, .feed-item-time, .ov-footer,
+  .nav-user { color: rgba(255,245,220,0.45) !important; }
+
+  /* Gold accents — only where they carry meaning */
+  .day-focus, .streak-fire, .nav-tab.active,
+  .roadmap-phase-title, .peptide-name, .stack-card-name,
+  .coach-title, .ov-brand { color: rgba(200,169,110,0.55) !important; }
+
+  /* Fullscript btn */
+  .fs-link-btn { border-radius: 20px !important; background: transparent !important; }
+
+  /* ═══ OPENING SEQUENCE ═══ */
+  #opening-sequence {
+    position: fixed; inset: 0; z-index: 99999;
+    background: #000000;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    opacity: 1; transition: opacity 0.8s ease;
+  }
+  #opening-sequence.fade-out { opacity: 0; pointer-events: none; }
+  #opening-sequence svg { width: 280px; max-width: 80vw; opacity: 0; transition: opacity 1.2s ease; }
+  #opening-sequence svg.visible { opacity: 1; }
+  #opening-sequence .os-tagline {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 16px; color: rgba(200,169,110,0); letter-spacing: 0.06em;
+    margin-top: 24px; transition: color 1s ease 0.6s;
+  }
+  #opening-sequence .os-tagline.visible { color: rgba(200,169,110,0.65); }
+  #opening-sequence .os-progress {
+    width: 120px; height: 1px; background: rgba(200,169,110,0.12);
+    margin-top: 32px; overflow: hidden; border-radius: 0;
+  }
+  #opening-sequence .os-progress-fill {
+    height: 100%; width: 0; background: rgba(200,169,110,0.5);
+    transition: width 1.8s ease;
+  }
+  #opening-sequence .os-progress-fill.active { width: 100%; }
+
+  /* ═══ NUCLEAR BACKGROUND OVERRIDE ═══ */
+  /* Catch ALL inline hardcoded backgrounds and force pure black system */
+  [style*="background:#161616"],
+  [style*="background: #161616"],
+  [style*="background:#111"],
+  [style*="background: #111"],
+  [style*="background:#0c0c0c"],
+  [style*="background: #0c0c0c"],
+  [style*="background:#1a1a1a"],
+  [style*="background: #1a1a1a"],
+  [style*="background:#080808"],
+  [style*="background: #080808"] {
+    background: transparent !important;
+  }
+  /* Catch inline border-radius */
+  [style*="border-radius:10px"],
+  [style*="border-radius: 10px"],
+  [style*="border-radius:9px"],
+  [style*="border-radius: 9px"],
+  [style*="border-radius:8px"],
+  [style*="border-radius: 8px"],
+  [style*="border-radius:6px"],
+  [style*="border-radius: 6px"],
+  [style*="border-radius:16px"],
+  [style*="border-radius: 16px"] {
+    border-radius: 0 !important;
+  }
+  /* Catch inline white borders */
+  [style*="border:1px solid rgba(255,255,255"],
+  [style*="border: 1px solid rgba(255,255,255"] {
+    border-color: rgba(200,169,110,0.09) !important;
+    border-width: 0.5px !important;
+  }
+  /* Exempt the opening-sequence from background overrides */
+  #opening-sequence, #opening-sequence * { background: revert; }
+  #opening-sequence { background: #000000 !important; }
   </style>
 </head>
-<body style="background:#080808;">
+<body style="background:#000000;">
+
+<!-- ═══ OPENING SEQUENCE ═══ -->
+<div id="opening-sequence">
+  <svg width="280" viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg">
+    <style>
+      .geo  { fill: none; stroke: #c8a96e; stroke-opacity: 0; stroke-width: 0.8; transition: stroke-opacity 1.2s ease; }
+      .geo2 { fill: none; stroke: #c8a96e; stroke-opacity: 0; stroke-width: 1.4; transition: stroke-opacity 1.2s ease; }
+      .wm   { font-family: 'Bebas Neue', 'Arial Narrow', sans-serif; }
+      .tag  { font-family: Georgia, serif; font-style: italic; }
+      .f0  { fill: #c8a96e; fill-opacity: 0; stroke: #000; stroke-width: 0.6; transition: fill-opacity 1.4s ease; }
+      .f1  { fill: #c8a96e; fill-opacity: 0; stroke: #000; stroke-width: 0.6; transition: fill-opacity 1.4s ease 0.1s; }
+      .f2  { fill: #c8a96e; fill-opacity: 0; stroke: #000; stroke-width: 0.6; transition: fill-opacity 1.4s ease 0.2s; }
+      .f3  { fill: #c8a96e; fill-opacity: 0; stroke: #000; stroke-width: 0.6; transition: fill-opacity 1.4s ease 0.3s; }
+      .os-active .geo  { stroke-opacity: 0.45; }
+      .os-active .geo2 { stroke-opacity: 0.75; }
+      .os-active .f0 { fill-opacity: 0.95; }
+      .os-active .f1 { fill-opacity: 0.75; }
+      .os-active .f2 { fill-opacity: 0.55; }
+      .os-active .f3 { fill-opacity: 0.38; }
+      .os-active .wm-stroke { stroke-opacity: 0.9; transition: stroke-opacity 1.6s ease 0.4s; }
+      .os-active .wm-fill { fill-opacity: 1; transition: fill-opacity 1.6s ease 0.6s; }
+      .os-active .wm-line { stroke-opacity: 0.4; transition: stroke-opacity 1.6s ease 0.8s; }
+      .os-active .wm-tag { fill-opacity: 0.65; transition: fill-opacity 1.6s ease 1s; }
+      .wm-stroke { stroke-opacity: 0; }
+      .wm-fill { fill-opacity: 0; }
+      .wm-line { stroke-opacity: 0; }
+      .wm-tag { fill-opacity: 0; }
+    </style>
+    <rect width="680" height="320" fill="#000000"/>
+    <!-- SACRED GEOMETRY -->
+    <circle cx="152" cy="152" r="106" class="geo2"/>
+    <rect x="78" y="82" width="148" height="148" class="geo"/>
+    <circle cx="152" cy="99"  r="53" class="geo"/>
+    <circle cx="152" cy="205" r="53" class="geo"/>
+    <circle cx="106" cy="126" r="53" class="geo"/>
+    <circle cx="198" cy="126" r="53" class="geo"/>
+    <circle cx="106" cy="178" r="53" class="geo"/>
+    <circle cx="198" cy="178" r="53" class="geo"/>
+    <circle cx="152" cy="152" r="53" class="geo"/>
+    <polygon points="152,70 220,108 220,194 152,232 84,194 84,108" class="geo"/>
+    <polygon points="152,232 84,108 220,108" class="geo"/>
+    <polygon points="152,70 84,194 220,194" class="geo"/>
+    <rect x="78" y="82" width="148" height="148" class="geo" transform="rotate(45 152 156)"/>
+    <!-- HUMAN FIGURE -->
+    <polygon points="152,46 144,52 148,64 152,66 156,64 160,52" class="f0"/>
+    <polygon points="144,52 140,60 144,66 148,64" class="f1"/>
+    <polygon points="160,52 156,64 160,66 164,60" class="f2"/>
+    <polygon points="148,64 144,66 146,72 150,74 152,72" class="f1"/>
+    <polygon points="152,66 156,64 158,70 154,74 152,72" class="f2"/>
+    <polygon points="148,72 144,78 148,82 152,80" class="f1"/>
+    <polygon points="152,72 154,74 158,80 156,82 152,80" class="f2"/>
+    <polygon points="144,78 130,80 124,88 132,94 140,90 148,82" class="f0"/>
+    <polygon points="156,80 158,82 164,90 172,94 180,88 170,80" class="f1"/>
+    <polygon points="148,82 140,90 142,100 150,102 152,98" class="f0"/>
+    <polygon points="152,80 152,98 158,100 162,90 156,82" class="f1"/>
+    <polygon points="132,94 124,100 126,112 136,114 142,100 140,90" class="f0"/>
+    <polygon points="140,90 142,100 148,104 150,102" class="f1"/>
+    <polygon points="172,94 180,100 178,112 168,114 162,100 164,90" class="f2"/>
+    <polygon points="164,90 162,100 156,104 154,102 156,82" class="f1"/>
+    <polygon points="142,100 148,104 150,114 144,116 136,114" class="f1"/>
+    <polygon points="158,100 156,104 154,114 160,116 168,114" class="f2"/>
+    <polygon points="148,104 152,102 156,104 154,114 150,114" class="f0"/>
+    <polygon points="144,116 150,114 150,124 146,126 140,122" class="f1"/>
+    <polygon points="150,114 156,114 160,122 154,126 150,124" class="f2"/>
+    <polygon points="140,122 146,126 144,136 138,132" class="f0"/>
+    <polygon points="154,126 160,122 162,132 156,136" class="f1"/>
+    <polygon points="146,126 150,124 154,126 156,136 150,138 144,136" class="f2"/>
+    <polygon points="138,132 144,136 142,146 136,142" class="f1"/>
+    <polygon points="156,136 162,132 164,142 158,146" class="f2"/>
+    <polygon points="144,136 150,138 156,136 158,146 150,150 142,146" class="f0"/>
+    <polygon points="136,142 142,146 140,156 130,154" class="f1"/>
+    <polygon points="158,146 164,142 170,154 160,156" class="f2"/>
+    <polygon points="142,146 150,150 158,146 160,156 150,160 140,156" class="f1"/>
+    <polygon points="124,88 108,92 100,100 112,104 124,100" class="f0"/>
+    <polygon points="108,92 90,96 82,104 94,108 100,100" class="f1"/>
+    <polygon points="90,96 72,100 64,108 76,112 82,104" class="f2"/>
+    <polygon points="72,100 56,104 50,110 62,114 64,108" class="f3"/>
+    <polygon points="50,110 44,106 38,112 46,116" class="f2"/>
+    <polygon points="44,106 40,102 36,108 38,112" class="f3"/>
+    <polygon points="180,88 196,92 204,100 192,104 180,100" class="f1"/>
+    <polygon points="196,92 214,96 222,104 210,108 204,100" class="f2"/>
+    <polygon points="214,96 232,100 240,108 228,112 222,104" class="f1"/>
+    <polygon points="232,100 248,104 254,110 242,114 240,108" class="f2"/>
+    <polygon points="254,110 260,106 266,112 258,116" class="f1"/>
+    <polygon points="260,106 264,102 268,108 266,112" class="f3"/>
+    <polygon points="134,156 150,160 148,172 132,168" class="f0"/>
+    <polygon points="132,168 148,172 146,186 130,182" class="f1"/>
+    <polygon points="130,182 146,186 144,200 128,196" class="f2"/>
+    <polygon points="128,196 144,200 142,214 126,210" class="f1"/>
+    <polygon points="126,210 142,214 140,228 124,224" class="f0"/>
+    <polygon points="124,224 140,228 138,242 122,238" class="f2"/>
+    <polygon points="122,238 138,242 135,250 118,247" class="f1"/>
+    <polygon points="118,247 135,250 132,256 115,253" class="f3"/>
+    <polygon points="170,156 154,160 156,172 172,168" class="f1"/>
+    <polygon points="172,168 156,172 158,186 174,182" class="f2"/>
+    <polygon points="174,182 158,186 160,200 176,196" class="f0"/>
+    <polygon points="176,196 160,200 162,214 178,210" class="f1"/>
+    <polygon points="178,210 162,214 164,228 180,224" class="f2"/>
+    <polygon points="180,224 164,228 166,242 182,238" class="f0"/>
+    <polygon points="182,238 166,242 169,250 186,247" class="f1"/>
+    <polygon points="186,247 169,250 172,256 189,253" class="f3"/>
+    <!-- WORDMARK -->
+    <text x="292" y="152" class="wm wm-stroke" font-size="90"
+      fill="none" stroke="#c8a96e" stroke-width="1.2"
+      letter-spacing="0.06em">WYLDE</text>
+    <text x="294" y="212" class="wm wm-fill" font-size="58" fill="#c8a96e" letter-spacing="0.1em">SELF</text>
+    <line x1="294" y1="224" x2="626" y2="224" class="wm-line" stroke="#c8a96e" stroke-width="0.6"/>
+    <text x="295" y="248" class="tag wm-tag" font-size="14" fill="#c8a96e">Train with the person you're becoming</text>
+  </svg>
+  <div class="os-tagline">Train with the person you're becoming</div>
+  <div class="os-progress"><div class="os-progress-fill"></div></div>
+</div>
+<script>
+(function(){
+  var os = document.getElementById('opening-sequence');
+  if (!os) return;
+  // Check if user has seen it before in this session
+  if (sessionStorage.getItem('ws_intro_seen')) { os.remove(); return; }
+  var svg = os.querySelector('svg');
+  var tagline = os.querySelector('.os-tagline');
+  var fill = os.querySelector('.os-progress-fill');
+  // Phase 1: fade in logo
+  setTimeout(function(){ svg.classList.add('visible'); svg.classList.add('os-active'); }, 200);
+  // Phase 2: tagline
+  setTimeout(function(){ tagline.classList.add('visible'); }, 800);
+  // Phase 3: progress line
+  setTimeout(function(){ fill.classList.add('active'); }, 1200);
+  // Phase 4: fade out and remove
+  setTimeout(function(){
+    os.classList.add('fade-out');
+    sessionStorage.setItem('ws_intro_seen', '1');
+    setTimeout(function(){ os.remove(); }, 900);
+  }, 3200);
+})();
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 
 <!-- AUTH SCREEN -->
@@ -759,7 +1248,7 @@
       <button id="authTabSignIn" onclick="switchAuthTab('signin')" style="color:var(--gold);border-bottom:2px solid var(--gold);">Sign In</button>
       <button id="authTabCreate" onclick="switchAuthTab('create')" style="color:var(--muted);border-bottom:2px solid transparent;">Create Account</button>
     </div>
-    <div id="authError" style="display:none;background:rgba(220,90,30,0.1);border:1px solid rgba(220,90,30,0.4);color:#ff7040;font-size:12px;padding:12px 16px;margin-bottom:16px;border-radius:8px;"></div>
+    <div id="authError" style="display:none;background:rgba(200,169,110,0.06);border:0.5px solid rgba(200,169,110,0.25);color:var(--gold);font-size:12px;padding:12px 16px;margin-bottom:16px;border-radius:8px;"></div>
     <div style="display:flex;flex-direction:column;gap:12px;">
       <input id="authEmail" class="input" type="email" placeholder="Email address" autocomplete="email"/>
       <input id="authPassword" class="input" type="password" placeholder="Password" autocomplete="current-password"/>
@@ -799,14 +1288,14 @@
 </nav>
 
 <!-- DISCLAIMER BANNER -->
-<div style="background:#0c0c0c;border-bottom:1px solid var(--border);padding:7px 24px 7px 224px;text-align:center;position:fixed;top:0;left:0;right:0;z-index:199;">
-  <p style="font-size:11px;letter-spacing:0.08em;color:rgba(200,169,110,0.7);font-family:'DM Sans',sans-serif;">
-    Early Access Demo — Some features are still being built and may not work as expected. We're improving things daily.
+<div style="background:#000000;border-bottom:none;padding:7px 24px 7px 204px;text-align:center;position:fixed;top:0;left:0;right:0;z-index:199;">
+  <p style="font-size:10px;letter-spacing:0.06em;color:rgba(255,245,220,0.2);font-family:var(--font-ui);">
+    Early access — some features still in progress
   </p>
 </div>
 
 <!-- ═══ INTRO VIDEO ═══ -->
-<div id="screen-intro" style="display:none;position:fixed;inset:0;z-index:9999;background:#080808;display:none;align-items:center;justify-content:center;flex-direction:column;">
+<div id="screen-intro" style="display:none;position:fixed;inset:0;z-index:9999;background:#000000;display:none;align-items:center;justify-content:center;flex-direction:column;">
   <video id="introVideo" src="intro.mp4" playsinline webkit-playsinline style="width:100%;max-width:500px;border-radius:16px;"></video>
   <button onclick="skipIntro()" style="margin-top:24px;background:transparent;border:1px solid rgba(200,169,110,0.3);color:var(--gold,#c8a96e);padding:10px 32px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer;">SKIP</button>
 </div>
@@ -815,7 +1304,7 @@
 <div class="screen active" id="screen-onboard">
   <div class="container">
     <p class="section-label">Welcome</p>
-    <h1 class="screen-title"><span class="pulse-dot" style="margin-right:8px;"></span>Let's build<br>your profile</h1>
+    <h1 class="screen-title">Let's build your profile</h1>
     <p class="screen-sub">Tell us about yourself so we can generate your future self and build your program.</p>
     <div class="gold-rule"></div>
 
@@ -943,10 +1432,8 @@
 <div class="screen" id="screen-dashboard">
   <div class="container">
     <p class="section-label">Dashboard</p>
-    <div class="screen-title-row">
-      <h1 class="screen-title" style="margin-bottom:0;">Today,<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);" id="dashGreet">let's work</span></h1>
-      <span class="pulse-dot" style="margin-top:8px;"></span>
-    </div>
+    <h1 class="screen-title" style="margin-bottom:0;">Today</h1>
+    <p class="screen-sub" style="margin-bottom:32px;"><span id="dashGreet" style="font-family:var(--ff-serif);font-style:italic;">Let's work</span></p>
     <div class="gold-rule"></div>
 
     <!-- DASH HEADER -->
@@ -1019,7 +1506,7 @@
 <div class="screen" id="screen-overview">
 <div class="ov-shell">
   <div class="ov-brand">Wylde Self</div>
-  <div class="ov-title"><span class="pulse-dot" style="margin-right:8px;"></span>Today's Protocol</div>
+  <div class="ov-title">Today's Protocol</div>
   <div class="ov-sub" id="ov-sub">Week 1 of 12 · Build muscle · Intermediate</div>
   <div class="ov-streak"><span class="ov-streak-dot"></span><span id="ov-streak-text">0 day streak — don't break it</span></div>
   <div class="ov-q" id="ov-q">"What would the version of you that's already won do today?"</div>
