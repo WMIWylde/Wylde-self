@@ -46,11 +46,11 @@
       --ff-serif:    'Cormorant Garamond', serif;
       --ff-body:     'Inter', system-ui, sans-serif;
       --font-editorial: 'Cormorant Garamond', serif;
-      /* ── Radius — sharp corners ── */
-      --r-sm:  0px;
-      --r-md:  0px;
-      --r-lg:  0px;
-      --r-xl:  0px;
+      /* ── Radius — soft rounded ── */
+      --r-sm:  8px;
+      --r-md:  14px;
+      --r-lg:  18px;
+      --r-xl:  24px;
     }
     html, body { background: #000000 !important; color: var(--text); font-family: var(--font-ui); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
@@ -97,7 +97,7 @@
     .input { background: rgba(200,169,110,0.04); border: 0.5px solid rgba(200,169,110,0.15); color: rgba(255,245,220,0.95); font-family: var(--font-ui); font-size: 14px; padding: 14px 18px; outline: none; width: 100%; transition: border-color 0.2s; border-radius: 0; -webkit-appearance: none; }
     .input:focus { border-color: rgba(200,169,110,0.45); }
     .input::placeholder { color: rgba(200,169,110,0.35); }
-    .card { background: transparent; border-top: 0.5px solid rgba(200,169,110,0.09); padding: 36px 0; margin-bottom: 16px; border-radius: 0; }
+    .card { background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.05); padding: 20px; margin-bottom: 12px; border-radius: 14px; }
 
     /* ONBOARDING */
     .onboard-form { display: flex; flex-direction: column; gap: 16px; }
@@ -749,290 +749,458 @@
   .feed-item-body { font-size:14px; color:var(--text); line-height:1.65; }
 
   /* ═══════════════════════════════════════════════════════════
-     ORGANIC CALM SYSTEM — whitespace as separator, minimal UI
+     CARD LAYOUT SYSTEM — soft containers, clear hierarchy
   ═══════════════════════════════════════════════════════════ */
 
   /* ── PHILOSOPHY ──
-     1. Whitespace IS the separator. No borders unless essential.
-     2. Gold appears sparingly — only for data, active states, and CTAs.
-     3. Large breathing room between sections.
-     4. Fewer visible elements = premium feel.
-     5. Soft transitions, no abrupt edges.
+     1. Cards = soft dark containers with subtle fill + rounded corners
+     2. Gold sparingly — active states, key data, CTAs only
+     3. Clear hierarchy: section titles bold, labels quiet
+     4. Generous inner padding, consistent gaps between cards
+     5. Feels like a meditation app with structure
   */
 
-  /* ── GLOBAL RESET — remove all visual noise ── */
+  /* ── GLOBAL — kill noisy animations but keep transitions ── */
   * { animation-duration: 0s !important; animation: none !important; }
-  /* Re-enable only the opening sequence animations */
   #opening-sequence, #opening-sequence * { animation: revert !important; animation-duration: revert !important; }
   .os-progress-fill { transition: width 1.8s ease !important; }
 
-  /* ── SPACING — generous breathing room ── */
-  .container { max-width: 640px !important; padding: 60px 32px !important; }
-  .screen { padding-bottom: 80px !important; }
-  .section-label { font-size: 10px !important; font-weight: 400 !important; letter-spacing: 0.2em !important; color: rgba(200,169,110,0.4) !important; margin-bottom: 32px !important; }
-  .screen-title { font-size: clamp(32px, 5vw, 48px) !important; font-weight: 300 !important; letter-spacing: 0.02em !important; line-height: 1.15 !important; margin-bottom: 12px !important; color: rgba(255,245,220,0.88) !important; }
-  .screen-sub { font-size: 15px !important; line-height: 1.8 !important; margin-bottom: 56px !important; color: rgba(255,245,220,0.5) !important; }
-  .gold-rule { width: 32px !important; height: 0.5px !important; background: rgba(200,169,110,0.25) !important; margin-bottom: 56px !important; }
-
-  /* ── CARDS — no borders, just space ── */
+  /* ── CARD TOKEN ── */
+  /* Reusable card look: subtle dark fill, soft border, rounded */
+  .ws-card,
   .day-card, .stat-box, .session-log, .peptide-card, .stack-card,
   .roadmap-phase, .dash-ring-card, .dash-macro-card, .dash-profile-card,
   .dash-stat-row, .ov-w, .ov-widget, .feed-post, .feed-item,
   .lb-row, .lb-item, .thread-card, .forum-section-card,
-  .chat-messages, .form-modal-inner, .protocol-modal-inner,
-  .roadmap-stat, .ov-mc, .ov-pg, .ov-stat-cell,
-  .wcard, .dash-card {
-    background: transparent !important;
-    border: none !important;
-    border-radius: 0 !important;
+  .roadmap-stat, .wcard, .dash-card {
+    background: rgba(255,255,255,0.035) !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
+    border-radius: 14px !important;
     box-shadow: none !important;
+    padding: 20px !important;
+    margin-bottom: 12px !important;
   }
 
-  /* Sections separated by whitespace, not lines */
-  .day-card, .peptide-card, .stack-card, .roadmap-phase,
-  .feed-item, .lb-item, .thread-card, .forum-section-card {
-    padding: 24px 0 !important;
-    margin-bottom: 0 !important;
-  }
-  /* Only use a faint line between repeating list items */
-  .day-card + .day-card, .feed-item + .feed-item,
-  .lb-item + .lb-item, .thread-card + .thread-card,
-  .peptide-card + .peptide-card, .stack-card + .stack-card,
-  .log-item + .log-item, .exercise + .exercise {
-    border-top: 0.5px solid rgba(255,245,220,0.04) !important;
+  /* ── SPACING ── */
+  .container { max-width: 680px !important; padding: 48px 28px !important; }
+  .screen { padding-bottom: 60px !important; }
+
+  /* ── SECTION LABELS — small caps, quiet ── */
+  .section-label {
+    font-size: 11px !important; font-weight: 500 !important;
+    letter-spacing: 0.12em !important; text-transform: uppercase !important;
+    color: rgba(255,245,220,0.5) !important; margin-bottom: 20px !important;
   }
 
-  /* Stat boxes — clean grid, no borders */
-  .stat-box { padding: 28px 16px !important; text-align: center !important; }
-  .stats-grid { gap: 24px !important; }
-  .stat-num { font-size: 40px !important; font-weight: 300 !important; color: rgba(200,169,110,0.7) !important; }
-  .stat-label { font-size: 10px !important; font-weight: 400 !important; letter-spacing: 0.12em !important; color: rgba(255,245,220,0.35) !important; margin-top: 8px !important; }
+  /* ── SCREEN TITLES — bold but warm ── */
+  .screen-title {
+    font-size: clamp(28px, 5vw, 40px) !important;
+    font-weight: 600 !important; letter-spacing: 0.01em !important;
+    line-height: 1.2 !important; margin-bottom: 8px !important;
+    color: rgba(255,245,220,0.92) !important;
+  }
+  .screen-sub {
+    font-size: 15px !important; line-height: 1.7 !important;
+    margin-bottom: 32px !important; color: rgba(255,245,220,0.55) !important;
+  }
+  .gold-rule { display: none !important; } /* cards provide the separation now */
 
-  /* ── DASHBOARD — calm, airy ── */
-  .dash-card { padding: 28px 0 !important; border: none !important; }
-  .dash-card + .dash-card { border-top: 0.5px solid rgba(255,245,220,0.04) !important; }
-  .dash-card-label { font-size: 10px !important; font-weight: 400 !important; letter-spacing: 0.15em !important; color: rgba(200,169,110,0.4) !important; margin-bottom: 12px !important; }
-  .dash-drag-handle { display: none !important; } /* hide drag dots — visual noise */
-  .wcard { padding: 28px 0 !important; border: none !important; box-shadow: none !important; }
+  /* ── STAT BOXES — inside-card feel ── */
+  .stat-box { text-align: center !important; }
+  .stats-grid { gap: 12px !important; }
+  .stat-num { font-size: 32px !important; font-weight: 600 !important; color: rgba(200,169,110,0.85) !important; }
+  .stat-label { font-size: 11px !important; font-weight: 400 !important; letter-spacing: 0.06em !important; color: rgba(255,245,220,0.45) !important; margin-top: 6px !important; }
+
+  /* ── DASHBOARD ── */
+  .dash-card-label {
+    font-size: 11px !important; font-weight: 500 !important;
+    letter-spacing: 0.1em !important; color: rgba(255,245,220,0.5) !important;
+    margin-bottom: 10px !important; text-transform: uppercase !important;
+  }
+  .dash-drag-handle { display: none !important; }
   .wcard:hover { transform: none !important; box-shadow: none !important; }
-  .dash-header .wcard, .dash-header.wcard { padding: 0 !important; }
-  .dash-greeting-line { font-weight: 300 !important; color: rgba(255,245,220,0.35) !important; }
-  .dash-name { font-weight: 300 !important; font-size: 28px !important; color: rgba(255,245,220,0.85) !important; }
-  .dash-day-line { color: rgba(255,245,220,0.4) !important; }
+  .dash-header.wcard, .dash-header .wcard { padding: 24px !important; }
+  .dash-greeting-line { font-weight: 400 !important; color: rgba(255,245,220,0.45) !important; font-size: 14px !important; }
+  .dash-name { font-weight: 600 !important; font-size: 26px !important; color: rgba(255,245,220,0.92) !important; }
+  .dash-day-line { color: rgba(255,245,220,0.5) !important; font-size: 13px !important; }
 
-  /* Momentum — subtle, not loud */
-  .momentum-bar { margin: 20px 0 4px !important; }
-  .momentum-track { height: 2px !important; background: rgba(255,245,220,0.04) !important; border-radius: 1px !important; }
-  .momentum-fill { border-radius: 1px !important; background: rgba(200,169,110,0.4) !important; }
-  .mday { height: 3px !important; border-radius: 1px !important; background: rgba(255,245,220,0.04) !important; }
-  .mday.done { background: rgba(200,169,110,0.35) !important; }
-  .mday.today { background: rgba(200,169,110,0.6) !important; box-shadow: none !important; }
+  /* Momentum bar */
+  .momentum-bar { margin: 16px 0 4px !important; }
+  .momentum-track { height: 4px !important; background: rgba(255,255,255,0.06) !important; border-radius: 4px !important; }
+  .momentum-fill { border-radius: 4px !important; background: rgba(200,169,110,0.55) !important; }
+  .mday { height: 4px !important; border-radius: 2px !important; background: rgba(255,255,255,0.06) !important; }
+  .mday.done { background: rgba(200,169,110,0.45) !important; }
+  .mday.today { background: rgba(200,169,110,0.75) !important; box-shadow: none !important; }
 
-  /* ── BUTTONS — quieter, taller touch targets ── */
-  .btn { font-size: 10px !important; font-weight: 400 !important; letter-spacing: 0.15em !important; padding: 14px 24px !important; border: 0.5px solid rgba(255,245,220,0.08) !important; color: rgba(255,245,220,0.55) !important; transition: all 0.3s ease !important; }
-  .btn:hover { border-color: rgba(200,169,110,0.25) !important; color: rgba(200,169,110,0.75) !important; background: transparent !important; }
-  .btn::after { display: none !important; }
-
-  /* Primary CTA — slightly more visible */
-  .btn-primary, .btn-gold, .ov-btn-g { border-color: rgba(200,169,110,0.2) !important; color: rgba(200,169,110,0.65) !important; }
-  .btn-primary:hover, .btn-gold:hover, .ov-btn-g:hover { border-color: rgba(200,169,110,0.4) !important; color: rgba(200,169,110,0.85) !important; }
-
-  .btn-ember, .btn-success, .btn-blue, .btn-purple {
-    background: transparent !important; border-radius: 0 !important;
+  /* ── BUTTONS — rounded, visible ── */
+  .btn {
+    font-size: 11px !important; font-weight: 500 !important;
+    letter-spacing: 0.1em !important; padding: 12px 22px !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: rgba(255,245,220,0.65) !important;
+    border-radius: 10px !important;
+    transition: all 0.2s ease !important;
+    text-transform: uppercase !important;
   }
+  .btn:hover {
+    border-color: rgba(200,169,110,0.35) !important;
+    color: rgba(200,169,110,0.85) !important;
+    background: rgba(200,169,110,0.06) !important;
+  }
+  .btn::after { display: none !important; }
+  .btn-primary, .btn-gold, .ov-btn-g {
+    border-color: rgba(200,169,110,0.3) !important;
+    color: rgba(200,169,110,0.8) !important;
+    background: rgba(200,169,110,0.06) !important;
+  }
+  .btn-primary:hover, .btn-gold:hover, .ov-btn-g:hover {
+    border-color: rgba(200,169,110,0.5) !important;
+    color: rgba(200,169,110,0.95) !important;
+    background: rgba(200,169,110,0.1) !important;
+  }
+  .btn-ember { border-radius: 10px !important; }
+  .btn-success { border-radius: 10px !important; }
+  .btn-blue { border-radius: 10px !important; }
+  .btn-purple { border-radius: 10px !important; }
 
-  /* ── INPUTS — minimal ── */
+  /* ── INPUTS — contained ── */
   .input, .wfield, .intake-textarea, .ov-cin, .alt-workout-input, .coach-input {
-    background: transparent !important;
-    border: none !important;
-    border-bottom: 0.5px solid rgba(255,245,220,0.06) !important;
-    border-radius: 0 !important;
-    padding: 14px 0 !important;
-    font-size: 15px !important;
-    font-weight: 300 !important;
-    color: rgba(255,245,220,0.85) !important;
-    transition: border-color 0.3s ease !important;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.07) !important;
+    border-radius: 10px !important;
+    padding: 14px 16px !important;
+    font-size: 14px !important; font-weight: 400 !important;
+    color: rgba(255,245,220,0.9) !important;
+    transition: border-color 0.2s ease !important;
   }
   .input:focus, .wfield:focus, .intake-textarea:focus, .ov-cin:focus, .coach-input:focus {
-    border-bottom-color: rgba(200,169,110,0.3) !important;
+    border-color: rgba(200,169,110,0.35) !important;
     outline: none !important;
   }
   .input::placeholder, .wfield::placeholder, .intake-textarea::placeholder,
   .ov-cin::placeholder, .coach-input::placeholder,
   .chat-input::placeholder, .coach-panel-input::placeholder,
-  .alt-workout-input::placeholder { color: rgba(255,245,220,0.2) !important; }
+  .alt-workout-input::placeholder { color: rgba(255,245,220,0.25) !important; }
 
-  /* ── PILLS / TAGS — softer ── */
+  /* ── PILLS / TAGS ── */
   .pill, .timeline-btn, .alt-pill, .intake-opt, .intake-scale-btn,
   .intake-yn-btn, .ov-tag, .ov-ft, .ov-muscle-pill, .ov-tl-btn {
-    font-size: 11px !important; font-weight: 400 !important; letter-spacing: 0.06em !important;
-    border: 0.5px solid rgba(255,245,220,0.06) !important;
-    color: rgba(255,245,220,0.4) !important;
-    padding: 10px 16px !important;
-    border-radius: 20px !important; /* organic, soft shape */
-    transition: all 0.3s ease !important;
+    font-size: 12px !important; font-weight: 500 !important; letter-spacing: 0.04em !important;
+    border: 1px solid rgba(255,255,255,0.07) !important;
+    color: rgba(255,245,220,0.5) !important;
+    padding: 9px 16px !important;
+    border-radius: 20px !important;
+    background: rgba(255,255,255,0.03) !important;
+    transition: all 0.2s ease !important;
   }
   .pill:hover, .timeline-btn:hover, .alt-pill:hover, .intake-opt:hover,
-  .ov-tag:hover, .ov-ft:hover { border-color: rgba(200,169,110,0.2) !important; color: rgba(255,245,220,0.65) !important; }
+  .ov-tag:hover, .ov-ft:hover { border-color: rgba(200,169,110,0.25) !important; color: rgba(255,245,220,0.7) !important; }
   .pill.selected, .timeline-btn.active, .alt-pill.active,
   .intake-opt.selected, .intake-scale-btn.selected, .intake-yn-btn.selected,
   .ov-tag.ov-sel, .ov-ft.ov-on, .ov-tl-btn.active {
-    border-color: rgba(200,169,110,0.3) !important;
+    border-color: rgba(200,169,110,0.35) !important;
+    background: rgba(200,169,110,0.08) !important;
+    color: rgba(200,169,110,0.85) !important;
+  }
+
+  /* ── NAV — clean sidebar ── */
+  nav {
+    border-right: 1px solid rgba(255,255,255,0.04) !important;
+    background: rgba(0,0,0,0.95) !important; width: 200px !important;
+  }
+  .nav-logo {
+    border-bottom: 1px solid rgba(255,255,255,0.04) !important;
+    padding: 28px 24px 24px !important;
+    font-weight: 500 !important; font-size: 18px !important;
+    letter-spacing: 0.14em !important;
+  }
+  .nav-tab {
+    font-size: 13px !important; font-weight: 400 !important;
+    letter-spacing: 0.02em !important; padding: 11px 24px !important;
+    color: rgba(255,245,220,0.4) !important;
+    border-left: 2px solid transparent !important;
+    text-transform: none !important;
+    transition: all 0.15s ease !important;
+  }
+  .nav-tab:hover { color: rgba(255,245,220,0.7) !important; background: rgba(255,255,255,0.02) !important; }
+  .nav-tab.active {
+    color: rgba(200,169,110,0.9) !important;
+    background: rgba(200,169,110,0.04) !important;
+    border-left-color: rgba(200,169,110,0.6) !important;
+  }
+  .nav-tab.active::after { display: none !important; }
+  .nav-footer { border-top: 1px solid rgba(255,255,255,0.04) !important; }
+  .screen { padding-left: 200px !important; }
+
+  /* Level badge */
+  .level-badge {
     background: rgba(200,169,110,0.06) !important;
+    border: 1px solid rgba(200,169,110,0.15) !important;
+    border-radius: 20px !important;
+    padding: 4px 10px !important;
+    font-size: 11px !important;
     color: rgba(200,169,110,0.7) !important;
   }
+  .pulse-dot { width: 5px !important; height: 5px !important; background: rgba(200,169,110,0.6) !important; border-radius: 50% !important; }
 
-  /* ── NAV — quieter ── */
-  nav { border-right: none !important; background: #000000 !important; width: 180px !important; }
-  .nav-logo { border-bottom: none !important; padding: 40px 24px 32px !important; font-weight: 300 !important; font-size: 16px !important; letter-spacing: 0.18em !important; }
-  .nav-tab { font-size: 11px !important; font-weight: 300 !important; letter-spacing: 0.08em !important; padding: 12px 24px !important; color: rgba(255,245,220,0.3) !important; border-left: none !important; text-transform: none !important; }
-  .nav-tab:hover { color: rgba(255,245,220,0.6) !important; background: transparent !important; }
-  .nav-tab.active { color: rgba(200,169,110,0.65) !important; background: transparent !important; border-left: none !important; }
-  .nav-tab.active::after { display: none !important; } /* remove the dot */
-  .nav-footer { border-top: none !important; }
-  .screen { padding-left: 180px !important; }
-
-  /* Level badge — barely visible */
-  .level-badge { border: none !important; background: transparent !important; padding: 0 !important; font-size: 10px !important; color: rgba(200,169,110,0.4) !important; border-radius: 0 !important; }
-  .pulse-dot { width: 3px !important; height: 3px !important; background: rgba(200,169,110,0.4) !important; }
-
-  /* ── HEARTBEAT LINE — hide it, too busy ── */
+  /* ── HEARTBEAT — hide ── */
   .heartbeat-line, .heartbeat-row { display: none !important; }
-  .screen { padding-bottom: 40px !important; }
 
-  /* ── COACH SIDEBAR — clean ── */
-  .coach-panel, .coach-sidebar { background: #000000 !important; border-left: 0.5px solid rgba(255,245,220,0.04) !important; }
-  .coach-header { border-bottom: none !important; }
-  .coach-fab, .coach-btn { background: transparent !important; border: 0.5px solid rgba(200,169,110,0.15) !important; box-shadow: none !important; }
-  .coach-fab svg, .coach-btn svg { fill: rgba(200,169,110,0.5) !important; }
-  .chat-send, .coach-send, .coach-panel-send { background: transparent !important; border: 0.5px solid rgba(200,169,110,0.2) !important; color: rgba(200,169,110,0.55) !important; border-radius: 0 !important; }
+  /* ── COACH SIDEBAR ── */
+  .coach-panel, .coach-sidebar {
+    background: rgba(0,0,0,0.97) !important;
+    border-left: 1px solid rgba(255,255,255,0.05) !important;
+  }
+  .coach-header { border-bottom: 1px solid rgba(255,255,255,0.04) !important; }
+  .coach-fab, .coach-btn {
+    background: rgba(200,169,110,0.06) !important;
+    border: 1px solid rgba(200,169,110,0.2) !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+  }
+  .coach-fab svg, .coach-btn svg { fill: rgba(200,169,110,0.6) !important; }
+  .chat-send, .coach-send, .coach-panel-send {
+    background: rgba(200,169,110,0.08) !important;
+    border: 1px solid rgba(200,169,110,0.25) !important;
+    color: rgba(200,169,110,0.7) !important;
+    border-radius: 10px !important;
+  }
   .msg-ai .msg-bubble, .coach-msg-ai .coach-msg-bubble, .coach-msg.assistant .coach-msg-bubble {
-    background: transparent !important; border: none !important; border-radius: 0 !important;
-    padding-left: 0 !important; border-left: 0.5px solid rgba(200,169,110,0.12) !important;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
+    border-radius: 14px 14px 14px 4px !important;
+    padding: 14px 16px !important;
   }
   .msg-user .msg-bubble, .coach-msg-user .coach-msg-bubble, .coach-msg.user .coach-msg-bubble {
-    background: rgba(200,169,110,0.04) !important; border: none !important; border-radius: 0 !important;
-    color: rgba(255,245,220,0.85) !important;
+    background: rgba(200,169,110,0.08) !important;
+    border: 1px solid rgba(200,169,110,0.15) !important;
+    border-radius: 14px 14px 4px 14px !important;
+    color: rgba(255,245,220,0.9) !important;
+    padding: 14px 16px !important;
   }
   .chat-messages { background: transparent !important; border: none !important; }
-  .chat-input-row { border: none !important; border-top: 0.5px solid rgba(255,245,220,0.04) !important; }
+  .chat-input-row {
+    border: none !important;
+    border-top: 1px solid rgba(255,255,255,0.05) !important;
+  }
   .chat-input, .coach-panel-input { background: transparent !important; }
-  .coach-input-wrap { border-top: 0.5px solid rgba(255,245,220,0.04) !important; }
-  .coach-typing { background: transparent !important; border: none !important; border-radius: 0 !important; }
+  .coach-input-wrap { border-top: 1px solid rgba(255,255,255,0.05) !important; }
+  .coach-typing {
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
+    border-radius: 14px !important;
+  }
 
-  /* ── OVERVIEW — spacious ── */
-  .ov-w { border: none !important; padding: 20px 0 !important; }
-  .ov-w + .ov-w { border-top: 0.5px solid rgba(255,245,220,0.03) !important; }
-  .ov-wh { border-bottom: none !important; padding: 8px 0 !important; }
-  .ov-wb { padding: 8px 0 20px !important; }
-  .ov-wt { color: rgba(200,169,110,0.45) !important; font-weight: 400 !important; }
-  .ov-btn { border-radius: 0 !important; background: transparent !important; border: 0.5px solid rgba(255,245,220,0.06) !important; color: rgba(255,245,220,0.45) !important; font-size: 10px !important; }
-  .ov-btn-g { border-color: rgba(200,169,110,0.15) !important; color: rgba(200,169,110,0.55) !important; }
-  .ov-mc, .ov-pg, .ov-stat-cell { background: transparent !important; border: none !important; border-radius: 0 !important; }
-  .ov-track { background: rgba(255,245,220,0.03) !important; border-radius: 1px !important; height: 2px !important; }
-  .ov-fill { border-radius: 1px !important; }
-  .ov-sb { border-radius: 0 !important; background: transparent !important; border: 0.5px solid rgba(255,245,220,0.06) !important; }
-  .ov-streak { border-radius: 20px !important; background: transparent !important; border: 0.5px solid rgba(200,169,110,0.12) !important; }
-  .ov-ai, .ov-cbub { background: transparent !important; border-radius: 0 !important; border: none !important; border-left: 0.5px solid rgba(200,169,110,0.15) !important; }
-  .ov-q { border-left: 0.5px solid rgba(200,169,110,0.15) !important; }
-  .ov-grid { gap: 0 !important; }
-  .ov-big { font-weight: 300 !important; color: rgba(255,245,220,0.75) !important; }
-  .ov-dim { color: rgba(255,245,220,0.3) !important; }
-  .ov-brand { font-weight: 300 !important; font-size: 14px !important; letter-spacing: 0.2em !important; color: rgba(200,169,110,0.35) !important; }
-  .ov-title { font-weight: 300 !important; font-size: 28px !important; color: rgba(255,245,220,0.8) !important; }
+  /* ── OVERVIEW — card containers ── */
+  .ov-w {
+    padding: 20px !important; margin-bottom: 12px !important;
+  }
+  .ov-w + .ov-w { border-top: none !important; }
+  .ov-wh { border-bottom: none !important; padding: 0 0 8px !important; }
+  .ov-wb { padding: 4px 0 0 !important; }
+  .ov-wt { color: rgba(255,245,220,0.7) !important; font-weight: 500 !important; font-size: 14px !important; }
+  .ov-we { color: rgba(200,169,110,0.6) !important; font-size: 11px !important; }
+  .ov-btn {
+    border-radius: 10px !important;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.07) !important;
+    color: rgba(255,245,220,0.55) !important;
+    font-size: 11px !important;
+  }
+  .ov-btn-g {
+    border-color: rgba(200,169,110,0.2) !important;
+    color: rgba(200,169,110,0.7) !important;
+    background: rgba(200,169,110,0.05) !important;
+  }
+  .ov-mc, .ov-pg, .ov-stat-cell {
+    background: rgba(255,255,255,0.02) !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 12px 8px !important;
+  }
+  .ov-track { background: rgba(255,255,255,0.06) !important; border-radius: 4px !important; height: 4px !important; }
+  .ov-fill { border-radius: 4px !important; }
+  .ov-sb {
+    border-radius: 10px !important;
+    background: rgba(255,255,255,0.04) !important;
+    border: 1px solid rgba(255,255,255,0.07) !important;
+  }
+  .ov-streak {
+    border-radius: 20px !important;
+    background: rgba(200,169,110,0.05) !important;
+    border: 1px solid rgba(200,169,110,0.15) !important;
+  }
+  .ov-ai, .ov-cbub {
+    background: rgba(255,255,255,0.02) !important;
+    border-radius: 10px !important;
+    border: none !important;
+    border-left: 2px solid rgba(200,169,110,0.2) !important;
+    padding: 10px 14px !important;
+    margin-top: 8px !important;
+  }
+  .ov-q {
+    border-left: 2px solid rgba(200,169,110,0.25) !important;
+    padding: 8px 14px !important;
+    color: rgba(255,245,220,0.5) !important;
+  }
+  .ov-grid { gap: 12px !important; }
+  .ov-big { font-weight: 600 !important; color: rgba(255,245,220,0.85) !important; }
+  .ov-dim { color: rgba(255,245,220,0.4) !important; }
+  .ov-brand { font-weight: 500 !important; font-size: 12px !important; letter-spacing: 0.2em !important; color: rgba(200,169,110,0.5) !important; }
+  .ov-title { font-weight: 600 !important; font-size: 26px !important; color: rgba(255,245,220,0.9) !important; }
 
-  /* ── PROGRAM — clean exercise list ── */
-  .day-header { padding: 20px 0 !important; }
-  .day-body.open { padding: 0 0 24px !important; }
-  .day-name { font-weight: 400 !important; font-size: 16px !important; color: rgba(255,245,220,0.8) !important; }
-  .day-focus { font-size: 11px !important; color: rgba(200,169,110,0.45) !important; }
-  .exercise { border-bottom: none !important; padding: 8px 0 !important; }
-  .ex-name, .log-name { color: rgba(255,245,220,0.75) !important; font-weight: 400 !important; }
-  .ex-sets, .ov-ex-s { color: rgba(200,169,110,0.5) !important; }
-  .log-set-btn { border-radius: 0 !important; }
+  /* ── PROGRAM — exercise cards ── */
+  .day-card { padding: 0 !important; overflow: hidden !important; }
+  .day-header { padding: 16px 20px !important; }
+  .day-body.open { padding: 0 20px 20px !important; }
+  .day-name { font-weight: 500 !important; font-size: 15px !important; color: rgba(255,245,220,0.85) !important; }
+  .day-focus { font-size: 12px !important; color: rgba(200,169,110,0.6) !important; }
+  .exercise { border-bottom: 1px solid rgba(255,255,255,0.04) !important; padding: 10px 0 !important; }
+  .exercise:last-child { border-bottom: none !important; }
+  .ex-name, .log-name { color: rgba(255,245,220,0.8) !important; font-weight: 400 !important; }
+  .ex-sets, .ov-ex-s { color: rgba(200,169,110,0.65) !important; }
+  .log-set-btn { border-radius: 8px !important; }
 
   /* ── PROGRESS ── */
-  .log-item { border-bottom: none !important; padding: 12px 0 !important; }
-  .log-check { background: transparent !important; border: 0.5px solid rgba(200,169,110,0.15) !important; border-radius: 50% !important; }
-  .session-log { border: none !important; background: transparent !important; }
+  .log-item { border-bottom: 1px solid rgba(255,255,255,0.04) !important; padding: 12px 0 !important; }
+  .log-item:last-child { border-bottom: none !important; }
+  .log-check {
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(200,169,110,0.2) !important;
+    border-radius: 50% !important;
+  }
+  .session-log {
+    padding: 20px !important;
+  }
 
-  /* ── SUPPLEMENTS/PEPTIDES — organic ── */
-  .peptide-tag { color: rgba(200,169,110,0.5) !important; border-color: rgba(200,169,110,0.12) !important; background: transparent !important; border-radius: 20px !important; }
+  /* ── SUPPLEMENTS/PEPTIDES ── */
+  .peptide-card, .stack-card { padding: 20px !important; }
+  .peptide-tag {
+    color: rgba(200,169,110,0.7) !important;
+    border-color: rgba(200,169,110,0.2) !important;
+    background: rgba(200,169,110,0.05) !important;
+    border-radius: 20px !important;
+  }
   .stack-priority { border-radius: 20px !important; }
-  .partner-badge { background: transparent !important; border: none !important; border-top: 0.5px solid rgba(255,245,220,0.04) !important; border-radius: 0 !important; }
+  .partner-badge {
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
+    border-radius: 14px !important;
+    margin-top: 12px !important;
+  }
 
   /* ── REVEAL SLIDER ── */
-  .reveal-slider { border-radius: 8px !important; border: none !important; }
-  .reveal-tab { border-radius: 8px !important; background: transparent !important; border: 0.5px solid rgba(255,245,220,0.04) !important; }
-  .reveal-tab.active { background: rgba(200,169,110,0.04) !important; border-color: rgba(200,169,110,0.15) !important; }
+  .reveal-slider { border-radius: 14px !important; border: 1px solid rgba(255,255,255,0.05) !important; overflow: hidden !important; }
+  .reveal-tab {
+    border-radius: 10px !important;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
+  }
+  .reveal-tab.active {
+    background: rgba(200,169,110,0.06) !important;
+    border-color: rgba(200,169,110,0.2) !important;
+  }
 
   /* ── AUTH ── */
   #screen-auth { background: #000000 !important; }
-  .auth-tab-bar { border-bottom: 0.5px solid rgba(255,245,220,0.04) !important; }
+  .auth-box {
+    background: rgba(255,255,255,0.035) !important;
+    border: 1px solid rgba(255,255,255,0.06) !important;
+    border-radius: 18px !important;
+    padding: 40px 32px !important;
+  }
+  .auth-tab-bar { border-bottom: 1px solid rgba(255,255,255,0.06) !important; }
 
-  /* ── COMMUNITY — clean ── */
-  .comm-tab-bar, .ctab-bar { border-bottom: 0.5px solid rgba(255,245,220,0.04) !important; }
-  .ctab { font-weight: 300 !important; color: rgba(255,245,220,0.3) !important; }
-  .ctab.active { color: rgba(200,169,110,0.55) !important; }
-  .forum-section-card { padding: 24px 0 !important; }
-  .forum-section-card:hover { transform: none !important; border-color: transparent !important; }
-  .forum-section-card-title { font-weight: 400 !important; }
+  /* ── COMMUNITY ── */
+  .comm-tab-bar, .ctab-bar { border-bottom: 1px solid rgba(255,255,255,0.06) !important; }
+  .ctab { font-weight: 400 !important; color: rgba(255,245,220,0.4) !important; }
+  .ctab.active { color: rgba(200,169,110,0.8) !important; }
+  .forum-section-card { padding: 20px !important; }
+  .forum-section-card:hover { transform: none !important; }
+  .forum-section-card-title { font-weight: 500 !important; }
 
-  /* ── XP TOAST — subtle ── */
-  #xp-toast { border-radius: 20px !important; background: rgba(0,0,0,0.9) !important; border: 0.5px solid rgba(200,169,110,0.15) !important; }
-  .level-up-name { color: rgba(200,169,110,0.7) !important; font-weight: 300 !important; }
+  /* ── XP TOAST ── */
+  #xp-toast {
+    border-radius: 14px !important;
+    background: rgba(15,15,15,0.95) !important;
+    border: 1px solid rgba(200,169,110,0.2) !important;
+    backdrop-filter: blur(12px) !important;
+  }
+  .level-up-name { color: rgba(200,169,110,0.85) !important; font-weight: 500 !important; }
 
   /* ── ROADMAP ── */
-  .roadmap-phase { padding: 28px 0 !important; }
-  .roadmap-phase::before { background: rgba(200,169,110,0.2) !important; width: 1px !important; }
-  .roadmap-stat { background: transparent !important; border: none !important; border-radius: 0 !important; }
-  .dash-motiv { background: transparent !important; border: none !important; border-radius: 0 !important; }
+  .roadmap-phase { padding: 20px !important; }
+  .roadmap-phase::before { background: rgba(200,169,110,0.3) !important; width: 2px !important; }
+  .roadmap-stat {
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+  }
+  .dash-motiv {
+    background: rgba(200,169,110,0.04) !important;
+    border: 1px solid rgba(200,169,110,0.1) !important;
+    border-radius: 14px !important;
+    padding: 20px !important;
+  }
 
-  /* ── PROGRESS BARS — thin, quiet ── */
-  .progress-bar-wrap, .dash-week-track, .dash-macro-bar-track { background: rgba(255,245,220,0.03) !important; height: 2px !important; }
-  .momentum-fill, .progress-bar, .dash-week-fill, .ov-fill { background: rgba(200,169,110,0.35) !important; }
+  /* ── PROGRESS BARS — rounded, visible ── */
+  .progress-bar-wrap, .dash-week-track, .dash-macro-bar-track {
+    background: rgba(255,255,255,0.06) !important;
+    height: 4px !important;
+    border-radius: 4px !important;
+  }
+  .momentum-fill, .progress-bar, .dash-week-fill, .ov-fill {
+    background: rgba(200,169,110,0.5) !important;
+    border-radius: 4px !important;
+  }
 
   /* ── PR BADGE ── */
-  .pr-badge { border-radius: 20px !important; color: rgba(200,169,110,0.6) !important; border-color: rgba(200,169,110,0.2) !important; }
+  .pr-badge { border-radius: 20px !important; color: rgba(200,169,110,0.75) !important; border-color: rgba(200,169,110,0.25) !important; }
 
   /* ── FORM MODALS ── */
-  .form-modal-inner, .protocol-modal-inner { background: #000000 !important; border: 0.5px solid rgba(255,245,220,0.04) !important; border-radius: 0 !important; }
+  .form-modal-inner, .protocol-modal-inner {
+    background: rgba(10,10,10,0.97) !important;
+    border: 1px solid rgba(255,255,255,0.07) !important;
+    border-radius: 18px !important;
+    backdrop-filter: blur(16px) !important;
+  }
 
-  /* ── DISCLAIMER BANNER — barely there ── */
-  [style*="padding:7px 24px 7px 224px"] p { color: rgba(255,245,220,0.25) !important; font-size: 10px !important; }
+  /* ── DISCLAIMER BANNER ── */
+  [style*="padding:7px 24px 7px 224px"] p { color: rgba(255,245,220,0.3) !important; font-size: 10px !important; }
 
   /* ── MOBILE ── */
   @media (max-width: 700px) {
-    nav { border-bottom: none !important; border-right: none !important; background: #000000 !important; width: 100% !important; }
+    nav { border-bottom: 1px solid rgba(255,255,255,0.04) !important; border-right: none !important; background: rgba(0,0,0,0.97) !important; width: 100% !important; }
     .nav-logo { border-right: none !important; }
     .screen { padding-left: 0 !important; }
-    .container { padding: 40px 20px !important; }
+    .container { padding: 32px 16px !important; }
   }
 
-  /* ═══ TEXT BRIGHTNESS — organic warmth ═══ */
-  /* Labels — whisper quiet */
+  /* ═══ TEXT BRIGHTNESS ═══ */
+  /* Labels — quiet but readable */
   .stat-label, .section-label, .dash-card-label, .protocol-section-label,
   .stack-card-dose, .roadmap-phase-weeks, .msg-label,
   .rest-status, .ex-track-lbl, .ov-mc-l, .ov-pg-l, .ov-stat-lbl,
   .ov-macro-lbl, .dash-week-lbl, .dash-stat-lbl,
   .form-group label, .intake-label, .comp-tag, .reveal-tab .tab-sub,
-  .hb-live, .live-tag, .coach-panel-context p { color: rgba(255,245,220,0.3) !important; }
+  .hb-live, .live-tag, .coach-panel-context p { color: rgba(255,245,220,0.4) !important; }
 
-  /* Secondary text — readable but soft */
+  /* Secondary text — comfortably readable */
   .screen-sub, .upload-label, .peptide-summary, .stack-card-why,
   .coach-subtitle, .ov-sub, .ov-fd, .ov-ai, .ov-coach-reply,
   .ov-q, .dash-day-line, .ov-daily-q, .roadmap-milestone,
   .stack-card-timing, .log-date, .msg-ai .msg-label,
   .thread-card-meta, .feed-item-time, .ov-footer,
-  .nav-user { color: rgba(255,245,220,0.45) !important; }
+  .nav-user { color: rgba(255,245,220,0.55) !important; }
 
-  /* Gold accents — only where they carry meaning */
+  /* Gold accents — meaningful only */
   .day-focus, .streak-fire, .nav-tab.active,
   .roadmap-phase-title, .peptide-name, .stack-card-name,
-  .coach-title, .ov-brand { color: rgba(200,169,110,0.55) !important; }
+  .coach-title, .ov-brand { color: rgba(200,169,110,0.75) !important; }
 
   /* Fullscript btn */
-  .fs-link-btn { border-radius: 20px !important; background: transparent !important; }
+  .fs-link-btn { border-radius: 14px !important; background: rgba(200,169,110,0.05) !important; }
 
   /* ═══ OPENING SEQUENCE ═══ */
   #opening-sequence {
@@ -1061,7 +1229,7 @@
   #opening-sequence .os-progress-fill.active { width: 100%; }
 
   /* ═══ NUCLEAR BACKGROUND OVERRIDE ═══ */
-  /* Catch ALL inline hardcoded backgrounds and force pure black system */
+  /* Catch ALL inline hardcoded backgrounds → make them use the card fill */
   [style*="background:#161616"],
   [style*="background: #161616"],
   [style*="background:#111"],
@@ -1072,9 +1240,9 @@
   [style*="background: #1a1a1a"],
   [style*="background:#080808"],
   [style*="background: #080808"] {
-    background: transparent !important;
+    background: rgba(255,255,255,0.035) !important;
   }
-  /* Catch inline border-radius */
+  /* Catch inline border-radius → normalize to our card radius */
   [style*="border-radius:10px"],
   [style*="border-radius: 10px"],
   [style*="border-radius:9px"],
@@ -1085,13 +1253,12 @@
   [style*="border-radius: 6px"],
   [style*="border-radius:16px"],
   [style*="border-radius: 16px"] {
-    border-radius: 0 !important;
+    border-radius: 14px !important;
   }
-  /* Catch inline white borders */
+  /* Catch inline white borders → match the card border */
   [style*="border:1px solid rgba(255,255,255"],
   [style*="border: 1px solid rgba(255,255,255"] {
-    border-color: rgba(200,169,110,0.09) !important;
-    border-width: 0.5px !important;
+    border-color: rgba(255,255,255,0.05) !important;
   }
   /* Exempt the opening-sequence from background overrides */
   #opening-sequence, #opening-sequence * { background: revert; }
