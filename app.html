@@ -781,8 +781,9 @@
     margin-bottom: 12px !important;
   }
 
-  /* ── SPACING ── */
-  .container { max-width: 680px !important; padding: 48px 28px !important; }
+  /* ── SPACING — narrow, phone-like column ── */
+  .container { max-width: 520px !important; padding: 40px 24px !important; }
+  .ov-shell { max-width: 520px !important; padding: 40px 24px !important; }
   .screen { padding-bottom: 60px !important; }
 
   /* ── SECTION LABELS — small caps, quiet ── */
@@ -991,9 +992,10 @@
     border-radius: 14px !important;
   }
 
-  /* ── OVERVIEW — card containers ── */
+  /* ── OVERVIEW — card containers, stacked vertically ── */
   .ov-w {
-    padding: 20px !important; margin-bottom: 12px !important;
+    padding: 20px !important; margin-bottom: 0 !important;
+    width: 100% !important;
   }
   .ov-w + .ov-w { border-top: none !important; }
   .ov-wh { border-bottom: none !important; padding: 0 0 8px !important; }
@@ -1043,7 +1045,29 @@
     padding: 8px 14px !important;
     color: rgba(255,245,220,0.5) !important;
   }
-  .ov-grid { gap: 12px !important; }
+  .ov-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important; /* single column — vertical stack */
+    gap: 12px !important;
+    max-width: 520px !important;
+  }
+  .overview-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  /* Dashboard card grid — single column stack */
+  #dashCardGrid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    max-width: 520px !important;
+  }
+  /* Stats grid — 3-up is fine but capped width */
+  .stats-grid { max-width: 520px !important; }
+  /* Macro rows — keep 4-up but tighter */
+  .ov-mcg { gap: 8px !important; }
+  .ov-pgs { gap: 8px !important; }
   .ov-big { font-weight: 600 !important; color: rgba(255,245,220,0.85) !important; }
   .ov-dim { color: rgba(255,245,220,0.4) !important; }
   .ov-brand { font-weight: 500 !important; font-size: 12px !important; letter-spacing: 0.2em !important; color: rgba(200,169,110,0.5) !important; }
