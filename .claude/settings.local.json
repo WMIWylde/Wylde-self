@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git remote:*)",
+      "Bash(git add:*)",
+      "Bash(cp \"/Users/goodboyrumi/Downloads/wylde terms/gate.html\" ~/Wylde-self/gate.html)",
+      "Bash(cp \"/Users/goodboyrumi/Downloads/wylde terms/privacy.html\" ~/Wylde-self/privacy.html)",
+      "Bash(cp \"/Users/goodboyrumi/Downloads/wylde terms/terms.html\" ~/Wylde-self/terms.html)",
+      "Bash(cp \"/Users/goodboyrumi/Downloads/files 2/HANDOFF.md\" \"/Users/goodboyrumi/Wylde-self/HANDOFF.md\")",
+      "Bash(cp \"/Users/goodboyrumi/Downloads/files 2/wylde-pitch-deck.html\" \"/Users/goodboyrumi/Wylde-self/investors.html\")"
+    ]
+  }
+}
