@@ -2327,6 +2327,19 @@
         if (err) { err.textContent = result.error.message; err.style.display = 'block'; }
         btn.disabled = false;
         btn.textContent = _authMode === 'signin' ? 'SIGN IN' : 'CREATE ACCOUNT';
+      } else if (_authMode === 'create') {
+        // Signup succeeded
+        if (result.data && result.data.session) {
+          // Auto-confirmed — user is signed in
+          btn.disabled = false;
+          btn.textContent = 'CREATE ACCOUNT';
+        } else {
+          // Needs email confirmation
+          if (err) { err.textContent = 'Account created! Check your email to confirm, then sign in.'; err.style.display = 'block'; err.style.color = 'var(--gold)'; }
+          btn.disabled = false;
+          btn.textContent = 'CREATE ACCOUNT';
+          switchAuthTab('signin');
+        }
       }
     }).catch(function(e) {
       console.error('Auth error:', e);
