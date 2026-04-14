@@ -260,6 +260,27 @@
     .partner-badge-label { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 3px; }
     .partner-badge-name { font-size: 13px; color: #f5f4f0; }
 
+    /* HEALTH+ TABS */
+    .health-tab { flex:1;padding:12px 8px;background:transparent;border:none;font-family:var(--font-ui);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(200,169,110,0.35);cursor:pointer;border-bottom:1px solid transparent;transition:all .2s; }
+    .health-tab.active { color:rgba(200,169,110,0.85);border-bottom-color:rgba(200,169,110,0.5); }
+    .protocol-check-item { border-top:0.5px solid rgba(200,169,110,0.1);padding:16px 0; }
+    .pc-name { font-size:15px;font-weight:500;color:rgba(255,245,220,0.9);margin-bottom:3px; }
+    .pc-dose { font-size:11px;color:rgba(200,169,110,0.55);font-family:var(--font-mono); }
+    .pc-cycle-track { height:2px;background:rgba(200,169,110,0.1);margin:8px 0 4px;position:relative; }
+    .pc-cycle-fill { position:absolute;top:0;left:0;height:100%;background:rgba(200,169,110,0.5);box-shadow:0 0 6px rgba(200,169,110,0.3); }
+    .pc-cycle-label { font-size:9px;color:rgba(200,169,110,0.4);letter-spacing:.12em;text-transform:uppercase; }
+    .pc-cycle-end { font-size:9px;color:rgba(200,169,110,0.3);text-align:right; }
+    .pc-actions { display:flex;gap:8px;margin-top:12px; }
+    .pc-take-btn { flex:1;border-color:rgba(200,169,110,0.45);color:rgba(200,169,110,0.9); }
+    .pc-skip-btn { flex:0 0 80px;border-color:rgba(200,169,110,0.15);color:rgba(200,169,110,0.4);font-size:8px; }
+    .pc-status-text { font-family:var(--font-serif,var(--ff-serif));font-style:italic;font-size:13px;color:rgba(200,169,110,0.6); }
+    .predict-peptide-card { background:rgba(200,169,110,0.04);border:0.5px solid rgba(200,169,110,0.12);padding:14px 16px;margin-bottom:6px;cursor:pointer;transition:border-color 0.2s; }
+    .predict-peptide-card:hover { border-color:rgba(200,169,110,0.35); }
+    .history-slider-row { display:flex;align-items:center;gap:12px;margin-bottom:14px; }
+    .history-slider-row label { font-size:11px;color:rgba(200,169,110,0.5);width:90px;flex-shrink:0;letter-spacing:.06em; }
+    .history-slider-row input[type=range] { flex:1;accent-color:rgba(200,169,110,0.6); }
+    .history-slider-row .slider-val { font-family:var(--font-mono);font-size:12px;color:rgba(200,169,110,0.7);width:24px;text-align:right; }
+
     /* PROTOCOL MODAL */
     .protocol-modal-inner { background: #111; border: 1px solid rgba(200,169,110,0.2); max-width: 600px; width: 100%; max-height: 88vh; overflow-y: auto; position: relative; }
     .protocol-modal-inner::-webkit-scrollbar { width: 4px; }
@@ -3745,6 +3766,7 @@
     var promises = timelines.map(function(tl) {
       var payload = { timeline: tl, goal: userGoal, userGoal: userGoal, gender: gender };
       if (futurePhotoBase64) payload.image_base64 = futurePhotoBase64;
+      if (window._protocolImageAddition) payload.protocolAddition = window._protocolImageAddition;
 
       return fetch('/api/generate-image', {
         method: 'POST',
@@ -5097,181 +5119,212 @@
     <p class="screen-sub">Connect with a functional medicine practitioner, review your labs, and access clinically optimized protocols — all inside Wylde Self.</p>
     <div class="gold-rule"></div>
 
-    <!-- TIER BANNER -->
-    <div style="background:rgba(200,169,110,0.06);border:1px solid rgba(200,169,110,0.2);padding:20px 24px;margin-bottom:32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-      <div>
-        <p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Health+ Tier</p>
-        <p style="font-size:14px;color:#f5f4f0;">Unlock functional medicine consultations, lab review & peptide protocols</p>
-      </div>
-      <button class="btn" onclick="showUpgrade()">Upgrade — $99/mo</button>
+    <!-- SUB-TAB NAV -->
+    <div id="healthTabNav" style="display:flex;gap:0;border-bottom:0.5px solid rgba(200,169,110,0.1);margin-bottom:0;">
+      <button class="health-tab active" data-tab="today" onclick="showHealthTab('today')">Today</button>
+      <button class="health-tab" data-tab="protocols" onclick="showHealthTab('protocols')">Protocols</button>
+      <button class="health-tab" data-tab="predict" onclick="showHealthTab('predict')">Predict</button>
+      <button class="health-tab" data-tab="history" onclick="showHealthTab('history')">History</button>
     </div>
 
-    <!-- CONSULT BOOKING -->
-    <div class="card" style="margin-bottom:16px;">
-      <div style="display:flex;align-items:flex-start;gap:20px;">
-        <div style="width:40px;height:40px;border:1px solid rgba(200,169,110,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">⚕</div>
-        <div style="flex:1;">
-          <p style="font-family:var(--ff-serif);font-size:18px;color:#f5f4f0;margin-bottom:6px;">Book a Functional Medicine Consultation</p>
-          <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;">A licensed functional medicine practitioner reviews your health profile, goals, and labs. They can recommend and refer clinically optimized protocols tailored specifically to you.</p>
-          <div style="display:flex;gap:12px;flex-wrap:wrap;">
-            <button class="btn" onclick="bookConsult()" style="font-size:12px;padding:11px 24px;">Book Consultation</button>
-            <button class="btn btn-outline" onclick="showConsultInfo()" style="font-size:12px;padding:11px 24px;">Learn More</button>
+    <!-- TODAY TAB -->
+    <div class="health-tab-content" id="ht-today" style="display:block;padding-top:8px;">
+      <div id="protocolChecklist"></div>
+    </div>
+
+    <!-- PROTOCOLS TAB -->
+    <div class="health-tab-content" id="ht-protocols" style="display:none;padding-top:16px;">
+      <div id="activeProtocolsList"></div>
+
+      <!-- TIER BANNER -->
+      <div style="background:rgba(200,169,110,0.06);border:1px solid rgba(200,169,110,0.2);padding:20px 24px;margin-bottom:32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div>
+          <p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Health+ Tier</p>
+          <p style="font-size:14px;color:#f5f4f0;">Unlock functional medicine consultations, lab review & peptide protocols</p>
+        </div>
+        <button class="btn" onclick="showUpgrade()">Upgrade — $99/mo</button>
+      </div>
+
+      <!-- CONSULT BOOKING -->
+      <div class="card" style="margin-bottom:16px;">
+        <div style="display:flex;align-items:flex-start;gap:20px;">
+          <div style="width:40px;height:40px;border:1px solid rgba(200,169,110,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">⚕</div>
+          <div style="flex:1;">
+            <p style="font-family:var(--ff-serif);font-size:18px;color:#f5f4f0;margin-bottom:6px;">Book a Functional Medicine Consultation</p>
+            <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;">A licensed functional medicine practitioner reviews your health profile, goals, and labs.</p>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+              <button class="btn" onclick="bookConsult()" style="font-size:12px;padding:11px 24px;">Book Consultation</button>
+              <button class="btn btn-outline" onclick="showConsultInfo()" style="font-size:12px;padding:11px 24px;">Learn More</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- LAB UPLOAD -->
-    <div class="card" style="margin-bottom:16px;">
-      <div style="display:flex;align-items:flex-start;gap:20px;">
-        <div style="width:40px;height:40px;border:1px solid rgba(200,169,110,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">🧬</div>
-        <div style="flex:1;">
-          <p style="font-family:var(--ff-serif);font-size:18px;color:#f5f4f0;margin-bottom:6px;">Upload Your Labs</p>
-          <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;">Upload your bloodwork and your practitioner will review it before your consultation — so every minute counts.</p>
-          <div class="upload-zone" style="padding:24px;text-align:center;border:1px dashed rgba(200,169,110,0.25);cursor:pointer;position:relative;" onclick="document.getElementById('labInput').click()">
-            <input type="file" id="labInput" accept=".pdf,.jpg,.png" style="display:none;" onchange="handleLabUpload(event)"/>
-            <p style="font-size:13px;color:var(--muted);">Tap to upload bloodwork PDF or image</p>
+      <!-- LAB UPLOAD -->
+      <div class="card" style="margin-bottom:16px;">
+        <div style="display:flex;align-items:flex-start;gap:20px;">
+          <div style="width:40px;height:40px;border:1px solid rgba(200,169,110,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">🧬</div>
+          <div style="flex:1;">
+            <p style="font-family:var(--ff-serif);font-size:18px;color:#f5f4f0;margin-bottom:6px;">Upload Your Labs</p>
+            <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;">Upload your bloodwork and your practitioner will review it before your consultation.</p>
+            <div class="upload-zone" style="padding:24px;text-align:center;border:1px dashed rgba(200,169,110,0.25);cursor:pointer;position:relative;" onclick="document.getElementById('labInput').click()">
+              <input type="file" id="labInput" accept=".pdf,.jpg,.png" style="display:none;" onchange="handleLabUpload(event)"/>
+              <p style="font-size:13px;color:var(--muted);">Tap to upload bloodwork PDF or image</p>
+            </div>
+            <p id="labUploadStatus" style="font-size:12px;color:var(--gold);margin-top:8px;display:none;">✓ Labs uploaded</p>
           </div>
-          <p id="labUploadStatus" style="font-size:12px;color:var(--gold);margin-top:8px;display:none;">✓ Labs uploaded — your practitioner will review before your consultation.</p>
         </div>
       </div>
-    </div>
 
-    <!-- SUPPLEMENT MARKETPLACE -->
-    <div style="margin-bottom:48px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <!-- SUPPLEMENT MARKETPLACE -->
+      <div style="margin-bottom:48px;">
         <p class="section-label" style="margin-bottom:0;">AI Supplement Stack</p>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <span style="font-size:10px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;">via</span>
-          <span style="font-size:11px;color:var(--gold);letter-spacing:0.1em;font-weight:500;">Fullscript</span>
+        <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px;">Your AI coach analyses your profile to recommend supplements with dosing and timing.</p>
+        <button class="btn" onclick="showScreen('supplements')">Open Supplement Marketplace →</button>
+      </div>
+
+      <!-- PEPTIDE LIBRARY -->
+      <p class="section-label">Peptide Library</p>
+      <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px;">Explore clinically studied peptides and build a personalized companion protocol.</p>
+      <div class="partner-badge" style="margin-bottom:20px;">
+        <div style="width:32px;height:32px;border:1px solid rgba(200,169,110,0.35);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--gold);flex-shrink:0;">◎</div>
+        <div>
+          <p class="partner-badge-label">In Partnership With</p>
+          <p class="partner-badge-name">Everwell USA — Newport Beach, CA</p>
         </div>
       </div>
-      <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px;">Your AI coach analyses your profile, goals, and health history to recommend the exact supplements you need — with dosing, timing, and why each one matters for you specifically.</p>
 
-      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
-        <button class="btn" onclick="showScreen('supplements')" style="margin-bottom:0;">Open Supplement Marketplace →</button>
+      <div class="peptide-card">
+        <p class="peptide-name">BPC-157</p>
+        <div class="peptide-tags"><span class="peptide-tag">Healing</span><span class="peptide-tag">Recovery</span><span class="peptide-tag">Injury Protection</span></div>
+        <p class="peptide-summary">BPC-157 is a synthetic peptide derived from a protein found in gastric juice, shown to dramatically accelerate healing of tendons, ligaments, muscles, and gut tissue.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('BPC-157','Healing / Recovery / Injury Protection')">Build My Protocol</button>
+          <button class="btn btn-outline" style="font-size:11px;padding:11px 22px;" onclick="openStartProtocol('BPC-157','250mcg daily',12)">Start Protocol</button>
+        </div>
       </div>
-      <p style="font-size:12px;color:var(--muted);line-height:1.6;font-family:var(--ff-serif);font-style:italic;">Get your AI-personalised stack with dosing, timing, and direct Fullscript purchasing.</p>
-    </div>
+      <div class="peptide-card">
+        <p class="peptide-name">TB-500</p>
+        <div class="peptide-tags"><span class="peptide-tag">Wound Healing</span><span class="peptide-tag">Flexibility</span><span class="peptide-tag">Inflammation</span></div>
+        <p class="peptide-summary">TB-500 is a synthetic version of Thymosin Beta-4 that plays a key role in tissue repair, cell migration, and anti-inflammatory response.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('TB-500','Wound Healing / Flexibility / Inflammation')">Build My Protocol</button>
+          <button class="btn btn-outline" style="font-size:11px;padding:11px 22px;" onclick="openStartProtocol('TB-500','750mcg twice weekly',8)">Start Protocol</button>
+        </div>
+      </div>
+      <div class="peptide-card">
+        <p class="peptide-name">Tesamorelin</p>
+        <div class="peptide-tags"><span class="peptide-tag">Growth Hormone</span><span class="peptide-tag">Fat Loss</span><span class="peptide-tag">Cognitive Function</span></div>
+        <p class="peptide-summary">Tesamorelin is a GHRH analogue that stimulates natural growth hormone release, one of the most effective peptides for reducing visceral fat.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('Tesamorelin','Growth Hormone / Fat Loss / Cognitive Function')">Build My Protocol</button>
+          <button class="btn btn-outline" style="font-size:11px;padding:11px 22px;" onclick="openStartProtocol('Tesamorelin','2mg daily',12)">Start Protocol</button>
+        </div>
+      </div>
+      <div class="peptide-card">
+        <p class="peptide-name">Ipamorelin</p>
+        <div class="peptide-tags"><span class="peptide-tag">GH Release</span><span class="peptide-tag">Lean Muscle</span><span class="peptide-tag">Anti-Aging</span></div>
+        <p class="peptide-summary">Ipamorelin is a selective growth hormone secretagogue with minimal cortisol/prolactin impact, widely used in anti-aging protocols.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('Ipamorelin','GH Release / Lean Muscle / Anti-Aging')">Build My Protocol</button>
+          <button class="btn btn-outline" style="font-size:11px;padding:11px 22px;" onclick="openStartProtocol('Ipamorelin','200mcg daily',12)">Start Protocol</button>
+        </div>
+      </div>
+      <div class="peptide-card">
+        <p class="peptide-name">Thymosin Alpha-1</p>
+        <div class="peptide-tags"><span class="peptide-tag">Immune System</span><span class="peptide-tag">T-Cell Regulation</span></div>
+        <p class="peptide-summary">Thymosin Alpha-1 modulates and strengthens the immune system by enhancing T-cell differentiation, maturation, and activity.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('Thymosin Alpha-1','Immune System / T-Cell Regulation')">Build My Protocol</button>
+          <button class="btn btn-outline" style="font-size:11px;padding:11px 22px;" onclick="openStartProtocol('Thymosin Alpha-1','1.6mg twice weekly',8)">Start Protocol</button>
+        </div>
+      </div>
+      <div class="peptide-card">
+        <p class="peptide-name">SEMAX</p>
+        <div class="peptide-tags"><span class="peptide-tag">Cognitive Enhancement</span><span class="peptide-tag">Memory</span><span class="peptide-tag">Mood</span><span class="peptide-tag">Performance</span></div>
+        <p class="peptide-summary">SEMAX increases BDNF expression, leading to improvements in focus, memory consolidation, and stress resilience.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('SEMAX','Cognitive Enhancement / Memory / Mood / Performance')">Build My Protocol</button>
+          <button class="btn btn-outline" style="font-size:11px;padding:11px 22px;" onclick="openStartProtocol('SEMAX','600mcg daily',4)">Start Protocol</button>
+        </div>
+      </div>
+      <div class="peptide-card">
+        <p class="peptide-name">GHK-Cu</p>
+        <div class="peptide-tags"><span class="peptide-tag">Skin</span><span class="peptide-tag">Collagen</span><span class="peptide-tag">Anti-Aging</span></div>
+        <p class="peptide-summary">GHK-Cu is a copper peptide that stimulates collagen synthesis, reduces inflammation, and promotes tissue remodeling for skin and wound repair.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('GHK-Cu','Skin / Collagen / Anti-Aging')">Build My Protocol</button>
+          <button class="btn btn-outline" style="font-size:11px;padding:11px 22px;" onclick="openStartProtocol('GHK-Cu','200mcg daily',12)">Start Protocol</button>
+        </div>
+      </div>
 
-    <!-- PEPTIDE LIBRARY -->
-    <p class="section-label" style="margin-top:8px;">Peptide Library</p>
-    <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px;">Explore clinically studied peptides and build a personalized companion protocol based on your goals and profile.</p>
+      <!-- THE PROCESS -->
+      <p class="section-label" style="margin-top:48px;">The Process</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.07);">
+        <div style="background:#161616;padding:24px 20px;"><p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">01</p><p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Complete your health profile</p><p style="font-size:12px;color:var(--muted);">Goals, concerns, medications, history</p></div>
+        <div style="background:#161616;padding:24px 20px;"><p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">02</p><p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Upload your labs</p><p style="font-size:12px;color:var(--muted);">Bloodwork reviewed before your consult</p></div>
+        <div style="background:#161616;padding:24px 20px;"><p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">03</p><p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Consult with your practitioner</p><p style="font-size:12px;color:var(--muted);">Video call, inside the app</p></div>
+        <div style="background:#161616;padding:24px 20px;"><p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">04</p><p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Receive your protocol</p><p style="font-size:12px;color:var(--muted);">Peptide referral + optimization plan</p></div>
+      </div>
 
-    <!-- Partner badge -->
-    <div class="partner-badge" style="margin-bottom:20px;">
-      <div style="width:32px;height:32px;border:1px solid rgba(200,169,110,0.35);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--gold);flex-shrink:0;">◎</div>
-      <div>
-        <p class="partner-badge-label">In Partnership With</p>
-        <p class="partner-badge-name">Everwell USA — Newport Beach, CA</p>
-      </div>
-    </div>
-
-    <!-- BPC-157 -->
-    <div class="peptide-card">
-      <p class="peptide-name">BPC-157</p>
-      <div class="peptide-tags">
-        <span class="peptide-tag">Healing</span>
-        <span class="peptide-tag">Recovery</span>
-        <span class="peptide-tag">Injury Protection</span>
-      </div>
-      <p class="peptide-summary">BPC-157 is a synthetic peptide derived from a protein found in gastric juice, shown to dramatically accelerate healing of tendons, ligaments, muscles, and gut tissue. It works by upregulating growth factors and promoting angiogenesis, making it the go-to protocol for active individuals recovering from chronic or acute injuries.</p>
-      <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('BPC-157','Healing / Recovery / Injury Protection')">Build My Protocol</button>
-    </div>
-
-    <!-- TB-500 -->
-    <div class="peptide-card">
-      <p class="peptide-name">TB-500</p>
-      <div class="peptide-tags">
-        <span class="peptide-tag">Wound Healing</span>
-        <span class="peptide-tag">Flexibility</span>
-        <span class="peptide-tag">Inflammation</span>
-      </div>
-      <p class="peptide-summary">TB-500 is a synthetic version of Thymosin Beta-4, a naturally occurring protein that plays a key role in tissue repair, cell migration, and anti-inflammatory response throughout the body. It is particularly valued for improving range of motion, reducing systemic inflammation, and accelerating recovery from muscle tears and joint damage.</p>
-      <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('TB-500','Wound Healing / Flexibility / Inflammation')">Build My Protocol</button>
-    </div>
-
-    <!-- Tesamorelin -->
-    <div class="peptide-card">
-      <p class="peptide-name">Tesamorelin</p>
-      <div class="peptide-tags">
-        <span class="peptide-tag">Growth Hormone</span>
-        <span class="peptide-tag">Fat Loss</span>
-        <span class="peptide-tag">Cognitive Function</span>
-      </div>
-      <p class="peptide-summary">Tesamorelin is a GHRH analogue that stimulates the pituitary gland to release growth hormone in a natural, pulsatile manner, making it one of the most effective peptides for reducing visceral fat and improving body composition. Emerging research also supports its role in enhancing cognitive clarity and verbal memory, particularly in adults over 40.</p>
-      <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('Tesamorelin','Growth Hormone / Fat Loss / Cognitive Function')">Build My Protocol</button>
-    </div>
-
-    <!-- Ipamorelin -->
-    <div class="peptide-card">
-      <p class="peptide-name">Ipamorelin</p>
-      <div class="peptide-tags">
-        <span class="peptide-tag">GH Release</span>
-        <span class="peptide-tag">Lean Muscle</span>
-        <span class="peptide-tag">Anti-Aging</span>
-      </div>
-      <p class="peptide-summary">Ipamorelin is a selective growth hormone secretagogue that triggers GH release with minimal impact on cortisol or prolactin, making it one of the cleanest GH-stimulating peptides available. It supports lean muscle development, improved sleep quality, accelerated fat metabolism, and is widely used in anti-aging protocols for its favorable side-effect profile.</p>
-      <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('Ipamorelin','GH Release / Lean Muscle / Anti-Aging')">Build My Protocol</button>
-    </div>
-
-    <!-- Thymosin Alpha-1 -->
-    <div class="peptide-card">
-      <p class="peptide-name">Thymosin Alpha-1</p>
-      <div class="peptide-tags">
-        <span class="peptide-tag">Immune System</span>
-        <span class="peptide-tag">T-Cell Regulation</span>
-      </div>
-      <p class="peptide-summary">Thymosin Alpha-1 is a naturally occurring thymic peptide that modulates and strengthens the immune system by enhancing T-cell differentiation, maturation, and activity. It is used clinically for immune deficiencies, chronic infections, and post-illness recovery, and is increasingly adopted by high-performers for baseline immune resilience and inflammation control.</p>
-      <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('Thymosin Alpha-1','Immune System / T-Cell Regulation')">Build My Protocol</button>
-    </div>
-
-    <!-- SEMAX -->
-    <div class="peptide-card">
-      <p class="peptide-name">SEMAX</p>
-      <div class="peptide-tags">
-        <span class="peptide-tag">Cognitive Enhancement</span>
-        <span class="peptide-tag">Memory</span>
-        <span class="peptide-tag">Mood</span>
-        <span class="peptide-tag">Performance</span>
-      </div>
-      <p class="peptide-summary">SEMAX is a synthetic analogue of ACTH that increases BDNF expression in the brain, leading to measurable improvements in focus, memory consolidation, and stress resilience. Originally developed in Russia for neurological rehabilitation, it is now widely used as a cognitive enhancer and mood stabilizer in performance-oriented wellness protocols.</p>
-      <button class="btn" style="font-size:11px;padding:11px 22px;" onclick="buildProtocol('SEMAX','Cognitive Enhancement / Memory / Mood / Performance')">Build My Protocol</button>
-    </div>
-
-    <!-- WHAT TO EXPECT -->
-    <p class="section-label" style="margin-top:48px;">The Process</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.07);">
-      <div style="background:#161616;padding:24px 20px;">
-        <p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">01</p>
-        <p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Complete your health profile</p>
-        <p style="font-size:12px;color:var(--muted);">Goals, concerns, medications, history</p>
-      </div>
-      <div style="background:#161616;padding:24px 20px;">
-        <p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">02</p>
-        <p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Upload your labs</p>
-        <p style="font-size:12px;color:var(--muted);">Bloodwork reviewed before your consult</p>
-      </div>
-      <div style="background:#161616;padding:24px 20px;">
-        <p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">03</p>
-        <p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Consult with your practitioner</p>
-        <p style="font-size:12px;color:var(--muted);">Video call, inside the app</p>
-      </div>
-      <div style="background:#161616;padding:24px 20px;">
-        <p style="font-family:var(--ff-hero);font-size:28px;color:var(--gold);margin-bottom:8px;">04</p>
-        <p style="font-size:13px;color:#f5f4f0;margin-bottom:4px;">Receive your protocol</p>
-        <p style="font-size:12px;color:var(--muted);">Peptide referral + optimization plan</p>
+      <!-- DISCLAIMER -->
+      <div style="margin-top:48px;padding:18px 20px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);">
+        <p style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Educational Disclaimer</p>
+        <p style="font-size:12px;color:#555;line-height:1.75;font-style:italic;font-family:var(--ff-serif);">Peptides are prescribed only through licensed physicians following consultation and lab review. The information presented is educational only. Wylde Self does not prescribe medications.</p>
+        <p style="font-size:11px;color:rgba(200,169,110,0.45);margin-top:10px;letter-spacing:0.06em;">In partnership with Everwell USA — Newport Beach, CA</p>
       </div>
     </div>
 
-    <!-- DISCLAIMER -->
-    <div style="margin-top:48px;padding:18px 20px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);">
-      <p style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Educational Disclaimer</p>
-      <p style="font-size:12px;color:#555;line-height:1.75;font-style:italic;font-family:var(--ff-serif);">
-        Peptides are prescribed only through licensed physicians following consultation and lab review. The information presented in the Peptide Library is educational only and does not constitute medical advice. Wylde Self does not prescribe medications. All peptide protocols are issued through licensed functional medicine physicians following consultation and lab review. This service is not available in all regions.
-      </p>
-      <p style="font-size:11px;color:rgba(200,169,110,0.45);margin-top:10px;letter-spacing:0.06em;">In partnership with Everwell USA — Newport Beach, CA</p>
+    <!-- PREDICT TAB -->
+    <div class="health-tab-content" id="ht-predict" style="display:none;padding-top:16px;">
+      <p style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,169,110,0.4);margin-bottom:12px;">Select a protocol to predict</p>
+      <div id="predictPeptideList"></div>
+      <div id="predictionResult" style="display:none;"></div>
     </div>
+
+    <!-- HISTORY TAB -->
+    <div class="health-tab-content" id="ht-history" style="display:none;padding-top:16px;">
+      <p style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,169,110,0.4);margin-bottom:16px;">Weekly check-in</p>
+      <div id="weeklyCheckInForm">
+        <div id="historyProtocolSelect" style="margin-bottom:16px;"></div>
+        <div class="history-slider-row"><label>Energy</label><input type="range" min="1" max="10" value="5" id="hist-energy" oninput="document.getElementById('hv-energy').textContent=this.value"><span class="slider-val" id="hv-energy">5</span></div>
+        <div class="history-slider-row"><label>Sleep</label><input type="range" min="1" max="10" value="5" id="hist-sleep" oninput="document.getElementById('hv-sleep').textContent=this.value"><span class="slider-val" id="hv-sleep">5</span></div>
+        <div class="history-slider-row"><label>Recovery</label><input type="range" min="1" max="10" value="5" id="hist-recovery" oninput="document.getElementById('hv-recovery').textContent=this.value"><span class="slider-val" id="hv-recovery">5</span></div>
+        <div class="history-slider-row"><label>Mood</label><input type="range" min="1" max="10" value="5" id="hist-mood" oninput="document.getElementById('hv-mood').textContent=this.value"><span class="slider-val" id="hv-mood">5</span></div>
+        <div class="history-slider-row"><label>Pain (0=none)</label><input type="range" min="0" max="10" value="0" id="hist-pain" oninput="document.getElementById('hv-pain').textContent=this.value"><span class="slider-val" id="hv-pain">0</span></div>
+        <div style="margin-bottom:14px;"><label style="font-size:11px;color:rgba(200,169,110,0.5);display:block;margin-bottom:6px;">Body weight</label><input class="input" type="number" id="hist-weight" placeholder="lbs" style="width:120px;"></div>
+        <div style="margin-bottom:14px;"><label style="font-size:11px;color:rgba(200,169,110,0.5);display:block;margin-bottom:6px;">Notes</label><textarea class="input" id="hist-notes" rows="3" placeholder="How are you feeling this week?" style="width:100%;resize:vertical;"></textarea></div>
+        <button class="btn btn-primary" style="width:100%;" onclick="submitWeeklyLog()">LOG WEEKLY CHECK-IN</button>
+      </div>
+      <div style="margin-top:32px;">
+        <p style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,169,110,0.4);margin-bottom:12px;">Recent logs</p>
+        <div id="historyLogs"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- START PROTOCOL MODAL -->
+<div id="startProtocolModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:500;display:none;align-items:center;justify-content:center;padding:24px;overflow-y:auto;">
+  <div style="background:#111;border:1px solid rgba(200,169,110,0.2);max-width:480px;width:100%;padding:32px;position:relative;margin:auto;">
+    <button onclick="closeModal('startProtocolModal')" style="position:absolute;top:12px;right:12px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;">×</button>
+    <p style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,169,110,0.4);margin-bottom:6px;">Start protocol</p>
+    <p id="spModalTitle" style="font-family:var(--ff-serif);font-size:20px;color:#f5f4f0;margin-bottom:20px;"></p>
+    <div style="margin-bottom:14px;"><label style="font-size:11px;color:rgba(200,169,110,0.5);display:block;margin-bottom:6px;">Dose</label><input class="input" type="text" id="sp-dose" placeholder="e.g. 250mcg"></div>
+    <div style="margin-bottom:14px;"><label style="font-size:11px;color:rgba(200,169,110,0.5);display:block;margin-bottom:6px;">Frequency</label><select class="input" id="sp-frequency"><option>daily</option><option>twice daily</option><option>3x weekly</option><option>twice weekly</option><option>weekly</option></select></div>
+    <div style="margin-bottom:14px;"><label style="font-size:11px;color:rgba(200,169,110,0.5);display:block;margin-bottom:6px;">Timing</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;" id="sp-timing">
+        <label style="font-size:10px;color:rgba(200,169,110,0.6);display:flex;align-items:center;gap:4px;"><input type="checkbox" value="morning"> Morning</label>
+        <label style="font-size:10px;color:rgba(200,169,110,0.6);display:flex;align-items:center;gap:4px;"><input type="checkbox" value="pre-workout"> Pre-workout</label>
+        <label style="font-size:10px;color:rgba(200,169,110,0.6);display:flex;align-items:center;gap:4px;"><input type="checkbox" value="post-workout"> Post-workout</label>
+        <label style="font-size:10px;color:rgba(200,169,110,0.6);display:flex;align-items:center;gap:4px;"><input type="checkbox" value="evening"> Evening</label>
+        <label style="font-size:10px;color:rgba(200,169,110,0.6);display:flex;align-items:center;gap:4px;"><input type="checkbox" value="before bed"> Before bed</label>
+      </div>
+    </div>
+    <div style="margin-bottom:14px;"><label style="font-size:11px;color:rgba(200,169,110,0.5);display:block;margin-bottom:6px;">Method</label><select class="input" id="sp-method"><option>injection</option><option>oral</option><option>nasal</option><option>topical</option></select></div>
+    <div style="margin-bottom:20px;"><label style="font-size:11px;color:rgba(200,169,110,0.5);display:block;margin-bottom:6px;">Cycle length</label><select class="input" id="sp-cycle"><option value="4">4 weeks</option><option value="6">6 weeks</option><option value="8">8 weeks</option><option value="12" selected>12 weeks</option><option value="16">16 weeks</option></select></div>
+    <button class="btn btn-primary" style="width:100%;" id="spSubmitBtn" onclick="submitStartProtocol()">BEGIN PROTOCOL</button>
   </div>
 </div>
 
@@ -5931,6 +5984,204 @@
     .catch(function() {
       document.getElementById('protocolBody').innerHTML = '<div style="font-size:13px;color:var(--muted)">Unable to generate protocol. Please check your connection and try again.</div>';
     });
+  }
+
+  // ── HEALTH+ TAB SYSTEM ──
+  function showHealthTab(tab) {
+    document.querySelectorAll('.health-tab').forEach(function(t) {
+      t.classList.toggle('active', t.dataset.tab === tab);
+    });
+    document.querySelectorAll('.health-tab-content').forEach(function(c) {
+      c.style.display = c.id === 'ht-' + tab ? 'block' : 'none';
+    });
+    if (tab === 'today') loadTodayChecklist();
+    if (tab === 'predict') loadPredictTab();
+    if (tab === 'history') loadHistoryTab();
+  }
+
+  function showGuestProtocolState() {
+    var c = document.getElementById('protocolChecklist');
+    if (c) c.innerHTML = '<div style="text-align:center;padding:40px 20px;"><div style="font-family:var(--ff-serif);font-style:italic;font-size:16px;color:rgba(200,169,110,0.5);margin-bottom:8px;">Sign in to track protocols</div><div style="font-size:12px;color:rgba(200,169,110,0.3);">Your daily checklist will appear here</div></div>';
+  }
+
+  async function loadTodayChecklist() {
+    if (!currentUser) { showGuestProtocolState(); return; }
+    try {
+      var res = await fetch('/api/protocol-checklist?userId=' + currentUser.id);
+      var data = await res.json();
+      window._activeProtocols = data.protocols;
+      window._todayDoses = data.todayDoses;
+      var container = document.getElementById('protocolChecklist');
+      if (!container) return;
+      if (!data.protocols || data.protocols.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:40px 20px;"><div style="font-family:var(--ff-serif);font-style:italic;font-size:16px;color:rgba(200,169,110,0.5);margin-bottom:8px;">No active protocols</div><div style="font-size:12px;color:rgba(200,169,110,0.3);margin-bottom:20px;">Start a protocol to begin tracking</div><button class="btn btn-primary" onclick="showHealthTab(\'protocols\')">VIEW PROTOCOLS</button></div>';
+        return;
+      }
+      container.innerHTML = data.protocols.map(function(p) { return renderProtocolCheckItem(p, data.todayDoses); }).join('');
+    } catch(e) { console.error('Load checklist error:', e); }
+  }
+
+  function renderProtocolCheckItem(p, todayDoses) {
+    var today = new Date();
+    var start = new Date(p.start_date);
+    var end = new Date(p.end_date);
+    var currentWeek = Math.max(1, Math.floor((today - start) / (7*24*60*60*1000)) + 1);
+    var totalDays = Math.floor((end - start) / (24*60*60*1000));
+    var elapsedDays = Math.floor((today - start) / (24*60*60*1000));
+    var pct = Math.min(100, Math.round((elapsedDays / totalDays) * 100));
+    var takenToday = todayDoses && todayDoses.find(function(d) { return d.protocol_id === p.id && !d.skipped; });
+    var skippedToday = todayDoses && todayDoses.find(function(d) { return d.protocol_id === p.id && d.skipped; });
+    var loggedToday = takenToday || skippedToday;
+    var endFormatted = end.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+    var timingBadges = (p.timing || []).map(function(t) { return '<span style="font-size:8px;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border:0.5px solid rgba(200,169,110,0.2);color:rgba(200,169,110,0.5);margin-right:4px;">' + t + '</span>'; }).join('');
+    var statusHtml = loggedToday
+      ? '<div class="pc-status" style="display:block;margin-top:12px;"><div class="pc-status-text">' + (takenToday ? 'Taken today. Keep going.' : 'Skipped today.') + '</div></div>'
+      : '<div class="pc-actions" id="pca-' + p.id + '"><button class="btn pc-take-btn" onclick="logDose(\'' + p.id + '\',false)">MARK TAKEN</button><button class="btn pc-skip-btn" onclick="logDose(\'' + p.id + '\',true)">SKIP</button></div>';
+    return '<div class="protocol-check-item" id="pc-' + p.id + '"><div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;"><div><div class="pc-name">' + p.peptide_name + '</div><div class="pc-dose">' + p.dose + ' · ' + p.frequency + '</div></div><div>' + timingBadges + '</div></div><div class="pc-cycle-label">Week ' + currentWeek + ' of ' + p.cycle_weeks + '</div><div class="pc-cycle-track"><div class="pc-cycle-fill" style="width:' + pct + '%"></div></div><div class="pc-cycle-end">Cycle ends ' + endFormatted + '</div>' + statusHtml + '</div>';
+  }
+
+  async function logDose(protocolId, skipped) {
+    if (!currentUser) return;
+    try {
+      var res = await fetch('/api/protocol-checklist', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ action:'log_dose', userId:currentUser.id, protocolId:protocolId, skipped:skipped }) });
+      if (res.ok) {
+        var actions = document.getElementById('pca-' + protocolId);
+        if (actions) actions.outerHTML = '<div class="pc-status" style="display:block;margin-top:12px;"><div class="pc-status-text">' + (skipped ? 'Skipped today.' : 'Taken today. Keep going.') + '</div></div>';
+        if (!skipped && typeof showXPToast === 'function') { showXPToast('+10 XP'); }
+        if (!skipped && typeof awardXP === 'function') { awardXP(10, 'dose_logged'); }
+      }
+    } catch(e) { console.error('Log dose error:', e); }
+  }
+
+  // ── START PROTOCOL MODAL ──
+  var _spPeptideName = '';
+  function openStartProtocol(name, defaultDose, defaultCycle) {
+    _spPeptideName = name;
+    document.getElementById('spModalTitle').textContent = name + ' Protocol';
+    document.getElementById('sp-dose').value = defaultDose || '';
+    document.getElementById('sp-cycle').value = String(defaultCycle || 12);
+    var modal = document.getElementById('startProtocolModal');
+    modal.style.display = 'flex';
+  }
+
+  async function submitStartProtocol() {
+    if (!currentUser) { alert('Please sign in first.'); return; }
+    var timingEls = document.querySelectorAll('#sp-timing input:checked');
+    var timing = [];
+    timingEls.forEach(function(el) { timing.push(el.value); });
+    var btn = document.getElementById('spSubmitBtn');
+    btn.textContent = 'STARTING...'; btn.disabled = true;
+    try {
+      var res = await fetch('/api/protocol-checklist', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ action:'start_protocol', userId:currentUser.id, peptideName:_spPeptideName, dose:document.getElementById('sp-dose').value, frequency:document.getElementById('sp-frequency').value, timing:timing, method:document.getElementById('sp-method').value, cycleWeeks:parseInt(document.getElementById('sp-cycle').value) }) });
+      if (res.ok) {
+        closeModal('startProtocolModal');
+        showHealthTab('today');
+        if (typeof showXPToast === 'function') showXPToast('+25 XP');
+      }
+    } catch(e) { console.error('Start protocol error:', e); }
+    btn.textContent = 'BEGIN PROTOCOL'; btn.disabled = false;
+  }
+
+  // ── PREDICT TAB ──
+  var _predictPeptides = [
+    { name:'BPC-157', cat:'Healing / Recovery' },
+    { name:'TB-500', cat:'Wound Healing / Flexibility' },
+    { name:'Tesamorelin', cat:'GH / Fat Loss / Cognition' },
+    { name:'Ipamorelin', cat:'GH / Lean Muscle / Anti-Aging' },
+    { name:'Thymosin Alpha-1', cat:'Immune / T-Cell' },
+    { name:'SEMAX', cat:'Cognitive / Memory / Mood' },
+    { name:'GHK-Cu', cat:'Skin / Collagen / Anti-Aging' }
+  ];
+
+  function loadPredictTab() {
+    var list = document.getElementById('predictPeptideList');
+    var result = document.getElementById('predictionResult');
+    if (result) result.style.display = 'none';
+    if (!list) return;
+    list.innerHTML = _predictPeptides.map(function(p) {
+      return '<div class="predict-peptide-card" onclick="loadProtocolPrediction(\'' + p.name + '\')"><div style="font-size:14px;font-weight:500;color:rgba(255,245,220,0.9);">' + p.name + '</div><div style="font-size:10px;color:rgba(200,169,110,0.45);margin-top:2px;">' + p.cat + '</div></div>';
+    }).join('');
+  }
+
+  async function loadProtocolPrediction(protocol) {
+    var list = document.getElementById('predictPeptideList');
+    if (list) list.innerHTML = '<div style="text-align:center;padding:30px;"><div style="font-size:12px;color:rgba(200,169,110,0.5);margin-bottom:8px;">Generating prediction for ' + protocol + '...</div><div style="font-family:var(--font-mono);font-size:10px;color:rgba(200,169,110,0.3);">This may take a moment</div></div>';
+    var userProfile = {};
+    try { userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}'); } catch(e) {}
+    try {
+      var res = await fetch('/api/predict-protocol', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ protocol:protocol, userProfile:userProfile, userId:currentUser ? currentUser.id : null }) });
+      var data = await res.json();
+      window._lastPrediction = data.prediction;
+      window._lastPredictionProtocol = protocol;
+      if (list) list.innerHTML = '<div class="predict-peptide-card" onclick="loadPredictTab()" style="text-align:center;"><span style="font-size:10px;color:rgba(200,169,110,0.5);">← Back to all protocols</span></div>';
+      renderPrediction(data.prediction, data.knowledge, data.cycle);
+    } catch(e) {
+      console.error('Prediction failed:', e);
+      if (list) list.innerHTML = '<div style="padding:20px;text-align:center;color:rgba(200,169,110,0.5);font-size:12px;">Prediction failed. <span style="cursor:pointer;text-decoration:underline;" onclick="loadPredictTab()">Try again</span></div>';
+    }
+  }
+
+  function renderPrediction(p, k, cycle) {
+    var container = document.getElementById('predictionResult');
+    if (!container || !p) return;
+    container.style.display = 'block';
+    var weeks = ['week2','week4','week8','week12'];
+    var timelineHtml = weeks.map(function(w) {
+      var data = p[w]; if (!data) return '';
+      var wNum = w.replace('week','');
+      var metricHtml = '';
+      if (data.metric) metricHtml = '<div style="font-family:var(--font-mono);font-size:10px;color:rgba(200,169,110,0.6);">' + data.metric + '</div>';
+      else if (data.metrics) metricHtml = '<div style="display:flex;gap:12px;margin-top:4px;">' + Object.keys(data.metrics).map(function(k) { return '<span style="font-family:var(--font-mono);font-size:10px;color:rgba(200,169,110,0.6);">' + k + ': ' + data.metrics[k] + '</span>'; }).join('') + '</div>';
+      return '<div style="border-top:0.5px solid rgba(200,169,110,0.09);padding:12px 0;display:flex;gap:16px;align-items:flex-start;"><div style="font-family:var(--font-mono);font-size:22px;font-weight:700;color:rgba(200,169,110,0.3);flex-shrink:0;width:32px;">' + wNum + '</div><div style="flex:1;"><div style="font-size:12px;font-weight:500;color:rgba(255,245,220,0.85);margin-bottom:4px;">' + (data.summary || data.focus) + '</div>' + metricHtml + '</div></div>';
+    }).join('');
+    var bestForHtml = (p.best_for || []).map(function(b) { return '<div style="font-size:12px;font-weight:300;color:rgba(255,245,220,0.8);padding:6px 0;border-bottom:0.5px solid rgba(200,169,110,0.07);">' + b + '</div>'; }).join('');
+    var watchForHtml = (p.watch_for || []).map(function(w) { return '<div style="font-size:12px;font-weight:300;color:rgba(200,169,110,0.55);padding:6px 0;border-bottom:0.5px solid rgba(200,169,110,0.07);">' + w + '</div>'; }).join('');
+    container.innerHTML = '<div style="padding:16px 0;"><div style="font-family:var(--ff-serif);font-style:italic;font-size:17px;color:rgba(255,245,220,0.9);line-height:1.5;margin-bottom:4px;">"' + (p.headline||'') + '"</div><div style="display:flex;gap:8px;align-items:center;margin-bottom:20px;"><span style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(200,169,110,0.4);">Confidence</span><span style="font-size:9px;font-weight:600;color:rgba(200,169,110,0.8);border:0.5px solid rgba(200,169,110,0.3);padding:2px 8px;">' + (p.confidence||'') + '</span><span style="font-size:10px;color:rgba(200,169,110,0.4);">' + (p.profile_match||'') + '</span></div><div style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,169,110,0.4);margin-bottom:12px;">Projected timeline</div>' + timelineHtml + '<div style="border:0.5px solid rgba(200,169,110,0.15);padding:14px;margin:16px 0;"><div style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,169,110,0.4);margin-bottom:12px;">Body composition projection</div><div style="display:flex;gap:0;"><div style="flex:1;text-align:center;border-right:0.5px solid rgba(200,169,110,0.1);padding-right:12px;"><div style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:rgba(255,245,220,0.9);">' + (p.body_composition?p.body_composition.fat_loss:'—') + '</div><div style="font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:rgba(200,169,110,0.4);margin-top:3px;">Fat loss</div></div><div style="flex:1;text-align:center;padding-left:12px;"><div style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:rgba(255,245,220,0.9);">' + (p.body_composition?p.body_composition.lean_gain:'—') + '</div><div style="font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:rgba(200,169,110,0.4);margin-top:3px;">Lean gain</div></div></div></div><div style="margin-bottom:14px;"><div style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,169,110,0.4);margin-bottom:8px;">Best for</div>' + bestForHtml + '</div><div style="margin-bottom:14px;"><div style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,169,110,0.4);margin-bottom:8px;">Monitor closely</div>' + watchForHtml + '</div><div style="border-left:0.5px solid rgba(200,169,110,0.3);padding-left:14px;margin-bottom:20px;"><div style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(200,169,110,0.35);margin-bottom:6px;">Clinician note</div><div style="font-family:var(--ff-serif);font-style:italic;font-size:14px;color:rgba(200,169,110,0.65);line-height:1.6;">"' + (p.clinician_note||'') + '"</div></div><div style="border-top:0.5px solid rgba(200,169,110,0.09);padding-top:14px;margin-bottom:20px;"><div style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,169,110,0.4);margin-bottom:6px;">After this cycle</div><div style="font-size:13px;color:rgba(255,245,220,0.8);">' + (p.next_protocol||'') + '</div></div><button class="btn btn-primary" style="width:100%;" onclick="generateWithProtocol()">GENERATE FUTURE SELF WITH THIS PROTOCOL</button></div>';
+  }
+
+  function generateWithProtocol() {
+    var addition = window._lastPrediction ? window._lastPrediction.image_prompt_addition : '';
+    window._protocolImageAddition = addition || '';
+    showScreen('future-self');
+  }
+
+  // ── HISTORY TAB ──
+  function loadHistoryTab() {
+    var selectDiv = document.getElementById('historyProtocolSelect');
+    var protocols = window._activeProtocols || [];
+    if (selectDiv && protocols.length > 0) {
+      selectDiv.innerHTML = '<select class="input" id="hist-protocol" style="width:100%;">' + protocols.map(function(p) { return '<option value="' + p.id + '">' + p.peptide_name + ' — ' + p.dose + '</option>'; }).join('') + '</select>';
+    } else if (selectDiv) {
+      selectDiv.innerHTML = '<div style="font-size:12px;color:rgba(200,169,110,0.4);margin-bottom:8px;">No active protocols to log against</div>';
+    }
+    loadHistoryLogs();
+  }
+
+  async function loadHistoryLogs() {
+    var container = document.getElementById('historyLogs');
+    if (!container || !currentUser) return;
+    container.innerHTML = '<div style="font-size:12px;color:rgba(200,169,110,0.3);text-align:center;padding:20px;">Weekly logs will appear here after your first check-in.</div>';
+  }
+
+  async function submitWeeklyLog() {
+    if (!currentUser) { alert('Please sign in first.'); return; }
+    var protocolEl = document.getElementById('hist-protocol');
+    if (!protocolEl) { alert('No active protocol selected.'); return; }
+    var protocols = window._activeProtocols || [];
+    var protocol = protocols.find(function(p) { return p.id === protocolEl.value; });
+    var currentWeek = 1;
+    if (protocol) {
+      currentWeek = Math.max(1, Math.floor((new Date() - new Date(protocol.start_date)) / (7*24*60*60*1000)) + 1);
+    }
+    try {
+      var res = await fetch('/api/protocol-checklist', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ action:'log_weekly', userId:currentUser.id, protocolId:protocolEl.value, weekNumber:currentWeek, energyLevel:parseInt(document.getElementById('hist-energy').value), sleepQuality:parseInt(document.getElementById('hist-sleep').value), recoveryScore:parseInt(document.getElementById('hist-recovery').value), moodScore:parseInt(document.getElementById('hist-mood').value), painLevel:parseInt(document.getElementById('hist-pain').value), bodyWeight:parseFloat(document.getElementById('hist-weight').value) || null, notes:document.getElementById('hist-notes').value }) });
+      if (res.ok) {
+        if (typeof showXPToast === 'function') showXPToast('+15 XP');
+        document.getElementById('hist-notes').value = '';
+        loadHistoryLogs();
+        alert('Weekly check-in logged!');
+      }
+    } catch(e) { console.error('Weekly log error:', e); }
   }
 
 })();
