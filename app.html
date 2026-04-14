@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" style="background:#000000;">
+<html lang="en" style="background:#0f0e0c;">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -7,54 +7,54 @@
   <link rel="icon" type="image/png" href="/logo-icon.png" />
   <link rel="apple-touch-icon" href="/logo-icon.png" />
   <title>Wylde Self — App</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Montserrat:wght@600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      /* ── Pure Black + Gold Hairline Design System ── */
-      --bg:         #000000;
-      --surface:    #0d0c0a;
-      --surface2:   #0d0c0a;
-      --border:     rgba(200,169,110,0.09);
-      --border2:    rgba(200,169,110,0.14);
-      --text:       rgba(255,245,220,0.95);
-      --text2:      rgba(255,245,220,0.75);
-      --text3:      rgba(200,169,110,0.55);
-      /* ── Brand — gold is the ONLY accent ── */
+      /* ── Warm Dark Design System v4 ── */
+      --bg:         #0f0e0c;
+      --surface:    #1a1815;
+      --surface2:   #201e1a;
+      --border:     rgba(200,180,140,0.08);
+      --border2:    rgba(200,180,140,0.12);
+      --text:       rgba(245,240,230,0.92);
+      --text2:      rgba(245,240,230,0.65);
+      --text3:      rgba(200,180,140,0.5);
+      /* ── Brand — warm gold accent ── */
       --gold:       #c8a96e;
       --gold-hi:    rgba(200,169,110,0.85);
-      --gold-mid:   rgba(200,169,110,0.55);
-      --gold-lo:    rgba(200,169,110,0.35);
-      --gold-dim:   rgba(200,169,110,0.15);
+      --gold-mid:   rgba(200,169,110,0.5);
+      --gold-lo:    rgba(200,169,110,0.3);
+      --gold-dim:   rgba(200,169,110,0.1);
       --ember:      #c8a96e;
-      --green:      #3dba6e;
-      --blue:       #4a9eff;
-      --purple:     #a87edd;
-      /* ── Accent system (gold-based) ── */
+      --green:      #5ec48a;
+      --blue:       #6bb3ff;
+      --purple:     #b99aee;
+      /* ── Accent system ── */
       --accent:        #c8a96e;
-      --accent-bg:     rgba(200,169,110,0.08);
-      --accent-border: rgba(200,169,110,0.35);
-      /* ── Fonts ── */
-      --font-ui:        'Inter', system-ui, sans-serif;
-      --font-mono:      'Space Mono', monospace;
-      --font-milestone: 'Montserrat', sans-serif;
-      --font-serif:     'Cormorant Garamond', serif;
+      --accent-bg:     rgba(200,169,110,0.06);
+      --accent-border: rgba(200,169,110,0.25);
+      /* ── Font — one family, clean ── */
+      --font-ui:        'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono:      'Inter', system-ui, sans-serif;
+      --font-milestone: 'Inter', system-ui, sans-serif;
+      --font-serif:     'Inter', system-ui, sans-serif;
       /* ── Legacy aliases ── */
-      --black:       #000000;
-      --charcoal:    #0d0c0a;
-      --white:       rgba(255,245,220,0.95);
-      --muted:       rgba(255,245,220,0.75);
+      --black:       #0f0e0c;
+      --charcoal:    #1a1815;
+      --white:       rgba(245,240,230,0.92);
+      --muted:       rgba(245,240,230,0.6);
       --ff-hero:     'Inter', system-ui, sans-serif;
-      --ff-serif:    'Cormorant Garamond', serif;
+      --ff-serif:    'Inter', system-ui, sans-serif;
       --ff-body:     'Inter', system-ui, sans-serif;
-      --font-editorial: 'Cormorant Garamond', serif;
+      --font-editorial: 'Inter', system-ui, sans-serif;
       /* ── Radius — soft rounded ── */
       --r-sm:  8px;
       --r-md:  14px;
       --r-lg:  18px;
       --r-xl:  24px;
     }
-    html, body { background: #000000 !important; color: var(--text); font-family: var(--font-ui); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    html, body { background: #0f0e0c !important; color: var(--text); font-family: var(--font-ui); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
     /* NAV */
     nav { position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; background: #000000; border-right: 0.5px solid rgba(200,169,110,0.09); width: 200px; display: flex; flex-direction: column; padding: 0; }
@@ -65,7 +65,7 @@
     .nav-tab { font-family: var(--font-ui); }
     .nav-tab:hover { color: #f5f4f0; background: rgba(255,255,255,0.03); }
     .nav-tab.active { color: var(--gold); border-left-color: var(--gold); background: rgba(200,169,110,0.06); }
-    .nav-tab.active::after { content: ''; display: inline-block; width: 4px; height: 4px; background: var(--gold); border-radius: 50%; margin-left: auto; }
+    .nav-tab.active::after { display: none; }
     .nav-tab.locked { opacity: 0.3; cursor: not-allowed; }
     .nav-tab.locked:hover { color: var(--muted); background: none; }
     .nav-footer { padding: 20px 24px; border-top: 1px solid var(--border); }
@@ -751,27 +751,28 @@
   .feed-item-body { font-size:14px; color:var(--text); line-height:1.65; }
 
   /* ═══════════════════════════════════════════════════════════
-     CARD LAYOUT SYSTEM — soft containers, clear hierarchy
+     WARM WELCOMING DESIGN v4 — fluid, inviting, inclusive
   ═══════════════════════════════════════════════════════════ */
 
   /* ── PHILOSOPHY ──
-     1. Cards = soft dark containers with subtle fill + rounded corners
-     2. Gold sparingly — active states, key data, CTAs only
-     3. Clear hierarchy: section titles bold, labels quiet
-     4. Generous inner padding, consistent gaps between cards
-     5. Feels like a meditation app with structure
+     1. Warm dark, not black — feels like candlelight, not a void
+     2. One font (Inter) — clean, friendly, no pretense
+     3. Sentence case — approachable, not shouting
+     4. Soft rounded cards with warm fills
+     5. Feels like a wellness journal, not a gym app
   */
 
   /* ── GLOBAL ── */
-  * { animation-duration: 0s !important; animation: none !important; }
+  * { animation-duration: 0s !important; animation: none !important; font-family: 'Inter', system-ui, -apple-system, sans-serif !important; }
   #opening-sequence, #opening-sequence * { animation: revert !important; animation-duration: revert !important; }
   .os-progress-fill { transition: width 1.8s ease !important; }
 
-  /* ═══ PHONE FRAME — everything lives in a centered phone column ═══ */
+  /* ═══ PHONE FRAME ═══ */
   html, body {
     display: flex !important;
     justify-content: center !important;
     min-height: 100vh !important;
+    background: #0f0e0c !important;
   }
 
   /* ── CARD TOKEN ── */
@@ -781,134 +782,138 @@
   .dash-stat-row, .ov-w, .ov-widget, .feed-post, .feed-item,
   .lb-row, .lb-item, .thread-card, .forum-section-card,
   .roadmap-stat, .wcard, .dash-card {
-    background: rgba(255,255,255,0.035) !important;
-    border: 1px solid rgba(255,255,255,0.05) !important;
+    background: rgba(255,248,235,0.03) !important;
+    border: 1px solid rgba(200,180,140,0.07) !important;
     border-radius: 16px !important;
     box-shadow: none !important;
-    padding: 18px !important;
+    padding: 20px !important;
     margin-bottom: 10px !important;
   }
 
-  /* ── SPACING — phone width ── */
-  .container { max-width: 100% !important; padding: 20px 16px 100px !important; }
-  .ov-shell { max-width: 100% !important; padding: 20px 16px 100px !important; }
-  .screen { padding-bottom: 100px !important; /* room for bottom nav */ }
+  /* ── SPACING ── */
+  .container { max-width: 100% !important; padding: 20px 20px 100px !important; }
+  .ov-shell { max-width: 100% !important; padding: 20px 20px 100px !important; }
+  .screen { padding-bottom: 100px !important; }
 
-  /* ── SECTION LABELS ── */
+  /* ── SECTION LABELS — sentence case, gentle ── */
   .section-label {
-    font-size: 11px !important; font-weight: 600 !important;
-    letter-spacing: 0.08em !important; text-transform: uppercase !important;
-    color: rgba(255,245,220,0.55) !important; margin-bottom: 14px !important;
+    font-size: 12px !important; font-weight: 500 !important;
+    letter-spacing: 0.02em !important; text-transform: none !important;
+    color: rgba(200,180,140,0.55) !important; margin-bottom: 14px !important;
   }
 
-  /* ── SCREEN TITLES — phone sized ── */
+  /* ── SCREEN TITLES — warm, not shouty ── */
   .screen-title {
-    font-size: 24px !important;
-    font-weight: 700 !important; letter-spacing: -0.01em !important;
-    line-height: 1.2 !important; margin-bottom: 4px !important;
-    color: rgba(255,245,220,0.95) !important;
+    font-size: 26px !important;
+    font-weight: 600 !important; letter-spacing: -0.02em !important;
+    line-height: 1.25 !important; margin-bottom: 6px !important;
+    color: rgba(245,240,230,0.93) !important;
+    font-style: normal !important;
   }
   .screen-sub {
-    font-size: 14px !important; line-height: 1.6 !important;
-    margin-bottom: 20px !important; color: rgba(255,245,220,0.5) !important;
+    font-size: 15px !important; line-height: 1.6 !important;
+    font-style: normal !important; font-family: 'Inter', system-ui, sans-serif !important;
+    margin-bottom: 24px !important; color: rgba(245,240,230,0.5) !important;
+    font-weight: 400 !important;
   }
   .gold-rule { display: none !important; }
 
-  /* ── STAT BOXES — inside-card feel ── */
+  /* ── STAT BOXES ── */
   .stat-box { text-align: center !important; }
   .stats-grid { gap: 12px !important; }
-  .stat-num { font-size: 32px !important; font-weight: 600 !important; color: rgba(200,169,110,0.85) !important; }
-  .stat-label { font-size: 11px !important; font-weight: 400 !important; letter-spacing: 0.06em !important; color: rgba(255,245,220,0.45) !important; margin-top: 6px !important; }
+  .stat-num { font-size: 30px !important; font-weight: 600 !important; color: rgba(200,169,110,0.8) !important; }
+  .stat-label { font-size: 11px !important; font-weight: 400 !important; letter-spacing: 0.02em !important; color: rgba(245,240,230,0.4) !important; margin-top: 6px !important; text-transform: none !important; }
 
   /* ── DASHBOARD ── */
   .dash-card-label {
-    font-size: 11px !important; font-weight: 500 !important;
-    letter-spacing: 0.1em !important; color: rgba(255,245,220,0.5) !important;
-    margin-bottom: 10px !important; text-transform: uppercase !important;
+    font-size: 12px !important; font-weight: 500 !important;
+    letter-spacing: 0.02em !important; color: rgba(245,240,230,0.45) !important;
+    margin-bottom: 10px !important; text-transform: none !important;
   }
   .dash-drag-handle { display: none !important; }
   .wcard:hover { transform: none !important; box-shadow: none !important; }
   .dash-header.wcard, .dash-header .wcard { padding: 24px !important; }
-  .dash-greeting-line { font-weight: 400 !important; color: rgba(255,245,220,0.45) !important; font-size: 13px !important; }
-  .dash-name { font-weight: 700 !important; font-size: 22px !important; color: rgba(255,245,220,0.95) !important; }
-  .dash-day-line { color: rgba(255,245,220,0.5) !important; font-size: 12px !important; }
+  .dash-greeting-line { font-weight: 400 !important; color: rgba(245,240,230,0.45) !important; font-size: 14px !important; }
+  .dash-name { font-weight: 600 !important; font-size: 24px !important; color: rgba(245,240,230,0.93) !important; }
+  .dash-day-line { color: rgba(245,240,230,0.45) !important; font-size: 13px !important; }
 
   /* Momentum bar */
   .momentum-bar { margin: 16px 0 4px !important; }
-  .momentum-track { height: 4px !important; background: rgba(255,255,255,0.06) !important; border-radius: 4px !important; }
-  .momentum-fill { border-radius: 4px !important; background: rgba(200,169,110,0.55) !important; }
-  .mday { height: 4px !important; border-radius: 2px !important; background: rgba(255,255,255,0.06) !important; }
-  .mday.done { background: rgba(200,169,110,0.45) !important; }
-  .mday.today { background: rgba(200,169,110,0.75) !important; box-shadow: none !important; }
+  .momentum-track { height: 5px !important; background: rgba(255,248,235,0.06) !important; border-radius: 6px !important; }
+  .momentum-fill { border-radius: 6px !important; background: rgba(200,169,110,0.45) !important; }
+  .mday { height: 5px !important; border-radius: 4px !important; background: rgba(255,248,235,0.06) !important; }
+  .mday.done { background: rgba(200,169,110,0.4) !important; }
+  .mday.today { background: rgba(200,169,110,0.7) !important; box-shadow: none !important; }
 
-  /* ── BUTTONS — rounded, visible ── */
+  /* ── BUTTONS — soft, inviting ── */
   .btn {
-    font-size: 11px !important; font-weight: 500 !important;
-    letter-spacing: 0.1em !important; padding: 12px 22px !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
-    color: rgba(255,245,220,0.65) !important;
-    border-radius: 10px !important;
+    font-size: 13px !important; font-weight: 500 !important;
+    letter-spacing: 0.01em !important; padding: 12px 24px !important;
+    border: 1px solid rgba(200,180,140,0.12) !important;
+    color: rgba(245,240,230,0.6) !important;
+    border-radius: 12px !important;
     transition: all 0.2s ease !important;
-    text-transform: uppercase !important;
+    text-transform: none !important;
   }
   .btn:hover {
-    border-color: rgba(200,169,110,0.35) !important;
+    border-color: rgba(200,169,110,0.3) !important;
     color: rgba(200,169,110,0.85) !important;
-    background: rgba(200,169,110,0.06) !important;
+    background: rgba(200,169,110,0.05) !important;
   }
   .btn::after { display: none !important; }
   .btn-primary, .btn-gold, .ov-btn-g {
-    border-color: rgba(200,169,110,0.3) !important;
-    color: rgba(200,169,110,0.8) !important;
-    background: rgba(200,169,110,0.06) !important;
+    border-color: rgba(200,169,110,0.2) !important;
+    color: rgba(200,169,110,0.75) !important;
+    background: rgba(200,169,110,0.04) !important;
   }
   .btn-primary:hover, .btn-gold:hover, .ov-btn-g:hover {
-    border-color: rgba(200,169,110,0.5) !important;
+    border-color: rgba(200,169,110,0.4) !important;
     color: rgba(200,169,110,0.95) !important;
-    background: rgba(200,169,110,0.1) !important;
+    background: rgba(200,169,110,0.08) !important;
   }
-  .btn-ember { border-radius: 10px !important; }
-  .btn-success { border-radius: 10px !important; }
-  .btn-blue { border-radius: 10px !important; }
-  .btn-purple { border-radius: 10px !important; }
+  .btn-ember { border-radius: 12px !important; }
+  .btn-success { border-radius: 12px !important; }
+  .btn-blue { border-radius: 12px !important; }
+  .btn-purple { border-radius: 12px !important; }
 
-  /* ── INPUTS — contained ── */
+  /* ── INPUTS — warm, soft ── */
   .input, .wfield, .intake-textarea, .ov-cin, .alt-workout-input, .coach-input {
-    background: rgba(255,255,255,0.03) !important;
-    border: 1px solid rgba(255,255,255,0.07) !important;
-    border-radius: 10px !important;
+    background: rgba(255,248,235,0.025) !important;
+    border: 1px solid rgba(200,180,140,0.1) !important;
+    border-radius: 12px !important;
     padding: 14px 16px !important;
-    font-size: 14px !important; font-weight: 400 !important;
-    color: rgba(255,245,220,0.9) !important;
+    font-size: 15px !important; font-weight: 400 !important;
+    color: rgba(245,240,230,0.9) !important;
     transition: border-color 0.2s ease !important;
   }
   .input:focus, .wfield:focus, .intake-textarea:focus, .ov-cin:focus, .coach-input:focus {
-    border-color: rgba(200,169,110,0.35) !important;
+    border-color: rgba(200,169,110,0.3) !important;
     outline: none !important;
   }
   .input::placeholder, .wfield::placeholder, .intake-textarea::placeholder,
   .ov-cin::placeholder, .coach-input::placeholder,
   .chat-input::placeholder, .coach-panel-input::placeholder,
-  .alt-workout-input::placeholder { color: rgba(255,245,220,0.25) !important; }
+  .alt-workout-input::placeholder { color: rgba(245,240,230,0.25) !important; }
 
-  /* ── PILLS / TAGS ── */
+  /* ── PILLS / TAGS — friendly, not clinical ── */
   .pill, .timeline-btn, .alt-pill, .intake-opt, .intake-scale-btn,
   .intake-yn-btn, .ov-tag, .ov-ft, .ov-muscle-pill, .ov-tl-btn {
-    font-size: 12px !important; font-weight: 500 !important; letter-spacing: 0.04em !important;
-    border: 1px solid rgba(255,255,255,0.07) !important;
-    color: rgba(255,245,220,0.5) !important;
-    padding: 9px 16px !important;
-    border-radius: 20px !important;
-    background: rgba(255,255,255,0.03) !important;
+    font-size: 13px !important; font-weight: 500 !important; letter-spacing: 0.01em !important;
+    border: 1px solid rgba(200,180,140,0.1) !important;
+    color: rgba(245,240,230,0.5) !important;
+    padding: 10px 18px !important;
+    border-radius: 24px !important;
+    background: rgba(255,248,235,0.025) !important;
     transition: all 0.2s ease !important;
+    text-transform: none !important;
   }
   .pill:hover, .timeline-btn:hover, .alt-pill:hover, .intake-opt:hover,
-  .ov-tag:hover, .ov-ft:hover { border-color: rgba(200,169,110,0.25) !important; color: rgba(255,245,220,0.7) !important; }
+  .ov-tag:hover, .ov-ft:hover { border-color: rgba(200,169,110,0.2) !important; color: rgba(245,240,230,0.7) !important; }
   .pill.selected, .timeline-btn.active, .alt-pill.active,
   .intake-opt.selected, .intake-scale-btn.selected, .intake-yn-btn.selected,
   .ov-tag.ov-sel, .ov-ft.ov-on, .ov-tl-btn.active {
-    border-color: rgba(200,169,110,0.35) !important;
-    background: rgba(200,169,110,0.08) !important;
+    border-color: rgba(200,169,110,0.3) !important;
+    background: rgba(200,169,110,0.07) !important;
     color: rgba(200,169,110,0.85) !important;
   }
 
@@ -925,8 +930,8 @@
     flex-direction: row !important;
     align-items: stretch !important;
     border-right: none !important;
-    border-top: 1px solid rgba(255,255,255,0.06) !important;
-    background: rgba(0,0,0,0.92) !important;
+    border-top: 1px solid rgba(200,180,140,0.07) !important;
+    background: rgba(15,14,12,0.94) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
     z-index: 500 !important;
@@ -951,7 +956,7 @@
     font-weight: 500 !important;
     letter-spacing: 0.03em !important;
     text-transform: none !important;
-    color: rgba(255,245,220,0.35) !important;
+    color: rgba(245,240,230,0.35) !important;
     border-left: none !important;
     border-bottom: none !important;
     gap: 2px !important;
@@ -1002,8 +1007,8 @@
     right: calc(50% - 200px) !important; /* align to phone frame */
   }
   .coach-panel, .coach-sidebar {
-    background: rgba(0,0,0,0.97) !important;
-    border-left: 1px solid rgba(255,255,255,0.05) !important;
+    background: rgba(15,14,12,0.97) !important;
+    border-left: 1px solid rgba(200,180,140,0.06) !important;
     max-width: 430px !important;
   }
   .coach-header { border-bottom: 1px solid rgba(255,255,255,0.04) !important; }
@@ -1179,14 +1184,14 @@
 
   /* ── AUTH ── */
   #screen-auth {
-    background: #000000 !important;
+    background: #0f0e0c !important;
     align-items: center !important; justify-content: center !important;
     max-width: 430px !important; margin: 0 auto !important;
     min-height: 100vh !important; padding: 20px 16px !important;
   }
   .auth-box {
-    background: rgba(255,255,255,0.035) !important;
-    border: 1px solid rgba(255,255,255,0.06) !important;
+    background: rgba(255,248,235,0.03) !important;
+    border: 1px solid rgba(200,180,140,0.08) !important;
     border-radius: 20px !important;
     padding: 32px 24px !important;
     width: 100% !important;
@@ -1264,7 +1269,11 @@
   .rest-status, .ex-track-lbl, .ov-mc-l, .ov-pg-l, .ov-stat-lbl,
   .ov-macro-lbl, .dash-week-lbl, .dash-stat-lbl,
   .form-group label, .intake-label, .comp-tag, .reveal-tab .tab-sub,
-  .hb-live, .live-tag, .coach-panel-context p { color: rgba(255,245,220,0.4) !important; }
+  .hb-live, .live-tag, .coach-panel-context p {
+    color: rgba(245,240,230,0.4) !important;
+    text-transform: none !important;
+    letter-spacing: 0.02em !important;
+  }
 
   /* Secondary text — comfortably readable */
   .screen-sub, .upload-label, .peptide-summary, .stack-card-why,
@@ -1272,12 +1281,15 @@
   .ov-q, .dash-day-line, .ov-daily-q, .roadmap-milestone,
   .stack-card-timing, .log-date, .msg-ai .msg-label,
   .thread-card-meta, .feed-item-time, .ov-footer,
-  .nav-user { color: rgba(255,245,220,0.55) !important; }
+  .nav-user {
+    color: rgba(245,240,230,0.5) !important;
+    font-style: normal !important;
+  }
 
   /* Gold accents — meaningful only */
   .day-focus, .streak-fire, .nav-tab.active,
   .roadmap-phase-title, .peptide-name, .stack-card-name,
-  .coach-title, .ov-brand { color: rgba(200,169,110,0.75) !important; }
+  .coach-title, .ov-brand { color: rgba(200,169,110,0.7) !important; }
 
   /* Fullscript btn */
   .fs-link-btn { border-radius: 14px !important; background: rgba(200,169,110,0.05) !important; }
@@ -1309,7 +1321,6 @@
   #opening-sequence .os-progress-fill.active { width: 100%; }
 
   /* ═══ NUCLEAR BACKGROUND OVERRIDE ═══ */
-  /* Catch ALL inline hardcoded backgrounds → make them use the card fill */
   [style*="background:#161616"],
   [style*="background: #161616"],
   [style*="background:#111"],
@@ -1319,8 +1330,12 @@
   [style*="background:#1a1a1a"],
   [style*="background: #1a1a1a"],
   [style*="background:#080808"],
-  [style*="background: #080808"] {
-    background: rgba(255,255,255,0.035) !important;
+  [style*="background: #080808"],
+  [style*="background:#000"],
+  [style*="background: #000"],
+  [style*="background:#000000"],
+  [style*="background: #000000"] {
+    background: rgba(255,248,235,0.03) !important;
   }
   /* Catch inline border-radius → normalize to our card radius */
   [style*="border-radius:10px"],
@@ -1342,10 +1357,10 @@
   }
   /* Exempt the opening-sequence from background overrides */
   #opening-sequence, #opening-sequence * { background: revert; }
-  #opening-sequence { background: #000000 !important; }
+  #opening-sequence { background: #0f0e0c !important; }
   </style>
 </head>
-<body style="background:#000000;">
+<body style="background:#0f0e0c;">
 
 <!-- ═══ OPENING SEQUENCE ═══ -->
 <div id="opening-sequence">
