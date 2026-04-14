@@ -1480,7 +1480,7 @@
 })();
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
 
 <!-- AUTH SCREEN -->
 <div id="screen-auth" style="display:none;">
@@ -2320,12 +2320,14 @@
       ? sb.auth.signInWithPassword({ email: email, password: password })
       : sb.auth.signUp({ email: email, password: password });
     p.then(function(result) {
+      console.log('Auth result:', result);
       if (result.error) {
         if (err) { err.textContent = result.error.message; err.style.display = 'block'; }
         btn.disabled = false;
         btn.textContent = _authMode === 'signin' ? 'SIGN IN' : 'CREATE ACCOUNT';
       }
     }).catch(function(e) {
+      console.error('Auth error:', e);
       if (err) { err.textContent = e.message || 'Authentication failed.'; err.style.display = 'block'; }
       btn.disabled = false;
       btn.textContent = _authMode === 'signin' ? 'SIGN IN' : 'CREATE ACCOUNT';
