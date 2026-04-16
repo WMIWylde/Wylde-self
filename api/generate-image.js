@@ -90,21 +90,34 @@ export default async function handler(req) {
       ];
     }
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image-preview:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents,
-          generationConfig: {
-            responseModalities: ['TEXT', 'IMAGE']
-          }
-        })
-      }
-    );
+    // Try models in order — names change often, first success wins
+    const models = [
+      'gemini-2.5-flash-preview-image',
+      'gemini-2.0-flash-exp-image-generation',
+      'gemini-2.0-flash-exp',
+    ];
 
-    const data = await response.json();
+    const body = JSON.stringify({
+      contents,
+      generationConfig: {
+        responseModalities: ['TEXT', 'IMAGE']
+      }
+    });
+
+    let response, data;
+    for (const model of models) {
+      response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body
+        }
+      );
+      data = await response.json();
+      if (response.ok || response.status !== 404) break;
+      // 404 = model doesn't exist on this key, try next
+    }
 
     if (!response.ok) {
       throw new Error(data?.error?.message || `Gemini error ${response.status}`);
