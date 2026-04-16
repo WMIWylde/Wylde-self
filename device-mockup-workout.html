@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wylde Self — Workout Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-main: #111010;
+    --bg-surface: #1B1A17;
+    --bg-soft: #232220;
+    --bg-elevated: #2A2926;
+    --text-primary: #F5F2ED;
+    --text-muted: #6B675E;
+    --accent-sage: #7A8E76;
+    --accent-sage-soft: #8FA08B;
+    --accent-gold: #C9AD6E;
+  }
+
+  body {
+    background: var(--bg-main);
+    font-family: 'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  .device {
+    width: 100%; max-width: 340px;
+    background: #161514;
+    border-radius: 44px;
+    padding: 14px;
+    box-shadow:
+      0 0 0 1px rgba(255,248,235,0.05),
+      0 2px 4px rgba(0,0,0,0.4),
+      0 8px 24px rgba(0,0,0,0.35),
+      0 24px 64px rgba(0,0,0,0.3),
+      0 48px 100px rgba(0,0,0,0.2);
+    position: relative;
+  }
+  .device::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 20%; right: 20%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,248,235,0.08), transparent);
+    border-radius: 44px 44px 0 0;
+  }
+  .device-notch {
+    width: 100px; height: 28px;
+    background: var(--bg-main);
+    border-radius: 20px;
+    margin: 0 auto;
+    position: relative; z-index: 10;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+  }
+  .device-screen {
+    background: var(--bg-surface);
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    margin-top: -14px;
+    padding: 28px 20px 24px;
+  }
+  .device-screen::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: 30px;
+    border: 1px solid rgba(255,248,235,0.04);
+    pointer-events: none;
+  }
+  .device-home {
+    width: 120px; height: 4px;
+    background: rgba(245,242,237,0.15);
+    border-radius: 2px;
+    margin: 10px auto 0;
+  }
+
+  /* Status */
+  .ds-status {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 2px 16px;
+    font-size: 11px; font-weight: 600;
+    color: rgba(245,242,237,0.5);
+  }
+  .ds-dots { display: flex; gap: 3px; }
+  .ds-dots span {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: rgba(245,242,237,0.35);
+  }
+  .ds-dots span:first-child { background: rgba(245,242,237,0.6); }
+
+  /* Workout header */
+  .wo-header { margin-bottom: 20px; padding: 0 2px; }
+  .wo-label {
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent-sage); margin-bottom: 4px;
+  }
+  .wo-title {
+    font-size: 20px; font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.03em; line-height: 1.15;
+    margin-bottom: 4px;
+  }
+  .wo-subtitle {
+    font-size: 11px; font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  /* Progress */
+  .wo-progress-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px;
+  }
+  .wo-progress-track {
+    flex: 1; height: 6px;
+    background: var(--bg-soft);
+    border-radius: 3px; overflow: hidden;
+  }
+  .wo-progress-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent-sage), var(--accent-sage-soft));
+    position: relative;
+  }
+  .wo-progress-fill::after {
+    content: '';
+    position: absolute; right: 0; top: 0; bottom: 0; width: 10px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18));
+    border-radius: 0 3px 3px 0;
+  }
+  .wo-progress-pct {
+    font-size: 12px; font-weight: 700;
+    color: var(--accent-sage-soft);
+    min-width: 32px; text-align: right;
+  }
+
+  /* Current exercise */
+  .wo-current {
+    background: var(--bg-soft);
+    border-radius: 14px;
+    padding: 18px 16px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(122,142,118,0.1);
+    position: relative; overflow: hidden;
+  }
+  .wo-current::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(122,142,118,0.15), transparent);
+  }
+  .wo-current-label {
+    font-size: 9px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--accent-sage); margin-bottom: 8px;
+  }
+  .wo-exercise-name {
+    font-size: 17px; font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.02em; margin-bottom: 3px;
+  }
+  .wo-exercise-detail {
+    font-size: 12px; font-weight: 500;
+    color: var(--text-muted); margin-bottom: 14px;
+  }
+  .wo-set-row {
+    display: flex; gap: 6px; margin-bottom: 14px;
+  }
+  .wo-set {
+    flex: 1; height: 4px;
+    background: var(--bg-elevated);
+    border-radius: 2px;
+  }
+  .wo-set.done { background: var(--accent-sage); }
+  .wo-set.active {
+    background: var(--accent-sage-soft);
+    animation: setPulse 1.5s ease infinite;
+  }
+  @keyframes setPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  .wo-btn {
+    display: block; width: 100%;
+    padding: 13px;
+    background: var(--accent-sage);
+    color: #111010;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 700;
+    border: none; border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 2px 12px rgba(122,142,118,0.25);
+    transition: all 0.2s ease;
+  }
+  .wo-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(122,142,118,0.35);
+  }
+  .wo-btn:active {
+    transform: scale(0.98);
+  }
+
+  /* Queue */
+  .wo-queue-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px;
+    background: var(--bg-soft);
+    border-radius: 11px; margin-bottom: 6px;
+    border: 1px solid rgba(255,248,235,0.03);
+  }
+  .wo-queue-num {
+    font-size: 10px; font-weight: 700;
+    color: var(--text-muted); min-width: 16px;
+  }
+  .wo-queue-name {
+    font-size: 13px; font-weight: 500;
+    color: var(--text-primary); flex: 1;
+  }
+  .wo-queue-sets {
+    font-size: 11px; font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  /* Timer */
+  .wo-timer {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 14px 0 2px;
+  }
+  .wo-timer-num {
+    font-size: 20px; font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+  }
+  .wo-timer-label {
+    font-size: 10px; font-weight: 500;
+    color: var(--text-muted); text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="device-notch"></div>
+  <div class="device-screen">
+
+    <div class="ds-status">
+      <span>9:41</span>
+      <div class="ds-dots"><span></span><span></span><span></span><span></span></div>
+    </div>
+
+    <div class="wo-header">
+      <div class="wo-label">Active Workout</div>
+      <div class="wo-title">Upper Body<br>Strength</div>
+      <div class="wo-subtitle">4 exercises · ~35 min</div>
+    </div>
+
+    <div class="wo-progress-row">
+      <div class="wo-progress-track">
+        <div class="wo-progress-fill" style="width:38%;"></div>
+      </div>
+      <span class="wo-progress-pct">38%</span>
+    </div>
+
+    <div class="wo-current">
+      <div class="wo-current-label">Current Exercise</div>
+      <div class="wo-exercise-name">Bench Press</div>
+      <div class="wo-exercise-detail">4 sets × 8 reps · 155 lb</div>
+      <div class="wo-set-row">
+        <div class="wo-set done"></div>
+        <div class="wo-set active"></div>
+        <div class="wo-set"></div>
+        <div class="wo-set"></div>
+      </div>
+      <button class="wo-btn">Complete Set</button>
+    </div>
+
+    <div style="margin-top:4px;">
+      <div class="wo-queue-item">
+        <span class="wo-queue-num">2</span>
+        <span class="wo-queue-name">Incline DB Press</span>
+        <span class="wo-queue-sets">3 × 10</span>
+      </div>
+      <div class="wo-queue-item">
+        <span class="wo-queue-num">3</span>
+        <span class="wo-queue-name">Cable Fly</span>
+        <span class="wo-queue-sets">3 × 12</span>
+      </div>
+    </div>
+
+    <div class="wo-timer">
+      <span class="wo-timer-num">12:48</span>
+      <span class="wo-timer-label">elapsed</span>
+    </div>
+
+  </div>
+  <div class="device-home"></div>
+</div>
+
+</body>
+</html>
