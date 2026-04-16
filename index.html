@@ -51,9 +51,20 @@
       --shadow-card: 0 1px 2px rgba(0,0,0,0.25), 0 4px 16px rgba(0,0,0,0.2), 0 16px 48px rgba(0,0,0,0.12);
       --shadow-glow: 0 0 60px rgba(122,142,118,0.06);
       --shadow-hover: 0 2px 4px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25), 0 24px 64px rgba(0,0,0,0.15);
-      --radius: 18px;
-      --radius-sm: 13px;
-      --radius-xs: 9px;
+      --radius: 16px;
+      --radius-sm: 12px;
+      --radius-xs: 8px;
+      --device-width: 320px;
+      --device-radius: 42px;
+      --device-screen-radius: 28px;
+      --device-padding: 12px;
+      --card-padding: 28px 24px 24px;
+      --card-padding-mobile: 24px 20px 20px;
+      --card-radius: 16px;
+      --card-bg: var(--bg-surface);
+      --card-border: 1px solid var(--border-soft);
+      --grid-gap: 16px;
+      --grid-gap-mobile: 12px;
       --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
       --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     }
@@ -612,10 +623,11 @@
 
     /* ─── DEVICE MOCKUP COMPONENT ─── */
     .device {
-      width: 100%; max-width: 340px;
+      width: 100%;
+      max-width: var(--device-width);
       background: #161514;
-      border-radius: 44px;
-      padding: 14px;
+      border-radius: var(--device-radius);
+      padding: var(--device-padding);
       box-shadow:
         0 0 0 1px rgba(255,248,235,0.05),
         0 2px 4px rgba(0,0,0,0.4),
@@ -631,42 +643,46 @@
       top: 0; left: 20%; right: 20%;
       height: 1px;
       background: linear-gradient(to right, transparent, rgba(255,248,235,0.08), transparent);
-      border-radius: 44px 44px 0 0;
+      border-radius: var(--device-radius) var(--device-radius) 0 0;
     }
     .device-notch {
-      width: 100px; height: 28px;
+      width: 96px; height: 26px;
       background: var(--bg-main);
-      border-radius: 20px;
+      border-radius: 18px;
       margin: 0 auto;
       position: relative; z-index: 10;
       box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
     }
     .device-screen {
       background: var(--bg-surface);
-      border-radius: 30px;
+      border-radius: var(--device-screen-radius);
       overflow: hidden;
       position: relative;
-      margin-top: -14px;
-      padding: 28px 20px 24px;
+      margin-top: calc(var(--device-padding) * -1);
+      padding: 24px 18px 20px;
+      /* Fixed aspect ratio for consistent height */
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
     }
     .device-screen::before {
       content: '';
       position: absolute; inset: 0;
-      border-radius: 30px;
+      border-radius: var(--device-screen-radius);
       border: 1px solid rgba(255,248,235,0.04);
       pointer-events: none;
     }
     .device-home {
-      width: 120px; height: 4px;
+      width: 110px; height: 4px;
       background: rgba(245,242,237,0.15);
       border-radius: 2px;
-      margin: 10px auto 0;
+      margin: 8px auto 0;
     }
 
     /* Device screen internals */
     .ds-status {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 0 2px 16px;
+      padding: 0 0 14px;
       font-size: 11px; font-weight: 600;
       color: rgba(245,242,237,0.5);
     }
@@ -779,10 +795,10 @@
 
     /* ─── FUTURE SELF DEVICE SCREEN ─── */
     .ds-future-screen {
-      padding: 28px 0 24px;
+      padding: 24px 0 20px;
     }
     .ds-future-screen .ds-status {
-      padding-left: 20px; padding-right: 20px;
+      padding-left: 18px; padding-right: 18px;
     }
     /* Before/After slider container */
     .ds-future-slider {
@@ -932,7 +948,7 @@
     }
     /* Bottom card */
     .ds-future-bottom {
-      padding: 14px 20px 0;
+      padding: 14px 18px 0;
       position: relative;
       z-index: 2;
     }
@@ -960,23 +976,23 @@
     .device-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 48px 36px;
-      max-width: 780px;
+      gap: 48px 40px;
+      max-width: 740px;
       margin: 0 auto;
       justify-items: center;
     }
     .device-grid-item {
       display: flex; flex-direction: column;
-      align-items: center; gap: 20px;
+      align-items: center; gap: 18px;
       transition: transform 0.45s var(--ease-out);
     }
-    .device-grid-item:nth-child(2) { transform: translateY(16px); }
-    .device-grid-item:nth-child(3) { transform: translateY(8px); }
-    .device-grid-item:hover { transform: translateY(-6px); }
-    .device-grid-item:nth-child(2):hover { transform: translateY(10px); }
-    .device-grid-item:nth-child(3):hover { transform: translateY(2px); }
+    .device-grid-item:nth-child(2) { transform: translateY(14px); }
+    .device-grid-item:nth-child(3) { transform: translateY(6px); }
+    .device-grid-item:hover { transform: translateY(-5px); }
+    .device-grid-item:nth-child(2):hover { transform: translateY(9px); }
+    .device-grid-item:nth-child(3):hover { transform: translateY(1px); }
     .device-grid-item .device {
-      transition: box-shadow 0.45s var(--ease-out), border-color 0.4s ease;
+      transition: box-shadow 0.45s var(--ease-out);
     }
     .device-grid-item:hover .device {
       box-shadow:
@@ -991,13 +1007,13 @@
     }
     .device-grid-caption strong {
       display: block;
-      font-size: 15px; font-weight: 700;
+      font-size: 14px; font-weight: 700;
       color: var(--text-primary);
       letter-spacing: -0.01em;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
     .device-grid-caption span {
-      font-size: 13px; font-weight: 400;
+      font-size: 12px; font-weight: 400;
       color: var(--text-muted);
     }
 
@@ -1005,7 +1021,7 @@
       .device-grid {
         grid-template-columns: 1fr;
         gap: 40px;
-        max-width: 340px;
+        max-width: var(--device-width);
       }
       .device-grid-item,
       .device-grid-item:nth-child(2),
@@ -1022,7 +1038,7 @@
     /* ─── WORKOUT DEVICE SCREEN — Step Execution ─── */
     .ds-wo-wrap {
       position: relative;
-      min-height: 380px;
+      flex: 1;
       overflow: hidden;
     }
 
@@ -1375,12 +1391,12 @@
       background: var(--accent-gold);
     }
 
-    /* Legacy preview-card styles kept for "different" section */
+    /* Content card base */
     .preview-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-soft);
-      border-radius: var(--radius);
-      padding: 32px 24px 28px;
+      background: var(--card-bg);
+      border: var(--card-border);
+      border-radius: var(--card-radius);
+      padding: var(--card-padding);
       text-align: left;
       transition: all 0.4s var(--ease-out);
       position: relative;
@@ -1397,28 +1413,28 @@
     .preview-card:nth-child(2n) { transform: translateY(3px); }
     .preview-card:hover {
       border-color: rgba(255,248,235,0.1);
-      transform: translateY(-5px);
+      transform: translateY(-4px);
       box-shadow: var(--shadow-hover), var(--shadow-glow);
     }
-    .preview-card:nth-child(2n):hover { transform: translateY(-2px); }
+    .preview-card:nth-child(2n):hover { transform: translateY(-1px); }
     .preview-card:hover::before { opacity: 1; }
     .preview-icon {
-      width: 44px; height: 44px;
+      width: 40px; height: 40px;
       border-radius: var(--radius-xs);
       display: flex; align-items: center; justify-content: center;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
     .preview-icon.today { background: var(--accent-sage-glow); }
     .preview-icon.future { background: var(--accent-gold-glow); }
     .preview-card h3 {
-      font-size: 15px; font-weight: 650;
-      margin-bottom: 8px; color: var(--text-primary);
+      font-size: 14px; font-weight: 650;
+      margin-bottom: 6px; color: var(--text-primary);
       letter-spacing: -0.01em;
     }
     .preview-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
+      gap: var(--grid-gap);
     }
 
     /* PROBLEM / INSIGHT */
@@ -1471,13 +1487,13 @@
     .steps-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
+      gap: var(--grid-gap);
     }
     .step-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-soft);
-      border-radius: var(--radius);
-      padding: 36px 24px 32px;
+      background: var(--card-bg);
+      border: var(--card-border);
+      border-radius: var(--card-radius);
+      padding: var(--card-padding);
       text-align: left;
       transition: all 0.4s var(--ease-out);
       position: relative;
@@ -1490,33 +1506,33 @@
       opacity: 0;
       transition: opacity 0.4s ease;
     }
-    .step-card:nth-child(2) { transform: translateY(6px); }
-    .step-card:nth-child(4) { transform: translateY(4px); }
+    .step-card:nth-child(2) { transform: translateY(5px); }
+    .step-card:nth-child(4) { transform: translateY(3px); }
     .step-card:hover {
       border-color: rgba(255,248,235,0.1);
-      transform: translateY(-5px);
+      transform: translateY(-4px);
       box-shadow: var(--shadow-hover);
     }
     .step-card:nth-child(2):hover { transform: translateY(1px); }
     .step-card:nth-child(4):hover { transform: translateY(-1px); }
     .step-card:hover::after { opacity: 1; }
     .step-number {
-      font-size: 12px; font-weight: 700;
+      font-size: 11px; font-weight: 700;
       color: var(--accent-sage);
       background: var(--accent-sage-glow);
-      width: 30px; height: 30px;
+      width: 28px; height: 28px;
       display: flex; align-items: center; justify-content: center;
       border-radius: var(--radius-xs);
-      margin-bottom: 22px;
+      margin-bottom: 18px;
     }
     .step-card h3 {
-      font-size: 16px; font-weight: 650;
-      margin-bottom: 10px; color: var(--text-primary);
+      font-size: 15px; font-weight: 650;
+      margin-bottom: 8px; color: var(--text-primary);
       letter-spacing: -0.01em;
     }
     .step-card p {
-      font-size: 13.5px; color: var(--text-secondary);
-      line-height: 1.65;
+      font-size: 13px; color: var(--text-secondary);
+      line-height: 1.6;
     }
 
     /* WHY DIFFERENT */
@@ -1635,19 +1651,19 @@
     .optimize-cards {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
+      gap: var(--grid-gap);
     }
     .opt-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-soft);
-      border-radius: var(--radius);
-      padding: 36px 28px 32px;
+      background: var(--card-bg);
+      border: var(--card-border);
+      border-radius: var(--card-radius);
+      padding: var(--card-padding);
       text-align: left;
       transition: all 0.4s var(--ease-out);
       position: relative;
       overflow: hidden;
     }
-    .opt-card:nth-child(2) { transform: translateY(6px); }
+    .opt-card:nth-child(2) { transform: translateY(5px); }
     .opt-card::before {
       content: '';
       position: absolute; inset: 0;
@@ -1657,27 +1673,27 @@
     }
     .opt-card:hover {
       border-color: rgba(201,173,110,0.12);
-      transform: translateY(-5px);
+      transform: translateY(-4px);
       box-shadow: var(--shadow-hover);
     }
     .opt-card:nth-child(2):hover { transform: translateY(1px); }
     .opt-card:hover::before { opacity: 1; }
     .opt-icon {
-      width: 44px; height: 44px;
+      width: 40px; height: 40px;
       border-radius: var(--radius-xs);
       background: var(--accent-gold-glow);
       display: flex; align-items: center; justify-content: center;
-      margin-bottom: 22px;
+      margin-bottom: 18px;
       position: relative;
     }
     .opt-card h3 {
       font-size: 15px; font-weight: 650;
-      margin-bottom: 10px; color: var(--text-primary);
+      margin-bottom: 8px; color: var(--text-primary);
       letter-spacing: -0.01em;
       position: relative;
     }
     .opt-card p {
-      font-size: 13.5px; color: var(--text-secondary);
+      font-size: 13px; color: var(--text-secondary);
       line-height: 1.6;
       position: relative;
     }
@@ -1798,8 +1814,8 @@
     /* TABLET */
     @media (max-width: 960px) {
       .phone-strip { grid-template-columns: repeat(2, 1fr); gap: 16px; max-width: 520px; }
-      .preview-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .steps-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .preview-grid { grid-template-columns: repeat(2, 1fr); gap: var(--grid-gap-mobile); }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); gap: var(--grid-gap-mobile); }
       #different .preview-grid { grid-template-columns: repeat(3, 1fr) !important; }
       .optimize-cards { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
       .section { padding: 90px 28px; }
@@ -1836,18 +1852,18 @@
       .badge { font-size: 10px; padding: 6px 14px; margin-bottom: 28px; }
       .btn-primary { padding: 16px 32px; font-size: 14px; width: 100%; justify-content: center; }
       .btn-secondary { padding: 13px 28px; font-size: 13px; width: 100%; justify-content: center; }
-      .preview-grid { grid-template-columns: 1fr; gap: 10px; }
-      .preview-card { padding: 24px 20px 22px; }
-      .steps-grid { grid-template-columns: 1fr; gap: 10px; }
-      .step-card { padding: 28px 20px 24px; }
+      .preview-grid { grid-template-columns: 1fr; gap: var(--grid-gap-mobile); }
+      .preview-card { padding: var(--card-padding-mobile); }
+      .steps-grid { grid-template-columns: 1fr; gap: var(--grid-gap-mobile); }
+      .step-card { padding: var(--card-padding-mobile); }
       #insight h2 { font-size: clamp(26px, 8vw, 36px); }
       .insight-contrast { font-size: 16px; padding: 18px 24px; }
       #how h2 { margin-bottom: 40px; }
       .different-copy h2 { font-size: clamp(28px, 8vw, 40px); }
       .diff-list li { padding: 8px 10px; font-size: 14px; }
       .slider-container { border-radius: var(--radius-sm); }
-      .optimize-cards { gap: 10px; }
-      .opt-card { padding: 28px 22px 24px; }
+      .optimize-cards { gap: var(--grid-gap-mobile); }
+      .opt-card { padding: var(--card-padding-mobile); }
       #cta { padding: 80px 20px 72px; }
       .cta-h2 { font-size: clamp(28px, 8vw, 44px); }
       .waitlist-row { flex-direction: column; }
@@ -2217,31 +2233,31 @@
     </div>
 
     <div class="preview-grid" style="grid-template-columns:repeat(5,1fr);">
-      <div class="preview-card reveal d1" style="padding:24px 16px;text-align:center;">
+      <div class="preview-card reveal d1" style="padding:22px 16px;text-align:center;">
         <div class="preview-icon today" style="margin:0 auto 14px;">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A8E76" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </div>
         <h3 style="font-size:13px;">Future Self Visualization</h3>
       </div>
-      <div class="preview-card reveal d2" style="padding:24px 16px;text-align:center;">
+      <div class="preview-card reveal d2" style="padding:22px 16px;text-align:center;">
         <div class="preview-icon future" style="margin:0 auto 14px;">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9AD6E" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
         </div>
         <h3 style="font-size:13px;">Adaptive Training</h3>
       </div>
-      <div class="preview-card reveal d3" style="padding:24px 16px;text-align:center;">
+      <div class="preview-card reveal d3" style="padding:22px 16px;text-align:center;">
         <div class="preview-icon today" style="margin:0 auto 14px;">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A8E76" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
         </div>
         <h3 style="font-size:13px;">AI Coaching</h3>
       </div>
-      <div class="preview-card reveal d3" style="padding:24px 16px;text-align:center;">
+      <div class="preview-card reveal d3" style="padding:22px 16px;text-align:center;">
         <div class="preview-icon future" style="margin:0 auto 14px;">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9AD6E" stroke-width="2" stroke-linecap="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
         </div>
         <h3 style="font-size:13px;">Protocol Tracking</h3>
       </div>
-      <div class="preview-card reveal d4" style="padding:24px 16px;text-align:center;">
+      <div class="preview-card reveal d4" style="padding:22px 16px;text-align:center;">
         <div class="preview-icon today" style="margin:0 auto 14px;">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A8E76" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
         </div>
