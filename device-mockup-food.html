@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wylde Self — Food Scan Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-main: #111010;
+    --bg-surface: #1B1A17;
+    --bg-soft: #232220;
+    --bg-elevated: #2A2926;
+    --text-primary: #F5F2ED;
+    --text-muted: #6B675E;
+    --accent-sage: #7A8E76;
+    --accent-sage-soft: #8FA08B;
+    --accent-gold: #C9AD6E;
+  }
+
+  body {
+    background: var(--bg-main);
+    font-family: 'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  .device {
+    width: 100%; max-width: 340px;
+    background: #161514;
+    border-radius: 44px;
+    padding: 14px;
+    box-shadow:
+      0 0 0 1px rgba(255,248,235,0.05),
+      0 2px 4px rgba(0,0,0,0.4),
+      0 8px 24px rgba(0,0,0,0.35),
+      0 24px 64px rgba(0,0,0,0.3),
+      0 48px 100px rgba(0,0,0,0.2);
+    position: relative;
+  }
+  .device::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 20%; right: 20%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,248,235,0.08), transparent);
+    border-radius: 44px 44px 0 0;
+  }
+  .device-notch {
+    width: 100px; height: 28px;
+    background: var(--bg-main);
+    border-radius: 20px;
+    margin: 0 auto;
+    position: relative; z-index: 10;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+  }
+  .device-screen {
+    background: var(--bg-surface);
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    margin-top: -14px;
+    padding: 28px 20px 24px;
+  }
+  .device-screen::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: 30px;
+    border: 1px solid rgba(255,248,235,0.04);
+    pointer-events: none;
+  }
+  .device-home {
+    width: 120px; height: 4px;
+    background: rgba(245,242,237,0.15);
+    border-radius: 2px;
+    margin: 10px auto 0;
+  }
+
+  /* Status */
+  .ds-status {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 2px 16px;
+    font-size: 11px; font-weight: 600;
+    color: rgba(245,242,237,0.5);
+  }
+  .ds-dots { display: flex; gap: 3px; }
+  .ds-dots span {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: rgba(245,242,237,0.35);
+  }
+  .ds-dots span:first-child { background: rgba(245,242,237,0.6); }
+
+  /* Food icon */
+  .food-icon {
+    width: 64px; height: 64px;
+    border-radius: 18px;
+    background: linear-gradient(145deg, var(--bg-soft), var(--bg-elevated));
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px;
+    font-size: 30px;
+    border: 1px solid rgba(255,248,235,0.04);
+  }
+
+  /* Meal info */
+  .food-name {
+    font-size: 18px; font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.03em; text-align: center;
+    margin-bottom: 3px;
+  }
+  .food-sub {
+    font-size: 11px; font-weight: 500;
+    color: var(--text-muted); text-align: center;
+    margin-bottom: 20px;
+  }
+
+  /* Calorie display */
+  .food-cal-row {
+    display: flex; align-items: baseline;
+    justify-content: center; gap: 5px;
+    margin-bottom: 16px;
+  }
+  .food-cal-num {
+    font-size: 36px; font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.04em; line-height: 1;
+  }
+  .food-cal-unit {
+    font-size: 13px; font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  /* Macros */
+  .food-macros {
+    display: flex; gap: 6px;
+    margin-bottom: 20px;
+  }
+  .food-macro {
+    flex: 1;
+    background: var(--bg-soft);
+    border-radius: 12px;
+    padding: 12px 6px;
+    text-align: center;
+    border: 1px solid rgba(255,248,235,0.03);
+  }
+  .food-macro-val {
+    font-size: 16px; font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1; margin-bottom: 3px;
+  }
+  .food-macro-label {
+    font-size: 9px; font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* Progress bar */
+  .food-bar-wrap { margin-bottom: 22px; }
+  .food-bar-header {
+    display: flex; justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .food-bar-label {
+    font-size: 10px; font-weight: 600;
+    color: var(--text-muted);
+  }
+  .food-bar-pct {
+    font-size: 10px; font-weight: 700;
+    color: var(--accent-sage-soft);
+  }
+  .food-bar-track {
+    height: 5px; background: var(--bg-soft);
+    border-radius: 3px; overflow: hidden;
+  }
+  .food-bar-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent-sage), var(--accent-sage-soft));
+    position: relative;
+  }
+  .food-bar-fill::after {
+    content: '';
+    position: absolute; right: 0; top: 0; bottom: 0; width: 10px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15));
+    border-radius: 0 3px 3px 0;
+  }
+
+  /* CTA button */
+  .food-btn {
+    display: block; width: 100%;
+    padding: 14px;
+    background: var(--accent-sage);
+    color: #111010;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 0.01em;
+    border: none; border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 2px 12px rgba(122,142,118,0.25);
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+  }
+  .food-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(122,142,118,0.35);
+  }
+  .food-btn:active {
+    transform: scale(0.98);
+  }
+
+  /* Logged state */
+  .food-logged {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px;
+    font-size: 11px; font-weight: 600;
+    color: var(--accent-gold);
+    opacity: 0.7;
+  }
+  .food-logged-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-gold);
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="device-notch"></div>
+  <div class="device-screen">
+
+    <div class="ds-status">
+      <span>9:41</span>
+      <div class="ds-dots"><span></span><span></span><span></span><span></span></div>
+    </div>
+
+    <div style="padding-top:8px;">
+      <div class="food-icon">🥗</div>
+      <div class="food-name">Grilled Chicken Salad</div>
+      <div class="food-sub">Scanned just now</div>
+
+      <div class="food-cal-row">
+        <span class="food-cal-num">540</span>
+        <span class="food-cal-unit">cal</span>
+      </div>
+
+      <div class="food-macros">
+        <div class="food-macro">
+          <div class="food-macro-val">42g</div>
+          <div class="food-macro-label">Protein</div>
+        </div>
+        <div class="food-macro">
+          <div class="food-macro-val">38g</div>
+          <div class="food-macro-label">Carbs</div>
+        </div>
+        <div class="food-macro">
+          <div class="food-macro-val">22g</div>
+          <div class="food-macro-label">Fat</div>
+        </div>
+      </div>
+
+      <div class="food-bar-wrap">
+        <div class="food-bar-header">
+          <span class="food-bar-label">Daily protein</span>
+          <span class="food-bar-pct">67%</span>
+        </div>
+        <div class="food-bar-track">
+          <div class="food-bar-fill" style="width:67%;"></div>
+        </div>
+      </div>
+
+      <button class="food-btn">Confirm &amp; Log</button>
+
+      <div class="food-logged">
+        <div class="food-logged-dot"></div>
+        <span>3 meals logged today</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="device-home"></div>
+</div>
+
+</body>
+</html>
