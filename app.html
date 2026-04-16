@@ -2288,27 +2288,36 @@
   }
 
   function initAuth() {
+    // ── GATE CHECK — runs once, never loops back ──
+    var gatePassed = localStorage.getItem('wylde_gate_passed') || localStorage.getItem('wylde_submitted');
+    if (!gatePassed) {
+      // User hasn't passed the gate yet — send them there
+      window.location.replace('/gate.html');
+      return;
+    }
+
     var sb = _getSupabase();
     if (!sb) {
-      // No Supabase — use legacy gate check
-      if (!localStorage.getItem('wylde_gate_passed') && !localStorage.getItem('wylde_submitted')) {
-        window.location.replace('/gate.html');
-      }
+      // No Supabase available — let them in as guest
+      _hideAuthScreen();
       return;
     }
     sb.auth.getSession().then(function(res) {
       if (res.data && res.data.session) {
         currentUser = res.data.session.user;
+        localStorage.setItem('wylde_gate_passed', '1');
         _hideAuthScreen();
         var signOutBtn = document.getElementById('navSignOutBtn');
         if (signOutBtn) signOutBtn.style.display = 'block';
       } else {
+        // No session — show auth screen (user already passed gate)
         _showAuthScreen();
       }
     });
     sb.auth.onAuthStateChange(function(event, session) {
       if (event === 'SIGNED_IN' && session) {
         currentUser = session.user;
+        localStorage.setItem('wylde_gate_passed', '1');
         _hideAuthScreen();
         var signOutBtn = document.getElementById('navSignOutBtn');
         if (signOutBtn) signOutBtn.style.display = 'block';
@@ -2317,6 +2326,7 @@
         currentUser = null;
         var signOutBtn = document.getElementById('navSignOutBtn');
         if (signOutBtn) signOutBtn.style.display = 'none';
+        // Show auth screen — do NOT redirect to gate
         _showAuthScreen();
       }
     });
@@ -2386,6 +2396,7 @@
   }
 
   function continueAsGuest() {
+    localStorage.setItem('wylde_gate_passed', '1');
     _hideAuthScreen();
   }
 
