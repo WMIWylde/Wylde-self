@@ -1245,6 +1245,104 @@
       box-shadow: 0 2px 16px rgba(201,173,110,0.3);
     }
 
+    /* ── Logging overlay (inline after set) ── */
+    .ds-wo-log {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      padding-top: 4px;
+      animation: logFadeIn 0.25s var(--ease-out);
+    }
+    .ds-wo-log.visible { display: flex; }
+    @keyframes logFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .ds-wo-log-label {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .ds-wo-log-reps {
+      display: flex; align-items: center; gap: 18px;
+    }
+    .ds-wo-log-adj {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: var(--text-primary);
+      font-size: 20px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.15s var(--ease-spring);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .ds-wo-log-adj:active { transform: scale(0.9); background: var(--bg-soft); }
+    .ds-wo-log-val {
+      font-size: 36px; font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      min-width: 44px;
+      text-align: center;
+    }
+    .ds-wo-log-weight {
+      font-size: 12px; font-weight: 500;
+      color: var(--text-muted);
+    }
+    .ds-wo-log-confirm {
+      display: block; width: 100%;
+      padding: 14px;
+      background: var(--accent-sage);
+      color: #111010;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.01em;
+      border: none; border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 2px 16px rgba(122,142,118,0.3);
+      transition: transform 0.2s var(--ease-spring);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .ds-wo-log-confirm:active { transform: scale(0.97); }
+    .ds-wo-log-confirm.gold {
+      background: var(--accent-gold);
+      box-shadow: 0 2px 16px rgba(201,173,110,0.3);
+    }
+
+    /* Completed sets history */
+    .ds-wo-history {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      width: 100%;
+    }
+    .ds-wo-history:empty { display: none; }
+    .ds-wo-history-item {
+      font-size: 10px; font-weight: 600;
+      color: var(--accent-sage-soft);
+      background: rgba(122,142,118,0.08);
+      border-radius: 6px;
+      padding: 4px 8px;
+      animation: logFadeIn 0.25s var(--ease-out);
+    }
+    .ds-wo-logged-msg {
+      font-size: 11px; font-weight: 600;
+      color: var(--accent-sage-soft);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      height: 0;
+      overflow: hidden;
+    }
+    .ds-wo-logged-msg.show {
+      opacity: 1;
+      height: auto;
+      margin-bottom: 2px;
+    }
+
     /* Timer */
     .ds-wo-timer {
       display: flex; align-items: center; justify-content: center;
@@ -2038,11 +2136,28 @@
                   <div class="ds-wo-dot"></div>
                 </div>
 
+                <div class="ds-wo-history" id="woHistory"></div>
+
+                <div class="ds-wo-logged-msg" id="woLoggedMsg">Locked in.</div>
+
                 <div class="ds-wo-progress" id="woProgressWrap">
                   <div class="ds-wo-progress-fill" id="woProgressFill" style="width:0%;"></div>
                 </div>
 
+                <!-- Default state: Complete Set button -->
                 <div class="ds-wo-btn" id="woBtn">Complete Set</div>
+
+                <!-- Logging state: reps editor -->
+                <div class="ds-wo-log" id="woLog">
+                  <div class="ds-wo-log-label" id="woLogLabel">Set 1</div>
+                  <div class="ds-wo-log-reps">
+                    <div class="ds-wo-log-adj" id="woLogMinus">−</div>
+                    <div class="ds-wo-log-val" id="woLogVal">8</div>
+                    <div class="ds-wo-log-adj" id="woLogPlus">+</div>
+                  </div>
+                  <div class="ds-wo-log-weight" id="woLogWeight">155 lb</div>
+                  <div class="ds-wo-log-confirm" id="woLogSave">Save & Continue →</div>
+                </div>
 
                 <div class="ds-wo-timer">
                   <span class="ds-wo-timer-num" id="woTimer">0:00</span>
@@ -2417,17 +2532,20 @@
       document.addEventListener('touchend', function() { active = false; isHoriz = false; });
     })();
 
-    // WORKOUT STEP ENGINE
+    // WORKOUT STEP ENGINE — with set logging
     (function() {
       var exercises = [
-        { name: 'Bench Press', sets: 4, reps: '8 reps · 155 lb' },
-        { name: 'Incline DB Press', sets: 3, reps: '10 reps · 45 lb' },
-        { name: 'Cable Fly', sets: 3, reps: '12 reps · 30 lb' }
+        { name: 'Bench Press', sets: 4, targetReps: 8, weight: '155 lb' },
+        { name: 'Incline DB Press', sets: 3, targetReps: 10, weight: '45 lb' },
+        { name: 'Cable Fly', sets: 3, targetReps: 12, weight: '30 lb' }
       ];
       var totalSets = exercises.reduce(function(s, e) { return s + e.sets; }, 0);
       var exIdx = 0, setIdx = 0, completedSets = 0;
       var running = false, seconds = 0, timerInterval = null;
+      var loggedReps = 0; // current reps value in logger
+      var setLog = []; // per-exercise: [{reps:8},{reps:9},...]
 
+      // DOM refs
       var step = document.getElementById('woStep');
       var stepCounter = document.getElementById('woStepCounter');
       var exName = document.getElementById('woExercise');
@@ -2435,8 +2553,17 @@
       var setTotal = document.getElementById('woSetTotal');
       var repsEl = document.getElementById('woReps');
       var dotsEl = document.getElementById('woDots');
+      var historyEl = document.getElementById('woHistory');
+      var loggedMsg = document.getElementById('woLoggedMsg');
       var progressFill = document.getElementById('woProgressFill');
       var btn = document.getElementById('woBtn');
+      var logPanel = document.getElementById('woLog');
+      var logLabel = document.getElementById('woLogLabel');
+      var logVal = document.getElementById('woLogVal');
+      var logWeight = document.getElementById('woLogWeight');
+      var logMinus = document.getElementById('woLogMinus');
+      var logPlus = document.getElementById('woLogPlus');
+      var logSave = document.getElementById('woLogSave');
       var timerNum = document.getElementById('woTimer');
       var complete = document.getElementById('woComplete');
       if (!btn) return;
@@ -2444,13 +2571,21 @@
       function pad(n) { return n < 10 ? '0' + n : '' + n; }
       function formatTime(s) { return Math.floor(s / 60) + ':' + pad(s % 60); }
 
+      function renderHistory() {
+        var html = '';
+        for (var i = 0; i < setLog.length; i++) {
+          html += '<div class="ds-wo-history-item">Set ' + (i + 1) + ' — ' + setLog[i].reps + ' reps</div>';
+        }
+        historyEl.innerHTML = html;
+      }
+
       function render(animate) {
         var ex = exercises[exIdx];
         stepCounter.textContent = 'Exercise ' + (exIdx + 1) + ' of ' + exercises.length;
         exName.textContent = ex.name;
         setNum.textContent = setIdx + 1;
         setTotal.textContent = 'of ' + ex.sets;
-        repsEl.textContent = ex.reps;
+        repsEl.textContent = ex.targetReps + ' reps · ' + ex.weight;
 
         // Dots
         var html = '';
@@ -2462,9 +2597,17 @@
         }
         dotsEl.innerHTML = html;
 
+        // History
+        renderHistory();
+
         // Overall progress
         var pct = Math.round((completedSets / totalSets) * 100);
         progressFill.style.width = pct + '%';
+
+        // Reset log panel
+        logPanel.classList.remove('visible');
+        btn.style.display = '';
+        loggedMsg.classList.remove('show');
 
         if (animate) {
           step.classList.remove('active');
@@ -2478,6 +2621,22 @@
         }
       }
 
+      function showLogPanel() {
+        var ex = exercises[exIdx];
+        loggedReps = ex.targetReps;
+        logLabel.textContent = 'Set ' + (setIdx + 1);
+        logVal.textContent = loggedReps;
+        logWeight.textContent = ex.weight;
+
+        // Last set of last exercise = gold save button
+        var isLast = (exIdx === exercises.length - 1 && setIdx === ex.sets - 1);
+        logSave.textContent = isLast ? 'Finish Workout →' : 'Save & Continue →';
+        logSave.classList.toggle('gold', isLast);
+
+        btn.style.display = 'none';
+        logPanel.classList.add('visible');
+      }
+
       function showComplete() {
         step.classList.add('exiting');
         step.classList.remove('active');
@@ -2488,9 +2647,17 @@
         }, 350);
       }
 
+      function flashMsg() {
+        var msgs = ['Locked in.', 'Logged.', 'Set saved.'];
+        loggedMsg.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+        loggedMsg.classList.add('show');
+        setTimeout(function() { loggedMsg.classList.remove('show'); }, 1200);
+      }
+
       function resetWorkout() {
         exIdx = 0; setIdx = 0; completedSets = 0;
         seconds = 0; running = false;
+        setLog = [];
         if (timerInterval) clearInterval(timerInterval);
         timerInterval = null;
         timerNum.textContent = '0:00';
@@ -2498,12 +2665,14 @@
         step.classList.remove('exiting');
         btn.textContent = 'Complete Set';
         btn.classList.remove('gold');
+        btn.style.display = '';
+        logPanel.classList.remove('visible');
         render(false);
         step.classList.add('active');
       }
 
+      // "Complete Set" → show log panel
       btn.addEventListener('click', function() {
-        // Start timer on first tap
         if (!running) {
           running = true;
           timerInterval = setInterval(function() {
@@ -2511,35 +2680,39 @@
             timerNum.textContent = formatTime(seconds);
           }, 1000);
         }
-
-        // Flash
         btn.classList.add('flash');
         setTimeout(function() { btn.classList.remove('flash'); }, 300);
+        showLogPanel();
+      });
 
-        var ex = exercises[exIdx];
+      // +/- reps
+      logMinus.addEventListener('click', function() {
+        if (loggedReps > 0) { loggedReps--; logVal.textContent = loggedReps; }
+      });
+      logPlus.addEventListener('click', function() {
+        loggedReps++; logVal.textContent = loggedReps;
+      });
+
+      // "Save & Continue" → commit set, advance
+      logSave.addEventListener('click', function() {
+        setLog.push({ reps: loggedReps });
         completedSets++;
         setIdx++;
 
+        var ex = exercises[exIdx];
         if (setIdx >= ex.sets) {
-          // Move to next exercise
           exIdx++;
           setIdx = 0;
+          setLog = [];
           if (exIdx >= exercises.length) {
-            // Workout done
             showComplete();
             return;
           }
-          // Animate exercise transition
           render(true);
         } else {
           render(false);
         }
-
-        // Update button text on last set of last exercise
-        if (exIdx === exercises.length - 1 && setIdx === exercises[exIdx].sets - 1) {
-          btn.textContent = 'Finish Workout';
-          btn.classList.add('gold');
-        }
+        flashMsg();
       });
 
       // Tap completion screen to restart demo
