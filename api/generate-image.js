@@ -91,10 +91,11 @@ export default async function handler(req) {
     }
 
     // Try models in order — names change often, first success wins
+    // Updated April 2026: old 2.0-flash-exp models retired
     const models = [
-      'gemini-2.5-flash-preview-image',
-      'gemini-2.0-flash-exp-image-generation',
-      'gemini-2.0-flash-exp',
+      'gemini-2.5-flash-image',
+      'gemini-3.1-flash-image-preview',
+      'gemini-3-pro-image-preview',
     ];
 
     const body = JSON.stringify({
