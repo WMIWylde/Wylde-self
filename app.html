@@ -615,8 +615,8 @@
   #screen-auth { position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;align-items:center;justify-content:center; }
   .auth-box { width:100%;max-width:420px;padding:40px 28px; }
   .auth-logo { text-align:center;margin-bottom:48px; }
-  .auth-logo-mark { font-family:var(--font-ui);font-size:48px;font-weight:700;letter-spacing:0.18em;color:var(--text);margin-bottom:12px; }
-  .auth-logo-mark span { color:var(--sage); }
+  .auth-logo-img { width: 100px; height: 100px; object-fit: contain; margin-bottom: 16px; }
+  .auth-logo-img-sm { width: 56px; height: 56px; margin-bottom: 8px; }
   .auth-logo-label { font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--text3);margin-top:10px; }
   .auth-headline { font-size:24px;font-weight:700;color:var(--text);text-align:center;margin-bottom:10px;line-height:1.2; }
   .auth-sub { font-size:14px;color:var(--text2);text-align:center;margin-bottom:40px;line-height:1.6; }
@@ -1093,8 +1093,10 @@
     opacity: 1; transition: opacity 0.8s ease;
   }
   #opening-sequence.fade-out { opacity: 0; pointer-events: none; }
-  #opening-sequence svg { width: 280px; max-width: 80vw; opacity: 0; transition: opacity 1.2s ease; }
-  #opening-sequence svg.visible { opacity: 1; }
+  #opening-sequence .os-logo { width: 120px; height: 120px; object-fit: contain; opacity: 0; transition: opacity 1.2s ease; }
+  #opening-sequence .os-logo.visible { opacity: 1; }
+  #opening-sequence .os-wordmark { font-family: 'Inter', sans-serif; font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0); margin-top: 20px; transition: color 1s ease 0.4s; }
+  #opening-sequence .os-wordmark.visible { color: rgba(255,255,255,0.85); }
   #opening-sequence .os-tagline {
     font-family: 'Cormorant Garamond', serif; font-style: italic;
     font-size: 16px; color: rgba(198,169,107,0); letter-spacing: 0.06em;
@@ -1110,7 +1112,6 @@
     transition: width 1.8s ease;
   }
   #opening-sequence .os-progress-fill.active { width: 100%; }
-  #opening-sequence, #opening-sequence * { background: revert; }
   #opening-sequence { background: #121212 !important; }
   </style>
 </head>
@@ -1118,112 +1119,8 @@
 
 <!-- ═══ OPENING SEQUENCE ═══ -->
 <div id="opening-sequence">
-  <svg width="280" viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg">
-    <style>
-      .geo  { fill: none; stroke: #c8a96e; stroke-opacity: 0; stroke-width: 0.8; transition: stroke-opacity 1.2s ease; }
-      .geo2 { fill: none; stroke: #c8a96e; stroke-opacity: 0; stroke-width: 1.4; transition: stroke-opacity 1.2s ease; }
-      .wm   { font-family: 'Bebas Neue', 'Arial Narrow', sans-serif; }
-      .tag  { font-family: Georgia, serif; font-style: italic; }
-      .f0  { fill: #c8a96e; fill-opacity: 0; stroke: #000; stroke-width: 0.6; transition: fill-opacity 1.4s ease; }
-      .f1  { fill: #c8a96e; fill-opacity: 0; stroke: #000; stroke-width: 0.6; transition: fill-opacity 1.4s ease 0.1s; }
-      .f2  { fill: #c8a96e; fill-opacity: 0; stroke: #000; stroke-width: 0.6; transition: fill-opacity 1.4s ease 0.2s; }
-      .f3  { fill: #c8a96e; fill-opacity: 0; stroke: #000; stroke-width: 0.6; transition: fill-opacity 1.4s ease 0.3s; }
-      .os-active .geo  { stroke-opacity: 0.45; }
-      .os-active .geo2 { stroke-opacity: 0.75; }
-      .os-active .f0 { fill-opacity: 0.95; }
-      .os-active .f1 { fill-opacity: 0.75; }
-      .os-active .f2 { fill-opacity: 0.55; }
-      .os-active .f3 { fill-opacity: 0.38; }
-      .os-active .wm-stroke { stroke-opacity: 0.9; transition: stroke-opacity 1.6s ease 0.4s; }
-      .os-active .wm-fill { fill-opacity: 1; transition: fill-opacity 1.6s ease 0.6s; }
-      .os-active .wm-line { stroke-opacity: 0.4; transition: stroke-opacity 1.6s ease 0.8s; }
-      .os-active .wm-tag { fill-opacity: 0.65; transition: fill-opacity 1.6s ease 1s; }
-      .wm-stroke { stroke-opacity: 0; }
-      .wm-fill { fill-opacity: 0; }
-      .wm-line { stroke-opacity: 0; }
-      .wm-tag { fill-opacity: 0; }
-    </style>
-    <rect width="680" height="320" fill="#000000"/>
-    <!-- SACRED GEOMETRY -->
-    <circle cx="152" cy="152" r="106" class="geo2"/>
-    <rect x="78" y="82" width="148" height="148" class="geo"/>
-    <circle cx="152" cy="99"  r="53" class="geo"/>
-    <circle cx="152" cy="205" r="53" class="geo"/>
-    <circle cx="106" cy="126" r="53" class="geo"/>
-    <circle cx="198" cy="126" r="53" class="geo"/>
-    <circle cx="106" cy="178" r="53" class="geo"/>
-    <circle cx="198" cy="178" r="53" class="geo"/>
-    <circle cx="152" cy="152" r="53" class="geo"/>
-    <polygon points="152,70 220,108 220,194 152,232 84,194 84,108" class="geo"/>
-    <polygon points="152,232 84,108 220,108" class="geo"/>
-    <polygon points="152,70 84,194 220,194" class="geo"/>
-    <rect x="78" y="82" width="148" height="148" class="geo" transform="rotate(45 152 156)"/>
-    <!-- HUMAN FIGURE -->
-    <polygon points="152,46 144,52 148,64 152,66 156,64 160,52" class="f0"/>
-    <polygon points="144,52 140,60 144,66 148,64" class="f1"/>
-    <polygon points="160,52 156,64 160,66 164,60" class="f2"/>
-    <polygon points="148,64 144,66 146,72 150,74 152,72" class="f1"/>
-    <polygon points="152,66 156,64 158,70 154,74 152,72" class="f2"/>
-    <polygon points="148,72 144,78 148,82 152,80" class="f1"/>
-    <polygon points="152,72 154,74 158,80 156,82 152,80" class="f2"/>
-    <polygon points="144,78 130,80 124,88 132,94 140,90 148,82" class="f0"/>
-    <polygon points="156,80 158,82 164,90 172,94 180,88 170,80" class="f1"/>
-    <polygon points="148,82 140,90 142,100 150,102 152,98" class="f0"/>
-    <polygon points="152,80 152,98 158,100 162,90 156,82" class="f1"/>
-    <polygon points="132,94 124,100 126,112 136,114 142,100 140,90" class="f0"/>
-    <polygon points="140,90 142,100 148,104 150,102" class="f1"/>
-    <polygon points="172,94 180,100 178,112 168,114 162,100 164,90" class="f2"/>
-    <polygon points="164,90 162,100 156,104 154,102 156,82" class="f1"/>
-    <polygon points="142,100 148,104 150,114 144,116 136,114" class="f1"/>
-    <polygon points="158,100 156,104 154,114 160,116 168,114" class="f2"/>
-    <polygon points="148,104 152,102 156,104 154,114 150,114" class="f0"/>
-    <polygon points="144,116 150,114 150,124 146,126 140,122" class="f1"/>
-    <polygon points="150,114 156,114 160,122 154,126 150,124" class="f2"/>
-    <polygon points="140,122 146,126 144,136 138,132" class="f0"/>
-    <polygon points="154,126 160,122 162,132 156,136" class="f1"/>
-    <polygon points="146,126 150,124 154,126 156,136 150,138 144,136" class="f2"/>
-    <polygon points="138,132 144,136 142,146 136,142" class="f1"/>
-    <polygon points="156,136 162,132 164,142 158,146" class="f2"/>
-    <polygon points="144,136 150,138 156,136 158,146 150,150 142,146" class="f0"/>
-    <polygon points="136,142 142,146 140,156 130,154" class="f1"/>
-    <polygon points="158,146 164,142 170,154 160,156" class="f2"/>
-    <polygon points="142,146 150,150 158,146 160,156 150,160 140,156" class="f1"/>
-    <polygon points="124,88 108,92 100,100 112,104 124,100" class="f0"/>
-    <polygon points="108,92 90,96 82,104 94,108 100,100" class="f1"/>
-    <polygon points="90,96 72,100 64,108 76,112 82,104" class="f2"/>
-    <polygon points="72,100 56,104 50,110 62,114 64,108" class="f3"/>
-    <polygon points="50,110 44,106 38,112 46,116" class="f2"/>
-    <polygon points="44,106 40,102 36,108 38,112" class="f3"/>
-    <polygon points="180,88 196,92 204,100 192,104 180,100" class="f1"/>
-    <polygon points="196,92 214,96 222,104 210,108 204,100" class="f2"/>
-    <polygon points="214,96 232,100 240,108 228,112 222,104" class="f1"/>
-    <polygon points="232,100 248,104 254,110 242,114 240,108" class="f2"/>
-    <polygon points="254,110 260,106 266,112 258,116" class="f1"/>
-    <polygon points="260,106 264,102 268,108 266,112" class="f3"/>
-    <polygon points="134,156 150,160 148,172 132,168" class="f0"/>
-    <polygon points="132,168 148,172 146,186 130,182" class="f1"/>
-    <polygon points="130,182 146,186 144,200 128,196" class="f2"/>
-    <polygon points="128,196 144,200 142,214 126,210" class="f1"/>
-    <polygon points="126,210 142,214 140,228 124,224" class="f0"/>
-    <polygon points="124,224 140,228 138,242 122,238" class="f2"/>
-    <polygon points="122,238 138,242 135,250 118,247" class="f1"/>
-    <polygon points="118,247 135,250 132,256 115,253" class="f3"/>
-    <polygon points="170,156 154,160 156,172 172,168" class="f1"/>
-    <polygon points="172,168 156,172 158,186 174,182" class="f2"/>
-    <polygon points="174,182 158,186 160,200 176,196" class="f0"/>
-    <polygon points="176,196 160,200 162,214 178,210" class="f1"/>
-    <polygon points="178,210 162,214 164,228 180,224" class="f2"/>
-    <polygon points="180,224 164,228 166,242 182,238" class="f0"/>
-    <polygon points="182,238 166,242 169,250 186,247" class="f1"/>
-    <polygon points="186,247 169,250 172,256 189,253" class="f3"/>
-    <!-- WORDMARK -->
-    <text x="292" y="152" class="wm wm-stroke" font-size="90"
-      fill="none" stroke="#c8a96e" stroke-width="1.2"
-      letter-spacing="0.06em">WYLDE</text>
-    <text x="294" y="212" class="wm wm-fill" font-size="58" fill="#c8a96e" letter-spacing="0.1em">SELF</text>
-    <line x1="294" y1="224" x2="626" y2="224" class="wm-line" stroke="#c8a96e" stroke-width="0.6"/>
-    <text x="295" y="248" class="tag wm-tag" font-size="14" fill="#c8a96e">Train with the person you're becoming</text>
-  </svg>
+  <img src="/logo-icon.png" alt="Wylde Self" class="os-logo" />
+  <div class="os-wordmark">Wylde Self</div>
   <div class="os-tagline">Train with the person you're becoming</div>
   <div class="os-progress"><div class="os-progress-fill"></div></div>
 </div>
@@ -1231,15 +1128,18 @@
 (function(){
   var os = document.getElementById('opening-sequence');
   if (!os) return;
-  var svg = os.querySelector('svg');
+  var logo = os.querySelector('.os-logo');
+  var wordmark = os.querySelector('.os-wordmark');
   var tagline = os.querySelector('.os-tagline');
   var fill = os.querySelector('.os-progress-fill');
   // Phase 1: fade in logo
-  setTimeout(function(){ svg.classList.add('visible'); svg.classList.add('os-active'); }, 200);
-  // Phase 2: tagline
-  setTimeout(function(){ tagline.classList.add('visible'); }, 800);
-  // Phase 3: progress line
-  setTimeout(function(){ fill.classList.add('active'); }, 1200);
+  setTimeout(function(){ logo.classList.add('visible'); }, 200);
+  // Phase 2: wordmark
+  setTimeout(function(){ wordmark.classList.add('visible'); }, 700);
+  // Phase 3: tagline
+  setTimeout(function(){ tagline.classList.add('visible'); }, 1100);
+  // Phase 4: progress line
+  setTimeout(function(){ fill.classList.add('active'); }, 1400);
   // Phase 4: fade out and remove
   setTimeout(function(){
     os.classList.add('fade-out');
@@ -1257,7 +1157,7 @@
     <!-- Welcome state (default) -->
     <div id="authWelcome">
       <div class="auth-logo">
-        <div class="auth-logo-mark">W<span>S</span></div>
+        <img src="/logo-icon.png" alt="Wylde Self" class="auth-logo-img" />
         <p class="auth-logo-label">Wylde Self</p>
       </div>
 
@@ -1274,7 +1174,7 @@
     <!-- Sign-in form (hidden by default) -->
     <div id="authFormWrap" style="display:none;">
       <div class="auth-logo" style="margin-bottom:28px;">
-        <div class="auth-logo-mark">W<span>S</span></div>
+        <img src="/logo-icon.png" alt="Wylde Self" class="auth-logo-img auth-logo-img-sm" />
       </div>
 
       <div class="auth-tab-bar">
