@@ -615,9 +615,10 @@
   #screen-auth { position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;align-items:center;justify-content:center; }
   .auth-box { width:100%;max-width:420px;padding:40px 28px; }
   .auth-logo { text-align:center;margin-bottom:48px; }
-  .auth-logo-img { width: 100px; height: 100px; object-fit: contain; margin-bottom: 16px; }
-  .auth-logo-img-sm { width: 56px; height: 56px; margin-bottom: 8px; }
-  .auth-logo-label { font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--text3);margin-top:10px; }
+  .auth-logo-img { width: 160px; height: 160px; object-fit: contain; margin-bottom: 20px; }
+  .auth-logo-img-sm { width: 64px; height: 64px; margin-bottom: 8px; }
+  .auth-logo-label { font-family: 'Inter', sans-serif; font-size: 22px; font-weight: 300; letter-spacing: 0.22em; text-transform: uppercase; color: var(--white); margin-top: 4px; }
+  .auth-logo-label span { color: var(--gold); font-weight: 400; }
   .auth-headline { font-size:24px;font-weight:700;color:var(--text);text-align:center;margin-bottom:10px;line-height:1.2; }
   .auth-sub { font-size:14px;color:var(--text2);text-align:center;margin-bottom:40px;line-height:1.6; }
   .auth-cta { width:100%;padding:16px;font-size:14px;border-radius:14px; }
@@ -1158,7 +1159,7 @@
     <div id="authWelcome">
       <div class="auth-logo">
         <img src="/logo-icon.png" alt="Wylde Self" class="auth-logo-img" />
-        <p class="auth-logo-label">Wylde Self</p>
+        <p class="auth-logo-label">Wylde <span>Self</span></p>
       </div>
 
       <h2 class="auth-headline">See your future.</h2>
