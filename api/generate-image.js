@@ -104,8 +104,9 @@ export default async function handler(req) {
       }
     });
 
-    let response, data;
+    let response, data, usedModel;
     for (const model of models) {
+      console.log(`[generate-image] Trying model: ${model}`);
       response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
         {
@@ -115,19 +116,26 @@ export default async function handler(req) {
         }
       );
       data = await response.json();
+      usedModel = model;
       if (response.ok || response.status !== 404) break;
-      // 404 = model doesn't exist on this key, try next
+      console.log(`[generate-image] Model ${model} returned ${response.status}, trying next...`);
     }
 
+    console.log(`[generate-image] Final model: ${usedModel}, status: ${response.status}`);
+
     if (!response.ok) {
-      throw new Error(data?.error?.message || `Gemini error ${response.status}`);
+      const errMsg = data?.error?.message || `Gemini error ${response.status}`;
+      console.error(`[generate-image] API error:`, JSON.stringify(data?.error || data).substring(0, 500));
+      throw new Error(errMsg);
     }
 
     const parts = data?.candidates?.[0]?.content?.parts || [];
+    console.log(`[generate-image] Response parts: ${parts.length}, types: ${parts.map(p => p.text ? 'text' : p.inlineData ? 'image' : 'unknown').join(',')}`);
     const imagePart = parts.find(p => p.inlineData);
 
     if (!imagePart) {
-      throw new Error('No image in response: ' + JSON.stringify(data).substring(0, 200));
+      console.error('[generate-image] No image part found. Full response:', JSON.stringify(data).substring(0, 500));
+      throw new Error('No image in response — model may not support image generation');
     }
 
     const { mimeType, data: imgData } = imagePart.inlineData;

@@ -3025,6 +3025,8 @@
   var _activeTimeline = '12weeks';
   var _sliderPct = 50;
   var _timelineLabels = { '12weeks': '12 WKS', '6months': '6 MO', '1year': '1 YR' };
+  // Transparent 1x1 pixel — never set img.src to '' (browsers resolve '' to current page URL)
+  var _blankPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
   function switchTimeline(tl) {
     _activeTimeline = tl;
@@ -3041,7 +3043,7 @@
       if (afterImg) afterImg.src = img;
       if (loading) loading.classList.add('hidden');
     } else {
-      if (afterImg) afterImg.src = '';
+      if (afterImg) afterImg.src = _blankPixel;
       if (loading) loading.classList.remove('hidden');
       if (loadingText) loadingText.textContent = 'Generating ' + _timelineLabels[tl] + '...';
     }
@@ -3068,7 +3070,7 @@
     var wrap = document.getElementById('revealWrap');
     if (wrap) { wrap.style.display = 'block'; wrap.classList.add('visible'); }
     var beforeImg = document.getElementById('beforeImg');
-    if (beforeImg) beforeImg.src = futurePhotoBase64 || '';
+    if (beforeImg) beforeImg.src = futurePhotoBase64 || _blankPixel;
     switchTimeline('12weeks');
 
     // Disable generate button
@@ -3087,9 +3089,16 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       })
-      .then(function(r) { return r.json(); })
+      .then(function(r) {
+        var ct = r.headers.get('content-type') || '';
+        if (!r.ok) throw new Error('API returned ' + r.status);
+        if (ct.indexOf('application/json') === -1) throw new Error('API returned non-JSON (got ' + ct + ')');
+        return r.json();
+      })
       .then(function(d) {
-        if (!d.success || !d.image_base64) throw new Error(d.error || 'No image');
+        console.log('[FutureSelf] ' + tl + ' raw response:', d);
+        if (!d.success || !d.image_base64) throw new Error(d.error || 'No image in response');
+        if (d.image_base64.indexOf('data:image') !== 0) throw new Error('Invalid image data format');
         _generatedImages[tl] = d.image_base64;
         if (tl === '12weeks') awardXP(50, 'Future Self generated');
 
