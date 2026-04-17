@@ -31,8 +31,8 @@
     :root {
       --bg-main: #111010;
       --bg-surface: #1B1A17;
-      --bg-soft: #232220;
-      --bg-elevated: #2A2926;
+      --bg-soft: #242424;
+      --bg-elevated: #2C2C2C;
       --card-light: #F5F2EC;
       --sand: #E8E3D9;
       --cream: #F0EDE5;
@@ -55,14 +55,18 @@
       --radius-sm: 12px;
       --radius-xs: 8px;
       --device-width: 320px;
-      --device-radius: 42px;
-      --device-screen-radius: 28px;
-      --device-padding: 12px;
-      --card-padding: 28px 24px 24px;
-      --card-padding-mobile: 24px 20px 20px;
+      --device-ratio: 9 / 19;
+      --device-radius: 24px;
+      --device-screen-radius: 20px;
+      --device-padding: 0px;
+      --device-bg: #1C1C1C;
+      --device-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      --card-padding: 20px;
+      --card-padding-mobile: 18px;
       --card-radius: 16px;
-      --card-bg: var(--bg-surface);
-      --card-border: 1px solid var(--border-soft);
+      --card-bg: #1C1C1C;
+      --card-border: none;
+      --card-shadow: 0 10px 30px rgba(0,0,0,0.25);
       --grid-gap: 16px;
       --grid-gap-mobile: 12px;
       --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -623,60 +627,40 @@
 
     /* ─── DEVICE MOCKUP COMPONENT ─── */
     .device {
-      width: 100%;
-      max-width: var(--device-width);
-      background: #161514;
+      width: var(--device-width);
+      aspect-ratio: var(--device-ratio);
+      background: var(--device-bg);
       border-radius: var(--device-radius);
-      padding: var(--device-padding);
-      box-shadow:
-        0 0 0 1px rgba(255,248,235,0.05),
-        0 2px 4px rgba(0,0,0,0.4),
-        0 8px 24px rgba(0,0,0,0.35),
-        0 24px 64px rgba(0,0,0,0.3),
-        0 48px 100px rgba(0,0,0,0.2);
-      position: relative;
-      margin: 0 auto;
-    }
-    .device::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 20%; right: 20%;
-      height: 1px;
-      background: linear-gradient(to right, transparent, rgba(255,248,235,0.08), transparent);
-      border-radius: var(--device-radius) var(--device-radius) 0 0;
-    }
-    .device-notch {
-      width: 96px; height: 26px;
-      background: var(--bg-main);
-      border-radius: 18px;
-      margin: 0 auto;
-      position: relative; z-index: 10;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
-    }
-    .device-screen {
-      background: var(--bg-surface);
-      border-radius: var(--device-screen-radius);
+      box-shadow: var(--device-shadow);
       overflow: hidden;
       position: relative;
-      margin-top: calc(var(--device-padding) * -1);
-      padding: 24px 18px 20px;
-      /* Fixed aspect ratio for consistent height */
-      min-height: 520px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
     }
-    .device-screen::before {
-      content: '';
-      position: absolute; inset: 0;
-      border-radius: var(--device-screen-radius);
-      border: 1px solid rgba(255,248,235,0.04);
-      pointer-events: none;
+    .device-notch {
+      width: 90px; height: 24px;
+      background: #141414;
+      border-radius: 14px;
+      margin: 10px auto 0;
+      position: relative; z-index: 10;
+      flex-shrink: 0;
+    }
+    .device-screen {
+      background: var(--device-bg);
+      overflow: hidden;
+      position: relative;
+      padding: 8px 18px 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
     .device-home {
-      width: 110px; height: 4px;
-      background: rgba(245,242,237,0.15);
+      width: 100px; height: 4px;
+      background: rgba(245,242,237,0.12);
       border-radius: 2px;
-      margin: 8px auto 0;
+      margin: auto auto 8px;
+      flex-shrink: 0;
     }
 
     /* Device screen internals */
@@ -795,10 +779,13 @@
 
     /* ─── FUTURE SELF DEVICE SCREEN ─── */
     .ds-future-screen {
-      padding: 24px 0 20px;
+      padding: 8px 0 16px;
     }
     .ds-future-screen .ds-status {
       padding-left: 18px; padding-right: 18px;
+    }
+    .ds-future-screen .ds-future-slider {
+      flex: 1;
     }
     /* Before/After slider container */
     .ds-future-slider {
@@ -898,7 +885,7 @@
       position: absolute;
       bottom: 0; left: 0; right: 0;
       height: 50%;
-      background: linear-gradient(to top, var(--bg-surface) 0%, rgba(27,26,23,0.9) 35%, transparent 100%);
+      background: linear-gradient(to top, var(--device-bg) 0%, rgba(28,28,28,0.9) 35%, transparent 100%);
       z-index: 3;
       pointer-events: none;
     }
@@ -976,10 +963,10 @@
     .device-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 48px 40px;
+      gap: 40px;
+      justify-items: center;
       max-width: 740px;
       margin: 0 auto;
-      justify-items: center;
     }
     .device-grid-item {
       display: flex; flex-direction: column;
@@ -995,12 +982,7 @@
       transition: box-shadow 0.45s var(--ease-out);
     }
     .device-grid-item:hover .device {
-      box-shadow:
-        0 0 0 1px rgba(255,248,235,0.07),
-        0 4px 8px rgba(0,0,0,0.45),
-        0 12px 32px rgba(0,0,0,0.4),
-        0 32px 80px rgba(0,0,0,0.3),
-        0 56px 120px rgba(0,0,0,0.2);
+      box-shadow: 0 28px 60px rgba(0,0,0,0.45);
     }
     .device-grid-caption {
       text-align: center;
@@ -1017,10 +999,11 @@
       color: var(--text-muted);
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 700px) {
       .device-grid {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 36px;
+        justify-items: center;
         max-width: var(--device-width);
       }
       .device-grid-item,
@@ -1032,6 +1015,12 @@
       .device-grid-item:nth-child(2):hover,
       .device-grid-item:nth-child(3):hover {
         transform: translateY(-4px);
+      }
+    }
+    @media (max-width: 360px) {
+      .device {
+        width: 100%;
+        max-width: 290px;
       }
     }
 
@@ -1391,44 +1380,50 @@
       background: var(--accent-gold);
     }
 
+    /* Card inner layout */
+    .card-inner {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+    .card-sub {
+      font-size: 13px;
+      color: #A0A0A0;
+      line-height: 1.6;
+    }
+
     /* Content card base */
     .preview-card {
       background: var(--card-bg);
       border: var(--card-border);
       border-radius: var(--card-radius);
-      padding: var(--card-padding);
+      box-shadow: var(--card-shadow);
       text-align: left;
-      transition: all 0.4s var(--ease-out);
+      transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
       position: relative;
       overflow: hidden;
     }
-    .preview-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(to right, transparent, rgba(201,173,110,0.12), transparent);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-    .preview-card:nth-child(2n) { transform: translateY(3px); }
     .preview-card:hover {
-      border-color: rgba(255,248,235,0.1);
       transform: translateY(-4px);
-      box-shadow: var(--shadow-hover), var(--shadow-glow);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
     }
-    .preview-card:nth-child(2n):hover { transform: translateY(-1px); }
-    .preview-card:hover::before { opacity: 1; }
     .preview-icon {
       width: 40px; height: 40px;
       border-radius: var(--radius-xs);
       display: flex; align-items: center; justify-content: center;
-      margin-bottom: 16px;
     }
     .preview-icon.today { background: var(--accent-sage-glow); }
     .preview-icon.future { background: var(--accent-gold-glow); }
     .preview-card h3 {
       font-size: 14px; font-weight: 650;
-      margin-bottom: 6px; color: var(--text-primary);
+      color: var(--text-primary);
       letter-spacing: -0.01em;
     }
     .preview-grid {
@@ -1493,29 +1488,15 @@
       background: var(--card-bg);
       border: var(--card-border);
       border-radius: var(--card-radius);
-      padding: var(--card-padding);
+      box-shadow: var(--card-shadow);
       text-align: left;
-      transition: all 0.4s var(--ease-out);
+      transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
       position: relative;
     }
-    .step-card::after {
-      content: '';
-      position: absolute; bottom: 0; left: 20%; right: 20%;
-      height: 1px;
-      background: linear-gradient(to right, transparent, rgba(122,142,118,0.15), transparent);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-    .step-card:nth-child(2) { transform: translateY(5px); }
-    .step-card:nth-child(4) { transform: translateY(3px); }
     .step-card:hover {
-      border-color: rgba(255,248,235,0.1);
       transform: translateY(-4px);
-      box-shadow: var(--shadow-hover);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
     }
-    .step-card:nth-child(2):hover { transform: translateY(1px); }
-    .step-card:nth-child(4):hover { transform: translateY(-1px); }
-    .step-card:hover::after { opacity: 1; }
     .step-number {
       font-size: 11px; font-weight: 700;
       color: var(--accent-sage);
@@ -1523,11 +1504,10 @@
       width: 28px; height: 28px;
       display: flex; align-items: center; justify-content: center;
       border-radius: var(--radius-xs);
-      margin-bottom: 18px;
     }
     .step-card h3 {
       font-size: 15px; font-weight: 650;
-      margin-bottom: 8px; color: var(--text-primary);
+      color: var(--text-primary);
       letter-spacing: -0.01em;
     }
     .step-card p {
@@ -1657,45 +1637,30 @@
       background: var(--card-bg);
       border: var(--card-border);
       border-radius: var(--card-radius);
-      padding: var(--card-padding);
+      box-shadow: var(--card-shadow);
       text-align: left;
-      transition: all 0.4s var(--ease-out);
+      transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
       position: relative;
       overflow: hidden;
     }
-    .opt-card:nth-child(2) { transform: translateY(5px); }
-    .opt-card::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse at top right, rgba(201,173,110,0.04), transparent 60%);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
     .opt-card:hover {
-      border-color: rgba(201,173,110,0.12);
       transform: translateY(-4px);
-      box-shadow: var(--shadow-hover);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
     }
-    .opt-card:nth-child(2):hover { transform: translateY(1px); }
-    .opt-card:hover::before { opacity: 1; }
     .opt-icon {
       width: 40px; height: 40px;
       border-radius: var(--radius-xs);
       background: var(--accent-gold-glow);
       display: flex; align-items: center; justify-content: center;
-      margin-bottom: 18px;
-      position: relative;
     }
     .opt-card h3 {
       font-size: 15px; font-weight: 650;
-      margin-bottom: 8px; color: var(--text-primary);
+      color: var(--text-primary);
       letter-spacing: -0.01em;
-      position: relative;
     }
     .opt-card p {
       font-size: 13px; color: var(--text-secondary);
       line-height: 1.6;
-      position: relative;
     }
 
     /* CLOSING CTA */
@@ -1853,9 +1818,9 @@
       .btn-primary { padding: 16px 32px; font-size: 14px; width: 100%; justify-content: center; }
       .btn-secondary { padding: 13px 28px; font-size: 13px; width: 100%; justify-content: center; }
       .preview-grid { grid-template-columns: 1fr; gap: var(--grid-gap-mobile); }
-      .preview-card { padding: var(--card-padding-mobile); }
+      .preview-card .card-inner { padding: 16px; }
       .steps-grid { grid-template-columns: 1fr; gap: var(--grid-gap-mobile); }
-      .step-card { padding: var(--card-padding-mobile); }
+      .step-card .card-inner { padding: 16px; }
       #insight h2 { font-size: clamp(26px, 8vw, 36px); }
       .insight-contrast { font-size: 16px; padding: 18px 24px; }
       #how h2 { margin-bottom: 40px; }
@@ -1863,7 +1828,7 @@
       .diff-list li { padding: 8px 10px; font-size: 14px; }
       .slider-container { border-radius: var(--radius-sm); }
       .optimize-cards { gap: var(--grid-gap-mobile); }
-      .opt-card { padding: var(--card-padding-mobile); }
+      .opt-card .card-inner { padding: 16px; }
       #cta { padding: 80px 20px 72px; }
       .cta-h2 { font-size: clamp(28px, 8vw, 44px); }
       .waitlist-row { flex-direction: column; }
@@ -2180,24 +2145,32 @@
     <h2 class="reveal d1">Four steps. Zero guesswork.</h2>
     <div class="steps-grid">
       <div class="step-card reveal d1">
-        <div class="step-number">1</div>
-        <h3>Meet your future self</h3>
-        <p>A version of you that followed through.</p>
+        <div class="card-inner">
+          <div class="step-number">1</div>
+          <h3 class="card-title">Meet your future self</h3>
+          <p class="card-sub">A version of you that followed through.</p>
+        </div>
       </div>
       <div class="step-card reveal d2">
-        <div class="step-number">2</div>
-        <h3>Follow today's plan</h3>
-        <p>Workout. Nutrition. Protocol. Already laid out.</p>
+        <div class="card-inner">
+          <div class="step-number">2</div>
+          <h3 class="card-title">Follow today's plan</h3>
+          <p class="card-sub">Workout. Nutrition. Protocol. Already laid out.</p>
+        </div>
       </div>
       <div class="step-card reveal d3">
-        <div class="step-number">3</div>
-        <h3>Track in seconds</h3>
-        <p>Scan meals. Log workouts. Mark progress.</p>
+        <div class="card-inner">
+          <div class="step-number">3</div>
+          <h3 class="card-title">Track in seconds</h3>
+          <p class="card-sub">Scan meals. Log workouts. Mark progress.</p>
+        </div>
       </div>
       <div class="step-card reveal d4">
-        <div class="step-number">4</div>
-        <h3>Watch it adapt</h3>
-        <p>Your system evolves as you do.</p>
+        <div class="card-inner">
+          <div class="step-number">4</div>
+          <h3 class="card-title">Watch it adapt</h3>
+          <p class="card-sub">Your system evolves as you do.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -2233,35 +2206,45 @@
     </div>
 
     <div class="preview-grid" style="grid-template-columns:repeat(5,1fr);">
-      <div class="preview-card reveal d1" style="padding:22px 16px;text-align:center;">
-        <div class="preview-icon today" style="margin:0 auto 14px;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A8E76" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div class="preview-card reveal d1">
+        <div class="card-inner" style="align-items:center;text-align:center;">
+          <div class="preview-icon today">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A8E76" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h3 class="card-title" style="font-size:13px;">Future Self Visualization</h3>
         </div>
-        <h3 style="font-size:13px;">Future Self Visualization</h3>
       </div>
-      <div class="preview-card reveal d2" style="padding:22px 16px;text-align:center;">
-        <div class="preview-icon future" style="margin:0 auto 14px;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9AD6E" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      <div class="preview-card reveal d2">
+        <div class="card-inner" style="align-items:center;text-align:center;">
+          <div class="preview-icon future">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9AD6E" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <h3 class="card-title" style="font-size:13px;">Adaptive Training</h3>
         </div>
-        <h3 style="font-size:13px;">Adaptive Training</h3>
       </div>
-      <div class="preview-card reveal d3" style="padding:22px 16px;text-align:center;">
-        <div class="preview-icon today" style="margin:0 auto 14px;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A8E76" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <div class="preview-card reveal d3">
+        <div class="card-inner" style="align-items:center;text-align:center;">
+          <div class="preview-icon today">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A8E76" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <h3 class="card-title" style="font-size:13px;">AI Coaching</h3>
         </div>
-        <h3 style="font-size:13px;">AI Coaching</h3>
       </div>
-      <div class="preview-card reveal d3" style="padding:22px 16px;text-align:center;">
-        <div class="preview-icon future" style="margin:0 auto 14px;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9AD6E" stroke-width="2" stroke-linecap="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+      <div class="preview-card reveal d3">
+        <div class="card-inner" style="align-items:center;text-align:center;">
+          <div class="preview-icon future">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9AD6E" stroke-width="2" stroke-linecap="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+          </div>
+          <h3 class="card-title" style="font-size:13px;">Protocol Tracking</h3>
         </div>
-        <h3 style="font-size:13px;">Protocol Tracking</h3>
       </div>
-      <div class="preview-card reveal d4" style="padding:22px 16px;text-align:center;">
-        <div class="preview-icon today" style="margin:0 auto 14px;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A8E76" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      <div class="preview-card reveal d4">
+        <div class="card-inner" style="align-items:center;text-align:center;">
+          <div class="preview-icon today">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A8E76" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <h3 class="card-title" style="font-size:13px;">Identity Reinforcement</h3>
         </div>
-        <h3 style="font-size:13px;">Identity Reinforcement</h3>
       </div>
     </div>
   </div>
@@ -2275,25 +2258,31 @@
     <p class="section-sub reveal d2">Guided protocols, weekly reviews, and clinician-connected tracking — for users who want more.</p>
     <div class="optimize-cards">
       <div class="opt-card reveal d1">
-        <div class="opt-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C6A96B" stroke-width="2" stroke-linecap="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+        <div class="card-inner">
+          <div class="opt-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C6A96B" stroke-width="2" stroke-linecap="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+          </div>
+          <h3 class="card-title">Adaptive Protocols</h3>
+          <p class="card-sub">Adjusts based on progress and recovery.</p>
         </div>
-        <h3>Adaptive Protocols</h3>
-        <p>Adjusts based on progress and recovery.</p>
       </div>
       <div class="opt-card reveal d2">
-        <div class="opt-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C6A96B" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <div class="card-inner">
+          <div class="opt-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C6A96B" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <h3 class="card-title">Weekly Check-ins</h3>
+          <p class="card-sub">Surfaces what's working and what isn't.</p>
         </div>
-        <h3>Weekly Check-ins</h3>
-        <p>Surfaces what's working and what isn't.</p>
       </div>
       <div class="opt-card reveal d3">
-        <div class="opt-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C6A96B" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        <div class="card-inner">
+          <div class="opt-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C6A96B" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          </div>
+          <h3 class="card-title">Clinician Visibility</h3>
+          <p class="card-sub">Share your progress for connected guidance.</p>
         </div>
-        <h3>Clinician Visibility</h3>
-        <p>Share your progress for connected guidance.</p>
       </div>
     </div>
   </div>
