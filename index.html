@@ -883,11 +883,12 @@
       pointer-events: none;
     }
     .ds-future-tag {
-      font-size: 8px; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      padding: 4px 10px;
+      font-size: 7px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 3px 8px;
       border-radius: 100px;
       backdrop-filter: blur(12px);
+      opacity: 0.7;
       -webkit-backdrop-filter: blur(12px);
     }
     .ds-future-tag.before {
@@ -930,15 +931,11 @@
       margin-bottom: 10px;
     }
     .ds-future-weeks {
-      font-size: 26px; font-weight: 800;
+      font-size: 16px; font-weight: 700;
       color: var(--text-primary);
-      letter-spacing: -0.04em;
+      letter-spacing: -0.02em;
       line-height: 1;
-    }
-    .ds-future-weeks-label {
-      font-size: 11px; font-weight: 500;
-      color: var(--text-muted);
-      letter-spacing: 0.01em;
+      white-space: nowrap;
     }
 
 
@@ -1997,7 +1994,7 @@
     <div class="hero-content">
       <div class="badge"><span class="badge-dot"></span> Early access — limited spots</div>
       <h1 class="hero-h1">Become the person<br>you said you would.</h1>
-      <p class="hero-sub">Train alongside a future version of yourself.<br>AI-generated. Adaptive. Built to keep you moving.</p>
+      <p class="hero-sub">See your future self. Train to become them.</p>
       <div class="hero-actions" style="margin-top:36px;">
         <a href="/gate.html" id="heroDemoBtn" onclick="return checkDemo(event)" class="btn-primary">
           Try the App
@@ -2029,7 +2026,7 @@
               <div class="ds-dots"><span></span><span></span><span></span><span></span></div>
             </div>
             <div style="margin-bottom:20px;">
-              <div class="ds-day">Day 1 — Prove it.</div>
+              <div class="ds-day">Day 1 — Start becoming.</div>
               <div class="ds-week">Week 1 of 12</div>
               <div class="ds-progress"><div class="ds-progress-fill" style="width:60%;"></div></div>
             </div>
@@ -2040,8 +2037,8 @@
               <span class="ds-row-meta">Start Session</span>
             </div>
             <div class="ds-row">
-              <span class="ds-row-label">Nutrition</span>
-              <span class="ds-row-meta gold">120 / 180g</span>
+              <span class="ds-row-label">Protein</span>
+              <span class="ds-row-meta gold">120g of 180g</span>
             </div>
             <div class="ds-row">
               <span class="ds-row-label">Hydration</span>
@@ -2058,21 +2055,6 @@
               <div class="ds-workout-dot"></div>
               <span class="ds-workout-name">Incline DB Press</span>
               <span class="ds-workout-sets">3 × 10</span>
-            </div>
-            <div class="ds-workout">
-              <div class="ds-workout-dot"></div>
-              <span class="ds-workout-name">Cable Fly</span>
-              <span class="ds-workout-sets">3 × 12</span>
-            </div>
-            <div class="ds-divider"></div>
-            <div class="ds-label">Protocol</div>
-            <div class="ds-protocol">
-              <span class="ds-protocol-name">BPC-157</span>
-              <span class="ds-protocol-status done">✓ Done</span>
-            </div>
-            <div class="ds-protocol">
-              <span class="ds-protocol-name">TB-500</span>
-              <span class="ds-protocol-status rest">Rest Day</span>
             </div>
             <div class="ds-nav">
               <div class="ds-nav-dot active"></div>
@@ -2118,8 +2100,7 @@
             </div>
             <div class="ds-future-bottom">
               <div class="ds-future-stat-bar">
-                <span class="ds-future-weeks">12</span>
-                <span class="ds-future-weeks-label">weeks</span>
+                <span class="ds-future-weeks">12 weeks</span>
               </div>
               <div class="ds-nav">
                 <div class="ds-nav-dot"></div>
