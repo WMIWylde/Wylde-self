@@ -7,6 +7,20 @@
   <link rel="icon" type="image/png" href="/logo-icon.png" />
   <link rel="apple-touch-icon" href="/logo-icon.png" />
   <title>Wylde Self — App</title>
+
+  <!-- Open Graph — link previews (iMessage, social, etc.) -->
+  <meta property="og:title" content="Wylde Self" />
+  <meta property="og:description" content="Train alongside the person you're becoming." />
+  <meta property="og:image" content="https://wyldeself.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://wyldeself.com" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Wylde Self" />
+  <meta name="twitter:description" content="Train alongside the person you're becoming." />
+  <meta name="twitter:image" content="https://wyldeself.com/og-image.png" />
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -601,7 +615,7 @@
   #screen-auth { position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;align-items:center;justify-content:center; }
   .auth-box { width:100%;max-width:420px;padding:40px 28px; }
   .auth-logo { text-align:center;margin-bottom:48px; }
-  .auth-logo-mark { font-family:var(--font-ui);font-size:28px;font-weight:700;letter-spacing:0.14em;color:var(--text);margin-bottom:8px; }
+  .auth-logo-mark { font-family:var(--font-ui);font-size:48px;font-weight:700;letter-spacing:0.18em;color:var(--text);margin-bottom:12px; }
   .auth-logo-mark span { color:var(--sage); }
   .auth-logo-label { font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--text3);margin-top:10px; }
   .auth-headline { font-size:24px;font-weight:700;color:var(--text);text-align:center;margin-bottom:10px;line-height:1.2; }
@@ -1217,8 +1231,6 @@
 (function(){
   var os = document.getElementById('opening-sequence');
   if (!os) return;
-  // Check if user has seen it before in this session
-  if (sessionStorage.getItem('ws_intro_seen')) { os.remove(); return; }
   var svg = os.querySelector('svg');
   var tagline = os.querySelector('.os-tagline');
   var fill = os.querySelector('.os-progress-fill');
@@ -1231,7 +1243,6 @@
   // Phase 4: fade out and remove
   setTimeout(function(){
     os.classList.add('fade-out');
-    sessionStorage.setItem('ws_intro_seen', '1');
     setTimeout(function(){ os.remove(); }, 900);
   }, 3200);
 })();
