@@ -160,6 +160,16 @@
     .ob-next:hover { opacity: 0.88; color: #1A1A1A !important; }
     .ob-skip { background: none; border: none; color: var(--text3); font-size: 12px; cursor: pointer; margin-top: 16px; font-family: var(--font-ui); letter-spacing: 0.04em; }
     .ob-skip:hover { color: var(--text2); }
+    .ob-container { max-width: 520px; }
+    .ob-field { margin-bottom: 28px; }
+    .ob-input-lg { font-size: 16px; padding: 16px 18px; }
+    .ob-weight-row { display: flex; gap: 8px; align-items: center; }
+    .ob-weight-input { max-width: 140px; }
+    .ob-optional { color: var(--text3); font-size: 10px; letter-spacing: 0.06em; text-transform: none; font-weight: 400; }
+    .ob-textarea { resize: vertical; font-family: var(--font-ui); line-height: 1.6; margin-top: 10px; }
+    .ob-diet-pills { margin-bottom: 12px; }
+    .ob-diet-notes { margin-top: 4px; }
+    .ob-finish { flex: 2; }
 
     /* TIMELINE */
     .timeline-btn { flex:1; font-family:var(--ff-body); font-size:12px; font-weight:500; letter-spacing:0.02em; padding:10px; border:1px solid var(--border); background:transparent; color:var(--text2); cursor:pointer; transition:all 0.2s; border-radius:12px; }
@@ -167,6 +177,26 @@
     .timeline-btn.active { border-color:rgba(122,142,118,0.3); background:var(--sage-dim); color:var(--sage); }
 
     /* FUTURE SELF */
+    .future-container { max-width: 520px; }
+    .future-header { text-align: center; padding: 48px 0 32px; }
+    .future-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text3); margin-bottom: 20px; }
+    .future-title { font-size: clamp(28px, 6vw, 36px); font-weight: 700; color: var(--text); line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 10px; }
+    .future-sub { font-size: 14px; color: var(--text2); line-height: 1.5; }
+    .future-upload { background: var(--bg-surface); border-radius: 20px; padding: 48px 32px; text-align: center; cursor: pointer; margin-bottom: 20px; box-shadow: var(--shadow-card); transition: all 0.25s; }
+    .future-upload:hover { box-shadow: var(--shadow-hover); }
+    .future-upload-icon { width: 56px; height: 56px; border-radius: 50%; background: rgba(110,127,107,0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .future-upload-icon span { font-size: 24px; color: var(--sage); opacity: 0.7; }
+    .future-upload-label { font-size: 15px; color: var(--text2); margin-bottom: 6px; font-weight: 500; }
+    .future-upload-hint { font-size: 12px; color: var(--text3); }
+    .future-generate-btn { width: 100%; margin-bottom: 12px; }
+    .future-skip-wrap { text-align: center; margin-bottom: 24px; }
+    .future-skip { background: none; border: none; color: var(--text3); font-family: var(--font-ui); font-size: 12px; cursor: pointer; letter-spacing: 0.04em; }
+    .future-skip:hover { color: var(--text2); }
+    .future-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .future-start-btn { flex: 1; }
+    .future-reset-btn { flex-shrink: 0; padding: 14px 20px; }
+
+    /* Legacy upload zone compat */
     .upload-zone { border: 1.5px dashed rgba(255,248,235,0.1); background: rgba(255,248,235,0.02); padding: 60px 24px; text-align: center; cursor: pointer; transition: all 0.25s; position: relative; border-radius: 16px; }
     .upload-zone:hover { border-color: rgba(122,142,118,0.3); background: rgba(122,142,118,0.04); }
     .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
@@ -184,6 +214,14 @@
     .progress-label { font-size: 12px; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
 
     /* PROGRAM */
+    .program-header { margin-bottom: 24px; }
+    .program-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+    .program-title { font-size: 24px; font-weight: 700; color: var(--text); line-height: 1.15; margin: 0 0 4px; }
+    .program-sub { font-size: 13px; color: var(--text3); }
+    .program-generate { margin-bottom: 24px; }
+    .alt-section-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; }
+    .alt-input-row { display: flex; gap: 8px; }
+    .alt-rebuild-btn { width: auto; padding: 12px 20px; margin: 0; }
     .program-output { display: none; }
     .program-output.show { display: block; }
     .day-card { background: var(--bg-surface); border: none; margin-bottom: 8px; overflow: hidden; transition: box-shadow 0.2s; border-radius: 16px; box-shadow: var(--shadow-card); }
@@ -224,6 +262,11 @@
     .log-set-btn:disabled { opacity:0.3;cursor:not-allowed; }
 
     /* COACH */
+    .coach-container { padding-bottom: 0; }
+    .coach-header { margin-bottom: 32px; }
+    .coach-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; }
+    .coach-title { font-size: 24px; font-weight: 700; color: var(--text); line-height: 1.2; margin: 0; }
+    .coach-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 28px; }
     .chat-wrap { display: flex; flex-direction: column; height: calc(100vh - 280px); max-height: 500px; }
     .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; background: var(--bg-surface); border: none; border-bottom: none; border-radius: 16px 16px 0 0; box-shadow: var(--shadow-card); }
     .chat-messages::-webkit-scrollbar { width: 3px; }
@@ -250,13 +293,23 @@
     .stat-num, #sessionCount, #streakCount, #weekCount, #dashCalConsumed, #dash_water_val, #dc-streak-num, #dc-sleep-hrs, #macroCalories { font-family: var(--font-mono); }
     .streak-fire { font-family: var(--font-milestone); font-weight: 800; }
 
-    /* PROGRESS */
+    /* OPTIMIZE / PROGRESS */
+    .optimize-header { margin-bottom: 24px; }
+    .optimize-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; }
+    .optimize-title { font-size: 24px; font-weight: 700; color: var(--text); line-height: 1.15; margin: 0; }
+    .optimize-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+    .optimize-stat { background: var(--bg-surface); border: none; border-radius: 16px; padding: 18px 8px; text-align: center; box-shadow: var(--shadow-card); }
+    .optimize-stat-num { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1; font-family: var(--font-ui); }
+    .optimize-stat-label { font-size: 10px; color: var(--text3); margin-top: 4px; }
+    .optimize-log-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; }
+    .log-empty { justify-content: center; padding: 32px; }
+    .log-empty-text { font-size: 14px; color: var(--text3); }
     .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 32px; }
     .stat-box { background: var(--bg-surface); border: none; padding: 32px 20px; text-align: center; transition: box-shadow 0.2s; border-radius: 16px; box-shadow: var(--shadow-card); }
     .stat-box:hover { box-shadow: var(--shadow-hover); }
     .stat-num { font-family: var(--ff-hero); font-size: 48px; color: var(--sage); letter-spacing: -0.02em; line-height: 1; margin-bottom: 8px; font-weight: 800; }
     .stat-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); }
-    .complete-btn { width: 100%; padding: 18px; font-size: 14px; margin-bottom: 24px; }
+    .complete-btn { width: 100%; padding: 18px; font-size: 14px; margin-bottom: 28px; }
     .session-log { background: var(--bg-surface); border: none; border-radius: 16px; box-shadow: var(--shadow-card); overflow: hidden; }
     .log-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--border); }
     .log-item:last-child { border-bottom: none; }
@@ -540,11 +593,29 @@
   @keyframes slideIn { from{opacity:0;transform:scale(0.97)} to{opacity:1;transform:scale(1)} }
   .reveal-wrap.visible { animation:slideIn 0.35s ease-out; }
 
-  /* AUTH SCREEN */
+  /* DISCLAIMER */
+  .disclaimer-banner { background: var(--bg); padding: 7px 24px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 199; max-width: 430px; margin: 0 auto; }
+  .disclaimer-text { font-size: 10px; letter-spacing: 0.06em; color: var(--text3); opacity: 0.5; font-family: var(--font-ui); }
+
+  /* ═══ AUTH SCREEN ═══ */
   #screen-auth { position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;align-items:center;justify-content:center; }
-  .auth-box { width:100%;max-width:420px;padding:40px 32px; }
+  .auth-box { width:100%;max-width:420px;padding:40px 28px; }
+  .auth-logo { text-align:center;margin-bottom:48px; }
+  .auth-logo-mark { font-family:var(--font-ui);font-size:28px;font-weight:700;letter-spacing:0.14em;color:var(--text);margin-bottom:8px; }
+  .auth-logo-mark span { color:var(--sage); }
+  .auth-logo-label { font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--text3);margin-top:10px; }
+  .auth-headline { font-size:24px;font-weight:700;color:var(--text);text-align:center;margin-bottom:10px;line-height:1.2; }
+  .auth-sub { font-size:14px;color:var(--text2);text-align:center;margin-bottom:40px;line-height:1.6; }
+  .auth-cta { width:100%;padding:16px;font-size:14px;border-radius:14px; }
+  .auth-switch { text-align:center;margin-top:20px; }
+  .auth-switch-btn { background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:var(--font-ui);letter-spacing:0.04em; }
+  .auth-switch-btn span { color:var(--text2);text-decoration:underline; }
   .auth-tab-bar { display:flex;border-bottom:1px solid var(--border);margin-bottom:28px; }
-  .auth-tab-bar button { flex:1;background:none;border:none;padding:12px;font-family:var(--font-ui);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:color 0.2s; }
+  .auth-tab { flex:1;background:none;border:none;border-bottom:2px solid transparent;padding:12px;font-family:var(--font-ui);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:color 0.2s;color:var(--text3); }
+  .auth-tab.active { color:var(--sage);border-bottom-color:var(--sage); }
+  .auth-error { display:none;background:rgba(122,142,118,0.06);border:0.5px solid rgba(122,142,118,0.25);color:var(--sage);font-size:12px;padding:12px 16px;margin-bottom:16px;border-radius:8px; }
+  .auth-fields { display:flex;flex-direction:column;gap:12px; }
+  .auth-fields .auth-cta { margin-top:4px; }
 
   /* XP TOAST */
   #xp-toast { position:fixed;bottom:80px;right:24px;z-index:3000;background:rgba(201,173,110,0.15);border:1px solid rgba(201,173,110,0.5);color:var(--gold);font-family:var(--font-mono);font-size:12px;letter-spacing:0.05em;padding:10px 18px;border-radius:20px;pointer-events:none;opacity:0;transform:translateY(8px);transition:opacity 0.3s,transform 0.3s; }
@@ -1168,41 +1239,51 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
 
-<!-- AUTH SCREEN — now a clean welcome with sign-in tucked away -->
+<!-- ═══ AUTH SCREEN ═══ -->
 <div id="screen-auth" style="display:none;">
   <div class="auth-box">
+
     <!-- Welcome state (default) -->
     <div id="authWelcome">
-      <div style="text-align:center;margin-bottom:48px;">
-        <div style="font-family:var(--ff-hero);font-size:28px;letter-spacing:0.14em;color:var(--text);margin-bottom:8px;">W<span style="color:var(--sage)">S</span></div>
-        <p style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--text3);margin-top:10px;">Wylde Self</p>
+      <div class="auth-logo">
+        <div class="auth-logo-mark">W<span>S</span></div>
+        <p class="auth-logo-label">Wylde Self</p>
       </div>
-      <h2 style="font-size:24px;font-weight:700;color:var(--text);text-align:center;margin-bottom:10px;line-height:1.2;">See your future.</h2>
-      <p style="font-size:14px;color:var(--text2);text-align:center;margin-bottom:40px;line-height:1.6;">Follow the plan. Train alongside the person you're becoming.</p>
-      <button class="btn ob-next" style="width:100%;padding:16px;font-size:14px;border-radius:14px;color:#1A1A1A;background:#F5F2ED;" onclick="continueAsGuest()">Get Started</button>
-      <p style="text-align:center;margin-top:20px;">
-        <button onclick="showAuthForm()" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:var(--font-ui);letter-spacing:0.04em;">I have an account — <span style="color:var(--text2);text-decoration:underline;">Sign in</span></button>
+
+      <h2 class="auth-headline">See your future.</h2>
+      <p class="auth-sub">Follow the plan. Train alongside the person you're becoming.</p>
+
+      <button class="btn ob-next auth-cta" onclick="continueAsGuest()">Get Started</button>
+
+      <p class="auth-switch">
+        <button class="auth-switch-btn" onclick="showAuthForm()">I have an account — <span>Sign in</span></button>
       </p>
     </div>
+
     <!-- Sign-in form (hidden by default) -->
     <div id="authFormWrap" style="display:none;">
-      <div style="text-align:center;margin-bottom:28px;">
-        <div style="font-family:var(--ff-hero);font-size:22px;letter-spacing:0.14em;color:var(--text);margin-bottom:6px;">W<span style="color:var(--sage)">S</span></div>
+      <div class="auth-logo" style="margin-bottom:28px;">
+        <div class="auth-logo-mark">W<span>S</span></div>
       </div>
+
       <div class="auth-tab-bar">
-        <button id="authTabSignIn" onclick="switchAuthTab('signin')" style="color:var(--sage);border-bottom:2px solid var(--sage);">Sign In</button>
-        <button id="authTabCreate" onclick="switchAuthTab('create')" style="color:var(--muted);border-bottom:2px solid transparent;">Create Account</button>
+        <button id="authTabSignIn" class="auth-tab active" onclick="switchAuthTab('signin')">Sign In</button>
+        <button id="authTabCreate" class="auth-tab" onclick="switchAuthTab('create')">Create Account</button>
       </div>
-      <div id="authError" style="display:none;background:rgba(122,142,118,0.06);border:0.5px solid rgba(122,142,118,0.25);color:var(--sage);font-size:12px;padding:12px 16px;margin-bottom:16px;border-radius:8px;"></div>
-      <div style="display:flex;flex-direction:column;gap:12px;">
+
+      <div id="authError" class="auth-error"></div>
+
+      <div class="auth-fields">
         <input id="authEmail" class="input" type="email" placeholder="Email address" autocomplete="email"/>
         <input id="authPassword" class="input" type="password" placeholder="Password" autocomplete="current-password"/>
-        <button id="authSubmitBtn" class="btn ob-next" style="width:100%;margin-top:4px;color:#1A1A1A;background:#F5F2ED;" onclick="submitAuth()">SIGN IN</button>
+        <button id="authSubmitBtn" class="btn ob-next auth-cta" onclick="submitAuth()">SIGN IN</button>
       </div>
-      <p style="text-align:center;margin-top:20px;">
-        <button onclick="hideAuthForm()" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:var(--font-ui);">← Back</button>
+
+      <p class="auth-switch">
+        <button class="auth-switch-btn" onclick="hideAuthForm()">← Back</button>
       </p>
     </div>
+
   </div>
 </div>
 
@@ -1226,10 +1307,8 @@
 </nav>
 
 <!-- DISCLAIMER BANNER -->
-<div style="background:var(--bg);border-bottom:none;padding:7px 24px 7px 204px;text-align:center;position:fixed;top:0;left:0;right:0;z-index:199;">
-  <p style="font-size:10px;letter-spacing:0.06em;color:var(--text3);opacity:0.5;font-family:var(--font-ui);">
-    Early access — some features still in progress
-  </p>
+<div class="disclaimer-banner">
+  <p class="disclaimer-text">Early access — some features still in progress</p>
 </div>
 
 <!-- ═══ INTRO VIDEO ═══ -->
@@ -1240,7 +1319,7 @@
 
 <!-- ═══ ONBOARDING — Step-by-step ═══ -->
 <div class="screen active" id="screen-onboard">
-  <div class="container" style="max-width:520px;">
+  <div class="container ob-container">
 
     <!-- Progress dots -->
     <div class="ob-progress" id="obProgress">
@@ -1255,9 +1334,9 @@
       <h1 class="ob-step-title">What should we call you?</h1>
       <p class="ob-step-sub">This is your journey. Let's make it personal.</p>
 
-      <div class="form-group" style="margin-bottom:28px;">
+      <div class="form-group ob-field">
         <label>First name</label>
-        <input class="input" type="text" id="userName" placeholder="Your name" style="font-size:16px;padding:16px 18px;" />
+        <input class="input ob-input-lg" type="text" id="userName" placeholder="Your name" />
       </div>
 
       <div class="form-group">
@@ -1271,7 +1350,7 @@
       </div>
 
       <div class="ob-nav">
-        <button class="btn ob-next" onclick="obNext(1)" style="flex:1;color:#1A1A1A;background:#F5F2ED;">Continue</button>
+        <button class="btn ob-next" onclick="obNext(1)">Continue</button>
       </div>
     </div>
 
@@ -1280,7 +1359,7 @@
       <h1 class="ob-step-title">What are you training for?</h1>
       <p class="ob-step-sub">We'll build everything around this.</p>
 
-      <div class="form-group" style="margin-bottom:28px;">
+      <div class="form-group ob-field">
         <label>Primary goal</label>
         <div class="pill-group" id="goalGroup">
           <button class="pill" onclick="selectPill(this,'goalGroup')">Lose fat</button>
@@ -1290,7 +1369,7 @@
         </div>
       </div>
 
-      <div class="form-group" style="margin-bottom:28px;">
+      <div class="form-group ob-field">
         <label>Current fitness level</label>
         <div class="pill-group" id="levelGroup">
           <button class="pill" onclick="selectPill(this,'levelGroup')">Beginner</button>
@@ -1311,7 +1390,7 @@
 
       <div class="ob-nav">
         <button class="btn ob-back" onclick="obBack(2)">Back</button>
-        <button class="btn ob-next" onclick="obNext(2)" style="color:#1A1A1A;background:#F5F2ED;">Continue</button>
+        <button class="btn ob-next" onclick="obNext(2)">Continue</button>
       </div>
     </div>
 
@@ -1320,7 +1399,7 @@
       <h1 class="ob-step-title">A few details</h1>
       <p class="ob-step-sub">Helps us calibrate your program. Skip anything you'd rather not share.</p>
 
-      <div class="form-group" style="margin-bottom:28px;">
+      <div class="form-group ob-field">
         <label>Age range</label>
         <div class="pill-group" id="ageGroup">
           <button class="pill" onclick="selectPill(this,'ageGroup')">18–24</button>
@@ -1331,7 +1410,7 @@
         </div>
       </div>
 
-      <div class="form-group" style="margin-bottom:28px;">
+      <div class="form-group ob-field">
         <label>Height</label>
         <div class="pill-group" id="heightGroup">
           <button class="pill" onclick="selectPill(this,'heightGroup')">Under 5'4"</button>
@@ -1342,10 +1421,10 @@
         </div>
       </div>
 
-      <div class="form-group" style="margin-bottom:28px;">
+      <div class="form-group ob-field">
         <label>Current weight</label>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input class="input" type="number" id="weightInput" placeholder="e.g. 180" style="max-width:140px;" />
+        <div class="ob-weight-row">
+          <input class="input ob-weight-input" type="number" id="weightInput" placeholder="e.g. 180" />
           <div class="pill-group" id="weightUnitGroup">
             <button class="pill selected" onclick="selectPill(this,'weightUnitGroup')">lbs</button>
             <button class="pill" onclick="selectPill(this,'weightUnitGroup')">kg</button>
@@ -1353,8 +1432,8 @@
         </div>
       </div>
 
-      <div class="form-group" style="margin-bottom:28px;">
-        <label>Health concerns <span style="color:var(--text3);font-size:10px;letter-spacing:0.06em;text-transform:none;font-weight:400;">(optional)</span></label>
+      <div class="form-group ob-field">
+        <label>Health concerns <span class="ob-optional">(optional)</span></label>
         <div class="pill-group" id="healthGroup">
           <button class="pill" onclick="togglePill(this)">Lower back pain</button>
           <button class="pill" onclick="togglePill(this)">Knee issues</button>
@@ -1366,12 +1445,12 @@
           <button class="pill" onclick="togglePill(this)">Arthritis</button>
           <button class="pill" onclick="togglePill(this)">None</button>
         </div>
-        <textarea class="input" id="healthNotes" placeholder="Anything else we should know..." rows="2" style="resize:vertical;font-family:var(--ff-body);line-height:1.6;margin-top:10px;"></textarea>
+        <textarea class="input ob-textarea" id="healthNotes" placeholder="Anything else we should know..." rows="2"></textarea>
       </div>
 
       <div class="ob-nav">
         <button class="btn ob-back" onclick="obBack(3)">Back</button>
-        <button class="btn ob-next" onclick="obNext(3)" style="color:#1A1A1A;background:#F5F2ED;">Continue</button>
+        <button class="btn ob-next" onclick="obNext(3)">Continue</button>
       </div>
     </div>
 
@@ -1380,9 +1459,9 @@
       <h1 class="ob-step-title">Almost there</h1>
       <p class="ob-step-sub">Any dietary preferences? Then we'll build your future self.</p>
 
-      <div class="form-group" style="margin-bottom:28px;">
-        <label>Dietary preferences <span style="color:var(--text3);font-size:10px;letter-spacing:0.06em;text-transform:none;font-weight:400;">(optional)</span></label>
-        <div class="pill-group" id="dietGroup" style="margin-bottom:12px;">
+      <div class="form-group ob-field">
+        <label>Dietary preferences <span class="ob-optional">(optional)</span></label>
+        <div class="pill-group ob-diet-pills" id="dietGroup">
           <button class="pill" onclick="togglePill(this)">No restrictions</button>
           <button class="pill" onclick="togglePill(this)">Vegetarian</button>
           <button class="pill" onclick="togglePill(this)">Vegan</button>
@@ -1395,12 +1474,12 @@
           <button class="pill" onclick="togglePill(this)">Nut allergy</button>
           <button class="pill" onclick="togglePill(this)">Shellfish allergy</button>
         </div>
-        <input class="input" id="dietNotes" placeholder="Any other dietary needs or allergies..." style="margin-top:4px;" />
+        <input class="input ob-diet-notes" id="dietNotes" placeholder="Any other dietary needs or allergies..." />
       </div>
 
       <div class="ob-nav">
         <button class="btn ob-back" onclick="obBack(4)">Back</button>
-        <button class="btn ob-next" onclick="completeOnboard()" style="flex:2;color:#1A1A1A;background:#F5F2ED;">Build My Future Self →</button>
+        <button class="btn ob-next ob-finish" onclick="completeOnboard()">Build My Future Self →</button>
       </div>
     </div>
 
@@ -1437,53 +1516,55 @@
 <div class="screen" id="screen-overview">
 <div class="ov-shell">
 
-  <!-- 1. HEADER — compact, identity-driven -->
+  <!-- 1. HEADER -->
   <div class="ov-hero">
     <div class="ov-hero-top">
-      <div class="ov-streak-pill"><span class="ov-streak-dot"></span><span id="ov-streak-text">0 day streak</span></div>
+      <div class="ov-streak-pill">
+        <span class="ov-streak-dot"></span>
+        <span id="ov-streak-text">0 day streak</span>
+      </div>
     </div>
     <h1 class="ov-hero-title" id="ov-hero-title">Day 1 — Start becoming.</h1>
-    <div class="ov-hero-sub" id="ov-sub">Week 1 of 12</div>
-    <div class="ov-hero-bar"><div class="ov-hero-bar-fill" id="ov-hero-progress" style="width:0%"></div></div>
+    <p class="ov-hero-sub" id="ov-sub">Week 1 of 12</p>
+    <div class="ov-hero-bar">
+      <div class="ov-hero-bar-fill" id="ov-hero-progress"></div>
+    </div>
   </div>
 
-  <!-- 2. TODAY'S MISSION — hero cream card -->
+  <!-- 2. TODAY'S MISSION -->
   <div>
-    <div class="ov-mission-label">Today's Mission</div>
+    <p class="ov-mission-label">Today's Mission</p>
     <div class="ov-mission-card">
-      <!-- Workout — primary action -->
       <div class="ov-mission-item ov-mission-primary" id="ov-w-program" onclick="showScreen('program')">
         <div class="ov-mission-left">
-          <div class="ov-mission-name">Workout</div>
-          <div class="ov-mission-meta" id="ov-mission-workout-meta">Upper Body · 6 exercises</div>
+          <p class="ov-mission-name">Workout</p>
+          <p class="ov-mission-meta" id="ov-mission-workout-meta">Upper Body · 6 exercises</p>
         </div>
         <button class="ov-mission-btn">Start Session →</button>
       </div>
 
       <div class="ov-mission-divider"></div>
 
-      <!-- Protein — horizontal bar -->
       <div class="ov-mission-item" id="ov-w-cal" onclick="showScreen('nutrition')">
         <div class="ov-mission-left">
-          <div class="ov-mission-name">Protein</div>
-          <div class="ov-mission-meta"><span id="ov-mac-p">0</span>g of <span id="ov-cal-goal">180</span>g</div>
+          <p class="ov-mission-name">Protein</p>
+          <p class="ov-mission-meta"><span id="ov-mac-p">0</span>g of <span id="ov-cal-goal">180</span>g</p>
         </div>
         <div class="ov-protein-bar-wrap">
-          <div class="ov-protein-bar"><div class="ov-protein-bar-fill" id="ov-protein-bar-fill" style="width:0%"></div></div>
+          <div class="ov-protein-bar"><div class="ov-protein-bar-fill" id="ov-protein-bar-fill"></div></div>
           <span class="ov-protein-pct" id="ov-cal-pct">0%</span>
         </div>
       </div>
 
       <div class="ov-mission-divider"></div>
 
-      <!-- Hydration — bar + stepper -->
       <div class="ov-mission-item" id="ov-w-water">
         <div class="ov-mission-left">
-          <div class="ov-mission-name">Water</div>
-          <div class="ov-mission-meta"><span id="ov-wv">0</span> / 128 oz</div>
+          <p class="ov-mission-name">Water</p>
+          <p class="ov-mission-meta"><span id="ov-wv">0</span> / 128 oz</p>
         </div>
         <div class="ov-hydration-wrap">
-          <div class="ov-hydration-bar"><div class="ov-hydration-bar-fill" id="ov-hydration-bar-fill" style="width:0%"></div></div>
+          <div class="ov-hydration-bar"><div class="ov-hydration-bar-fill" id="ov-hydration-bar-fill"></div></div>
           <div class="ov-water-btns">
             <button class="ov-sb" onclick="event.stopPropagation();ovChW(-8)">−</button>
             <button class="ov-sb" onclick="event.stopPropagation();ovChW(8)">+</button>
@@ -1500,17 +1581,17 @@
     <button class="ov-quick" onclick="showScreen('coach')"><span class="ov-quick-icon">💬</span> Coach</button>
   </div>
 
-  <!-- 4. FUTURE SELF TEASER CARD -->
+  <!-- 4. FUTURE SELF TEASER -->
   <div class="ov-future-strip" id="ov-w-future" onclick="showScreen('future')">
     <div class="ov-future-img-placeholder" id="ov-future-thumb"></div>
     <div class="ov-future-text">
-      <div class="ov-future-headline">This is you in 12 weeks</div>
-      <div class="ov-future-sub">See your future self →</div>
+      <p class="ov-future-headline">This is you in 12 weeks</p>
+      <p class="ov-future-sub">See your future self →</p>
     </div>
     <span class="ov-future-arrow">›</span>
   </div>
 
-  <!-- 5. TODAY'S WORKOUT — expandable preview -->
+  <!-- 5. TODAY'S WORKOUT — expandable -->
   <div class="ov-section-card" id="ov-workout-section">
     <div class="ov-section-header" onclick="ovTogSection('workout')">
       <span class="ov-section-title">Today's Workout</span>
@@ -1526,7 +1607,7 @@
     </div>
   </div>
 
-  <!-- 6. PROTOCOL CARD -->
+  <!-- 6. PROTOCOL — expandable -->
   <div class="ov-section-card" id="ov-protocol-section">
     <div class="ov-section-header" onclick="ovTogSection('protocol')">
       <span class="ov-section-title">Protocol</span>
@@ -1535,27 +1616,18 @@
     <div class="ov-section-body" id="ov-body-protocol" style="display:none">
       <div class="ov-proto-item"><span class="ov-proto-name">BPC-157</span><span class="ov-proto-status ov-proto-done">✓ Done</span></div>
       <div class="ov-proto-item"><span class="ov-proto-name">TB-500</span><span class="ov-proto-status ov-proto-rest">Rest day</span></div>
-      <div class="ov-proto-cycle">Cycle ends in 5 days</div>
+      <p class="ov-proto-cycle">Cycle ends in 5 days</p>
       <button class="ov-btn" onclick="showScreen('health')">Open Protocol</button>
     </div>
   </div>
 
-  <!-- Hidden data targets for ovSyncData compat -->
+  <!-- Hidden data sync targets -->
   <div style="display:none">
-    <span id="ov-cal-num">0</span>
-    <span id="ov-cal-bar"></span>
-    <span id="ov-n-p">—</span>
-    <span id="ov-n-c">—</span>
-    <span id="ov-n-f">—</span>
-    <span id="ov-mac-c">—</span>
-    <span id="ov-mac-f">—</span>
-    <span id="ov-n-cal">—</span>
-    <span id="ov-w-pct">0%</span>
-    <span id="ov-w-bar"></span>
-    <span id="ov-w-pct-num">0%</span>
-    <span id="ov-sessions">0</span>
-    <span id="ov-streak">0</span>
-    <span id="ov-weeks">0</span>
+    <span id="ov-cal-num">0</span><span id="ov-cal-bar"></span>
+    <span id="ov-n-p">—</span><span id="ov-n-c">—</span><span id="ov-n-f">—</span>
+    <span id="ov-mac-c">—</span><span id="ov-mac-f">—</span><span id="ov-n-cal">—</span>
+    <span id="ov-w-pct">0%</span><span id="ov-w-bar"></span><span id="ov-w-pct-num">0%</span>
+    <span id="ov-sessions">0</span><span id="ov-streak">0</span><span id="ov-weeks">0</span>
     <div id="ov-w-energy"><div id="ov-ai-e"></div><div id="ov-ai-w"></div></div>
     <div id="ov-w-nutrition"></div>
   </div>
@@ -1690,35 +1762,35 @@
 
 <!-- ═══ FUTURE SELF ═══ -->
 <div class="screen" id="screen-future">
-  <div class="container" style="max-width:520px;">
+  <div class="container future-container">
 
     <!-- Cinematic header -->
-    <div style="text-align:center;padding:48px 0 32px;">
-      <p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text3);margin-bottom:20px;">Future Self</p>
-      <h1 style="font-size:clamp(28px,6vw,36px);font-weight:700;color:var(--text);line-height:1.1;letter-spacing:-0.02em;margin:0 0 10px;">This is who you're becoming.</h1>
-      <p style="font-size:14px;color:var(--text2);line-height:1.5;">Upload a photo. See your future.</p>
+    <div class="future-header">
+      <p class="future-label">Future Self</p>
+      <h1 class="future-title">This is who you're becoming.</h1>
+      <p class="future-sub">Upload a photo. See your future.</p>
     </div>
 
-    <!-- Upload zone — cinematic, full-width -->
-    <div id="uploadZone" onclick="document.getElementById('photoInput').click()" style="background:var(--bg-surface);border-radius:20px;padding:48px 32px;text-align:center;cursor:pointer;margin-bottom:20px;box-shadow:var(--shadow-card);transition:all 0.25s;">
+    <!-- Upload zone -->
+    <div class="future-upload" id="uploadZone" onclick="document.getElementById('photoInput').click()">
       <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handlePhoto(event.target.files[0])" />
-      <div style="width:56px;height:56px;border-radius:50%;background:rgba(110,127,107,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-        <span style="font-size:24px;color:var(--sage);opacity:0.7;">↑</span>
+      <div class="future-upload-icon">
+        <span>↑</span>
       </div>
-      <p style="font-size:15px;color:var(--text2);margin-bottom:6px;font-weight:500;">Upload a reference photo</p>
-      <p style="font-size:12px;color:var(--text3);">Your starting point</p>
+      <p class="future-upload-label">Upload a reference photo</p>
+      <p class="future-upload-hint">Your starting point</p>
     </div>
 
-    <button class="btn ob-next" id="generateBtn" onclick="generateAllTimelines()" style="width:100%;padding:16px;font-size:14px;border-radius:14px;margin-bottom:12px;color:#1A1A1A;background:#F5F2ED;">Build My Future Self</button>
+    <button class="btn ob-next future-generate-btn" id="generateBtn" onclick="generateAllTimelines()">Build My Future Self</button>
 
-    <div style="text-align:center;margin-bottom:24px;">
-      <button onclick="showScreen('program')" style="background:none;border:none;color:var(--text3);font-family:var(--ff-body);font-size:12px;cursor:pointer;letter-spacing:0.04em;">Skip for now</button>
-    </div>
+    <p class="future-skip-wrap">
+      <button class="future-skip" onclick="showScreen('program')">Skip for now</button>
+    </p>
 
     <!-- REVEAL SLIDER -->
     <div class="reveal-wrap" id="revealWrap" style="display:none;">
 
-      <div class="reveal-tabs" id="revealTabs" style="margin-bottom:20px;">
+      <div class="reveal-tabs" id="revealTabs">
         <button class="reveal-tab active" data-timeline="12weeks" onclick="switchTimeline('12weeks')">
           <span class="tab-label">12 weeks</span>
           <span class="tab-sub">Leaner, more athletic</span>
@@ -1746,7 +1818,7 @@
           <span class="reveal-label label-after" id="afterTimelineLabel">12 WKS</span>
           <div class="after-loading" id="afterLoading">
             <div class="loading-ring"></div>
-            <div class="loading-text" id="loadingText">Generating...</div>
+            <p class="loading-text" id="loadingText">Generating...</p>
           </div>
         </div>
         <div class="reveal-line" id="revealLine"></div>
@@ -1758,13 +1830,13 @@
         </div>
       </div>
 
-      <div style="display:flex;gap:10px;margin-top:20px;">
-        <button class="btn ob-next" onclick="showScreen('program')" style="flex:1;padding:14px;color:#1A1A1A;background:#F5F2ED;">Start My Program →</button>
-        <button class="btn" onclick="resetFutureSelf()" style="flex-shrink:0;padding:14px 20px;">Reset</button>
+      <div class="future-actions">
+        <button class="btn ob-next future-start-btn" onclick="showScreen('program')">Start My Program →</button>
+        <button class="btn future-reset-btn" onclick="resetFutureSelf()">Reset</button>
       </div>
     </div>
 
-    <!-- Keep for dashboard avatar sync -->
+    <!-- Dashboard avatar sync -->
     <div style="display:none;"><span id="becomingTag"></span></div>
   </div>
 </div>
@@ -1772,57 +1844,57 @@
 <!-- ═══ PROGRAM ═══ -->
 <div class="screen" id="screen-program">
   <div class="container">
-    <div style="margin-bottom:24px;">
-      <p style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;">Your Program</p>
-      <h1 style="font-size:24px;font-weight:700;color:var(--text);line-height:1.15;margin:0 0 4px;" id="programName">Day 1 Workout</h1>
-      <p style="font-size:13px;color:var(--text3);" id="programSub">Built for your goals and schedule.</p>
+    <div class="program-header">
+      <p class="program-label">Your Program</p>
+      <h1 class="program-title" id="programName">Day 1 Workout</h1>
+      <p class="program-sub" id="programSub">Built for your goals and schedule.</p>
     </div>
 
-    <button class="ov-btn ov-btn-g" id="generateProgramBtn" onclick="generateProgram()" style="margin-bottom:24px;">Generate My Program</button>
+    <button class="ov-btn ov-btn-g program-generate" id="generateProgramBtn" onclick="generateProgram()">Generate My Program</button>
 
     <div class="program-output" id="programOutput">
       <div id="programDays"></div>
 
-      <!-- Alt rebuild section -->
-      <div class="alt-program-section" id="altProgramSection" style="margin-top:24px;">
-        <p style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;">Adjust Program</p>
-        <div class="alt-pills-wrap" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+      <!-- Adjust Program -->
+      <div class="alt-program-section" id="altProgramSection">
+        <p class="alt-section-label">Adjust Program</p>
+        <div class="alt-pills-wrap">
           <button class="alt-pill" onclick="setAltPill(this,'No equipment needed')">No equipment</button>
           <button class="alt-pill" onclick="setAltPill(this,'More cardio')">More cardio</button>
           <button class="alt-pill" onclick="setAltPill(this,'Avoid lower back')">Avoid lower back</button>
           <button class="alt-pill" onclick="setAltPill(this,'Shorter sessions')">Shorter sessions</button>
           <button class="alt-pill" onclick="setAltPill(this,'Bodyweight only')">Bodyweight only</button>
         </div>
-        <div style="display:flex;gap:8px;">
-          <input class="alt-workout-input" id="altProgramInput" placeholder="Describe adjustments..." onkeydown="if(event.key==='Enter')rebuildProgram()" style="flex:1;padding:12px 14px;background:var(--bg-soft);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:13px;font-family:var(--ff-body);outline:none;" />
-          <button class="ov-btn" id="rebuildProgramBtn" onclick="rebuildProgram()" style="width:auto;padding:12px 20px;margin:0;">Rebuild</button>
+        <div class="alt-input-row">
+          <input class="alt-workout-input" id="altProgramInput" placeholder="Describe adjustments..." onkeydown="if(event.key==='Enter')rebuildProgram()" />
+          <button class="ov-btn alt-rebuild-btn" id="rebuildProgramBtn" onclick="rebuildProgram()">Rebuild</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ COACH — Command Center ═══ -->
+<!-- ═══ COACH ═══ -->
 <div class="screen" id="screen-coach">
-  <div class="container" style="padding-bottom:0;">
-    <div style="margin-bottom:32px;">
-      <p style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;">Wylde Coach</p>
-      <h1 style="font-size:24px;font-weight:700;color:var(--text);line-height:1.2;margin:0;">You said this week<br>was different.</h1>
+  <div class="container coach-container">
+    <div class="coach-header">
+      <p class="coach-label">Wylde Coach</p>
+      <h1 class="coach-title">You said this week<br>was different.</h1>
     </div>
 
-    <!-- Quick action buttons -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;">
+    <!-- Quick actions -->
+    <div class="coach-actions">
       <button class="coach-action-btn" onclick="coachQuickAction('Fix my plan')">Fix my plan</button>
       <button class="coach-action-btn" onclick="coachQuickAction('Motivate me')">Motivate me</button>
       <button class="coach-action-btn" onclick="coachQuickAction('I\'m off track')">I'm off track</button>
       <button class="coach-action-btn" onclick="coachQuickAction('Optimize everything')">Optimize everything</button>
     </div>
 
-    <!-- Chat (secondary) -->
+    <!-- Chat -->
     <div class="chat-wrap">
       <div class="chat-messages" id="chatMessages">
         <div class="msg msg-ai">
-          <div class="msg-label" style="color:var(--text3);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Wylde Coach</div>
+          <p class="msg-label">Wylde Coach</p>
           <div class="msg-bubble">I'm the version of you that's already done the work. What do you need?</div>
         </div>
       </div>
@@ -1834,35 +1906,35 @@
   </div>
 </div>
 
-<!-- ═══ PROGRESS ═══ -->
+<!-- ═══ OPTIMIZE ═══ -->
 <div class="screen" id="screen-progress">
   <div class="container">
-    <div style="margin-bottom:24px;">
-      <p style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;">Optimize</p>
-      <h1 style="font-size:24px;font-weight:700;color:var(--text);line-height:1.15;margin:0;">Closing the gap.</h1>
+    <div class="optimize-header">
+      <p class="optimize-label">Optimize</p>
+      <h1 class="optimize-title">Closing the gap.</h1>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;">
-      <div style="background:var(--bg-surface);border:none;border-radius:16px;padding:18px 8px;text-align:center;box-shadow:var(--shadow-card);">
-        <div style="font-size:26px;font-weight:700;color:var(--text);line-height:1;" id="sessionCount">0</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:4px;">Sessions</div>
+    <div class="optimize-stats">
+      <div class="optimize-stat">
+        <div class="optimize-stat-num" id="sessionCount">0</div>
+        <div class="optimize-stat-label">Sessions</div>
       </div>
-      <div style="background:var(--bg-surface);border:none;border-radius:16px;padding:18px 8px;text-align:center;box-shadow:var(--shadow-card);">
-        <div style="font-size:26px;font-weight:700;color:var(--text);line-height:1;" id="streakCount">0</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:4px;">Day Streak</div>
+      <div class="optimize-stat">
+        <div class="optimize-stat-num" id="streakCount">0</div>
+        <div class="optimize-stat-label">Day Streak</div>
       </div>
-      <div style="background:var(--bg-surface);border:none;border-radius:16px;padding:18px 8px;text-align:center;box-shadow:var(--shadow-card);">
-        <div style="font-size:26px;font-weight:700;color:var(--text);line-height:1;" id="weekCount">0</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:4px;">Weeks In</div>
+      <div class="optimize-stat">
+        <div class="optimize-stat-num" id="weekCount">0</div>
+        <div class="optimize-stat-label">Weeks In</div>
       </div>
     </div>
 
-    <button class="ov-btn ov-btn-g complete-btn" onclick="completeSession()" style="margin-bottom:28px;">Complete Today's Session</button>
+    <button class="ov-btn ov-btn-g complete-btn" onclick="completeSession()">Complete Today's Session</button>
 
-    <p style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;">Session Log</p>
-    <div class="session-log" id="sessionLog" style="background:var(--bg-surface);border:none;border-radius:16px;overflow:hidden;box-shadow:var(--shadow-card);">
-      <div class="log-item" style="justify-content:center;padding:32px;">
-        <p style="font-size:14px;color:var(--text3);">Your sessions will appear here.</p>
+    <p class="optimize-log-label">Session Log</p>
+    <div class="session-log" id="sessionLog">
+      <div class="log-item log-empty">
+        <p class="log-empty-text">Your sessions will appear here.</p>
       </div>
     </div>
     <p class="streak-fire" id="streakMsg"></p>
@@ -1950,12 +2022,10 @@
     var ca = document.getElementById('authTabCreate');
     var btn = document.getElementById('authSubmitBtn');
     if (mode === 'signin') {
-      si.style.color = 'var(--sage)'; si.style.borderBottomColor = 'var(--sage)';
-      ca.style.color = 'var(--muted)'; ca.style.borderBottomColor = 'transparent';
+      si.classList.add('active'); ca.classList.remove('active');
       if (btn) btn.textContent = 'SIGN IN';
     } else {
-      ca.style.color = 'var(--sage)'; ca.style.borderBottomColor = 'var(--sage)';
-      si.style.color = 'var(--muted)'; si.style.borderBottomColor = 'transparent';
+      ca.classList.add('active'); si.classList.remove('active');
       if (btn) btn.textContent = 'CREATE ACCOUNT';
     }
     var err = document.getElementById('authError');
