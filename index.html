@@ -809,32 +809,16 @@
       z-index: 0;
       filter: brightness(0.75) saturate(0.85);
     }
-    /* After image — full brightness + subtle glow */
+    /* After image — clip-path reveals from the right */
     .ds-future-img-after {
       z-index: 1;
+      clip-path: inset(0 0 0 40%);
     }
-    /* Clip mask on after — revealed from right */
-    .ds-future-after-wrap {
+    /* Soft sage glow on the after side */
+    .ds-future-glow {
       position: absolute;
-      top: 0; right: 0; bottom: 0;
-      width: 60%;
-      overflow: hidden;
-      z-index: 1;
-    }
-    .ds-future-after-wrap img {
-      position: absolute;
-      top: 0; right: 0;
-      width: var(--slider-full-w, 320px);
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-    }
-    /* Soft glow on the after side */
-    .ds-future-after-wrap::before {
-      content: '';
-      position: absolute;
-      top: 10%; right: 10%;
-      width: 70%; height: 60%;
+      top: 10%; right: 5%;
+      width: 50%; height: 60%;
       background: radial-gradient(ellipse, rgba(122,142,118,0.18) 0%, rgba(122,142,118,0.04) 50%, transparent 70%);
       filter: blur(24px);
       z-index: 2;
@@ -2116,9 +2100,8 @@
             </div>
             <div class="ds-future-slider" id="futureSlider">
               <img class="ds-future-img-before" src="before.png" alt="Before" draggable="false" />
-              <div class="ds-future-after-wrap" id="futureAfterWrap">
-                <img src="after.png" alt="After" draggable="false" />
-              </div>
+              <img class="ds-future-img-after" id="futureAfterImg" src="after.png" alt="After" draggable="false" />
+              <div class="ds-future-glow"></div>
               <div class="ds-future-divider" id="futureDivider">
                 <div class="ds-future-divider-arrows">
                   <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#F5F2ED" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
@@ -2544,26 +2527,18 @@
       window.addEventListener('resize', reset);
     })();
 
-    // FUTURE SELF MINI-SLIDER
+    // FUTURE SELF MINI-SLIDER (clip-path reveal)
     (function() {
       var slider = document.getElementById('futureSlider');
-      var afterWrap = document.getElementById('futureAfterWrap');
+      var afterImg = document.getElementById('futureAfterImg');
       var divider = document.getElementById('futureDivider');
-      if (!slider || !afterWrap || !divider) return;
+      if (!slider || !afterImg || !divider) return;
       var active = false;
-
-      // Keep after-image sized to full slider width so both photos align
-      function syncSize() {
-        afterWrap.style.setProperty('--slider-full-w', slider.offsetWidth + 'px');
-      }
-      syncSize();
-      window.addEventListener('resize', syncSize);
 
       function set(clientX) {
         var rect = slider.getBoundingClientRect();
         var pct = Math.max(8, Math.min(92, ((clientX - rect.left) / rect.width) * 100));
-        var afterPct = 100 - pct;
-        afterWrap.style.width = afterPct + '%';
+        afterImg.style.clipPath = 'inset(0 0 0 ' + pct + '%)';
         divider.style.left = pct + '%';
       }
 
