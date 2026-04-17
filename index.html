@@ -1343,22 +1343,69 @@
       margin-bottom: 2px;
     }
 
-    /* Timer */
-    .ds-wo-timer {
-      display: flex; align-items: center; justify-content: center;
-      gap: 5px;
-      margin-top: 16px;
+    /* Rest timer */
+    .ds-wo-rest {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 0 4px;
+      animation: logFadeIn 0.3s var(--ease-out);
     }
-    .ds-wo-timer-num {
+    .ds-wo-rest.visible { display: flex; }
+    .ds-wo-rest-label {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .ds-wo-rest-ring {
+      position: relative;
+      width: 72px; height: 72px;
+    }
+    .ds-wo-rest-ring svg {
+      width: 72px; height: 72px;
+      transform: rotate(-90deg);
+    }
+    .ds-wo-rest-ring .ring-bg {
+      fill: none;
+      stroke: var(--bg-elevated);
+      stroke-width: 3;
+    }
+    .ds-wo-rest-ring .ring-fill {
+      fill: none;
+      stroke: var(--accent-sage);
+      stroke-width: 3;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1s linear;
+    }
+    .ds-wo-rest-time {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px; font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.03em;
+    }
+    .ds-wo-rest-skip {
+      font-size: 11px; font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px 16px;
+      border-radius: 8px;
+      transition: color 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .ds-wo-rest-skip:active { color: var(--text-primary); }
+    @keyframes restPulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+    .ds-wo-rest-done {
       font-size: 13px; font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: -0.02em;
-    }
-    .ds-wo-timer-label {
-      font-size: 9px; font-weight: 500;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+      color: var(--accent-sage);
+      animation: restPulse 0.6s ease-in-out 2;
     }
 
     /* ─── FOOD SCAN DEVICE SCREEN ─── */
@@ -2159,9 +2206,16 @@
                   <div class="ds-wo-log-confirm" id="woLogSave">Save & Continue →</div>
                 </div>
 
-                <div class="ds-wo-timer">
-                  <span class="ds-wo-timer-num" id="woTimer">0:00</span>
-                  <span class="ds-wo-timer-label">elapsed</span>
+                <div class="ds-wo-rest" id="woRest">
+                  <div class="ds-wo-rest-label">Rest</div>
+                  <div class="ds-wo-rest-ring">
+                    <svg viewBox="0 0 72 72">
+                      <circle class="ring-bg" cx="36" cy="36" r="31"/>
+                      <circle class="ring-fill" id="woRestRing" cx="36" cy="36" r="31" stroke-dasharray="194.78" stroke-dashoffset="0"/>
+                    </svg>
+                    <div class="ds-wo-rest-time" id="woRestTime">0:60</div>
+                  </div>
+                  <div class="ds-wo-rest-skip" id="woRestSkip">Skip</div>
                 </div>
               </div>
 
@@ -2539,11 +2593,13 @@
         { name: 'Incline DB Press', sets: 3, targetReps: 10, weight: '45 lb' },
         { name: 'Cable Fly', sets: 3, targetReps: 12, weight: '30 lb' }
       ];
+      var REST_SECONDS = 60; // mock: 60s rest between sets
+      var CIRCUMFERENCE = 2 * Math.PI * 31; // ring radius=31
       var totalSets = exercises.reduce(function(s, e) { return s + e.sets; }, 0);
       var exIdx = 0, setIdx = 0, completedSets = 0;
-      var running = false, seconds = 0, timerInterval = null;
-      var loggedReps = 0; // current reps value in logger
-      var setLog = []; // per-exercise: [{reps:8},{reps:9},...]
+      var loggedReps = 0;
+      var setLog = [];
+      var restTimer = null, restRemaining = 0;
 
       // DOM refs
       var step = document.getElementById('woStep');
@@ -2564,7 +2620,10 @@
       var logMinus = document.getElementById('woLogMinus');
       var logPlus = document.getElementById('woLogPlus');
       var logSave = document.getElementById('woLogSave');
-      var timerNum = document.getElementById('woTimer');
+      var restPanel = document.getElementById('woRest');
+      var restRing = document.getElementById('woRestRing');
+      var restTime = document.getElementById('woRestTime');
+      var restSkip = document.getElementById('woRestSkip');
       var complete = document.getElementById('woComplete');
       if (!btn) return;
 
@@ -2579,6 +2638,13 @@
         historyEl.innerHTML = html;
       }
 
+      function hideAllPanels() {
+        logPanel.classList.remove('visible');
+        restPanel.classList.remove('visible');
+        btn.style.display = '';
+        loggedMsg.classList.remove('show');
+      }
+
       function render(animate) {
         var ex = exercises[exIdx];
         stepCounter.textContent = 'Exercise ' + (exIdx + 1) + ' of ' + exercises.length;
@@ -2587,7 +2653,6 @@
         setTotal.textContent = 'of ' + ex.sets;
         repsEl.textContent = ex.targetReps + ' reps · ' + ex.weight;
 
-        // Dots
         var html = '';
         for (var i = 0; i < ex.sets; i++) {
           var cls = 'ds-wo-dot';
@@ -2597,17 +2662,12 @@
         }
         dotsEl.innerHTML = html;
 
-        // History
         renderHistory();
 
-        // Overall progress
         var pct = Math.round((completedSets / totalSets) * 100);
         progressFill.style.width = pct + '%';
 
-        // Reset log panel
-        logPanel.classList.remove('visible');
-        btn.style.display = '';
-        loggedMsg.classList.remove('show');
+        hideAllPanels();
 
         if (animate) {
           step.classList.remove('active');
@@ -2628,20 +2688,54 @@
         logVal.textContent = loggedReps;
         logWeight.textContent = ex.weight;
 
-        // Last set of last exercise = gold save button
         var isLast = (exIdx === exercises.length - 1 && setIdx === ex.sets - 1);
         logSave.textContent = isLast ? 'Finish Workout →' : 'Save & Continue →';
         logSave.classList.toggle('gold', isLast);
 
         btn.style.display = 'none';
+        restPanel.classList.remove('visible');
         logPanel.classList.add('visible');
+      }
+
+      // ── Rest timer ──
+      function startRest(onDone) {
+        restRemaining = REST_SECONDS;
+        btn.style.display = 'none';
+        logPanel.classList.remove('visible');
+        restPanel.classList.add('visible');
+        restRing.style.strokeDasharray = CIRCUMFERENCE;
+        restRing.style.strokeDashoffset = '0';
+        restTime.textContent = '0:' + pad(restRemaining);
+
+        restTimer = setInterval(function() {
+          restRemaining--;
+          var elapsed = REST_SECONDS - restRemaining;
+          var offset = (elapsed / REST_SECONDS) * CIRCUMFERENCE;
+          restRing.style.strokeDashoffset = offset;
+          restTime.textContent = '0:' + pad(restRemaining);
+
+          if (restRemaining <= 0) {
+            clearInterval(restTimer);
+            restTimer = null;
+            restPanel.classList.remove('visible');
+            onDone();
+          }
+        }, 1000);
+      }
+
+      function skipRest() {
+        if (restTimer) {
+          clearInterval(restTimer);
+          restTimer = null;
+        }
+        restPanel.classList.remove('visible');
       }
 
       function showComplete() {
         step.classList.add('exiting');
         step.classList.remove('active');
         progressFill.style.width = '100%';
-        if (timerInterval) clearInterval(timerInterval);
+        if (restTimer) { clearInterval(restTimer); restTimer = null; }
         setTimeout(function() {
           complete.classList.add('visible');
         }, 350);
@@ -2656,30 +2750,21 @@
 
       function resetWorkout() {
         exIdx = 0; setIdx = 0; completedSets = 0;
-        seconds = 0; running = false;
         setLog = [];
-        if (timerInterval) clearInterval(timerInterval);
-        timerInterval = null;
-        timerNum.textContent = '0:00';
+        if (restTimer) { clearInterval(restTimer); restTimer = null; }
         complete.classList.remove('visible');
         step.classList.remove('exiting');
         btn.textContent = 'Complete Set';
         btn.classList.remove('gold');
         btn.style.display = '';
         logPanel.classList.remove('visible');
+        restPanel.classList.remove('visible');
         render(false);
         step.classList.add('active');
       }
 
       // "Complete Set" → show log panel
       btn.addEventListener('click', function() {
-        if (!running) {
-          running = true;
-          timerInterval = setInterval(function() {
-            seconds++;
-            timerNum.textContent = formatTime(seconds);
-          }, 1000);
-        }
         btn.classList.add('flash');
         setTimeout(function() { btn.classList.remove('flash'); }, 300);
         showLogPanel();
@@ -2693,26 +2778,60 @@
         loggedReps++; logVal.textContent = loggedReps;
       });
 
-      // "Save & Continue" → commit set, advance
+      // "Save & Continue" → commit set, start rest, then advance
       logSave.addEventListener('click', function() {
         setLog.push({ reps: loggedReps });
         completedSets++;
         setIdx++;
+        flashMsg();
 
         var ex = exercises[exIdx];
+        var workoutDone = false;
+        var needNewExercise = false;
+
         if (setIdx >= ex.sets) {
           exIdx++;
           setIdx = 0;
           setLog = [];
           if (exIdx >= exercises.length) {
-            showComplete();
-            return;
+            workoutDone = true;
+          } else {
+            needNewExercise = true;
           }
-          render(true);
-        } else {
-          render(false);
         }
-        flashMsg();
+
+        // Update dots + progress immediately
+        if (!workoutDone) {
+          var curEx = exercises[exIdx];
+          var dotHtml = '';
+          for (var i = 0; i < curEx.sets; i++) {
+            var cls = 'ds-wo-dot';
+            if (i < setIdx) cls += ' done';
+            else if (i === setIdx) cls += ' active';
+            dotHtml += '<div class="' + cls + '"></div>';
+          }
+          dotsEl.innerHTML = dotHtml;
+          renderHistory();
+          var pct = Math.round((completedSets / totalSets) * 100);
+          progressFill.style.width = pct + '%';
+        }
+
+        if (workoutDone) {
+          showComplete();
+        } else {
+          // Start rest timer, then render next set/exercise
+          logPanel.classList.remove('visible');
+          startRest(function() {
+            render(needNewExercise);
+          });
+        }
+      });
+
+      // Skip rest
+      restSkip.addEventListener('click', function() {
+        skipRest();
+        // Figure out if we just changed exercises
+        render(false);
       });
 
       // Tap completion screen to restart demo
