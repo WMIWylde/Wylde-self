@@ -125,13 +125,31 @@
     .input::placeholder { color: var(--text3); }
     .card { background: var(--bg-surface); border: none; padding: 20px; margin-bottom: 12px; border-radius: 16px; box-shadow: var(--shadow-card); }
 
-    /* ONBOARDING */
+    /* ONBOARDING — step-by-step */
     .onboard-form { display: flex; flex-direction: column; gap: 16px; }
-    .form-group label { display: block; font-size: 11px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(201,173,110,0.4); margin-bottom: 10px; }
+    .form-group label { display: block; font-size: 11px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
     .pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
     .pill { font-size: 12px; font-weight: 500; letter-spacing: 0.02em; padding: 9px 18px; border: 1px solid var(--border); background: transparent; color: var(--text2); cursor: pointer; transition: all 0.2s; font-family: var(--ff-body); border-radius: 24px; }
     .pill:hover { border-color: rgba(255,248,235,0.14); color: var(--text); }
     .pill.selected { border-color: rgba(122,142,118,0.3); background: var(--sage-dim); color: var(--sage); }
+
+    /* Onboard step system */
+    .ob-step { display: none; animation: obFadeIn 0.4s ease-out; }
+    .ob-step.ob-active { display: flex; flex-direction: column; }
+    @keyframes obFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .ob-progress { display: flex; gap: 6px; margin-bottom: 40px; }
+    .ob-progress-dot { width: 32px; height: 3px; border-radius: 2px; background: rgba(255,248,235,0.08); transition: background 0.3s; }
+    .ob-progress-dot.ob-done { background: var(--sage); }
+    .ob-progress-dot.ob-current { background: var(--sage-soft); }
+    .ob-step-title { font-size: clamp(26px, 5vw, 38px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.12; color: var(--text); margin-bottom: 10px; }
+    .ob-step-sub { font-size: 15px; color: var(--text2); line-height: 1.6; margin-bottom: 36px; }
+    .ob-nav { display: flex; gap: 12px; margin-top: 32px; }
+    .ob-nav .btn { flex: 1; padding: 14px 20px; font-size: 13px; }
+    .ob-back { background: transparent !important; border: 1px solid var(--border) !important; color: var(--text2) !important; }
+    .ob-next { background: #F5F2ED !important; border: none !important; color: var(--text-dark) !important; font-weight: 600 !important; }
+    .ob-next:hover { opacity: 0.9; }
+    .ob-skip { background: none; border: none; color: var(--text3); font-size: 12px; cursor: pointer; margin-top: 16px; font-family: var(--font-ui); letter-spacing: 0.04em; }
+    .ob-skip:hover { color: var(--text2); }
 
     /* TIMELINE */
     .timeline-btn { flex:1; font-family:var(--ff-body); font-size:12px; font-weight:500; letter-spacing:0.02em; padding:10px; border:1px solid var(--border); background:transparent; color:var(--text2); cursor:pointer; transition:all 0.2s; border-radius:12px; }
@@ -327,27 +345,27 @@
   /* OVERVIEW SCREEN */
   .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
   /* ══ TODAY SCREEN — v7 warm premium ══ */
-  .ov-shell { padding: 28px 20px 110px; max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+  .ov-shell { padding: 32px 20px 110px; max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
 
   /* ── 1. Hero header ── */
-  .ov-hero { margin-bottom: 4px; }
-  .ov-hero-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+  .ov-hero { margin-bottom: 8px; }
+  .ov-hero-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
   .ov-streak-pill { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--border-soft); border-radius: 20px; padding: 6px 14px; font-size: 11px; color: var(--text2); background: var(--bg-surface); }
   .ov-streak-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sage); display: inline-block; }
   .ov-hero-week { font-size: 12px; color: var(--text2); letter-spacing: 0.04em; }
-  .ov-hero-title { font-size: 34px; font-weight: 700; color: #fff; letter-spacing: -0.025em; line-height: 1.08; margin: 0 0 8px; }
-  .ov-hero-sub { font-size: 14px; color: var(--text2); margin: 0 0 16px; }
-  .ov-hero-bar { height: 6px; background: var(--bg-soft); border-radius: 3px; overflow: hidden; }
-  .ov-hero-bar-fill { height: 100%; background: var(--sage); border-radius: 3px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+  .ov-hero-title { font-size: clamp(28px, 7vw, 36px); font-weight: 700; color: var(--text); letter-spacing: -0.025em; line-height: 1.1; margin: 0 0 10px; }
+  .ov-hero-sub { font-size: 13px; color: var(--text3); margin: 0 0 18px; letter-spacing: 0.02em; }
+  .ov-hero-bar { height: 4px; background: var(--bg-soft); border-radius: 2px; overflow: hidden; }
+  .ov-hero-bar-fill { height: 100%; background: var(--sage); border-radius: 2px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
 
   /* ── 2. Mission card — hero element ── */
-  .ov-mission-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text2); margin-bottom: 14px; }
-  .ov-mission-card { background: var(--card-light); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow-soft); }
-  .ov-mission-item { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; cursor: pointer; transition: background 0.15s; }
+  .ov-mission-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-bottom: 14px; }
+  .ov-mission-card { background: var(--card-light); border-radius: 20px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.2); }
+  .ov-mission-item { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px; cursor: pointer; transition: background 0.15s; }
   .ov-mission-item:hover { background: rgba(0,0,0,0.02); }
   .ov-mission-item:active { background: rgba(0,0,0,0.04); transform: scale(0.995); }
-  .ov-mission-primary { padding: 22px 20px; }
-  .ov-mission-divider { height: 1px; background: rgba(0,0,0,0.06); margin: 0 20px; }
+  .ov-mission-primary { padding: 24px 22px; }
+  .ov-mission-divider { height: 1px; background: rgba(0,0,0,0.06); margin: 0 22px; }
   .ov-mission-left { flex: 1; min-width: 0; }
   .ov-mission-name { font-size: 15px; font-weight: 600; color: var(--text-dark); }
   .ov-mission-meta { font-size: 13px; color: rgba(26,26,26,0.5); margin-top: 3px; }
@@ -373,14 +391,14 @@
 
   /* ── 3. Quick actions ── */
   .ov-quick-row { display: flex; gap: 10px; }
-  .ov-quick { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 12px; background: var(--bg-surface); border: 1px solid var(--border-soft); border-radius: 14px; font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; font-family: var(--ff-body); transition: all 0.15s; }
-  .ov-quick:hover { border-color: rgba(255,255,255,0.14); color: #fff; background: var(--bg-soft); }
+  .ov-quick { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 15px 12px; background: var(--bg-surface); border: none; border-radius: 14px; font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; font-family: var(--ff-body); transition: all 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+  .ov-quick:hover { color: var(--text); background: var(--bg-soft); box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
   .ov-quick:active { transform: scale(0.97); }
   .ov-quick-icon { font-size: 16px; line-height: 1; }
 
   /* ── 4. Future self teaser ── */
-  .ov-future-strip { display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: var(--bg-surface); border: 1px solid var(--border-soft); border-radius: 16px; cursor: pointer; transition: all 0.2s; }
-  .ov-future-strip:hover { border-color: rgba(255,255,255,0.14); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+  .ov-future-strip { display: flex; align-items: center; gap: 16px; padding: 20px 22px; background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(122,142,118,0.06) 100%); border: 1px solid rgba(122,142,118,0.1); border-radius: 18px; cursor: pointer; transition: all 0.25s; }
+  .ov-future-strip:hover { border-color: rgba(122,142,118,0.2); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.2); }
   .ov-future-img-placeholder { width: 44px; height: 44px; border-radius: 12px; background: var(--bg-soft); flex-shrink: 0; overflow: hidden; }
   .ov-future-img-placeholder img { width: 100%; height: 100%; object-fit: cover; }
   .ov-future-text { flex: 1; min-width: 0; }
@@ -390,12 +408,12 @@
   .ov-future-strip:hover .ov-future-arrow { transform: translateX(2px); }
 
   /* ── 5. Section cards (workout, protocol) ── */
-  .ov-section-card { background: var(--bg-surface); border: 1px solid var(--border-soft); border-radius: 16px; overflow: hidden; }
-  .ov-section-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; cursor: pointer; user-select: none; transition: background 0.15s; }
+  .ov-section-card { background: var(--bg-surface); border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.12); }
+  .ov-section-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; cursor: pointer; user-select: none; transition: background 0.15s; }
   .ov-section-header:hover { background: rgba(255,255,255,0.02); }
-  .ov-section-title { font-size: 15px; font-weight: 600; color: #fff; }
+  .ov-section-title { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: 0.01em; }
   .ov-section-toggle { font-size: 18px; color: var(--text3); line-height: 1; transition: transform 0.2s; }
-  .ov-section-body { padding: 0 20px 20px; }
+  .ov-section-body { padding: 0 22px 22px; }
 
   /* Exercise rows */
   .ov-exr { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -513,8 +531,8 @@
   .reveal-wrap.visible { animation:slideIn 0.35s ease-out; }
 
   /* AUTH SCREEN */
-  #screen-auth { position:fixed;inset:0;z-index:2000;background:#0B0B0B;display:flex;align-items:center;justify-content:center; }
-  .auth-box { width:100%;max-width:420px;padding:40px; }
+  #screen-auth { position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;align-items:center;justify-content:center; }
+  .auth-box { width:100%;max-width:420px;padding:40px 32px; }
   .auth-tab-bar { display:flex;border-bottom:1px solid var(--border);margin-bottom:28px; }
   .auth-tab-bar button { flex:1;background:none;border:none;padding:12px;font-family:var(--font-ui);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:color 0.2s; }
 
@@ -1000,15 +1018,14 @@
 
   /* ── AUTH ── */
   #screen-auth {
-    background: #0f0e0c !important;
+    background: var(--bg) !important;
     align-items: center !important; justify-content: center !important;
     max-width: 430px !important; margin: 0 auto !important;
     min-height: 100vh !important; padding: 20px 16px !important;
   }
   .auth-box {
-    background: rgba(255,248,235,0.03) !important;
-    border: 1px solid rgba(200,180,140,0.08) !important;
-    border-radius: 20px !important;
+    background: transparent !important;
+    border: none !important;
     padding: 32px 24px !important;
     width: 100% !important;
   }
@@ -1317,26 +1334,41 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
 
-<!-- AUTH SCREEN -->
+<!-- AUTH SCREEN — now a clean welcome with sign-in tucked away -->
 <div id="screen-auth" style="display:none;">
   <div class="auth-box">
-    <div style="text-align:center;margin-bottom:36px;">
-      <a href="/" style="font-family:var(--ff-hero);font-size:24px;letter-spacing:0.14em;color:var(--text);text-decoration:none;">W<span style="color:var(--gold)">S</span></a>
-      <p style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-top:10px;">Wylde Self</p>
+    <!-- Welcome state (default) -->
+    <div id="authWelcome">
+      <div style="text-align:center;margin-bottom:48px;">
+        <div style="font-family:var(--ff-hero);font-size:28px;letter-spacing:0.14em;color:var(--text);margin-bottom:8px;">W<span style="color:var(--sage)">S</span></div>
+        <p style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--text3);margin-top:10px;">Wylde Self</p>
+      </div>
+      <h2 style="font-size:22px;font-weight:600;color:var(--text);text-align:center;margin-bottom:8px;line-height:1.3;">See your future.<br>Follow the plan.</h2>
+      <p style="font-size:14px;color:var(--text2);text-align:center;margin-bottom:36px;">Train alongside the person you're becoming.</p>
+      <button class="btn ob-next" style="width:100%;padding:16px;font-size:14px;border-radius:14px;" onclick="continueAsGuest()">Get Started</button>
+      <p style="text-align:center;margin-top:20px;">
+        <button onclick="showAuthForm()" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:var(--font-ui);letter-spacing:0.04em;">I have an account — <span style="color:var(--text2);text-decoration:underline;">Sign in</span></button>
+      </p>
     </div>
-    <div class="auth-tab-bar">
-      <button id="authTabSignIn" onclick="switchAuthTab('signin')" style="color:var(--gold);border-bottom:2px solid var(--gold);">Sign In</button>
-      <button id="authTabCreate" onclick="switchAuthTab('create')" style="color:var(--muted);border-bottom:2px solid transparent;">Create Account</button>
+    <!-- Sign-in form (hidden by default) -->
+    <div id="authFormWrap" style="display:none;">
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="font-family:var(--ff-hero);font-size:22px;letter-spacing:0.14em;color:var(--text);margin-bottom:6px;">W<span style="color:var(--sage)">S</span></div>
+      </div>
+      <div class="auth-tab-bar">
+        <button id="authTabSignIn" onclick="switchAuthTab('signin')" style="color:var(--sage);border-bottom:2px solid var(--sage);">Sign In</button>
+        <button id="authTabCreate" onclick="switchAuthTab('create')" style="color:var(--muted);border-bottom:2px solid transparent;">Create Account</button>
+      </div>
+      <div id="authError" style="display:none;background:rgba(122,142,118,0.06);border:0.5px solid rgba(122,142,118,0.25);color:var(--sage);font-size:12px;padding:12px 16px;margin-bottom:16px;border-radius:8px;"></div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <input id="authEmail" class="input" type="email" placeholder="Email address" autocomplete="email"/>
+        <input id="authPassword" class="input" type="password" placeholder="Password" autocomplete="current-password"/>
+        <button id="authSubmitBtn" class="btn ob-next" style="width:100%;margin-top:4px;" onclick="submitAuth()">SIGN IN</button>
+      </div>
+      <p style="text-align:center;margin-top:20px;">
+        <button onclick="hideAuthForm()" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:var(--font-ui);">← Back</button>
+      </p>
     </div>
-    <div id="authError" style="display:none;background:rgba(201,173,110,0.06);border:0.5px solid rgba(201,173,110,0.25);color:var(--gold);font-size:12px;padding:12px 16px;margin-bottom:16px;border-radius:8px;"></div>
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      <input id="authEmail" class="input" type="email" placeholder="Email address" autocomplete="email"/>
-      <input id="authPassword" class="input" type="password" placeholder="Password" autocomplete="current-password"/>
-      <button id="authSubmitBtn" class="btn" style="width:100%;margin-top:4px;" onclick="submitAuth()">SIGN IN</button>
-    </div>
-    <p style="text-align:center;margin-top:20px;font-size:12px;color:var(--muted);">
-      <span onclick="continueAsGuest()" style="color:var(--gold);cursor:pointer;text-decoration:underline;text-decoration-color:rgba(201,173,110,0.4);">Continue as guest</span>
-    </p>
   </div>
 </div>
 
@@ -1360,8 +1392,8 @@
 </nav>
 
 <!-- DISCLAIMER BANNER -->
-<div style="background:#000000;border-bottom:none;padding:7px 24px 7px 204px;text-align:center;position:fixed;top:0;left:0;right:0;z-index:199;">
-  <p style="font-size:10px;letter-spacing:0.06em;color:rgba(255,245,220,0.2);font-family:var(--font-ui);">
+<div style="background:var(--bg);border-bottom:none;padding:7px 24px 7px 204px;text-align:center;position:fixed;top:0;left:0;right:0;z-index:199;">
+  <p style="font-size:10px;letter-spacing:0.06em;color:var(--text3);opacity:0.5;font-family:var(--font-ui);">
     Early access — some features still in progress
   </p>
 </div>
@@ -1372,19 +1404,26 @@
   <button onclick="skipIntro()" style="margin-top:24px;background:transparent;border:1px solid rgba(201,173,110,0.3);color:var(--gold,#c8a96e);padding:10px 32px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer;">SKIP</button>
 </div>
 
-<!-- ═══ ONBOARDING ═══ -->
+<!-- ═══ ONBOARDING — Step-by-step ═══ -->
 <div class="screen active" id="screen-onboard">
-  <div class="container">
-    <p class="section-label">Welcome</p>
-    <h1 class="screen-title">Let's build your profile</h1>
-    <p class="screen-sub">Tell us about yourself so we can generate your future self and build your program.</p>
-    <div class="gold-rule"></div>
+  <div class="container" style="max-width:520px;">
 
-    <div class="onboard-form">
+    <!-- Progress dots -->
+    <div class="ob-progress" id="obProgress">
+      <div class="ob-progress-dot ob-current"></div>
+      <div class="ob-progress-dot"></div>
+      <div class="ob-progress-dot"></div>
+      <div class="ob-progress-dot"></div>
+    </div>
 
-      <div class="form-group">
-        <label>Your first name</label>
-        <input class="input" type="text" id="userName" placeholder="Enter your name" />
+    <!-- STEP 1 — Name + Gender -->
+    <div class="ob-step ob-active" id="obStep1">
+      <h1 class="ob-step-title">What should we call you?</h1>
+      <p class="ob-step-sub">This is your journey. Let's make it personal.</p>
+
+      <div class="form-group" style="margin-bottom:28px;">
+        <label>First name</label>
+        <input class="input" type="text" id="userName" placeholder="Your name" style="font-size:16px;padding:16px 18px;" />
       </div>
 
       <div class="form-group">
@@ -1397,40 +1436,17 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label>Age range</label>
-        <div class="pill-group" id="ageGroup">
-          <button class="pill" onclick="selectPill(this,'ageGroup')">18–24</button>
-          <button class="pill" onclick="selectPill(this,'ageGroup')">25–34</button>
-          <button class="pill" onclick="selectPill(this,'ageGroup')">35–44</button>
-          <button class="pill" onclick="selectPill(this,'ageGroup')">45–54</button>
-          <button class="pill" onclick="selectPill(this,'ageGroup')">55+</button>
-        </div>
+      <div class="ob-nav">
+        <button class="btn ob-next" onclick="obNext(1)" style="flex:1;">Continue</button>
       </div>
+    </div>
 
-      <div class="form-group">
-        <label>Height</label>
-        <div class="pill-group" id="heightGroup">
-          <button class="pill" onclick="selectPill(this,'heightGroup')">Under 5'4"</button>
-          <button class="pill" onclick="selectPill(this,'heightGroup')">5'4"–5'7"</button>
-          <button class="pill" onclick="selectPill(this,'heightGroup')">5'8"–5'11"</button>
-          <button class="pill" onclick="selectPill(this,'heightGroup')">6'0"–6'3"</button>
-          <button class="pill" onclick="selectPill(this,'heightGroup')">Over 6'3"</button>
-        </div>
-      </div>
+    <!-- STEP 2 — Goal + Fitness Level -->
+    <div class="ob-step" id="obStep2">
+      <h1 class="ob-step-title">What are you training for?</h1>
+      <p class="ob-step-sub">We'll build everything around this.</p>
 
-      <div class="form-group">
-        <label>Current weight</label>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input class="input" type="number" id="weightInput" placeholder="e.g. 180" style="max-width:140px;" />
-          <div class="pill-group" id="weightUnitGroup">
-            <button class="pill selected" onclick="selectPill(this,'weightUnitGroup')">lbs</button>
-            <button class="pill" onclick="selectPill(this,'weightUnitGroup')">kg</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-group">
+      <div class="form-group" style="margin-bottom:28px;">
         <label>Primary goal</label>
         <div class="pill-group" id="goalGroup">
           <button class="pill" onclick="selectPill(this,'goalGroup')">Lose fat</button>
@@ -1440,7 +1456,7 @@
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" style="margin-bottom:28px;">
         <label>Current fitness level</label>
         <div class="pill-group" id="levelGroup">
           <button class="pill" onclick="selectPill(this,'levelGroup')">Beginner</button>
@@ -1459,9 +1475,53 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label>Health concerns or limitations <span style="color:#444;font-size:10px;letter-spacing:0.06em;text-transform:none;font-weight:400;">(optional)</span></label>
-        <div class="pill-group" id="healthGroup" style="margin-bottom:12px;">
+      <div class="ob-nav">
+        <button class="btn ob-back" onclick="obBack(2)">Back</button>
+        <button class="btn ob-next" onclick="obNext(2)">Continue</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 — Body details -->
+    <div class="ob-step" id="obStep3">
+      <h1 class="ob-step-title">A few details</h1>
+      <p class="ob-step-sub">Helps us calibrate your program. Skip anything you'd rather not share.</p>
+
+      <div class="form-group" style="margin-bottom:28px;">
+        <label>Age range</label>
+        <div class="pill-group" id="ageGroup">
+          <button class="pill" onclick="selectPill(this,'ageGroup')">18–24</button>
+          <button class="pill" onclick="selectPill(this,'ageGroup')">25–34</button>
+          <button class="pill" onclick="selectPill(this,'ageGroup')">35–44</button>
+          <button class="pill" onclick="selectPill(this,'ageGroup')">45–54</button>
+          <button class="pill" onclick="selectPill(this,'ageGroup')">55+</button>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:28px;">
+        <label>Height</label>
+        <div class="pill-group" id="heightGroup">
+          <button class="pill" onclick="selectPill(this,'heightGroup')">Under 5'4"</button>
+          <button class="pill" onclick="selectPill(this,'heightGroup')">5'4"–5'7"</button>
+          <button class="pill" onclick="selectPill(this,'heightGroup')">5'8"–5'11"</button>
+          <button class="pill" onclick="selectPill(this,'heightGroup')">6'0"–6'3"</button>
+          <button class="pill" onclick="selectPill(this,'heightGroup')">Over 6'3"</button>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:28px;">
+        <label>Current weight</label>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input class="input" type="number" id="weightInput" placeholder="e.g. 180" style="max-width:140px;" />
+          <div class="pill-group" id="weightUnitGroup">
+            <button class="pill selected" onclick="selectPill(this,'weightUnitGroup')">lbs</button>
+            <button class="pill" onclick="selectPill(this,'weightUnitGroup')">kg</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:28px;">
+        <label>Health concerns <span style="color:var(--text3);font-size:10px;letter-spacing:0.06em;text-transform:none;font-weight:400;">(optional)</span></label>
+        <div class="pill-group" id="healthGroup">
           <button class="pill" onclick="togglePill(this)">Lower back pain</button>
           <button class="pill" onclick="togglePill(this)">Knee issues</button>
           <button class="pill" onclick="togglePill(this)">Shoulder injury</button>
@@ -1472,11 +1532,22 @@
           <button class="pill" onclick="togglePill(this)">Arthritis</button>
           <button class="pill" onclick="togglePill(this)">None</button>
         </div>
-        <textarea class="input" id="healthNotes" placeholder="Anything else? Injuries, medications, doctor\'s advice..." rows="3" style="resize:vertical;font-family:var(--ff-body);line-height:1.6;margin-top:4px;"></textarea>
+        <textarea class="input" id="healthNotes" placeholder="Anything else we should know..." rows="2" style="resize:vertical;font-family:var(--ff-body);line-height:1.6;margin-top:10px;"></textarea>
       </div>
 
-      <div class="form-group">
-        <label>Dietary preferences <span style="color:#444;font-size:10px;letter-spacing:0.06em;text-transform:none;font-weight:400;">(optional)</span></label>
+      <div class="ob-nav">
+        <button class="btn ob-back" onclick="obBack(3)">Back</button>
+        <button class="btn ob-next" onclick="obNext(3)">Continue</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 — Diet + Finish -->
+    <div class="ob-step" id="obStep4">
+      <h1 class="ob-step-title">Almost there</h1>
+      <p class="ob-step-sub">Any dietary preferences? Then we'll build your future self.</p>
+
+      <div class="form-group" style="margin-bottom:28px;">
+        <label>Dietary preferences <span style="color:var(--text3);font-size:10px;letter-spacing:0.06em;text-transform:none;font-weight:400;">(optional)</span></label>
         <div class="pill-group" id="dietGroup" style="margin-bottom:12px;">
           <button class="pill" onclick="togglePill(this)">No restrictions</button>
           <button class="pill" onclick="togglePill(this)">Vegetarian</button>
@@ -1493,10 +1564,12 @@
         <input class="input" id="dietNotes" placeholder="Any other dietary needs or allergies..." style="margin-top:4px;" />
       </div>
 
-      <div style="margin-top:8px;">
-        <button class="btn" onclick="completeOnboard()">Build My Profile</button>
+      <div class="ob-nav">
+        <button class="btn ob-back" onclick="obBack(4)">Back</button>
+        <button class="btn ob-next" onclick="completeOnboard()" style="flex:2;">Build My Future Self →</button>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -1619,8 +1692,8 @@
     </div>
   </div>
 
-  <!-- 6. PROTOCOL CARD -->
-  <div class="ov-section-card" id="ov-protocol-section">
+  <!-- 6. PROTOCOL CARD — hidden by default, shown when user has protocol data -->
+  <div class="ov-section-card" id="ov-protocol-section" style="display:none;">
     <div class="ov-section-header" onclick="ovTogSection('protocol')">
       <span class="ov-section-title">Protocol</span>
       <span class="ov-section-toggle" id="ov-tog-protocol">+</span>
@@ -1783,32 +1856,35 @@
 
 <!-- ═══ FUTURE SELF ═══ -->
 <div class="screen" id="screen-future">
-  <div class="container">
+  <div class="container" style="max-width:520px;">
+
     <!-- Cinematic header -->
-    <div style="text-align:center;padding:40px 0 28px;">
-      <p style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#666;margin-bottom:16px;">Future Self</p>
-      <h1 style="font-size:28px;font-weight:700;color:#fff;line-height:1.15;margin:0 0 8px;">You built this.</h1>
-      <p style="font-size:14px;color:#A0A0A0;">12 weeks.</p>
+    <div style="text-align:center;padding:48px 0 32px;">
+      <p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text3);margin-bottom:20px;">Future Self</p>
+      <h1 style="font-size:clamp(28px,6vw,36px);font-weight:700;color:var(--text);line-height:1.1;letter-spacing:-0.02em;margin:0 0 10px;">This is who you're becoming.</h1>
+      <p style="font-size:14px;color:var(--text2);line-height:1.5;">Upload a photo. See your future.</p>
     </div>
 
-    <!-- Upload zone -->
-    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('photoInput').click()" style="background:var(--bg-surface);border:none;border-radius:16px;padding:32px;text-align:center;cursor:pointer;margin-bottom:16px;box-shadow:var(--shadow-card);">
+    <!-- Upload zone — cinematic, full-width -->
+    <div id="uploadZone" onclick="document.getElementById('photoInput').click()" style="background:var(--bg-surface);border-radius:20px;padding:48px 32px;text-align:center;cursor:pointer;margin-bottom:20px;box-shadow:var(--shadow-card);transition:all 0.25s;">
       <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handlePhoto(event.target.files[0])" />
-      <div style="font-size:28px;margin-bottom:10px;opacity:0.3;">↑</div>
-      <p style="font-size:14px;color:#A0A0A0;margin-bottom:4px;">Upload a reference photo</p>
-      <p style="font-size:12px;color:#444;">Your "before" in the transformation</p>
+      <div style="width:56px;height:56px;border-radius:50%;background:rgba(122,142,118,0.08);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <span style="font-size:24px;color:var(--sage);opacity:0.7;">↑</span>
+      </div>
+      <p style="font-size:15px;color:var(--text2);margin-bottom:6px;font-weight:500;">Upload a reference photo</p>
+      <p style="font-size:12px;color:var(--text3);">Your starting point</p>
     </div>
 
-    <button class="ov-btn ov-btn-g" id="generateBtn" onclick="generateAllTimelines()" style="width:100%;margin-bottom:12px;">Generate My Future Self</button>
+    <button class="btn ob-next" id="generateBtn" onclick="generateAllTimelines()" style="width:100%;padding:16px;font-size:14px;border-radius:14px;margin-bottom:12px;">Generate My Future Self</button>
 
-    <div style="text-align:center;margin-bottom:20px;">
-      <button onclick="showScreen('program')" style="background:none;border:none;color:#666;font-family:var(--ff-body);font-size:12px;cursor:pointer;">Skip to my program</button>
+    <div style="text-align:center;margin-bottom:24px;">
+      <button onclick="showScreen('program')" style="background:none;border:none;color:var(--text3);font-family:var(--ff-body);font-size:12px;cursor:pointer;letter-spacing:0.04em;">Skip to my program →</button>
     </div>
 
     <!-- REVEAL SLIDER -->
     <div class="reveal-wrap" id="revealWrap" style="display:none;">
 
-      <div class="reveal-tabs" id="revealTabs">
+      <div class="reveal-tabs" id="revealTabs" style="margin-bottom:20px;">
         <button class="reveal-tab active" data-timeline="12weeks" onclick="switchTimeline('12weeks')">
           <span class="tab-label">12 weeks</span>
           <span class="tab-sub">Leaner, more athletic</span>
@@ -1828,11 +1904,11 @@
 
       <div class="reveal-slider" id="revealSlider">
         <div class="reveal-before" id="revealBefore">
-          <img id="beforeImg" src="" alt="Before"/>
-          <span class="reveal-label label-before">BEFORE</span>
+          <img id="beforeImg" src="" alt="Now"/>
+          <span class="reveal-label label-before">NOW</span>
         </div>
         <div class="reveal-after" id="revealAfter">
-          <img id="afterImg" src="" alt="After"/>
+          <img id="afterImg" src="" alt="Becoming"/>
           <span class="reveal-label label-after" id="afterTimelineLabel">12 WKS</span>
           <div class="after-loading" id="afterLoading">
             <div class="loading-ring"></div>
@@ -1848,9 +1924,9 @@
         </div>
       </div>
 
-      <div style="display:flex;gap:10px;margin-top:16px;">
-        <button class="btn" onclick="showScreen('program')" style="flex:1;">Build My Program</button>
-        <button class="btn btn-outline" onclick="resetFutureSelf()" style="flex:1;">Reset</button>
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        <button class="btn ob-next" onclick="showScreen('program')" style="flex:1;padding:14px;">Start My Program →</button>
+        <button class="btn" onclick="resetFutureSelf()" style="flex-shrink:0;padding:14px 20px;">Reset</button>
       </div>
     </div>
 
@@ -2040,11 +2116,11 @@
     var ca = document.getElementById('authTabCreate');
     var btn = document.getElementById('authSubmitBtn');
     if (mode === 'signin') {
-      si.style.color = 'var(--gold)'; si.style.borderBottomColor = 'var(--gold)';
+      si.style.color = 'var(--sage)'; si.style.borderBottomColor = 'var(--sage)';
       ca.style.color = 'var(--muted)'; ca.style.borderBottomColor = 'transparent';
       if (btn) btn.textContent = 'SIGN IN';
     } else {
-      ca.style.color = 'var(--gold)'; ca.style.borderBottomColor = 'var(--gold)';
+      ca.style.color = 'var(--sage)'; ca.style.borderBottomColor = 'var(--sage)';
       si.style.color = 'var(--muted)'; si.style.borderBottomColor = 'transparent';
       if (btn) btn.textContent = 'CREATE ACCOUNT';
     }
@@ -2572,25 +2648,13 @@
   function showScreen(id) {
     // Gate all screens except onboard behind profile completion
     if (id !== 'onboard' && !state.name) {
-      // Flash the onboarding form
+      // Send user to step 1 of onboarding
       showScreen('onboard');
-      var btn = document.querySelector('.btn[onclick="completeOnboard()"]');
-      if (btn) {
-        btn.textContent = 'Build Your Profile First';
-        btn.style.background = 'transparent';
-        btn.style.color = 'var(--gold)';
-        btn.style.border = '1px solid var(--gold)';
-        setTimeout(function() {
-          btn.textContent = 'Build My Profile';
-          btn.style.background = 'var(--gold)';
-          btn.style.color = '#080808';
-          btn.style.border = 'none';
-        }, 2500);
-      }
+      obGoTo(1);
       var nameInput = document.getElementById('userName');
       if (nameInput) {
         nameInput.focus();
-        nameInput.style.borderColor = 'var(--gold)';
+        nameInput.style.borderColor = 'var(--sage)';
         setTimeout(function() { nameInput.style.borderColor = ''; }, 2000);
       }
       return;
@@ -2620,6 +2684,57 @@
   // PILLS — multi select (health concerns)
   function togglePill(el) {
     el.classList.toggle('selected');
+  }
+
+  // AUTH FORM TOGGLE
+  function showAuthForm() {
+    document.getElementById('authWelcome').style.display = 'none';
+    document.getElementById('authFormWrap').style.display = 'block';
+  }
+  function hideAuthForm() {
+    document.getElementById('authFormWrap').style.display = 'none';
+    document.getElementById('authWelcome').style.display = 'block';
+  }
+
+  // ONBOARD STEP NAVIGATION
+  var _obStep = 1;
+  var _obTotal = 4;
+
+  function obGoTo(step) {
+    for (var i = 1; i <= _obTotal; i++) {
+      var el = document.getElementById('obStep' + i);
+      if (el) { el.classList.remove('ob-active'); }
+    }
+    var target = document.getElementById('obStep' + step);
+    if (target) target.classList.add('ob-active');
+    _obStep = step;
+    // Update progress dots
+    var dots = document.querySelectorAll('#obProgress .ob-progress-dot');
+    dots.forEach(function(d, idx) {
+      d.classList.remove('ob-done', 'ob-current');
+      if (idx < step - 1) d.classList.add('ob-done');
+      else if (idx === step - 1) d.classList.add('ob-current');
+    });
+    window.scrollTo(0, 0);
+  }
+
+  function obNext(fromStep) {
+    // Validate step 1 — name required
+    if (fromStep === 1) {
+      var name = document.getElementById('userName').value.trim();
+      if (!name) {
+        var inp = document.getElementById('userName');
+        inp.style.borderColor = 'rgba(220,80,80,0.6)';
+        inp.focus();
+        setTimeout(function() { inp.style.borderColor = ''; }, 2000);
+        return;
+      }
+    }
+    if (fromStep < _obTotal) obGoTo(fromStep + 1);
+  }
+
+  function obBack(fromStep) {
+    if (fromStep > 1) obGoTo(fromStep - 1);
   }
 
   // ONBOARDING
