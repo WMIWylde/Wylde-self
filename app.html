@@ -335,6 +335,7 @@
     /* EXERCISE TRACKING & FORM GUIDE */
     .ex-name-btn { background: none; border: none; color: var(--text); font-size: 14px; font-family: var(--ff-body); cursor: pointer; text-align: left; padding: 0; text-decoration: underline; text-decoration-color: rgba(122,142,118,0.3); text-underline-offset: 3px; transition: color 0.2s; }
     .ex-name-btn:hover { color: var(--gold); }
+    .ex-desc { font-size: 12px; color: var(--text3); line-height: 1.5; margin: 4px 0 2px; font-style: italic; }
     .ex-track { display: flex; gap: 6px; margin-top: 7px; }
     .ex-track-col { display: flex; flex-direction: column; align-items: center; }
     .ex-track-input { width: 54px; background: var(--bg-soft); border: 1px solid var(--border); color: var(--text); font-family: var(--ff-body); font-size: 12px; padding: 5px 6px; outline: none; text-align: center; transition: border-color 0.2s; -moz-appearance: textfield; border-radius: 8px; }
@@ -3218,22 +3219,22 @@
   // PROGRAM GENERATOR
   var programs = {
     'Lose fat': [
-      { day:'Day 01', focus:'Full Body Burn', exercises:[['Squat','4 × 12'],['Push-up','4 × 15'],['Dumbbell Row','4 × 12'],['Plank','4 × 45s'],['Jump Rope','10 min']] },
-      { day:'Day 02', focus:'Cardio + Core', exercises:[['Treadmill Intervals','20 min'],['Hanging Knee Raise','3 × 15'],['Russian Twist','3 × 20'],['Mountain Climbers','3 × 30s'],['Dead Bug','3 × 10']] },
-      { day:'Day 03', focus:'Upper Body', exercises:[['Bench Press','4 × 10'],['Lat Pulldown','4 × 12'],['Shoulder Press','3 × 12'],['Bicep Curl','3 × 15'],['Tricep Dip','3 × 12']] },
-      { day:'Day 04', focus:'Lower Body', exercises:[['Deadlift','4 × 8'],['Lunges','4 × 12'],['Leg Press','3 × 15'],['Calf Raise','4 × 20'],['Glute Bridge','3 × 15']] },
+      { day:'Day 01', focus:'Full Body Burn', exercises:[['Barbell Back Squat','4 × 12','Stand with barbell on upper traps, squat to parallel, drive through heels'],['Push-Up','4 × 15','Hands shoulder-width, lower chest to floor, press up with full lockout'],['Single-Arm Dumbbell Row','4 × 12','Brace on bench, pull dumbbell to hip, squeeze shoulder blade at top'],['Front Plank','4 × 45s','Forearms on floor, body straight from head to heels, brace core'],['Jump Rope','10 min','Light bounce on balls of feet, wrists drive the rope, stay relaxed']] },
+      { day:'Day 02', focus:'Cardio + Core', exercises:[['Treadmill Intervals','20 min','Alternate 30s sprint / 60s walk, increase speed each round'],['Hanging Knee Raise','3 × 15','Hang from bar, curl knees to chest without swinging'],['Russian Twist','3 × 20','Sit with feet off floor, rotate torso side to side with or without weight'],['Mountain Climbers','3 × 30s','Plank position, drive knees toward chest alternately at speed'],['Dead Bug','3 × 10','Lie on back, extend opposite arm and leg while keeping lower back flat']] },
+      { day:'Day 03', focus:'Upper Body', exercises:[['Flat Barbell Bench Press','4 × 10','Grip slightly wider than shoulders, lower bar to mid-chest, press up'],['Lat Pulldown','4 × 12','Grip bar wide, pull to upper chest, control the return'],['Seated Dumbbell Shoulder Press','3 × 12','Press dumbbells overhead from shoulder height, full lockout at top'],['Standing Dumbbell Curl','3 × 15','Elbows pinned at sides, curl with control, squeeze at top'],['Parallel Bar Dip','3 × 12','Lower until upper arms are parallel, press up to lockout']] },
+      { day:'Day 04', focus:'Lower Body', exercises:[['Conventional Deadlift','4 × 8','Hinge at hips, grip bar outside knees, drive floor away to stand'],['Walking Lunge','4 × 12','Step forward, lower back knee toward floor, push off front foot'],['Leg Press','3 × 15','Feet shoulder-width on platform, lower sled to 90°, press back up'],['Standing Calf Raise','4 × 20','Rise onto toes, pause at top, lower with full stretch at bottom'],['Barbell Hip Thrust','3 × 15','Upper back on bench, drive hips up with barbell across lap']] },
     ],
     'Build muscle': [
-      { day:'Day 01', focus:'Chest & Triceps', exercises:[['Bench Press','5 × 5'],['Incline Dumbbell Press','4 × 10'],['Cable Fly','3 × 15'],['Skull Crusher','4 × 10'],['Tricep Pushdown','3 × 15']] },
-      { day:'Day 02', focus:'Back & Biceps', exercises:[['Deadlift','5 × 5'],['Pull-up','4 × 8'],['Barbell Row','4 × 10'],['Hammer Curl','3 × 12'],['Face Pull','3 × 15']] },
-      { day:'Day 03', focus:'Legs', exercises:[['Back Squat','5 × 5'],['Romanian Deadlift','4 × 10'],['Leg Press','4 × 12'],['Leg Curl','3 × 12'],['Calf Raise','5 × 15']] },
-      { day:'Day 04', focus:'Shoulders & Arms', exercises:[['Overhead Press','4 × 8'],['Lateral Raise','4 × 15'],['Front Raise','3 × 12'],['Barbell Curl','4 × 10'],['Dip','4 × 12']] },
+      { day:'Day 01', focus:'Chest & Triceps', exercises:[['Flat Barbell Bench Press','5 × 5','Grip slightly wider than shoulders, lower bar to mid-chest, press explosively'],['Incline Dumbbell Press','4 × 10','Bench at 30°, press dumbbells from chest to full lockout'],['Cable Chest Fly','3 × 15','Cables set high, step forward, bring handles together in arc at chest height'],['Lying EZ-Bar Skull Crusher','4 × 10','Lower bar to forehead by bending elbows, extend arms to lockout'],['Cable Tricep Pushdown','3 × 15','Rope or bar attachment, press down keeping elbows pinned at sides']] },
+      { day:'Day 02', focus:'Back & Biceps', exercises:[['Conventional Deadlift','5 × 5','Hinge at hips, grip bar outside knees, stand tall by driving through floor'],['Pull-Up','4 × 8','Full dead hang, pull chin over bar, lower with control'],['Bent-Over Barbell Row','4 × 10','Hinge forward 45°, pull bar to lower chest, squeeze shoulder blades'],['Dumbbell Hammer Curl','3 × 12','Neutral grip, curl to shoulders, keep elbows stationary'],['Cable Face Pull','3 × 15','Rope at face height, pull to ears with elbows high, squeeze rear delts']] },
+      { day:'Day 03', focus:'Legs', exercises:[['Barbell Back Squat','5 × 5','Bar on upper traps, squat to parallel or below, drive through heels'],['Romanian Deadlift','4 × 10','Slight knee bend, hinge at hips, lower bar along shins, feel hamstring stretch'],['Leg Press','4 × 12','Feet shoulder-width, lower sled to 90° knee bend, press back up'],['Lying Leg Curl','3 × 12','Face down on machine, curl heels toward glutes, control the negative'],['Standing Calf Raise','5 × 15','Rise onto toes with full range, pause at top, slow descent']] },
+      { day:'Day 04', focus:'Shoulders & Arms', exercises:[['Standing Barbell Overhead Press','4 × 8','Strict press from front rack, full lockout overhead, no leg drive'],['Dumbbell Lateral Raise','4 × 15','Slight forward lean, raise arms to shoulder height, control descent'],['Dumbbell Front Raise','3 × 12','Alternating arms, raise to eye level with straight arms, slow negative'],['Standing Barbell Curl','4 × 10','Shoulder-width grip, curl to shoulders, lower with control'],['Parallel Bar Dip','4 × 12','Lean slightly forward for chest, upright for triceps, full depth']] },
     ],
     'default': [
-      { day:'Day 01', focus:'Power & Strength', exercises:[['Squat','4 × 6'],['Bench Press','4 × 6'],['Deadlift','3 × 5'],['Pull-up','4 × 8'],['Core Circuit','3 × 45s']] },
-      { day:'Day 02', focus:'Athletic Conditioning', exercises:[['Box Jump','4 × 6'],['Kettlebell Swing','4 × 15'],['Battle Rope','4 × 30s'],['Sled Push','4 × 20m'],['Burpee','3 × 10']] },
-      { day:'Day 03', focus:'Hypertrophy', exercises:[['Incline Press','4 × 12'],['Cable Row','4 × 12'],['Leg Press','4 × 15'],['Lateral Raise','3 × 15'],['Bicep Curl','3 × 15']] },
-      { day:'Day 04', focus:'Mobility & Recovery', exercises:[['Hip Flexor Stretch','3 × 60s'],['Thoracic Rotation','3 × 10'],['Foam Roll','10 min'],['Yoga Flow','15 min'],['Breathing Work','5 min']] },
+      { day:'Day 01', focus:'Power & Strength', exercises:[['Barbell Back Squat','4 × 6','Bar on upper traps, descend to parallel, drive up explosively'],['Flat Barbell Bench Press','4 × 6','Lower bar to mid-chest with control, press up with power'],['Conventional Deadlift','3 × 5','Grip outside knees, drive through floor, lockout hips at top'],['Pull-Up','4 × 8','Full dead hang start, pull chin over bar, control descent'],['Hanging Leg Raise','3 × 12','Hang from bar, raise straight legs to parallel, lower slowly']] },
+      { day:'Day 02', focus:'Athletic Conditioning', exercises:[['Box Jump','4 × 6','Stand facing box, swing arms and jump, land softly with bent knees'],['Kettlebell Swing','4 × 15','Hinge at hips, snap hips forward to swing bell to chest height'],['Battle Rope','4 × 30s','Feet wide, create alternating waves from shoulders, keep core braced'],['Sled Push','4 × 20m','Low grip on handles, drive with legs, keep arms extended'],['Burpee','3 × 10','Drop to push-up, jump feet in, explode up with arms overhead']] },
+      { day:'Day 03', focus:'Hypertrophy', exercises:[['Incline Dumbbell Press','4 × 12','Bench at 30°, press dumbbells up with slight arc, squeeze chest at top'],['Seated Cable Row','4 × 12','Pull handle to lower chest, squeeze shoulder blades together, slow return'],['Leg Press','4 × 15','Feet shoulder-width, lower to 90°, press up without locking knees'],['Dumbbell Lateral Raise','3 × 15','Slight bend in elbows, raise to shoulder height, control the negative'],['Standing Dumbbell Curl','3 × 15','Elbows at sides, supinate wrists as you curl, squeeze at top']] },
+      { day:'Day 04', focus:'Mobility & Recovery', exercises:[['Half-Kneeling Hip Flexor Stretch','3 × 60s','Rear knee down, shift hips forward, squeeze rear glute for deeper stretch'],['Thoracic Spine Rotation','3 × 10','On all fours, hand behind head, rotate open toward ceiling, follow with eyes'],['Foam Roll — Full Body','10 min','Slow rolls on quads, IT band, lats, upper back — pause on tight spots'],['Yoga Flow','15 min','Sun salutations into warrior poses, focus on breath and hip opening'],['Box Breathing','5 min','Inhale 4 counts, hold 4, exhale 4, hold 4 — reset your nervous system']] },
     ]
   };
 
@@ -3300,14 +3301,16 @@
   // Build exercise HTML with tracking inputs and clickable form guide
   function buildExHTML(exercises, dayTag) {
     return exercises.map(function(ex, idx) {
-      var name = ex[0], sets = ex[1];
+      var name = ex[0], sets = ex[1], desc = ex[2] || '';
       var sk = 'wylde_' + dayTag + '_' + idx;
       var saved = {};
       try { saved = JSON.parse(localStorage.getItem(sk) || '{}'); } catch(e) {}
+      var descHTML = desc ? '<p class="ex-desc">' + esc(desc) + '</p>' : '';
       return '<div class="exercise" style="flex-direction:column;align-items:flex-start;">' +
         '<div style="display:flex;justify-content:space-between;width:100%;align-items:flex-start;">' +
           '<div style="flex:1;">' +
             '<button class="ex-name-btn" data-ex="' + esc(name) + '" onclick="showFormGuide(this.dataset.ex)">' + esc(name) + '</button>' +
+            descHTML +
             '<div class="ex-track">' +
               '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="—" value="' + esc(saved.sets || '') + '" data-sk="' + sk + '" data-field="sets" oninput="saveTracking(this)" /><p class="ex-track-lbl">Sets</p></div>' +
               '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="—" value="' + esc(saved.reps || '') + '" data-sk="' + sk + '" data-field="reps" oninput="saveTracking(this)" /><p class="ex-track-lbl">Reps</p></div>' +
@@ -3386,8 +3389,13 @@
       'Days per week: ' + state.days + '\n' +
       'Health concerns: ' + healthStr + '\n' +
       'Additional notes: ' + notesStr + constraintLine + '\n\n' +
-      'Return ONLY a JSON array with no markdown, no backticks, no extra text. Each element: {"day":"Day 01","focus":"Focus Label","exercises":[["exercise name","sets x reps"],...]}\n' +
-      'Include 5-6 exercises per day. Account for health concerns and any adjustment requested. Return only the JSON array.';
+      'Return ONLY a JSON array with no markdown, no backticks, no extra text. Each element: {"day":"Day 01","focus":"Focus Label","exercises":[["Full Exercise Name","sets x reps","one-line movement cue describing form and motion"],...]}\n' +
+      'IMPORTANT RULES:\n' +
+      '- Use precise, full exercise names (e.g. "Flat Barbell Bench Press" not "Bench Press", "Cable Chest Fly" not "Cable Flyes", "Standing Barbell Curl" not "Curls")\n' +
+      '- The third element in each exercise array is a brief coaching cue explaining the movement (10-20 words)\n' +
+      '- Include 5-6 exercises per day\n' +
+      '- Account for health concerns and any adjustment requested\n' +
+      'Return only the JSON array.';
 
     fetch('/api/anthropic', {
       method: 'POST',
@@ -3429,7 +3437,7 @@
     var constraintNote = constraint ? 'Constraint: ' + constraint + '.' : 'No specific constraints.';
     var prompt = 'You are an expert personal trainer. The user needs an alternative workout for ' + dayName + ' (originally: ' + dayFocus + ').\n' +
       constraintNote + '\nUser: Goal: ' + state.goal + ', Level: ' + state.level + ', Health: ' + (state.health.join(', ') || 'none') + '\n' +
-      'Return ONLY a JSON object: {"focus":"Label","exercises":[["name","sets x reps"],...]}\nInclude 5 exercises. Return only the JSON.';
+      'Return ONLY a JSON object: {"focus":"Label","exercises":[["Full Exercise Name","sets x reps","brief movement cue describing form"],...]}\nUse precise full exercise names. Include 5 exercises. Return only the JSON.';
 
     fetch('/api/anthropic', {
       method: 'POST',
