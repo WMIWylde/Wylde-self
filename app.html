@@ -429,38 +429,57 @@
   .ov-hero {
     position: relative; overflow: hidden;
     padding: 0; text-align: left;
-    background: #1A1A1A;
-    border-radius: 24px; margin-bottom: 24px;
+    background: #20241C;
+    border-radius: 28px; margin-bottom: 24px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.12);
     animation: ovFadeUp 0.8s ease both;
-    min-height: 340px;
+    min-height: 420px;
   }
-  /* Full-bleed background image */
-  .ov-hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
-  /* Warm gradient overlay for readability */
-  .ov-hero::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-    background: linear-gradient(
-      180deg,
-      rgba(0,0,0,0.10) 0%,
-      rgba(0,0,0,0.05) 30%,
-      rgba(0,0,0,0.25) 60%,
-      rgba(0,0,0,0.55) 100%
-    );
+  /* Full-bleed background image — absolute fill */
+  .ov-hero-bg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center right;
+    z-index: 0;
+    display: block;
+  }
+  /* Warm earth-toned gradient overlay — left-to-right for text readability */
+  .ov-hero::before {
+    content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(32,36,28,0.48) 0%,
+        rgba(32,36,28,0.22) 35%,
+        rgba(32,36,28,0.08) 60%,
+        rgba(32,36,28,0.02) 100%
+      ),
+      linear-gradient(
+        to top,
+        rgba(32,36,28,0.45) 0%,
+        rgba(32,36,28,0.08) 40%,
+        transparent 70%
+      );
   }
   .ov-hero::after { content: none; }
-  /* Content wrapper over the image */
-  .ov-hero-content { position: relative; z-index: 2; padding: 28px 24px 28px; display: flex; flex-direction: column; justify-content: flex-end; min-height: 340px; }
+  /* Content wrapper — sits over image, pushes to bottom-left */
+  .ov-hero-content {
+    position: relative; z-index: 2;
+    padding: 24px 24px 28px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    min-height: 420px;
+  }
   .ov-hero-top { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.85); margin-bottom: 6px; }
-  .ov-hero-title { font-size: clamp(32px, 9vw, 44px); font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.08; margin: 0 0 8px; text-shadow: 0 2px 20px rgba(0,0,0,0.15); }
+  .ov-hero-title { font-size: clamp(32px, 9vw, 44px); font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.08; margin: 0 0 8px; text-shadow: 0 2px 20px rgba(0,0,0,0.2); max-width: 70%; }
   .ov-hero-phase { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.70); margin-bottom: 12px; }
-  .ov-hero-identity { font-size: 18px; font-weight: 600; color: #FFFFFF; margin: 0 0 4px; line-height: 1.35; font-style: normal; opacity: 1; animation: none; text-shadow: 0 1px 12px rgba(0,0,0,0.12); }
-  .ov-hero-sub { font-size: 13px; color: rgba(255,255,255,0.65); margin: 0 0 20px; letter-spacing: 0.01em; line-height: 1.5; }
+  .ov-hero-identity { font-size: 18px; font-weight: 600; color: #FFFFFF; margin: 0 0 4px; line-height: 1.35; font-style: normal; opacity: 1; animation: none; text-shadow: 0 1px 12px rgba(0,0,0,0.15); max-width: 75%; }
+  .ov-hero-sub { font-size: 13px; color: rgba(255,255,255,0.65); margin: 0 0 20px; letter-spacing: 0.01em; line-height: 1.5; max-width: 70%; }
   .ov-hero-bar-wrap { display: none; }
   .ov-hero-bar-label { display: none; }
-  /* Remove old image element styles */
   .ov-hero-img { display: none; }
 
-  /* Badge pill — top right */
+  /* Badge pill — top right, frosted glass */
   .ov-hero-img-badge { position: absolute; top: 20px; right: 16px; z-index: 3; background: rgba(255,255,255,0.18); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 20px; padding: 7px 14px; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.15); }
   .ov-hero-img-badge-icon { font-size: 11px; }
   .ov-hero-img-badge-text { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #FFFFFF; line-height: 1.2; }
