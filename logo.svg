@@ -1,16 +1,16 @@
 <svg width="100%" viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .geo  { fill: none; stroke: #c8a96e; stroke-opacity: 0.45; stroke-width: 0.8; }
-    .geo2 { fill: none; stroke: #c8a96e; stroke-opacity: 0.75; stroke-width: 1.4; }
+    .geo  { fill: none; stroke: #6E7F66; stroke-opacity: 0.25; stroke-width: 0.8; }
+    .geo2 { fill: none; stroke: #6E7F66; stroke-opacity: 0.45; stroke-width: 1.4; }
     .wm   { font-family: 'Bebas Neue', 'Arial Narrow', sans-serif; }
     .tag  { font-family: Georgia, serif; font-style: italic; }
-    .f0  { fill: #c8a96e; fill-opacity: 0.95; stroke: #080808; stroke-width: 0.6; }
-    .f1  { fill: #c8a96e; fill-opacity: 0.75; stroke: #080808; stroke-width: 0.6; }
-    .f2  { fill: #c8a96e; fill-opacity: 0.55; stroke: #080808; stroke-width: 0.6; }
-    .f3  { fill: #c8a96e; fill-opacity: 0.38; stroke: #080808; stroke-width: 0.6; }
+    .f0  { fill: #4A5A44; fill-opacity: 0.90; stroke: #F7F6F3; stroke-width: 0.6; }
+    .f1  { fill: #6E7F66; fill-opacity: 0.75; stroke: #F7F6F3; stroke-width: 0.6; }
+    .f2  { fill: #8A9A82; fill-opacity: 0.60; stroke: #F7F6F3; stroke-width: 0.6; }
+    .f3  { fill: #A4B29E; fill-opacity: 0.45; stroke: #F7F6F3; stroke-width: 0.6; }
   </style>
 
-  <rect width="680" height="320" fill="#080808"/>
+  <!-- No background rect — transparent -->
 
   <!-- SACRED GEOMETRY -->
   <circle cx="152" cy="152" r="106" class="geo2"/>
@@ -97,9 +97,9 @@
 
   <!-- WORDMARK -->
   <text x="292" y="152" class="wm" font-size="90"
-    fill="none" stroke="#c8a96e" stroke-width="1.2" stroke-opacity="0.9"
+    fill="none" stroke="#4A5A44" stroke-width="1.2" stroke-opacity="0.85"
     letter-spacing="0.06em">WYLDE</text>
-  <text x="294" y="212" class="wm" font-size="58" fill="#c8a96e" letter-spacing="0.1em">SELF</text>
-  <line x1="294" y1="224" x2="626" y2="224" stroke="#c8a96e" stroke-width="0.6" stroke-opacity="0.4"/>
-  <text x="295" y="248" class="tag" font-size="14" fill="#c8a96e" fill-opacity="0.65">Train with the person you're becoming</text>
+  <text x="294" y="212" class="wm" font-size="58" fill="#6E7F66" letter-spacing="0.1em">SELF</text>
+  <line x1="294" y1="224" x2="626" y2="224" stroke="#6E7F66" stroke-width="0.6" stroke-opacity="0.3"/>
+  <text x="295" y="248" class="tag" font-size="14" fill="#6E7F66" fill-opacity="0.6">Train with the person you're becoming</text>
 </svg>
