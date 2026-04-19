@@ -422,83 +422,108 @@
 
   /* OVERVIEW SCREEN */
   .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
-  /* ═══ TODAY SCREEN — v10 light wellness ═══ */
-  .ov-shell { padding: 0 20px 110px; max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 0; }
+  /* ═══ TODAY SCREEN — v11 reference match ═══ */
+  .ov-shell { padding: 0 16px 140px; max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 0; }
 
   /* ── A. Hero Mission Card ── */
   .ov-hero {
-    padding: 40px 24px 36px; text-align: center;
-    background: linear-gradient(180deg, #FFFFFF 0%, #F7F6F3 100%);
+    position: relative; overflow: hidden;
+    padding: 28px 24px 28px; text-align: left;
+    background: #FFFFFF;
     border-radius: 24px; margin-bottom: 24px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.05);
     animation: ovFadeUp 0.8s ease both;
+    min-height: 260px;
   }
-  .ov-hero-phase { font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sage); margin-bottom: 18px; }
-  .ov-hero-title { font-size: clamp(34px, 8vw, 48px); font-weight: 700; color: var(--text); letter-spacing: -0.03em; line-height: 1.05; margin: 0 0 6px; }
-  .ov-hero-sub { font-size: 14px; color: var(--text2); margin: 0; letter-spacing: 0.01em; }
-  .ov-hero-identity { font-size: 15px; color: var(--text2); margin: 20px 0 0; line-height: 1.5; font-style: italic; opacity: 0; animation: ovFadeIn 1s ease 0.4s forwards; }
-  .ov-hero-bar-wrap { margin-top: 28px; }
-  .ov-hero-bar { height: 4px; background: rgba(0,0,0,0.05); border-radius: 3px; overflow: hidden; }
-  .ov-hero-bar-fill { height: 100%; background: var(--sage); border-radius: 3px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
-  .ov-hero-bar-label { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: var(--text3); letter-spacing: 0.02em; }
-  .ov-hero-top { display: none; }
+  .ov-hero-top { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage); margin-bottom: 8px; }
+  .ov-hero-title { font-size: clamp(28px, 7vw, 38px); font-weight: 700; color: var(--text); letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 8px; position: relative; z-index: 2; }
+  .ov-hero-phase { font-size: 9px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--sage); margin-bottom: 16px; position: relative; z-index: 2; }
+  .ov-hero-identity { font-size: 17px; font-weight: 600; color: var(--text); margin: 0 0 4px; line-height: 1.35; font-style: normal; opacity: 1; animation: none; position: relative; z-index: 2; max-width: 60%; }
+  .ov-hero-sub { font-size: 13px; color: var(--text3); margin: 0 0 20px; letter-spacing: 0.01em; position: relative; z-index: 2; max-width: 55%; }
+  .ov-hero-bar-wrap { display: none; }
+  .ov-hero-bar-label { display: none; }
 
-  /* ── Primary CTA ── */
-  .ov-cta-wrap { padding: 0 0 28px; text-align: center; animation: ovFadeUp 0.8s ease 0.2s both; }
-  .ov-cta { width: 100%; padding: 18px 32px; border: none; border-radius: 16px; background: var(--sage); color: #FFFFFF; font-family: var(--ff-body); font-size: 15px; font-weight: 600; letter-spacing: 0.04em; cursor: pointer; transition: all 0.2s; box-shadow: 0 6px 24px rgba(110,127,102,0.2); }
-  .ov-cta:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 10px 32px rgba(110,127,102,0.25); }
+  /* Hero image — right side */
+  .ov-hero-img { position: absolute; top: 0; right: 0; bottom: 0; width: 50%; object-fit: cover; border-radius: 0 24px 24px 0; z-index: 1; }
+  .ov-hero-img-badge { position: absolute; bottom: 20px; right: 16px; z-index: 3; background: rgba(0,0,0,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; gap: 8px; }
+  .ov-hero-img-badge-icon { font-size: 14px; }
+  .ov-hero-img-badge-text { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #FFFFFF; line-height: 1.3; }
+
+  /* ── Primary CTA (inside hero) ── */
+  .ov-cta-wrap { padding: 0; text-align: left; animation: none; position: relative; z-index: 2; }
+  .ov-cta { display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; border: none; border-radius: 14px; background: var(--text); color: #FFFFFF; font-family: var(--ff-body); font-size: 14px; font-weight: 600; letter-spacing: 0.02em; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+  .ov-cta:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.16); }
   .ov-cta:active { transform: scale(0.98); }
+  .ov-cta-arrow { font-size: 16px; }
 
   /* ── B. Today Stack ── */
-  .ov-stack { padding: 0 0 20px; animation: ovFadeUp 0.8s ease 0.35s both; }
-  .ov-stack-label { font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; padding-left: 2px; }
+  .ov-stack { padding: 0 0 20px; animation: ovFadeUp 0.8s ease 0.2s both; }
+  .ov-stack-label { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text); margin-bottom: 14px; padding-left: 2px; }
   .ov-stack-card { background: #FFFFFF; border: none; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-  .ov-stack-row { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; cursor: pointer; transition: background 0.15s; }
+  .ov-stack-row { display: flex; align-items: center; padding: 20px 20px; cursor: pointer; transition: background 0.15s; gap: 14px; }
   .ov-stack-row:hover { background: rgba(0,0,0,0.015); }
   .ov-stack-row:active { background: rgba(0,0,0,0.03); }
-  .ov-stack-row + .ov-stack-row { border-top: 1px solid rgba(0,0,0,0.04); }
+  .ov-stack-row + .ov-stack-row { border-top: 1px solid rgba(0,0,0,0.05); }
+  .ov-stack-icon { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
+  .ov-stack-icon.workout { background: rgba(110,127,102,0.12); color: var(--sage); }
+  .ov-stack-icon.protein { background: rgba(139,90,43,0.10); color: #8B5A2B; }
+  .ov-stack-icon.water { background: rgba(66,133,244,0.10); color: #4285F4; }
   .ov-stack-left { flex: 1; min-width: 0; }
-  .ov-stack-name { font-size: 14px; font-weight: 500; color: var(--text); }
-  .ov-stack-meta { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .ov-stack-name { font-size: 16px; font-weight: 600; color: var(--text); }
+  .ov-stack-meta { font-size: 13px; color: var(--text3); margin-top: 2px; }
   .ov-stack-right { flex-shrink: 0; display: flex; align-items: center; gap: 10px; }
-  .ov-stack-arrow { font-size: 14px; color: var(--text3); }
+  .ov-stack-status { font-size: 12px; font-weight: 500; color: var(--sage); padding: 5px 12px; border: 1px solid rgba(110,127,102,0.2); border-radius: 20px; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .ov-stack-status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sage); }
+  .ov-stack-arrow { font-size: 18px; color: var(--text3); }
 
   /* protein / water bars */
-  .ov-protein-bar-wrap { flex-shrink: 0; display: flex; align-items: center; gap: 10px; }
-  .ov-protein-bar { width: 60px; height: 5px; background: rgba(0,0,0,0.06); border-radius: 3px; overflow: hidden; }
-  .ov-protein-bar-fill { height: 100%; background: var(--sage); border-radius: 3px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); width: 0%; }
-  .ov-protein-pct { font-size: 11px; font-weight: 600; color: var(--sage); min-width: 28px; text-align: right; }
-  .ov-hydration-wrap { flex-shrink: 0; display: flex; align-items: center; gap: 8px; }
-  .ov-hydration-bar { width: 52px; height: 5px; background: rgba(0,0,0,0.06); border-radius: 3px; overflow: hidden; }
-  .ov-hydration-bar-fill { height: 100%; background: var(--sage); border-radius: 3px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); width: 0%; }
-  .ov-water-btns { display: flex; gap: 4px; flex-shrink: 0; }
-  .ov-sb { width: 30px; height: 30px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.08); background: #FFFFFF; color: var(--text); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; font-weight: 500; }
-  .ov-sb:hover { border-color: rgba(0,0,0,0.14); background: rgba(0,0,0,0.02); }
+  .ov-protein-bar-wrap { flex-shrink: 0; display: flex; align-items: center; gap: 10px; flex: 1; max-width: 160px; }
+  .ov-protein-bar { flex: 1; height: 6px; background: rgba(0,0,0,0.06); border-radius: 4px; overflow: hidden; }
+  .ov-protein-bar-fill { height: 100%; background: var(--sage); border-radius: 4px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); width: 0%; }
+  .ov-protein-pct { font-size: 13px; font-weight: 600; color: var(--sage); min-width: 32px; text-align: right; }
+  .ov-hydration-wrap { flex-shrink: 0; display: flex; align-items: center; gap: 10px; flex: 1; max-width: 180px; }
+  .ov-hydration-bar { flex: 1; height: 6px; background: rgba(0,0,0,0.06); border-radius: 4px; overflow: hidden; }
+  .ov-hydration-bar-fill { height: 100%; background: #4285F4; border-radius: 4px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); width: 0%; }
+  .ov-water-btns { display: flex; gap: 6px; flex-shrink: 0; }
+  .ov-sb { width: 34px; height: 34px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.10); background: #FFFFFF; color: var(--text); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; font-weight: 500; }
+  .ov-sb:hover { border-color: rgba(0,0,0,0.18); background: rgba(0,0,0,0.02); }
   .ov-sb:active { transform: scale(0.9); }
 
   /* ── C. Secondary Strip ── */
-  .ov-secondary { display: flex; flex-direction: column; gap: 10px; padding: 0 0 20px; animation: ovFadeUp 0.8s ease 0.5s both; }
-  .ov-sec-row { display: flex; align-items: center; gap: 14px; padding: 15px 20px; background: #FFFFFF; border: none; border-radius: 16px; cursor: pointer; transition: all 0.15s; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
-  .ov-sec-row:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
-  .ov-sec-row:active { transform: scale(0.99); }
-  .ov-sec-icon { font-size: 15px; flex-shrink: 0; opacity: 0.7; }
-  .ov-sec-text { flex: 1; font-size: 13px; color: var(--text2); }
-  .ov-sec-arrow { font-size: 13px; color: var(--text3); flex-shrink: 0; }
-
-  /* ── Future Self Teaser ── */
-  .ov-future-strip { display: flex; align-items: center; gap: 16px; padding: 20px; background: linear-gradient(135deg, #FFFFFF 0%, rgba(110,127,102,0.06) 100%); border: none; border-radius: 20px; cursor: pointer; transition: all 0.25s; box-shadow: 0 4px 20px rgba(0,0,0,0.05); animation: ovFadeUp 0.8s ease 0.6s both; }
-  .ov-future-strip:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
-  .ov-future-img-placeholder { width: 48px; height: 48px; border-radius: 14px; background: rgba(110,127,102,0.08); flex-shrink: 0; overflow: hidden; }
-  .ov-future-img-placeholder img { width: 100%; height: 100%; object-fit: cover; }
-  .ov-future-text { flex: 1; min-width: 0; }
-  .ov-future-headline { font-size: 15px; font-weight: 600; color: var(--text); }
-  .ov-future-sub { font-size: 12px; color: var(--sage); margin-top: 3px; font-weight: 500; }
-  .ov-future-arrow { font-size: 16px; color: var(--text3); flex-shrink: 0; transition: transform 0.15s; }
-  .ov-future-strip:hover .ov-future-arrow { transform: translateX(3px); }
+  .ov-secondary { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 0 16px; animation: ovFadeUp 0.8s ease 0.35s both; }
+  .ov-sec-row { display: flex; flex-direction: column; gap: 0; padding: 18px 18px; background: #FFFFFF; border: none; border-radius: 18px; cursor: pointer; transition: all 0.15s; box-shadow: 0 3px 14px rgba(0,0,0,0.04); }
+  .ov-sec-row:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.07); transform: translateY(-1px); }
+  .ov-sec-row:active { transform: scale(0.98); }
+  .ov-sec-top { display: flex; align-items: center; gap: 12px; margin-bottom: 2px; }
+  .ov-sec-icon-wrap { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; }
+  .ov-sec-icon-wrap.coach { background: rgba(128,90,213,0.10); color: #805AD5; }
+  .ov-sec-icon-wrap.meal { background: rgba(184,155,94,0.10); color: #B89B5E; }
+  .ov-sec-icon { display: none; }
+  .ov-sec-title { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .ov-sec-subtitle { font-size: 12px; color: var(--text3); margin-top: 2px; padding-left: 52px; }
+  .ov-sec-text { display: none; }
+  .ov-sec-arrow { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--text3); }
+  .ov-sec-row { position: relative; }
 
   /* ── Streak pill ── */
-  .ov-streak-pill { display: inline-flex; align-items: center; gap: 7px; border: none; border-radius: 20px; padding: 7px 16px; font-size: 11px; font-weight: 500; color: var(--sage); background: rgba(110,127,102,0.08); }
-  .ov-streak-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sage); display: inline-block; }
+  .ov-streak-wrap { padding: 0 0 20px; animation: ovFadeUp 0.8s ease 0.4s both; display: flex; align-items: center; gap: 10px; }
+  .ov-streak-pill { display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 20px; padding: 8px 16px; font-size: 13px; font-weight: 600; color: var(--text); background: transparent; }
+  .ov-streak-fire { font-size: 16px; }
+  .ov-streak-dot { display: none; }
+  .ov-streak-msg { font-size: 13px; color: var(--text3); }
+
+  /* ── Future Self Teaser ── */
+  .ov-future-strip { display: flex; align-items: center; gap: 16px; padding: 18px 20px; background: linear-gradient(135deg, #FFFFFF 60%, rgba(110,127,102,0.08) 100%); border: none; border-radius: 20px; cursor: pointer; transition: all 0.25s; box-shadow: 0 4px 20px rgba(0,0,0,0.05); animation: ovFadeUp 0.8s ease 0.5s both; }
+  .ov-future-strip:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+  .ov-future-img-placeholder { width: 72px; height: 72px; border-radius: 16px; background: rgba(110,127,102,0.08); flex-shrink: 0; overflow: hidden; position: relative; }
+  .ov-future-img-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+  .ov-future-badge { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); background: rgba(110,127,102,0.85); color: #fff; font-size: 8px; font-weight: 700; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 6px; white-space: nowrap; text-transform: uppercase; }
+  .ov-future-text { flex: 1; min-width: 0; }
+  .ov-future-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sage); margin-bottom: 3px; }
+  .ov-future-headline { font-size: 16px; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .ov-future-sub { font-size: 13px; color: var(--text3); margin-top: 3px; font-weight: 400; }
+  .ov-future-arrow { font-size: 18px; color: var(--text3); flex-shrink: 0; transition: transform 0.15s; }
+  .ov-future-strip:hover .ov-future-arrow { transform: translateX(3px); }
 
   /* ── Day Complete ── */
   .ov-complete { text-align: center; padding: 24px 0 12px; display: none; animation: ovFadeIn 0.6s ease both; }
@@ -1437,22 +1462,23 @@
 
   <!-- A. HERO MISSION CARD -->
   <div class="ov-hero">
-    <p class="ov-hero-phase" id="ov-phase-label">Phase 1 · Your Transformation</p>
+    <p class="ov-hero-top">Today</p>
     <h1 class="ov-hero-title" id="ov-hero-title">Day 1 of 84</h1>
-    <p class="ov-hero-sub" id="ov-sub">Start becoming.</p>
-    <p class="ov-hero-identity" id="ov-identity">You are becoming someone who follows through.</p>
-    <div class="ov-hero-bar-wrap">
-      <div class="ov-hero-bar"><div class="ov-hero-bar-fill" id="ov-hero-progress"></div></div>
-      <div class="ov-hero-bar-label">
-        <span id="ov-bar-start">Day 1</span>
-        <span id="ov-bar-end">Day 84</span>
-      </div>
+    <p class="ov-hero-phase" id="ov-phase-label">Phase 1 · Your First Transformation</p>
+    <p class="ov-hero-identity" id="ov-identity">You're becoming someone who follows through.</p>
+    <p class="ov-hero-sub" id="ov-sub">Discipline compounds. Future you is watching.</p>
+    <!-- CTA inside hero -->
+    <div class="ov-cta-wrap">
+      <button class="ov-cta" onclick="showScreen('program')">Start Today's Session <span class="ov-cta-arrow">&rarr;</span></button>
     </div>
-  </div>
-
-  <!-- PRIMARY CTA -->
-  <div class="ov-cta-wrap">
-    <button class="ov-cta" onclick="showScreen('program')">Start Today's Session</button>
+    <!-- Hero image -->
+    <img class="ov-hero-img" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=500&q=75&auto=format&fit=crop" alt="" id="ov-hero-img" />
+    <div class="ov-hero-img-badge">
+      <span class="ov-hero-img-badge-icon">&#9889;</span>
+      <span class="ov-hero-img-badge-text" id="ov-hero-weeks-badge">12 Weeks<br/>To Your Next Level</span>
+    </div>
+    <!-- Hidden bar elements for JS compat -->
+    <div class="ov-hero-bar-wrap"><div class="ov-hero-bar"><div class="ov-hero-bar-fill" id="ov-hero-progress"></div></div><div class="ov-hero-bar-label"><span id="ov-bar-start"></span><span id="ov-bar-end"></span></div></div>
   </div>
 
   <!-- DAY COMPLETE (hidden until all tasks done) -->
@@ -1467,15 +1493,18 @@
     <p class="ov-stack-label">Today's Focus</p>
     <div class="ov-stack-card">
       <div class="ov-stack-row" id="ov-w-program" onclick="showScreen('program')">
+        <div class="ov-stack-icon workout">&#9783;</div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Workout</p>
-          <p class="ov-stack-meta" id="ov-mission-workout-meta">Upper Body · 6 exercises</p>
+          <p class="ov-stack-meta" id="ov-mission-workout-meta">Upper Body &middot; 6 Exercises</p>
         </div>
         <div class="ov-stack-right">
-          <span class="ov-stack-arrow">›</span>
+          <span class="ov-stack-status"><span class="ov-stack-status-dot"></span> Not Started</span>
+          <span class="ov-stack-arrow">&#8250;</span>
         </div>
       </div>
       <div class="ov-stack-row" id="ov-w-cal" onclick="showScreen('nutrition')">
+        <div class="ov-stack-icon protein">&#9775;</div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Protein</p>
           <p class="ov-stack-meta"><span id="ov-mac-p">0</span>g of <span id="ov-cal-goal">180</span>g</p>
@@ -1486,9 +1515,10 @@
         </div>
       </div>
       <div class="ov-stack-row" id="ov-w-water">
+        <div class="ov-stack-icon water">&#128167;</div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Water</p>
-          <p class="ov-stack-meta"><span id="ov-wv">0</span> / 128 oz</p>
+          <p class="ov-stack-meta"><span id="ov-wv">0</span> of 128 oz</p>
         </div>
         <div class="ov-hydration-wrap">
           <div class="ov-hydration-bar"><div class="ov-hydration-bar-fill" id="ov-hydration-bar-fill"></div></div>
@@ -1501,34 +1531,46 @@
     </div>
   </div>
 
-  <!-- C. SECONDARY STRIP -->
+  <!-- C. SECONDARY STRIP (side-by-side) -->
   <div class="ov-secondary">
     <div class="ov-sec-row" onclick="showScreen('coach')">
-      <span class="ov-sec-icon">&#128172;</span>
-      <span class="ov-sec-text" id="ov-coach-prompt">Ask your coach anything</span>
-      <span class="ov-sec-arrow">›</span>
+      <div class="ov-sec-top">
+        <div class="ov-sec-icon-wrap coach">&#10024;</div>
+        <span class="ov-sec-title" id="ov-coach-prompt">Ask your coach anything</span>
+      </div>
+      <p class="ov-sec-subtitle">Get guidance &amp; stay accountable</p>
+      <span class="ov-sec-arrow">&#8250;</span>
     </div>
     <div class="ov-sec-row" onclick="showScreen('nutrition')">
-      <span class="ov-sec-icon">&#127860;</span>
-      <span class="ov-sec-text">Log a meal</span>
-      <span class="ov-sec-arrow">›</span>
-    </div>
-    <div class="ov-sec-row" style="cursor:default;border-color:transparent;background:transparent;padding:10px 20px;">
-      <div class="ov-streak-pill">
-        <span class="ov-streak-dot"></span>
-        <span id="ov-streak-text">0 day streak</span>
+      <div class="ov-sec-top">
+        <div class="ov-sec-icon-wrap meal">&#127860;</div>
+        <span class="ov-sec-title">Log a meal</span>
       </div>
+      <p class="ov-sec-subtitle">Fuel your transformation</p>
+      <span class="ov-sec-arrow">&#8250;</span>
     </div>
+  </div>
+
+  <!-- STREAK PILL -->
+  <div class="ov-streak-wrap">
+    <div class="ov-streak-pill">
+      <span class="ov-streak-fire">&#128293;</span>
+      <span id="ov-streak-text">0 day streak</span>
+    </div>
+    <span class="ov-streak-msg">&middot; Start today and build momentum.</span>
   </div>
 
   <!-- FUTURE SELF TEASER -->
   <div class="ov-future-strip" id="ov-w-future" onclick="showScreen('future')">
-    <div class="ov-future-img-placeholder" id="ov-future-thumb"></div>
-    <div class="ov-future-text">
-      <p class="ov-future-headline" id="ov-future-headline">This is you in 12 weeks</p>
-      <p class="ov-future-sub">See your future self ›</p>
+    <div class="ov-future-img-placeholder" id="ov-future-thumb">
+      <span class="ov-future-badge" id="ov-future-badge">12 Weeks</span>
     </div>
-    <span class="ov-future-arrow">›</span>
+    <div class="ov-future-text">
+      <p class="ov-future-label">Future You</p>
+      <p class="ov-future-headline" id="ov-future-headline">This is you in 12 weeks.</p>
+      <p class="ov-future-sub">See your future self and stay locked in.</p>
+    </div>
+    <span class="ov-future-arrow">&#8250;</span>
   </div>
 
   <!-- HIDDEN: legacy sections (kept for JS compat, display:none via CSS) -->
@@ -1580,8 +1622,8 @@
 
   /* ── Identity Copy Rotation ── */
   var IDENTITY_LINES = [
-    "You are becoming someone who follows through.",
-    "Momentum is building.",
+    "You're becoming someone who follows through.",
+    "You're building momentum that can't be stopped.",
     "You're becoming leaner, stronger, more disciplined.",
     "This is the version of you that keeps going.",
     "Every rep is proof you're changing.",
@@ -1602,16 +1644,16 @@
 
   /* ── Phase Label ── */
   function ovGetPhaseLabel(day, dur) {
-    if (dur <= 28) return 'Phase 1 \u00b7 Foundation';
-    if (dur <= 56) return day <= 28 ? 'Phase 1 \u00b7 Foundation' : 'Phase 2 \u00b7 Building';
+    if (dur <= 28) return 'Phase 1 \u00b7 Your First Transformation';
+    if (dur <= 56) return day <= 28 ? 'Phase 1 \u00b7 Your First Transformation' : 'Phase 2 \u00b7 Building Momentum';
     if (dur <= 84) {
-      if (day <= 28) return 'Phase 1 \u00b7 Foundation';
-      if (day <= 56) return 'Phase 2 \u00b7 Building';
-      return 'Phase 3 \u00b7 Transformation';
+      if (day <= 28) return 'Phase 1 \u00b7 Your First Transformation';
+      if (day <= 56) return 'Phase 2 \u00b7 Building Momentum';
+      return 'Phase 3 \u00b7 Deep Transformation';
     }
-    if (day <= 28) return 'Phase 1 \u00b7 Foundation';
-    if (day <= 56) return 'Phase 2 \u00b7 Building';
-    if (day <= 84) return 'Phase 3 \u00b7 Transformation';
+    if (day <= 28) return 'Phase 1 \u00b7 Your First Transformation';
+    if (day <= 56) return 'Phase 2 \u00b7 Building Momentum';
+    if (day <= 84) return 'Phase 3 \u00b7 Deep Transformation';
     return 'Phase 4 \u00b7 Mastery';
   }
 
@@ -1630,24 +1672,34 @@
     var dur = ovPhase.durationDays;
     var weeksLeft = Math.max(1, Math.ceil((dur - d) / 7));
 
+    var SUB_LINES = [
+      'Discipline compounds. Future you is watching.',
+      'Every rep brings you closer.',
+      'Small actions. Massive results.',
+      'Show up. That\u2019s the whole secret.',
+      'Consistency beats intensity.',
+      'Your future self is built today.',
+      'The work is the shortcut.',
+      'One day or day one. You chose day one.'
+    ];
     if (!ovPhase.isSetupComplete) {
-      if (hero) hero.textContent = 'Day 1';
-      if (sub) sub.textContent = 'Start becoming.';
-      if (phase) phase.textContent = 'Your Transformation Begins';
+      if (hero) hero.textContent = 'Day 1 of ' + dur;
+      if (sub) sub.textContent = SUB_LINES[0];
+      if (phase) phase.textContent = 'Phase 1 \u00b7 Your First Transformation';
       if (identity) identity.textContent = ovGetIdentityLine(1);
       if (progBar) progBar.style.width = '0%';
-      if (barStart) barStart.textContent = 'Day 1';
-      if (barEnd) barEnd.textContent = 'Day ' + dur;
     } else {
       if (hero) hero.textContent = 'Day ' + d + ' of ' + dur;
-      if (sub) sub.textContent = weeksLeft + ' week' + (weeksLeft !== 1 ? 's' : '') + ' remaining';
+      if (sub) sub.textContent = SUB_LINES[(d - 1) % SUB_LINES.length];
       if (phase) phase.textContent = ovGetPhaseLabel(d, dur);
       if (identity) identity.textContent = ovGetIdentityLine(d);
       if (progBar) progBar.style.width = Math.round(d / dur * 100) + '%';
-      if (barStart) barStart.textContent = 'Day ' + d;
-      if (barEnd) barEnd.textContent = 'Day ' + dur;
     }
-    if (futureHL) futureHL.textContent = 'This is you in ' + weeksLeft + ' week' + (weeksLeft !== 1 ? 's' : '');
+    if (futureHL) futureHL.textContent = 'This is you in ' + weeksLeft + ' week' + (weeksLeft !== 1 ? 's' : '') + '.';
+    var weeksBadge = document.getElementById('ov-hero-weeks-badge');
+    if (weeksBadge) weeksBadge.innerHTML = weeksLeft + ' Week' + (weeksLeft !== 1 ? 's' : '') + '<br/>To Your Next Level';
+    var futureBadge = document.getElementById('ov-future-badge');
+    if (futureBadge) futureBadge.textContent = weeksLeft + ' Week' + (weeksLeft !== 1 ? 's' : '');
   }
 
   function ovSyncData() {
