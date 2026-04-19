@@ -425,35 +425,50 @@
   /* ═══ TODAY SCREEN — v11 reference match ═══ */
   .ov-shell { padding: 0 16px 140px; max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 0; }
 
-  /* ── A. Hero Mission Card ── */
+  /* ── A. Hero Mission Card — cinematic full-bleed ── */
   .ov-hero {
     position: relative; overflow: hidden;
-    padding: 28px 24px 28px; text-align: left;
-    background: #FFFFFF;
+    padding: 0; text-align: left;
+    background: #1A1A1A;
     border-radius: 24px; margin-bottom: 24px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
     animation: ovFadeUp 0.8s ease both;
-    min-height: 280px;
+    min-height: 340px;
   }
-  .ov-hero-top { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage); margin-bottom: 8px; position: relative; z-index: 2; }
-  .ov-hero-title { font-size: clamp(26px, 7vw, 36px); font-weight: 700; color: var(--text); letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 6px; position: relative; z-index: 2; max-width: 55%; }
-  .ov-hero-phase { font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sage); margin-bottom: 14px; position: relative; z-index: 2; max-width: 55%; }
-  .ov-hero-identity { font-size: 17px; font-weight: 600; color: var(--text); margin: 0 0 6px; line-height: 1.35; font-style: normal; opacity: 1; animation: none; position: relative; z-index: 2; max-width: 50%; }
-  .ov-hero-sub { font-size: 13px; color: var(--text3); margin: 0 0 22px; letter-spacing: 0.01em; position: relative; z-index: 2; max-width: 48%; line-height: 1.5; }
+  /* Full-bleed background image */
+  .ov-hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+  /* Warm gradient overlay for readability */
+  .ov-hero::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(0,0,0,0.10) 0%,
+      rgba(0,0,0,0.05) 30%,
+      rgba(0,0,0,0.25) 60%,
+      rgba(0,0,0,0.55) 100%
+    );
+  }
+  .ov-hero::after { content: none; }
+  /* Content wrapper over the image */
+  .ov-hero-content { position: relative; z-index: 2; padding: 28px 24px 28px; display: flex; flex-direction: column; justify-content: flex-end; min-height: 340px; }
+  .ov-hero-top { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.85); margin-bottom: 6px; }
+  .ov-hero-title { font-size: clamp(32px, 9vw, 44px); font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.08; margin: 0 0 8px; text-shadow: 0 2px 20px rgba(0,0,0,0.15); }
+  .ov-hero-phase { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.70); margin-bottom: 12px; }
+  .ov-hero-identity { font-size: 18px; font-weight: 600; color: #FFFFFF; margin: 0 0 4px; line-height: 1.35; font-style: normal; opacity: 1; animation: none; text-shadow: 0 1px 12px rgba(0,0,0,0.12); }
+  .ov-hero-sub { font-size: 13px; color: rgba(255,255,255,0.65); margin: 0 0 20px; letter-spacing: 0.01em; line-height: 1.5; }
   .ov-hero-bar-wrap { display: none; }
   .ov-hero-bar-label { display: none; }
+  /* Remove old image element styles */
+  .ov-hero-img { display: none; }
 
-  /* Hero image — right side with fade blend */
-  .ov-hero-img { position: absolute; top: 0; right: 0; bottom: 0; width: 48%; object-fit: cover; border-radius: 0 24px 24px 0; z-index: 1; }
-  .ov-hero::after { content: ''; position: absolute; top: 0; right: 30%; bottom: 0; width: 25%; background: linear-gradient(to right, #FFFFFF, transparent); z-index: 1; pointer-events: none; }
-  .ov-hero-img-badge { position: absolute; bottom: 16px; right: 12px; z-index: 3; background: rgba(0,0,0,0.50); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 10px; padding: 8px 12px; display: flex; align-items: center; gap: 6px; }
-  .ov-hero-img-badge-icon { font-size: 12px; }
-  .ov-hero-img-badge-text { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #FFFFFF; line-height: 1.3; }
+  /* Badge pill — top right */
+  .ov-hero-img-badge { position: absolute; top: 20px; right: 16px; z-index: 3; background: rgba(255,255,255,0.18); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 20px; padding: 7px 14px; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.15); }
+  .ov-hero-img-badge-icon { font-size: 11px; }
+  .ov-hero-img-badge-text { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #FFFFFF; line-height: 1.2; }
 
   /* ── Primary CTA (inside hero) ── */
-  .ov-cta-wrap { padding: 0; text-align: left; animation: none; position: relative; z-index: 2; }
-  .ov-cta { display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; border: none; border-radius: 14px; background: var(--text); color: #FFFFFF; font-family: var(--ff-body); font-size: 14px; font-weight: 600; letter-spacing: 0.02em; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(0,0,0,0.12); max-width: 52%; }
-  .ov-cta:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.16); }
+  .ov-cta-wrap { padding: 0; text-align: left; animation: none; }
+  .ov-cta { display: inline-flex; align-items: center; gap: 10px; padding: 15px 28px; border: none; border-radius: 14px; background: rgba(255,255,255,0.95); color: var(--text); font-family: var(--ff-body); font-size: 14px; font-weight: 600; letter-spacing: 0.02em; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+  .ov-cta:hover { background: #FFFFFF; transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0,0,0,0.2); }
   .ov-cta:active { transform: scale(0.98); }
   .ov-cta-arrow { font-size: 16px; }
 
@@ -1461,22 +1476,22 @@
 <div class="screen" id="screen-overview">
 <div class="ov-shell">
 
-  <!-- A. HERO MISSION CARD -->
+  <!-- A. HERO MISSION CARD — cinematic -->
   <div class="ov-hero">
-    <p class="ov-hero-top">Today</p>
-    <h1 class="ov-hero-title" id="ov-hero-title">Day 1 of 84</h1>
-    <p class="ov-hero-phase" id="ov-phase-label">Phase 1 · Your First Transformation</p>
-    <p class="ov-hero-identity" id="ov-identity">You're becoming someone who follows through.</p>
-    <p class="ov-hero-sub" id="ov-sub">Discipline compounds. Future you is watching.</p>
-    <!-- CTA inside hero -->
-    <div class="ov-cta-wrap">
-      <button class="ov-cta" onclick="showScreen('program')">Start Today's Session <span class="ov-cta-arrow">&rarr;</span></button>
-    </div>
-    <!-- Hero image -->
-    <img class="ov-hero-img" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=500&q=75&auto=format&fit=crop" alt="" id="ov-hero-img" />
+    <img class="ov-hero-bg" src="/hero-bg.png" alt="" />
     <div class="ov-hero-img-badge">
       <span class="ov-hero-img-badge-icon">&#9889;</span>
-      <span class="ov-hero-img-badge-text" id="ov-hero-weeks-badge">12 Weeks<br/>To Your Next Level</span>
+      <span class="ov-hero-img-badge-text" id="ov-hero-weeks-badge">12 Weeks</span>
+    </div>
+    <div class="ov-hero-content">
+      <p class="ov-hero-top">Today</p>
+      <h1 class="ov-hero-title" id="ov-hero-title">Day 1 of 84</h1>
+      <p class="ov-hero-phase" id="ov-phase-label">Phase 1 · Your First Transformation</p>
+      <p class="ov-hero-identity" id="ov-identity">You're becoming someone who follows through.</p>
+      <p class="ov-hero-sub" id="ov-sub">Discipline compounds. Future you is watching.</p>
+      <div class="ov-cta-wrap">
+        <button class="ov-cta" onclick="showScreen('program')">Start Today's Session <span class="ov-cta-arrow">&rarr;</span></button>
+      </div>
     </div>
     <!-- Hidden bar elements for JS compat -->
     <div class="ov-hero-bar-wrap"><div class="ov-hero-bar"><div class="ov-hero-bar-fill" id="ov-hero-progress"></div></div><div class="ov-hero-bar-label"><span id="ov-bar-start"></span><span id="ov-bar-end"></span></div></div>
