@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <link rel="icon" type="image/png" href="/logo-icon.png" />
   <link rel="apple-touch-icon" href="/logo-icon.png" />
-  <title>Wylde Self — You already know who you could be</title>
+  <title>Wylde Self — Meet the version of you that already followed through</title>
 
   <!-- SOCIAL SHARE META -->
   <meta name="description" content="You already know who you could be. Wylde Self makes you train like that person — today. An identity transformation system, not a fitness app." />
@@ -102,11 +102,17 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 200;
       padding: 16px 32px;
       display: flex; justify-content: space-between; align-items: center;
-      background: rgba(247,246,243,0.88);
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      border-bottom: none;
+      transition: padding 0.3s ease, background 0.3s ease;
+    }
+    nav.scrolled {
+      background: rgba(247,246,243,0.92);
       backdrop-filter: blur(24px) saturate(1.2);
       -webkit-backdrop-filter: blur(24px) saturate(1.2);
-      border-bottom: 1px solid var(--border-soft);
-      transition: padding 0.3s ease;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
     }
     .logo-link {
       display: flex; align-items: center; gap: 10px;
@@ -116,104 +122,135 @@
     .logo-text {
       font-size: 13px; font-weight: 600;
       letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--text-primary);
+      color: #FFFFFF;
+      transition: color 0.3s ease;
     }
-    .logo-text span { color: var(--accent-sage); }
+    .logo-text span { color: rgba(255,255,255,0.7); transition: color 0.3s ease; }
+    nav.scrolled .logo-text { color: var(--text-primary); }
+    nav.scrolled .logo-text span { color: var(--accent-sage); }
     .nav-right { display: flex; align-items: center; gap: 24px; }
     .nav-link {
       font-size: 13px; font-weight: 500;
-      color: var(--text-muted);
+      color: rgba(255,255,255,0.6);
       text-decoration: none;
       transition: color 0.25s;
       letter-spacing: 0.01em;
     }
-    .nav-link:hover { color: var(--text-primary); }
+    .nav-link:hover { color: #FFFFFF; }
+    nav.scrolled .nav-link { color: var(--text-muted); }
+    nav.scrolled .nav-link:hover { color: var(--text-primary); }
     .nav-cta {
       font-size: 13px; font-weight: 600;
       color: #FFFFFF;
-      background: #1A1A1A;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
       padding: 10px 26px;
       border-radius: 100px;
       text-decoration: none;
       transition: all 0.25s ease;
       letter-spacing: 0.01em;
     }
-    .nav-cta:hover { background: var(--accent-sage); color: #FFFFFF; transform: translateY(-1px) scale(1.02); }
+    .nav-cta:hover { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); transform: translateY(-1px) scale(1.02); }
+    nav.scrolled .nav-cta { background: #1A1A1A; color: #FFFFFF; border-color: #1A1A1A; }
+    nav.scrolled .nav-cta:hover { background: var(--accent-sage); border-color: var(--accent-sage); }
     .nav-cta:active { transform: scale(0.97); transition-duration: 0.1s; }
 
-    /* HERO */
+    /* HERO — full-bleed cinematic */
     #hero {
       min-height: 100vh; min-height: 100svh;
-      display: flex; align-items: center; justify-content: center;
-      text-align: center;
+      display: flex; align-items: flex-end; justify-content: flex-start;
+      text-align: left;
       position: relative;
-      padding: 140px 24px 100px;
+      padding: 0 clamp(24px, 5vw, 80px) clamp(60px, 10vh, 120px);
       overflow: hidden;
     }
     .hero-bg {
       position: absolute; inset: 0;
-      background: url(slide1_cover.jpg) center/cover no-repeat;
-      opacity: 0.1;
-      filter: saturate(0.6) brightness(0.8);
+      background: url(/hero-bg.png) center/cover no-repeat;
+      opacity: 1;
+      filter: none;
     }
     .hero-gradient {
       position: absolute; inset: 0;
       background:
-        radial-gradient(ellipse 70% 50% at 50% 25%, rgba(122,142,118,0.07) 0%, transparent 55%),
-        radial-gradient(ellipse 50% 40% at 50% 80%, rgba(201,173,110,0.04) 0%, transparent 50%),
-        linear-gradient(to bottom, var(--bg-main) 0%, rgba(247,246,243,0.3) 25%, rgba(247,246,243,0.3) 75%, var(--bg-main) 100%);
+        linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.10) 30%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.30) 75%, rgba(0,0,0,0.55) 100%),
+        linear-gradient(90deg, rgba(0,0,0,0.40) 0%, rgba(0,0,0,0.15) 40%, transparent 70%);
       pointer-events: none;
     }
     .hero-content {
       position: relative; z-index: 2;
-      max-width: 800px; width: 100%;
+      max-width: 640px; width: 100%;
     }
-    .badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 11px; font-weight: 600;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--accent-sage-soft);
-      background: rgba(122,142,118,0.08);
-      border: 1px solid rgba(122,142,118,0.15);
-      padding: 8px 20px;
-      border-radius: 100px;
-      margin-bottom: 36px;
-      opacity: 0; animation: fadeUp 0.7s ease forwards 0.1s;
-    }
-    .badge-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent-sage);
-      animation: pulse 2.5s ease infinite;
-    }
+    .badge { display: none; }
+    .badge-dot { display: none; }
     .hero-h1 {
-      font-size: clamp(42px, 7.5vw, 80px);
+      font-size: clamp(36px, 6vw, 64px);
       font-weight: 700;
-      line-height: 1.06;
-      letter-spacing: -0.035em;
-      color: var(--text-primary);
-      margin-bottom: 24px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: #FFFFFF;
+      margin-bottom: 28px;
       opacity: 0; animation: fadeUp 0.8s ease forwards 0.25s;
     }
     .hero-sub {
-      font-size: clamp(17px, 2vw, 20px);
+      font-size: clamp(16px, 1.8vw, 19px);
       font-weight: 400;
-      color: var(--text-secondary);
-      max-width: 500px;
-      margin: 0 auto 14px;
-      line-height: 1.65;
+      color: rgba(255,255,255,0.75);
+      max-width: 480px;
+      margin: 0 0 10px;
+      line-height: 1.7;
       opacity: 0; animation: fadeUp 0.8s ease forwards 0.4s;
     }
     .hero-support {
-      font-size: 15px; font-weight: 500;
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
+      font-size: clamp(15px, 1.6vw, 17px);
+      font-weight: 500;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 0;
       margin-bottom: 44px;
+      line-height: 1.6;
       opacity: 0; animation: fadeUp 0.8s ease forwards 0.5s;
     }
     .hero-actions {
-      display: flex; flex-direction: column; align-items: center; gap: 16px;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
       opacity: 0; animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+    .hero-signin {
+      font-size: 14px; font-weight: 400;
+      color: rgba(255,255,255,0.5);
+      opacity: 0; animation: fadeUp 0.8s ease forwards 0.7s;
+    }
+    .hero-signin a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .hero-signin a:hover { color: #FFFFFF; }
+    /* Hero-specific CTA button — outlined on dark image */
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px; font-weight: 600;
+      color: #FFFFFF;
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      padding: 18px 40px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s var(--ease-out);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .hero-cta:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.5);
+      transform: translateY(-2px);
+    }
+    .hero-cta:active {
+      transform: translateY(0) scale(0.98);
+      transition-duration: 0.1s;
     }
     .btn-primary {
       display: inline-flex; align-items: center; gap: 10px;
@@ -1994,8 +2031,7 @@
       <span class="logo-text">WYLDE <span>SELF</span></span>
     </a>
     <div class="nav-right">
-      <a href="/investors.html" class="nav-link">Investors</a>
-      <a href="#cta" class="nav-cta">Try the App</a>
+      <a href="/gate.html" onclick="return checkDemo(event)" class="nav-cta">See My Future</a>
     </div>
   </nav>
 
@@ -2004,18 +2040,16 @@
     <div class="hero-bg"></div>
     <div class="hero-gradient"></div>
     <div class="hero-content">
-      <div class="badge"><span class="badge-dot"></span> Now in early access</div>
-      <h1 class="hero-h1">You already know<br>who you could be.</h1>
-      <p class="hero-sub">Wylde Self makes you train like that person — today. Not someday.</p>
-      <div class="hero-actions" style="margin-top:36px;">
-        <a href="/gate.html" id="heroDemoBtn" onclick="return checkDemo(event)" class="btn-primary">
-          See My Future Self
+      <h1 class="hero-h1">Meet the version of you<br>that already followed through.</h1>
+      <p class="hero-sub">You've seen flashes of who you could be.<br>This is where you become them.</p>
+      <p class="hero-support">Train with your future self.<br>Close the gap — daily.</p>
+      <div class="hero-actions">
+        <a href="/gate.html" id="heroDemoBtn" onclick="return checkDemo(event)" class="hero-cta">
+          See My Future
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
-        <a href="#cta" class="btn-secondary">Get Early Access →</a>
       </div>
-
-
+      <p class="hero-signin">Already have access? <a href="/app.html">Sign in</a></p>
     </div>
   </section>
 
@@ -2460,9 +2494,8 @@
           </form>
           <div class="form-success" id="ctaSuccess">You're in. The gap starts closing now.</div>
           <p class="form-note">Free to start. Limited early access.</p>
-          <div class="hero-form-actions">
-            <a href="/gate.html" onclick="return checkDemo(event)" class="btn-primary" style="flex:1;">See My Future Self →</a>
-            <a href="javascript:void(0)" onclick="document.querySelector('#ctaForm input[name=&quot;name&quot;]').focus()" class="btn-secondary" style="flex:1;">Get Early Access →</a>
+          <div style="margin-top:24px;">
+            <a href="/gate.html" onclick="return checkDemo(event)" class="btn-primary">See My Future Self →</a>
           </div>
         </div>
       </div>
@@ -2818,6 +2851,18 @@
 
       // Init
       render(false);
+    })();
+
+    // NAV SCROLL STATE
+    (function() {
+      var nav = document.querySelector('nav');
+      if (!nav) return;
+      function checkScroll() {
+        if (window.scrollY > 80) { nav.classList.add('scrolled'); }
+        else { nav.classList.remove('scrolled'); }
+      }
+      window.addEventListener('scroll', checkScroll, { passive: true });
+      checkScroll();
     })();
 
     // SCROLL REVEAL
