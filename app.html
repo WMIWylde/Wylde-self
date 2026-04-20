@@ -193,23 +193,20 @@
     /* FUTURE SELF */
     .future-container { max-width: 520px; }
 
-    /* Sage banner */
-    .fs-banner {
-      margin: 12px 0 0; border-radius: 20px;
-      padding: 36px 24px 32px; text-align: center;
-      background: linear-gradient(160deg, #7a9a6e 0%, #6b8b60 50%, #5c7c53 100%);
-      position: relative; overflow: hidden;
+    /* Full sage background for Future Self screen */
+    #screen-future {
+      background: linear-gradient(170deg, #6b8b5e 0%, #5a7a4e 40%, #4a6a40 100%);
+      min-height: 100vh;
     }
-    .fs-banner::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.08) 0%, transparent 60%);
-      pointer-events: none;
+
+    /* Header text — directly on sage bg, no card */
+    .fs-header-text {
+      text-align: center; padding: 24px 16px 0; position: relative;
     }
     .future-label {
-      position: relative; z-index: 1;
-      font-size: 10px; font-weight: 600; letter-spacing: 0.25em;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.25em;
       text-transform: uppercase; color: rgba(255,255,255,0.35);
-      margin-bottom: 14px;
+      margin-bottom: 18px;
       animation: fsGoldPulse 3s ease-in-out infinite;
     }
     @keyframes fsGoldPulse {
@@ -218,45 +215,67 @@
       60% { color: #e8d5a3; text-shadow: 0 0 12px rgba(200,169,110,0.5), 0 0 30px rgba(200,169,110,0.2); }
     }
     .future-title {
-      position: relative; z-index: 1;
-      font-size: clamp(26px, 6vw, 32px); font-weight: 700;
-      color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.15; margin: 0 0 8px;
+      font-size: clamp(28px, 7vw, 36px); font-weight: 700;
+      color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.12; margin: 0 0 12px;
     }
     .future-sub {
-      position: relative; z-index: 1;
-      font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.5;
+      font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.6;
+      max-width: 300px; margin: 0 auto;
     }
 
-    /* Upload zone */
-    .future-upload-wrap { padding: 20px 0 0; }
+    /* Upload zone — glass card with silhouette bg */
+    .future-upload-wrap { padding: 24px 16px 0; }
     .future-upload {
-      background: var(--bg-surface); border: 1px solid var(--border);
-      border-radius: 20px; padding: 44px 24px; text-align: center;
-      cursor: pointer; transition: all 0.3s; box-shadow: var(--shadow-card);
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px; padding: 48px 24px; text-align: center;
+      cursor: pointer; transition: all 0.3s;
       position: relative; overflow: hidden;
     }
-    .future-upload:hover { box-shadow: var(--shadow-hover); }
-    .future-upload-icon { width: 52px; height: 52px; border-radius: 50%; background: rgba(110,127,107,0.08); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
-    .future-upload-icon span { font-size: 22px; color: var(--sage); opacity: 0.6; }
-    .future-upload-label { font-size: 15px; color: var(--text2); margin-bottom: 4px; font-weight: 500; }
-    .future-upload-hint { font-size: 12px; color: var(--text3); }
-    .future-upload-preview { width: 100%; max-height: 300px; object-fit: cover; border-radius: 12px; display: none; }
+    .future-upload:hover { background: rgba(255,255,255,0.16); }
 
-    /* Gold CTA */
-    .future-generate-btn {
-      width: 100%; margin-top: 16px; padding: 16px; border: none; border-radius: 14px;
-      font-family: var(--font-ui); font-size: 15px; font-weight: 600;
-      cursor: pointer; letter-spacing: 0.01em;
-      background: linear-gradient(135deg, #c8a96e 0%, #b5944e 100%);
-      color: #FFFFFF; transition: opacity 0.2s;
-      box-shadow: 0 2px 12px rgba(200,169,110,0.25);
+    /* Silhouette figure behind upload — uses image if available, CSS fallback */
+    .future-upload::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 55% 45%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.08) 30%, transparent 60%);
+      pointer-events: none;
     }
-    .future-generate-btn:hover { opacity: 0.9; }
-    .future-generate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .fs-silhouette {
+      position: absolute; top: 0; right: -10%; bottom: 0; width: 65%;
+      object-fit: contain; object-position: center bottom;
+      opacity: 0.5; pointer-events: none; mix-blend-mode: soft-light;
+    }
 
-    .future-skip-wrap { text-align: center; margin-top: 14px; margin-bottom: 24px; }
-    .future-skip { background: none; border: none; color: var(--text3); font-family: var(--font-ui); font-size: 12px; cursor: pointer; letter-spacing: 0.04em; }
-    .future-skip:hover { color: var(--text2); }
+    .future-upload-icon { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; position: relative; z-index: 2; }
+    .future-upload-icon span { font-size: 22px; color: rgba(255,255,255,0.7); }
+    .future-upload-label { font-size: 16px; color: #FFFFFF; margin-bottom: 4px; font-weight: 600; position: relative; z-index: 2; }
+    .future-upload-hint { font-size: 13px; color: rgba(255,255,255,0.45); position: relative; z-index: 2; }
+    .future-upload-preview { width: 100%; max-height: 300px; object-fit: cover; border-radius: 12px; display: none; position: relative; z-index: 2; }
+
+    /* Motivational line above CTA */
+    .fs-motivation {
+      text-align: center; margin-top: 20px;
+      font-size: 13px; font-style: italic; color: rgba(255,255,255,0.4);
+      letter-spacing: 0.01em;
+    }
+
+    /* Gold CTA — larger, rounder, more premium */
+    .future-generate-btn {
+      width: 100%; margin-top: 12px; padding: 18px; border: none; border-radius: 50px;
+      font-family: var(--font-ui); font-size: 17px; font-weight: 700;
+      cursor: pointer; letter-spacing: 0.01em;
+      background: linear-gradient(135deg, #d4b87a 0%, #c8a96e 40%, #b5944e 100%);
+      color: #FFFFFF; transition: all 0.25s;
+      box-shadow: 0 4px 20px rgba(200,169,110,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    }
+    .future-generate-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(200,169,110,0.45), inset 0 1px 0 rgba(255,255,255,0.2); }
+    .future-generate-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    .future-skip-wrap { text-align: center; margin-top: 16px; margin-bottom: 24px; }
+    .future-skip { background: none; border: none; color: rgba(255,255,255,0.35); font-family: var(--font-ui); font-size: 13px; cursor: pointer; letter-spacing: 0.02em; }
+    .future-skip:hover { color: rgba(255,255,255,0.55); }
 
     /* Implode animation on upload zone */
     .future-upload.imploding {
@@ -277,30 +296,30 @@
       100% { transform: scale(1); opacity: 1; border-radius: 0; }
     }
 
-    /* Timeline tabs — pill style */
+    /* Timeline tabs — pill style on sage bg */
     .fs-tabs {
       display: flex; gap: 6px; margin-bottom: 16px;
-      background: var(--bg-surface); border-radius: 14px;
-      padding: 4px; box-shadow: var(--shadow-card);
+      background: rgba(0,0,0,0.15); border-radius: 14px;
+      padding: 4px;
     }
     .fs-tab {
       flex: 1; padding: 12px 8px; border: none; border-radius: 10px;
       background: transparent; cursor: pointer; text-align: center;
       font-family: var(--font-ui); transition: all 0.2s;
     }
-    .fs-tab-label { font-size: 13px; font-weight: 600; color: var(--text2); display: block; }
-    .fs-tab-sub { font-size: 10px; color: var(--text3); display: block; margin-top: 2px; }
+    .fs-tab-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5); display: block; }
+    .fs-tab-sub { font-size: 10px; color: rgba(255,255,255,0.3); display: block; margin-top: 2px; }
     .fs-tab-status { margin-top: 4px; }
-    .fs-tab.active { background: var(--sage); }
+    .fs-tab.active { background: rgba(255,255,255,0.18); }
     .fs-tab.active .fs-tab-label { color: #FFFFFF; }
     .fs-tab.active .fs-tab-sub { color: rgba(255,255,255,0.65); }
-    .fs-tab.ready .fs-tab-status::after { content: '✓'; font-size: 10px; color: var(--sage); }
-    .fs-tab.active.ready .fs-tab-status::after { color: rgba(255,255,255,0.8); }
+    .fs-tab.ready .fs-tab-status::after { content: '✓'; font-size: 10px; color: rgba(255,255,255,0.6); }
+    .fs-tab.active.ready .fs-tab-status::after { color: #FFFFFF; }
 
     /* Image display */
     .fs-image-wrap {
       position: relative; border-radius: 20px; overflow: hidden;
-      background: var(--bg-surface); box-shadow: var(--shadow-card);
+      background: rgba(0,0,0,0.2);
       min-height: 300px;
     }
     .fs-image {
@@ -2535,11 +2554,11 @@
 <div class="screen" id="screen-future">
   <div class="container future-container">
 
-    <!-- Sage banner with copy -->
-    <div class="fs-banner">
+    <!-- Header copy — on sage bg -->
+    <div class="fs-header-text">
       <p class="future-label">Future Self</p>
-      <h1 class="future-title">See who you're becoming.</h1>
-      <p class="future-sub">Upload a photo. We'll show you what following through looks like.</p>
+      <h1 class="future-title">Meet the version of you who followed through.</h1>
+      <p class="future-sub">Upload a photo. We'll generate the version of you who stayed disciplined.</p>
     </div>
 
     <!-- UPLOAD ZONE (implodes on generate) -->
@@ -2550,14 +2569,16 @@
         <div id="uploadPlaceholder">
           <div class="future-upload-icon"><span>↑</span></div>
           <p class="future-upload-label">Upload a reference photo</p>
-          <p class="future-upload-hint">Your starting point</p>
+          <p class="future-upload-hint">This is where it starts</p>
         </div>
       </div>
 
-      <button class="future-generate-btn" id="generateBtn" onclick="generateAllTimelines()">Build My Future Self →</button>
+      <p class="fs-motivation">Most people never follow through.</p>
+
+      <button class="future-generate-btn" id="generateBtn" onclick="generateAllTimelines()">Reveal My Future Self →</button>
 
       <p class="future-skip-wrap">
-        <button class="future-skip" onclick="showScreen('program')">Skip for now</button>
+        <button class="future-skip" onclick="showScreen('program')">Not ready yet</button>
       </p>
     </div>
 
