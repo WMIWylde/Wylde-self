@@ -2303,13 +2303,17 @@
         Object.assign(state, pd);
         if (result.data.xp !== undefined) state.xp = result.data.xp;
         if (result.data.streak !== undefined) state.streak = result.data.streak;
+        // Load program from Supabase if available and not already in localStorage
+        if (result.data.program && !localStorage.getItem('wylde_program')) {
+          try { localStorage.setItem('wylde_program', JSON.stringify(result.data.program)); } catch(e) {}
+        }
         if (state.name) {
           document.getElementById('navUserName').textContent = state.name.toUpperCase();
           document.querySelectorAll('.nav-tab.locked').forEach(function(t){ t.classList.remove('locked'); });
           if (!localStorage.getItem('wylde_intro_seen')) {
-            setTimeout(function(){ playIntro(function(){ showScreen('overview'); }); }, 100);
+            setTimeout(function(){ playIntro(function(){ showScreen('overview'); loadSavedProgram(); }); }, 100);
           } else {
-            setTimeout(function(){ showScreen('overview'); }, 100);
+            setTimeout(function(){ showScreen('overview'); loadSavedProgram(); }, 100);
           }
         }
         _updateLevelDisplay();
@@ -2712,7 +2716,11 @@
           document.getElementById('navUserName').textContent = state.name.toUpperCase();
           document.querySelectorAll('.nav-tab.locked').forEach(function(t){ t.classList.remove('locked'); });
           _updateLevelDisplay();
-          setTimeout(function(){ showScreen('overview'); }, 100);
+          setTimeout(function(){
+            showScreen('overview');
+            // Load saved program if exists
+            loadSavedProgram();
+          }, 100);
         }
       }
     } catch(e) {}
@@ -3009,6 +3017,8 @@
 
   function regenerateProgram() {
     if (!confirm('Generate a new workout program based on your current profile?')) return;
+    localStorage.removeItem('wylde_program');
+    localStorage.removeItem('wylde_program_date');
     showScreen('program');
     setTimeout(function(){ generateProgram(); }, 300);
   }
@@ -3033,6 +3043,9 @@
     state.log = log;
     state.joinedDate = joinedDate;
     saveProfile();
+    // Clear saved program
+    localStorage.removeItem('wylde_program');
+    localStorage.removeItem('wylde_program_date');
     showScreen('onboard');
     obGoTo(1);
   }
@@ -3044,6 +3057,8 @@
       sb.auth.signOut().then(function() {
         currentUser = null;
         localStorage.removeItem('wylde_profile');
+        localStorage.removeItem('wylde_program');
+        localStorage.removeItem('wylde_program_date');
         location.reload();
       });
     } else {
@@ -3702,6 +3717,44 @@
     addDay();
   }
 
+  // ═══ PROGRAM PERSISTENCE ═══
+  function saveProgramData(plan) {
+    try {
+      localStorage.setItem('wylde_program', JSON.stringify(plan));
+      localStorage.setItem('wylde_program_date', new Date().toISOString());
+    } catch(e) { console.warn('Failed to save program:', e); }
+    // Also save to Supabase if authenticated
+    var sb = _getSupabase();
+    if (sb && currentUser) {
+      sb.from('profiles').upsert({
+        id: currentUser.id,
+        program: plan,
+        program_date: new Date().toISOString()
+      }, { onConflict: 'id' }).then(function(res) {
+        if (res.error) console.warn('Supabase program save error:', res.error.message);
+      });
+    }
+  }
+
+  function loadSavedProgram() {
+    var container = document.getElementById('programDays');
+    var btn = document.getElementById('generateProgramBtn');
+    var output = document.getElementById('programOutput');
+    // Try localStorage first
+    try {
+      var saved = localStorage.getItem('wylde_program');
+      if (saved) {
+        var plan = JSON.parse(saved);
+        if (plan && plan.length > 0) {
+          if (output) output.classList.add('show');
+          renderPlan(plan, container, btn);
+          return true;
+        }
+      }
+    } catch(e) {}
+    return false;
+  }
+
   function generateProgram(constraint) {
     var btn = document.getElementById('generateProgramBtn');
     if (btn) { btn.textContent = 'Building your program...'; btn.disabled = true; }
@@ -3752,7 +3805,10 @@
       text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
       var start = text.indexOf('['), end = text.lastIndexOf(']');
       if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
-      renderPlan(JSON.parse(text), container, btn);
+      var parsedPlan = JSON.parse(text);
+      // Save program to localStorage and Supabase
+      saveProgramData(parsedPlan);
+      renderPlan(parsedPlan, container, btn);
     })
     .catch(function(err) {
       console.error('Program error:', err);
