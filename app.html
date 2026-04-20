@@ -1326,18 +1326,20 @@
       </div>
     </div>
 
-    <!-- STEP 2 — Goal + Fitness Level -->
+    <!-- STEP 2 — Goals + Fitness Level -->
     <div class="ob-step" id="obStep2">
       <h1 class="ob-step-title">What are you training for?</h1>
-      <p class="ob-step-sub">We'll build everything around this.</p>
+      <p class="ob-step-sub">Select all that apply — we'll build around your goals.</p>
 
       <div class="form-group ob-field">
-        <label>Primary goal</label>
+        <label>Your goals <span class="ob-optional">(select multiple)</span></label>
         <div class="pill-group" id="goalGroup">
-          <button class="pill" onclick="selectPill(this,'goalGroup')">Lose fat</button>
-          <button class="pill" onclick="selectPill(this,'goalGroup')">Build muscle</button>
-          <button class="pill" onclick="selectPill(this,'goalGroup')">Get lean &amp; athletic</button>
-          <button class="pill" onclick="selectPill(this,'goalGroup')">Build confidence</button>
+          <button class="pill" onclick="togglePill(this)">Burn fat</button>
+          <button class="pill" onclick="togglePill(this)">Build muscle</button>
+          <button class="pill" onclick="togglePill(this)">Get lean &amp; athletic</button>
+          <button class="pill" onclick="togglePill(this)">Build confidence</button>
+          <button class="pill" onclick="togglePill(this)">Improve endurance</button>
+          <button class="pill" onclick="togglePill(this)">Increase flexibility</button>
         </div>
       </div>
 
@@ -1357,6 +1359,37 @@
           <button class="pill" onclick="selectPill(this,'daysGroup')">4 days</button>
           <button class="pill" onclick="selectPill(this,'daysGroup')">5 days</button>
           <button class="pill" onclick="selectPill(this,'daysGroup')">6 days</button>
+        </div>
+      </div>
+
+      <div class="form-group ob-field">
+        <label>Do you have equipment at home?</label>
+        <div class="pill-group" id="equipmentGroup">
+          <button class="pill" onclick="selectPill(this,'equipmentGroup')">Yes — full setup</button>
+          <button class="pill" onclick="selectPill(this,'equipmentGroup')">Some basics</button>
+          <button class="pill" onclick="selectPill(this,'equipmentGroup')">No equipment</button>
+        </div>
+      </div>
+
+      <div class="form-group ob-field">
+        <label>Do you have access to a gym?</label>
+        <div class="pill-group" id="gymGroup">
+          <button class="pill" onclick="selectPill(this,'gymGroup')">Yes</button>
+          <button class="pill" onclick="selectPill(this,'gymGroup')">No</button>
+          <button class="pill" onclick="selectPill(this,'gymGroup')">Sometimes</button>
+        </div>
+      </div>
+
+      <div class="form-group ob-field">
+        <label>Open to workout classes? <span class="ob-optional">(optional)</span></label>
+        <div class="pill-group" id="classGroup">
+          <button class="pill" onclick="togglePill(this)">Yoga</button>
+          <button class="pill" onclick="togglePill(this)">Pilates</button>
+          <button class="pill" onclick="togglePill(this)">Spin / Cycling</button>
+          <button class="pill" onclick="togglePill(this)">HIIT classes</button>
+          <button class="pill" onclick="togglePill(this)">Boxing</button>
+          <button class="pill" onclick="togglePill(this)">Swimming</button>
+          <button class="pill" onclick="togglePill(this)">Not interested</button>
         </div>
       </div>
 
@@ -2063,6 +2096,47 @@
       </div>
     </div>
     <p class="streak-fire" id="streakMsg"></p>
+
+    <!-- Settings & Account -->
+    <div style="margin-top:40px;padding-top:24px;border-top:1px solid rgba(0,0,0,0.06);">
+      <p style="font-family:var(--ff-body);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:16px;">Settings &amp; Account</p>
+
+      <button onclick="openEditProfile()" style="display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:12px;cursor:pointer;margin-bottom:10px;text-align:left;">
+        <span style="font-size:20px;">&#9998;</span>
+        <span style="flex:1;">
+          <span style="display:block;font-size:15px;font-weight:600;color:var(--text);">Edit Profile</span>
+          <span style="display:block;font-size:13px;color:var(--muted);margin-top:2px;">Update goals, equipment, fitness level</span>
+        </span>
+        <span style="color:var(--muted);font-size:14px;">&rsaquo;</span>
+      </button>
+
+      <button onclick="regenerateProgram()" style="display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:12px;cursor:pointer;margin-bottom:10px;text-align:left;">
+        <span style="font-size:20px;">&#8635;</span>
+        <span style="flex:1;">
+          <span style="display:block;font-size:15px;font-weight:600;color:var(--text);">Regenerate Program</span>
+          <span style="display:block;font-size:13px;color:var(--muted);margin-top:2px;">Get a fresh AI-built workout plan</span>
+        </span>
+        <span style="color:var(--muted);font-size:14px;">&rsaquo;</span>
+      </button>
+
+      <button onclick="resetProfile()" style="display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:12px;cursor:pointer;margin-bottom:10px;text-align:left;">
+        <span style="font-size:20px;">&#128260;</span>
+        <span style="flex:1;">
+          <span style="display:block;font-size:15px;font-weight:600;color:var(--text);">Reset Profile</span>
+          <span style="display:block;font-size:13px;color:var(--muted);margin-top:2px;">Start fresh — redo onboarding from scratch</span>
+        </span>
+        <span style="color:var(--muted);font-size:14px;">&rsaquo;</span>
+      </button>
+
+      <button onclick="signOutUser()" style="display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:12px;cursor:pointer;margin-bottom:10px;text-align:left;">
+        <span style="font-size:20px;">&#9211;</span>
+        <span style="flex:1;">
+          <span style="display:block;font-size:15px;font-weight:600;color:var(--text);">Sign Out</span>
+          <span style="display:block;font-size:13px;color:var(--muted);margin-top:2px;">Log out of your account</span>
+        </span>
+        <span style="color:var(--muted);font-size:14px;">&rsaquo;</span>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -2617,7 +2691,8 @@
   // STATE
   var state = {
     name: '', gender: '', age: '', height: '', weight: '', weightUnit: 'lbs',
-    goal: '', level: '', days: '',
+    goals: [], level: '', days: '',
+    equipment: '', gymAccess: '', classPreferences: [],
     health: [], healthNotes: '', diet: [], dietNotes: '',
     sessions: 0, streak: 0,
     log: [],
@@ -2772,24 +2847,30 @@
     if (!name) { document.getElementById('userName').style.borderColor='rgba(220,80,80,0.6)'; return; }
     var gender  = document.querySelector('#genderGroup .selected');
     var age     = document.querySelector('#ageGroup .selected');
-    var goal    = document.querySelector('#goalGroup .selected');
+    var goals   = Array.from(document.querySelectorAll('#goalGroup .selected')).map(function(p){ return p.textContent; });
     var level   = document.querySelector('#levelGroup .selected');
     var days    = document.querySelector('#daysGroup .selected');
     var height  = document.querySelector('#heightGroup .selected');
     var weight  = document.getElementById('weightInput').value.trim();
     var wUnit   = document.querySelector('#weightUnitGroup .selected');
+    var equipment = document.querySelector('#equipmentGroup .selected');
+    var gym     = document.querySelector('#gymGroup .selected');
+    var classes = Array.from(document.querySelectorAll('#classGroup .selected')).map(function(p){ return p.textContent; });
     var health  = Array.from(document.querySelectorAll('#healthGroup .selected')).map(function(p){ return p.textContent; });
     var notes   = document.getElementById('healthNotes').value.trim();
 
-    state.name        = name;
-    state.gender      = gender  ? gender.textContent  : 'Prefer not to say';
-    state.age         = age     ? age.textContent      : '';
-    state.height      = height  ? height.textContent   : '';
-    state.weight      = weight  || '';
-    state.weightUnit  = wUnit   ? wUnit.textContent    : 'lbs';
-    state.goal        = goal    ? goal.textContent     : 'Get lean & athletic';
-    state.level       = level   ? level.textContent    : 'Intermediate';
-    state.days        = days    ? days.textContent     : '4 days';
+    state.name             = name;
+    state.gender           = gender    ? gender.textContent    : 'Prefer not to say';
+    state.age              = age       ? age.textContent        : '';
+    state.height           = height    ? height.textContent     : '';
+    state.weight           = weight    || '';
+    state.weightUnit       = wUnit     ? wUnit.textContent      : 'lbs';
+    state.goals            = goals.length > 0 ? goals : ['Get lean & athletic'];
+    state.level            = level     ? level.textContent      : 'Intermediate';
+    state.days             = days      ? days.textContent       : '4 days';
+    state.equipment        = equipment ? equipment.textContent  : '';
+    state.gymAccess        = gym       ? gym.textContent        : '';
+    state.classPreferences = classes.filter(function(c){ return c !== 'Not interested'; });
     var diet   = Array.from(document.querySelectorAll('#dietGroup .selected')).map(function(p){ return p.textContent; });
     var dNotes = document.getElementById('dietNotes').value.trim();
     state.health      = health;
@@ -2797,8 +2878,11 @@
     state.diet        = diet;
     state.dietNotes   = dNotes;
 
+    // Backward compat: keep goal as primary for display
+    state.goal = state.goals[0] || 'Get lean & athletic';
+
     document.getElementById('programName').textContent = name;
-    document.getElementById('programSub').textContent  = 'A ' + state.days + ' program built around your goal: ' + state.goal + '.';
+    document.getElementById('programSub').textContent  = 'A ' + state.days + ' program built around your goals.';
 
     // Unlock all nav tabs
     document.querySelectorAll('.nav-tab.locked').forEach(function(t){ t.classList.remove('locked'); });
@@ -2815,6 +2899,9 @@
 
     // Set after image based on gender
     setAfterImage();
+
+    // Auto-generate workout program after profile completion
+    setTimeout(function() { generateProgram(); }, 500);
 
     // Play intro animation for first-time users
     playIntro(function(){ showScreen('future'); });
@@ -2837,6 +2924,110 @@
     intro.style.display = 'none';
     localStorage.setItem('wylde_intro_seen', '1');
     if (window._introCallback) { window._introCallback(); window._introCallback = null; }
+  }
+
+  // SETTINGS FUNCTIONS
+  function openEditProfile() {
+    // Go back to onboarding with current values pre-filled
+    showScreen('onboard');
+    obGoTo(1);
+    // Pre-fill name
+    var nameInput = document.getElementById('userName');
+    if (nameInput && state.name) nameInput.value = state.name;
+    // Pre-fill gender
+    if (state.gender) {
+      document.querySelectorAll('#genderGroup .pill').forEach(function(p){
+        p.classList.remove('selected');
+        if (p.textContent === state.gender) p.classList.add('selected');
+      });
+    }
+    // Pre-fill goals (multi-select)
+    if (state.goals && state.goals.length > 0) {
+      document.querySelectorAll('#goalGroup .pill').forEach(function(p){
+        p.classList.remove('selected');
+        if (state.goals.indexOf(p.textContent) !== -1) p.classList.add('selected');
+      });
+    }
+    // Pre-fill level
+    if (state.level) {
+      document.querySelectorAll('#levelGroup .pill').forEach(function(p){
+        p.classList.remove('selected');
+        if (p.textContent === state.level) p.classList.add('selected');
+      });
+    }
+    // Pre-fill days
+    if (state.days) {
+      document.querySelectorAll('#daysGroup .pill').forEach(function(p){
+        p.classList.remove('selected');
+        if (p.textContent === state.days) p.classList.add('selected');
+      });
+    }
+    // Pre-fill equipment
+    if (state.equipment) {
+      document.querySelectorAll('#equipmentGroup .pill').forEach(function(p){
+        p.classList.remove('selected');
+        if (p.textContent === state.equipment) p.classList.add('selected');
+      });
+    }
+    // Pre-fill gym
+    if (state.gymAccess) {
+      document.querySelectorAll('#gymGroup .pill').forEach(function(p){
+        p.classList.remove('selected');
+        if (p.textContent === state.gymAccess) p.classList.add('selected');
+      });
+    }
+    // Pre-fill classes (multi-select)
+    if (state.classPreferences && state.classPreferences.length > 0) {
+      document.querySelectorAll('#classGroup .pill').forEach(function(p){
+        p.classList.remove('selected');
+        if (state.classPreferences.indexOf(p.textContent) !== -1) p.classList.add('selected');
+      });
+    }
+  }
+
+  function regenerateProgram() {
+    if (!confirm('Generate a new workout program based on your current profile?')) return;
+    showScreen('program');
+    setTimeout(function(){ generateProgram(); }, 300);
+  }
+
+  function resetProfile() {
+    if (!confirm('This will erase your profile and start fresh. Your session history will be kept. Continue?')) return;
+    // Keep session data
+    var sessions = state.sessions;
+    var streak = state.streak;
+    var log = state.log;
+    var joinedDate = state.joinedDate;
+    // Reset state
+    Object.assign(state, {
+      name: '', gender: '', age: '', height: '', weight: '', weightUnit: 'lbs',
+      goals: [], goal: '', level: '', days: '',
+      equipment: '', gymAccess: '', classPreferences: [],
+      health: [], healthNotes: '', diet: [], dietNotes: '',
+      avatarUrl: ''
+    });
+    state.sessions = sessions;
+    state.streak = streak;
+    state.log = log;
+    state.joinedDate = joinedDate;
+    saveProfile();
+    showScreen('onboard');
+    obGoTo(1);
+  }
+
+  function signOutUser() {
+    if (!confirm('Sign out of your account?')) return;
+    var sb = _getSupabase();
+    if (sb) {
+      sb.auth.signOut().then(function() {
+        currentUser = null;
+        localStorage.removeItem('wylde_profile');
+        location.reload();
+      });
+    } else {
+      localStorage.removeItem('wylde_profile');
+      location.reload();
+    }
   }
 
   // TIMELINE
@@ -3490,16 +3681,23 @@
     container.innerHTML = '<div style="padding:32px 0;text-align:center;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:16px;color:var(--muted);">Your AI coach is building your program...</p><div style="width:40px;height:1px;background:var(--gold);margin:16px auto;"></div></div>';
     document.getElementById('altProgramSection').style.display = 'none';
 
+    var goalsStr = (state.goals && state.goals.length > 0) ? state.goals.join(', ') : (state.goal || 'General fitness');
     var healthStr = state.health.length > 0 ? state.health.join(', ') : 'none';
     var notesStr = state.healthNotes || 'none';
+    var equipStr = state.equipment || 'not specified';
+    var gymStr = state.gymAccess || 'not specified';
+    var classStr = (state.classPreferences && state.classPreferences.length > 0) ? state.classPreferences.join(', ') : 'none';
     var constraintLine = constraint ? '\nAdjustment requested: ' + constraint : '';
 
     var prompt = 'You are an expert personal trainer and strength coach. Create a detailed ' + state.days + ' per week workout program for the following person:\n\n' +
       'Name: ' + state.name + '\n' +
       'Age range: ' + (state.age || 'not specified') + '\n' +
-      'Goal: ' + state.goal + '\n' +
+      'Goals: ' + goalsStr + '\n' +
       'Fitness level: ' + state.level + '\n' +
       'Days per week: ' + state.days + '\n' +
+      'Equipment at home: ' + equipStr + '\n' +
+      'Gym access: ' + gymStr + '\n' +
+      'Open to classes: ' + classStr + '\n' +
       'Health concerns: ' + healthStr + '\n' +
       'Additional notes: ' + notesStr + constraintLine + '\n\n' +
       'Return ONLY a JSON array with no markdown, no backticks, no extra text. Each element: {"day":"Day 01","focus":"Focus Label","exercises":[["Full Exercise Name","sets x reps","one-line movement cue describing form and motion"],...]}\n' +
@@ -3507,17 +3705,19 @@
       '- Use precise, full exercise names (e.g. "Flat Barbell Bench Press" not "Bench Press", "Cable Chest Fly" not "Cable Flyes", "Standing Barbell Curl" not "Curls")\n' +
       '- The third element in each exercise array is a brief coaching cue explaining the movement (10-20 words)\n' +
       '- Include 5-6 exercises per day\n' +
-      '- Account for health concerns and any adjustment requested\n' +
+      '- Account for equipment availability and gym access — if no gym, use bodyweight/home exercises\n' +
+      '- If the user is open to classes, incorporate 1-2 class-based sessions (e.g. yoga, spin) into the weekly plan\n' +
+      '- Account for ALL listed goals, health concerns, and any adjustment requested\n' +
       'Return only the JSON array.';
 
-    fetch('/api/anthropic', {
+    fetch('/api/openai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 2048, messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] })
     })
     .then(function(res) { return res.json(); })
     .then(function(data) {
-      var text = data.content && data.content[0] && data.content[0].text;
+      var text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
       if (!text) throw new Error('No response');
       text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
       var start = text.indexOf('['), end = text.lastIndexOf(']');
@@ -3547,19 +3747,20 @@
     btn.disabled = true;
     btn.textContent = 'Finding alternative...';
 
+    var goalsStr = (state.goals && state.goals.length > 0) ? state.goals.join(', ') : (state.goal || 'General fitness');
     var constraintNote = constraint ? 'Constraint: ' + constraint + '.' : 'No specific constraints.';
     var prompt = 'You are an expert personal trainer. The user needs an alternative workout for ' + dayName + ' (originally: ' + dayFocus + ').\n' +
-      constraintNote + '\nUser: Goal: ' + state.goal + ', Level: ' + state.level + ', Health: ' + (state.health.join(', ') || 'none') + '\n' +
+      constraintNote + '\nUser: Goals: ' + goalsStr + ', Level: ' + state.level + ', Equipment: ' + (state.equipment || 'not specified') + ', Gym: ' + (state.gymAccess || 'not specified') + ', Health: ' + (state.health.join(', ') || 'none') + '\n' +
       'Return ONLY a JSON object: {"focus":"Label","exercises":[["Full Exercise Name","sets x reps","brief movement cue describing form"],...]}\nUse precise full exercise names. Include 5 exercises. Return only the JSON.';
 
-    fetch('/api/anthropic', {
+    fetch('/api/openai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 512, messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] })
     })
     .then(function(res) { return res.json(); })
     .then(function(data) {
-      var text = data.content && data.content[0] && data.content[0].text;
+      var text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
       if (!text) throw new Error('No response');
       text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
       var start = text.indexOf('{'), end = text.lastIndexOf('}');
