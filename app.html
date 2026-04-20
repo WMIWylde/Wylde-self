@@ -266,11 +266,12 @@
     .screen-title-row { display:flex;align-items:center;gap:10px;margin-bottom:16px; }
     .screen-title-row .screen-title { margin-bottom:0; }
     .hb-bar { height:2px;border-radius:1px;animation:heartbeat-bar 1.5s ease-in-out infinite; }
-    .rest-timer-wrap { display:none;flex-direction:column;align-items:center;padding:16px 0 8px;position:relative; }
+    .rest-timer-wrap { display:none;flex-direction:row;align-items:center;gap:20px;padding:16px 0 8px;position:relative; }
     .rest-timer-wrap.active { display:flex; }
+    .rest-timer-inner { display:flex;flex-direction:column;align-items:center; }
     .rest-status { font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px; }
-    .rest-skip { font-size:10px;letter-spacing:0.08em;color:#333;background:none;border:none;cursor:pointer;font-family:var(--ff-body);text-transform:uppercase;position:absolute;bottom:4px;right:0;padding:4px 8px;transition:color 0.2s; }
-    .rest-skip:hover { color:var(--muted); }
+    .rest-skip { font-size:11px;letter-spacing:0.06em;color:var(--text);background:var(--surface);border:1px solid rgba(0,0,0,0.08);cursor:pointer;font-family:var(--ff-body);text-transform:uppercase;font-weight:500;padding:10px 18px;border-radius:8px;transition:background 0.2s,border-color 0.2s;white-space:nowrap; }
+    .rest-skip:hover { background:rgba(0,0,0,0.04);border-color:rgba(0,0,0,0.14); }
     .log-set-btn { font-family:var(--ff-body);font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:6px 12px;cursor:pointer;border-radius:6px;background:rgba(60,170,90,0.18);border:1px solid rgba(60,170,90,0.45);color:#50e080;transition:background 0.2s;margin-top:6px; }
     .log-set-btn:hover { background:rgba(60,170,90,0.30); }
     .log-set-btn:disabled { opacity:0.3;cursor:not-allowed; }
@@ -3609,6 +3610,12 @@
       var sk = 'wylde_' + dayTag + '_' + idx;
       var saved = {};
       try { saved = JSON.parse(localStorage.getItem(sk) || '{}'); } catch(e) {}
+      // Parse recommended sets x reps (e.g. "3x12", "4 x 8-10")
+      var recSets = '', recReps = '';
+      if (sets) {
+        var match = String(sets).match(/(\d+)\s*[xX×]\s*(\d+)/);
+        if (match) { recSets = match[1]; recReps = match[2]; }
+      }
       var descHTML = desc ? '<p class="ex-desc">' + esc(desc) + '</p>' : '';
       return '<div class="exercise" style="flex-direction:column;align-items:flex-start;">' +
         '<div style="display:flex;justify-content:space-between;width:100%;align-items:flex-start;">' +
@@ -3616,8 +3623,8 @@
             '<button class="ex-name-btn" data-ex="' + esc(name) + '" onclick="showFormGuide(this.dataset.ex)">' + esc(name) + '</button>' +
             descHTML +
             '<div class="ex-track">' +
-              '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="—" value="' + esc(saved.sets || '') + '" data-sk="' + sk + '" data-field="sets" oninput="saveTracking(this)" /><p class="ex-track-lbl">Sets</p></div>' +
-              '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="—" value="' + esc(saved.reps || '') + '" data-sk="' + sk + '" data-field="reps" oninput="saveTracking(this)" /><p class="ex-track-lbl">Reps</p></div>' +
+              '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="' + (recSets || '—') + '" value="' + esc(saved.sets || recSets) + '" data-sk="' + sk + '" data-field="sets" oninput="saveTracking(this)" /><p class="ex-track-lbl">Sets</p></div>' +
+              '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="' + (recReps || '—') + '" value="' + esc(saved.reps || recReps) + '" data-sk="' + sk + '" data-field="reps" oninput="saveTracking(this)" /><p class="ex-track-lbl">Reps</p></div>' +
               '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="—" value="' + esc(saved.weight || '') + '" data-sk="' + sk + '" data-field="weight" oninput="saveTracking(this)" /><p class="ex-track-lbl">lbs</p></div>' +
             '</div>' +
             '<button class="log-set-btn" data-exname="' + esc(name) + '" onclick="startRestTimer(this, this.dataset.exname)">Log Set \u2713</button>' +
@@ -3625,12 +3632,14 @@
           '<span class="ex-sets" style="margin-left:12px;flex-shrink:0;">' + esc(sets) + '</span>' +
         '</div>' +
         '<div class="rest-timer-wrap">' +
-          '<div class="rest-status">Resting...</div>' +
-          '<svg width="120" height="120" viewBox="0 0 120 120">' +
-            '<circle cx="60" cy="60" r="54" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="6"/>' +
-            '<circle class="rest-ring" cx="60" cy="60" r="54" fill="none" stroke="#5a9ecf" stroke-width="6" stroke-linecap="round" stroke-dasharray="339" stroke-dashoffset="0" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 0.9s linear,stroke 0.5s;"/>' +
-          '</svg>' +
-          '<button class="rest-skip">Skip rest</button>' +
+          '<div class="rest-timer-inner">' +
+            '<div class="rest-status">Resting...</div>' +
+            '<svg width="100" height="100" viewBox="0 0 120 120">' +
+              '<circle cx="60" cy="60" r="54" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="6"/>' +
+              '<circle class="rest-ring" cx="60" cy="60" r="54" fill="none" stroke="#5a9ecf" stroke-width="6" stroke-linecap="round" stroke-dasharray="339" stroke-dashoffset="0" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 0.9s linear,stroke 0.5s;"/>' +
+            '</svg>' +
+          '</div>' +
+          '<button class="rest-skip">Skip</button>' +
         '</div>' +
       '</div>';
     }).join('');
@@ -5219,6 +5228,98 @@
   <div class="hb-seg" style="width:5px;animation-delay:0.52s"></div>
   <span class="hb-live">LIVE</span>
 </div>
+
+<!-- FIRST-USE WALKTHROUGH -->
+<style>
+  .wt-overlay { position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity 0.35s ease; }
+  .wt-overlay.show { opacity:1; }
+  .wt-card { background:#fff;border-radius:20px;max-width:340px;width:100%;padding:36px 28px 28px;text-align:center;transform:translateY(16px);transition:transform 0.35s ease;position:relative; }
+  .wt-overlay.show .wt-card { transform:translateY(0); }
+  .wt-icon { width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:26px; }
+  .wt-title { font-family:var(--ff-serif,Georgia,serif);font-size:20px;font-weight:700;color:#1A1A1A;margin-bottom:8px;letter-spacing:-0.02em; }
+  .wt-desc { font-size:14px;line-height:1.6;color:#666;margin-bottom:28px; }
+  .wt-dots { display:flex;gap:6px;justify-content:center;margin-bottom:20px; }
+  .wt-dot { width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,0.1);transition:background 0.25s; }
+  .wt-dot.active { background:#7A8E76; }
+  .wt-btn { font-family:var(--ff-body,Inter,sans-serif);font-size:14px;font-weight:600;padding:12px 28px;border-radius:10px;border:none;cursor:pointer;transition:all 0.2s;letter-spacing:-0.01em; }
+  .wt-btn-primary { background:#1A1A1A;color:#fff; }
+  .wt-btn-primary:hover { background:#333; }
+  .wt-btn-skip { background:none;border:none;color:#999;font-size:12px;cursor:pointer;margin-top:12px;font-family:var(--ff-body,Inter,sans-serif);letter-spacing:0.04em; }
+  .wt-btn-skip:hover { color:#666; }
+</style>
+
+<div class="wt-overlay" id="walkthrough" style="display:none;">
+  <div class="wt-card">
+    <div class="wt-icon" id="wtIcon"></div>
+    <h3 class="wt-title" id="wtTitle"></h3>
+    <p class="wt-desc" id="wtDesc"></p>
+    <div class="wt-dots" id="wtDots"></div>
+    <button class="wt-btn wt-btn-primary" id="wtNext" onclick="walkthroughNext()">Next</button>
+    <br>
+    <button class="wt-btn-skip" id="wtSkip" onclick="walkthroughDismiss()">Skip tour</button>
+  </div>
+</div>
+
+<script>
+(function() {
+  if (localStorage.getItem('wylde_walkthrough_done')) return;
+
+  var steps = [
+    { icon: '👋', bg: 'rgba(122,142,118,0.12)', title: 'Welcome to Wylde Self', desc: 'This is your identity execution system. Let\u2019s walk through what\u2019s here so you can hit the ground running.' },
+    { icon: '⚡', bg: 'rgba(122,142,118,0.12)', title: 'Today', desc: 'Your daily mission. One screen, one focus \u2014 what you need to do right now to close the gap.' },
+    { icon: '🔮', bg: 'rgba(201,173,110,0.12)', title: 'Future Self', desc: 'An AI-generated image of who you\u2019re becoming. Not fantasy \u2014 a reference point you train toward.' },
+    { icon: '🗣️', bg: 'rgba(90,158,207,0.12)', title: 'Coach', desc: 'Your AI coach knows your history, your patterns, and when to push. Available whenever you need it.' },
+    { icon: '📊', bg: 'rgba(122,142,118,0.12)', title: 'Optimize', desc: 'Track your streaks, log nutrition, and see proof you\u2019re changing. Settings live here too.' },
+    { icon: '🚀', bg: 'rgba(201,173,110,0.12)', title: 'You\u2019re ready', desc: 'Start with today\u2019s mission. The gap closes one day at a time.' }
+  ];
+
+  var current = 0;
+  var overlay = document.getElementById('walkthrough');
+  var icon = document.getElementById('wtIcon');
+  var title = document.getElementById('wtTitle');
+  var desc = document.getElementById('wtDesc');
+  var dots = document.getElementById('wtDots');
+  var nextBtn = document.getElementById('wtNext');
+
+  function renderStep() {
+    var s = steps[current];
+    icon.textContent = s.icon;
+    icon.style.background = s.bg;
+    title.textContent = s.title;
+    desc.textContent = s.desc;
+    dots.innerHTML = steps.map(function(_, i) {
+      return '<div class="wt-dot' + (i === current ? ' active' : '') + '"></div>';
+    }).join('');
+    nextBtn.textContent = current === steps.length - 1 ? 'Let\u2019s go' : 'Next';
+  }
+
+  window.walkthroughNext = function() {
+    current++;
+    if (current >= steps.length) {
+      walkthroughDismiss();
+    } else {
+      renderStep();
+    }
+  };
+
+  window.walkthroughDismiss = function() {
+    overlay.classList.remove('show');
+    setTimeout(function() { overlay.style.display = 'none'; }, 350);
+    localStorage.setItem('wylde_walkthrough_done', '1');
+  };
+
+  // Show after a brief delay (let app load first)
+  setTimeout(function() {
+    renderStep();
+    overlay.style.display = 'flex';
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        overlay.classList.add('show');
+      });
+    });
+  }, 1200);
+})();
+</script>
 
 </body>
 </html>
