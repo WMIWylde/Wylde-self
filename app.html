@@ -192,21 +192,144 @@
 
     /* FUTURE SELF */
     .future-container { max-width: 520px; }
-    .future-header { text-align: center; padding: 48px 0 32px; }
-    .future-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text3); margin-bottom: 20px; }
-    .future-title { font-size: clamp(28px, 6vw, 36px); font-weight: 700; color: var(--text); line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 10px; }
-    .future-sub { font-size: 14px; color: var(--text2); line-height: 1.5; }
-    .future-upload { background: var(--bg-surface); border-radius: 20px; padding: 48px 32px; text-align: center; cursor: pointer; margin-bottom: 20px; box-shadow: var(--shadow-card); transition: all 0.25s; }
+
+    /* Sage banner */
+    .fs-banner {
+      margin: 12px 0 0; border-radius: 20px;
+      padding: 36px 24px 32px; text-align: center;
+      background: linear-gradient(160deg, #7a9a6e 0%, #6b8b60 50%, #5c7c53 100%);
+      position: relative; overflow: hidden;
+    }
+    .fs-banner::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .future-label {
+      position: relative; z-index: 1;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.25em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35);
+      margin-bottom: 14px;
+      animation: fsGoldPulse 3s ease-in-out infinite;
+    }
+    @keyframes fsGoldPulse {
+      0%, 100% { color: rgba(255,255,255,0.35); text-shadow: none; }
+      40% { color: #e8d5a3; text-shadow: 0 0 12px rgba(200,169,110,0.5), 0 0 30px rgba(200,169,110,0.2); }
+      60% { color: #e8d5a3; text-shadow: 0 0 12px rgba(200,169,110,0.5), 0 0 30px rgba(200,169,110,0.2); }
+    }
+    .future-title {
+      position: relative; z-index: 1;
+      font-size: clamp(26px, 6vw, 32px); font-weight: 700;
+      color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.15; margin: 0 0 8px;
+    }
+    .future-sub {
+      position: relative; z-index: 1;
+      font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.5;
+    }
+
+    /* Upload zone */
+    .future-upload-wrap { padding: 20px 0 0; }
+    .future-upload {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 44px 24px; text-align: center;
+      cursor: pointer; transition: all 0.3s; box-shadow: var(--shadow-card);
+      position: relative; overflow: hidden;
+    }
     .future-upload:hover { box-shadow: var(--shadow-hover); }
-    .future-upload-icon { width: 56px; height: 56px; border-radius: 50%; background: rgba(110,127,107,0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
-    .future-upload-icon span { font-size: 24px; color: var(--sage); opacity: 0.7; }
-    .future-upload-label { font-size: 15px; color: var(--text2); margin-bottom: 6px; font-weight: 500; }
+    .future-upload-icon { width: 52px; height: 52px; border-radius: 50%; background: rgba(110,127,107,0.08); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+    .future-upload-icon span { font-size: 22px; color: var(--sage); opacity: 0.6; }
+    .future-upload-label { font-size: 15px; color: var(--text2); margin-bottom: 4px; font-weight: 500; }
     .future-upload-hint { font-size: 12px; color: var(--text3); }
-    .future-generate-btn { width: 100%; margin-bottom: 12px; }
-    .future-skip-wrap { text-align: center; margin-bottom: 24px; }
+    .future-upload-preview { width: 100%; max-height: 300px; object-fit: cover; border-radius: 12px; display: none; }
+
+    /* Gold CTA */
+    .future-generate-btn {
+      width: 100%; margin-top: 16px; padding: 16px; border: none; border-radius: 14px;
+      font-family: var(--font-ui); font-size: 15px; font-weight: 600;
+      cursor: pointer; letter-spacing: 0.01em;
+      background: linear-gradient(135deg, #c8a96e 0%, #b5944e 100%);
+      color: #FFFFFF; transition: opacity 0.2s;
+      box-shadow: 0 2px 12px rgba(200,169,110,0.25);
+    }
+    .future-generate-btn:hover { opacity: 0.9; }
+    .future-generate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .future-skip-wrap { text-align: center; margin-top: 14px; margin-bottom: 24px; }
     .future-skip { background: none; border: none; color: var(--text3); font-family: var(--font-ui); font-size: 12px; cursor: pointer; letter-spacing: 0.04em; }
     .future-skip:hover { color: var(--text2); }
-    .future-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+    /* Implode animation on upload zone */
+    .future-upload.imploding {
+      animation: fsImplode 0.6s ease-in forwards;
+    }
+    @keyframes fsImplode {
+      0% { transform: scale(1); opacity: 1; border-radius: 20px; }
+      50% { transform: scale(0.85); opacity: 0.6; border-radius: 50%; }
+      100% { transform: scale(0); opacity: 0; border-radius: 50%; }
+    }
+
+    /* Result gallery — replaces slider */
+    .fs-result { display: none; }
+    .fs-result.active { display: block; animation: fsExplode 0.7s ease-out both; }
+    @keyframes fsExplode {
+      0% { transform: scale(0); opacity: 0; border-radius: 50%; }
+      50% { transform: scale(1.05); opacity: 0.8; border-radius: 20px; }
+      100% { transform: scale(1); opacity: 1; border-radius: 0; }
+    }
+
+    /* Timeline tabs — pill style */
+    .fs-tabs {
+      display: flex; gap: 6px; margin-bottom: 16px;
+      background: var(--bg-surface); border-radius: 14px;
+      padding: 4px; box-shadow: var(--shadow-card);
+    }
+    .fs-tab {
+      flex: 1; padding: 12px 8px; border: none; border-radius: 10px;
+      background: transparent; cursor: pointer; text-align: center;
+      font-family: var(--font-ui); transition: all 0.2s;
+    }
+    .fs-tab-label { font-size: 13px; font-weight: 600; color: var(--text2); display: block; }
+    .fs-tab-sub { font-size: 10px; color: var(--text3); display: block; margin-top: 2px; }
+    .fs-tab-status { margin-top: 4px; }
+    .fs-tab.active { background: var(--sage); }
+    .fs-tab.active .fs-tab-label { color: #FFFFFF; }
+    .fs-tab.active .fs-tab-sub { color: rgba(255,255,255,0.65); }
+    .fs-tab.ready .fs-tab-status::after { content: '✓'; font-size: 10px; color: var(--sage); }
+    .fs-tab.active.ready .fs-tab-status::after { color: rgba(255,255,255,0.8); }
+
+    /* Image display */
+    .fs-image-wrap {
+      position: relative; border-radius: 20px; overflow: hidden;
+      background: var(--bg-surface); box-shadow: var(--shadow-card);
+      min-height: 300px;
+    }
+    .fs-image {
+      width: 100%; display: block; border-radius: 20px;
+      animation: fsFadeIn 0.4s ease both;
+    }
+    @keyframes fsFadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+    .fs-image-label {
+      position: absolute; top: 14px; left: 14px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #fff;
+      padding: 5px 12px; border-radius: 8px;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+    }
+    .fs-loading-overlay {
+      position: absolute; inset: 0; display: flex;
+      flex-direction: column; align-items: center; justify-content: center;
+      background: var(--bg-surface);
+    }
+    .fs-loading-overlay .loading-ring {
+      width: 40px; height: 40px; border: 2px solid var(--border);
+      border-top-color: var(--sage); border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .fs-loading-text { font-size: 13px; color: var(--text3); margin-top: 12px; }
+
+    /* Actions below result */
+    .future-actions { display: flex; gap: 10px; margin-top: 16px; }
     .future-start-btn { flex: 1; }
     .future-reset-btn { flex-shrink: 0; padding: 14px 20px; }
 
@@ -2412,69 +2535,61 @@
 <div class="screen" id="screen-future">
   <div class="container future-container">
 
-    <!-- Cinematic header -->
-    <div class="future-header">
+    <!-- Sage banner with copy -->
+    <div class="fs-banner">
       <p class="future-label">Future Self</p>
-      <h1 class="future-title">This is who you're becoming.</h1>
-      <p class="future-sub">Upload a photo. See your future.</p>
+      <h1 class="future-title">See who you're becoming.</h1>
+      <p class="future-sub">Upload a photo. We'll show you what following through looks like.</p>
     </div>
 
-    <!-- Upload zone -->
-    <div class="future-upload" id="uploadZone" onclick="document.getElementById('photoInput').click()">
-      <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handlePhoto(event.target.files[0])" />
-      <div class="future-upload-icon">
-        <span>↑</span>
+    <!-- UPLOAD ZONE (implodes on generate) -->
+    <div id="fsUploadWrap" class="future-upload-wrap">
+      <div class="future-upload" id="uploadZone" onclick="document.getElementById('photoInput').click()">
+        <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handlePhoto(event.target.files[0])" />
+        <img class="future-upload-preview" id="uploadPreview" src="" alt="" />
+        <div id="uploadPlaceholder">
+          <div class="future-upload-icon"><span>↑</span></div>
+          <p class="future-upload-label">Upload a reference photo</p>
+          <p class="future-upload-hint">Your starting point</p>
+        </div>
       </div>
-      <p class="future-upload-label">Upload a reference photo</p>
-      <p class="future-upload-hint">Your starting point</p>
+
+      <button class="future-generate-btn" id="generateBtn" onclick="generateAllTimelines()">Build My Future Self →</button>
+
+      <p class="future-skip-wrap">
+        <button class="future-skip" onclick="showScreen('program')">Skip for now</button>
+      </p>
     </div>
 
-    <button class="btn ob-next future-generate-btn" id="generateBtn" onclick="generateAllTimelines()">Build My Future Self</button>
+    <!-- RESULT GALLERY (explodes in after generation) -->
+    <div class="fs-result" id="fsResult">
 
-    <p class="future-skip-wrap">
-      <button class="future-skip" onclick="showScreen('program')">Skip for now</button>
-    </p>
-
-    <!-- REVEAL SLIDER -->
-    <div class="reveal-wrap" id="revealWrap" style="display:none;">
-
-      <div class="reveal-tabs" id="revealTabs">
-        <button class="reveal-tab active" data-timeline="12weeks" onclick="switchTimeline('12weeks')">
-          <span class="tab-label">12 weeks</span>
-          <span class="tab-sub">Leaner, more athletic</span>
-          <div class="tab-status" id="status-12weeks"><div class="tab-loader"></div></div>
+      <!-- Timeline tabs -->
+      <div class="fs-tabs" id="fsTabs">
+        <button class="fs-tab active" data-timeline="12weeks" onclick="switchTimeline('12weeks')">
+          <span class="fs-tab-label">12 Weeks</span>
+          <span class="fs-tab-sub">Recomposition</span>
+          <div class="fs-tab-status" id="status-12weeks"></div>
         </button>
-        <button class="reveal-tab" data-timeline="6months" onclick="switchTimeline('6months')">
-          <span class="tab-label">6 months</span>
-          <span class="tab-sub">Clear recomposition</span>
-          <div class="tab-status" id="status-6months"><div class="tab-loader"></div></div>
+        <button class="fs-tab" data-timeline="6months" onclick="switchTimeline('6months')">
+          <span class="fs-tab-label">6 Months</span>
+          <span class="fs-tab-sub">Transformed</span>
+          <div class="fs-tab-status" id="status-6months"></div>
         </button>
-        <button class="reveal-tab" data-timeline="1year" onclick="switchTimeline('1year')">
-          <span class="tab-label">1 year</span>
-          <span class="tab-sub">Full transformation</span>
-          <div class="tab-status" id="status-1year"><div class="tab-loader"></div></div>
+        <button class="fs-tab" data-timeline="1year" onclick="switchTimeline('1year')">
+          <span class="fs-tab-label">1 Year</span>
+          <span class="fs-tab-sub">Peak form</span>
+          <div class="fs-tab-status" id="status-1year"></div>
         </button>
       </div>
 
-      <div class="reveal-slider" id="revealSlider">
-        <div class="reveal-before" id="revealBefore">
-          <img id="beforeImg" src="" alt="Now"/>
-          <span class="reveal-label label-before">NOW</span>
-        </div>
-        <div class="reveal-after" id="revealAfter">
-          <img id="afterImg" src="" alt="Becoming"/>
-          <span class="reveal-label label-after" id="afterTimelineLabel">12 WKS</span>
-          <div class="after-loading" id="afterLoading">
-            <div class="loading-ring"></div>
-            <p class="loading-text" id="loadingText">Generating...</p>
-          </div>
-        </div>
-        <div class="reveal-line" id="revealLine"></div>
-        <div class="reveal-handle" id="revealHandle">
-          <div class="handle-inner">
-            <div class="arr-l"></div>
-            <div class="arr-r"></div>
-          </div>
+      <!-- Image display -->
+      <div class="fs-image-wrap" id="fsImageWrap">
+        <img class="fs-image" id="fsDisplayImg" src="" alt="Your future self" />
+        <span class="fs-image-label" id="fsImageLabel">12 Weeks</span>
+        <div class="fs-loading-overlay" id="fsLoading">
+          <div class="loading-ring"></div>
+          <p class="fs-loading-text" id="loadingText">Building your future self...</p>
         </div>
       </div>
 
@@ -2484,8 +2599,16 @@
       </div>
     </div>
 
-    <!-- Dashboard avatar sync -->
-    <div style="display:none;"><span id="becomingTag"></span></div>
+    <!-- Hidden compat elements -->
+    <div style="display:none;">
+      <span id="becomingTag"></span>
+      <img id="beforeImg" src="" /><img id="afterImg" src="" />
+      <span id="afterTimelineLabel"></span>
+      <div id="revealWrap"></div><div id="revealSlider"></div>
+      <div id="revealHandle"></div><div id="revealLine"></div>
+      <div id="revealBefore"></div><div id="revealAfter"></div>
+      <div id="afterLoading"></div>
+    </div>
   </div>
 </div>
 
@@ -4034,21 +4157,19 @@
   // ═══ FUTURE SELF — REVEAL SLIDER ═══
 
   function triggerUpload() { document.getElementById('photoInput').click(); }
-  var futurePhotoBase64 = null; // kept for compatibility
+  var futurePhotoBase64 = null;
 
   function handlePhoto(file) {
     if (!file) return;
     var reader = new FileReader();
     reader.onload = function(e) {
       futurePhotoBase64 = e.target.result;
+      var preview = document.getElementById('uploadPreview');
+      var placeholder = document.getElementById('uploadPlaceholder');
       var zone = document.getElementById('uploadZone');
-      zone.innerHTML = '<div style="position:relative;width:100%;height:100%;min-height:200px;">' +
-        '<img src="' + e.target.result + '" style="width:100%;height:100%;min-height:200px;object-fit:cover;border-radius:12px;display:block;">' +
-        '<button onclick="clearFuturePhoto(event)" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);border:1.5px solid #c8a96e;color:#c8a96e;font-size:18px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">×</button>' +
-        '<div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-family:var(--font-mono);color:#c8a96e;font-size:11px;letter-spacing:3px;background:rgba(0,0,0,0.5);padding:3px 10px;border-radius:4px;">TODAY</div>' +
-        '</div>';
-      zone.style.padding = '0';
-      zone.style.border = '1.5px solid #c8a96e';
+      if (preview) { preview.src = e.target.result; preview.style.display = 'block'; }
+      if (placeholder) placeholder.style.display = 'none';
+      if (zone) { zone.style.padding = '0'; zone.style.border = '1.5px solid rgba(200,169,110,0.4)'; }
     };
     reader.readAsDataURL(file);
   }
@@ -4056,42 +4177,47 @@
   function clearFuturePhoto(e) {
     if (e) e.stopPropagation();
     futurePhotoBase64 = null;
+    var preview = document.getElementById('uploadPreview');
+    var placeholder = document.getElementById('uploadPlaceholder');
     var zone = document.getElementById('uploadZone');
-    zone.style.padding = '';
-    zone.style.border = '';
-    zone.innerHTML = '<input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handlePhoto(event.target.files[0])" />' +
-      '<div class="upload-icon">↑</div>' +
-      '<p class="upload-label">Upload a reference photo (optional)</p>' +
-      '<p style="font-size:12px;color:#444;margin-top:8px;letter-spacing:0.06em;">Shown as "Today" in the before/after reveal</p>';
+    if (preview) { preview.style.display = 'none'; preview.src = ''; }
+    if (placeholder) placeholder.style.display = 'block';
+    if (zone) { zone.style.padding = ''; zone.style.border = ''; }
   }
 
   // Timeline state
   var _generatedImages = { '12weeks': null, '6months': null, '1year': null };
   var _activeTimeline = '12weeks';
-  var _sliderPct = 50;
-  var _timelineLabels = { '12weeks': '12 WKS', '6months': '6 MO', '1year': '1 YR' };
-  // Transparent 1x1 pixel — never set img.src to '' (browsers resolve '' to current page URL)
+  var _timelineLabels = { '12weeks': '12 Weeks', '6months': '6 Months', '1year': '1 Year' };
   var _blankPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
   function switchTimeline(tl) {
     _activeTimeline = tl;
-    document.querySelectorAll('.reveal-tab').forEach(function(t) {
+    // Update tabs
+    document.querySelectorAll('.fs-tab').forEach(function(t) {
       t.classList.toggle('active', t.dataset.timeline === tl);
     });
-    var labelEl = document.getElementById('afterTimelineLabel');
-    if (labelEl) labelEl.textContent = _timelineLabels[tl];
-    var afterImg = document.getElementById('afterImg');
-    var loading = document.getElementById('afterLoading');
+    // Update image
+    var displayImg = document.getElementById('fsDisplayImg');
+    var loading = document.getElementById('fsLoading');
     var loadingText = document.getElementById('loadingText');
+    var label = document.getElementById('fsImageLabel');
+    if (label) label.textContent = _timelineLabels[tl];
+
     var img = _generatedImages[tl];
     if (img) {
-      if (afterImg) afterImg.src = img;
-      if (loading) loading.classList.add('hidden');
+      if (displayImg) { displayImg.src = img; displayImg.style.display = 'block'; }
+      if (loading) loading.style.display = 'none';
     } else {
-      if (afterImg) afterImg.src = _blankPixel;
-      if (loading) loading.classList.remove('hidden');
-      if (loadingText) loadingText.textContent = 'Generating ' + _timelineLabels[tl] + '...';
+      if (displayImg) displayImg.style.display = 'none';
+      if (loading) loading.style.display = 'flex';
+      if (loadingText) loadingText.textContent = 'Building ' + _timelineLabels[tl] + '...';
     }
+    // Legacy compat
+    var afterImg = document.getElementById('afterImg');
+    if (afterImg) afterImg.src = img || _blankPixel;
+    var afterLabel = document.getElementById('afterTimelineLabel');
+    if (afterLabel) afterLabel.textContent = _timelineLabels[tl];
   }
 
   function generateAllTimelines() {
@@ -4107,21 +4233,29 @@
     // Reset tab statuses
     ['12weeks','6months','1year'].forEach(function(tl) {
       var s = document.getElementById('status-' + tl);
-      if (s) s.innerHTML = '<div class="tab-loader"></div>';
-      var tab = document.querySelector('[data-timeline="' + tl + '"]');
+      if (s) s.innerHTML = '';
+      var tab = document.querySelector('.fs-tab[data-timeline="' + tl + '"]');
       if (tab) tab.classList.remove('ready');
     });
 
-    // Show wrap and set before image
-    var wrap = document.getElementById('revealWrap');
-    if (wrap) { wrap.style.display = 'block'; wrap.classList.add('visible'); }
-    var beforeImg = document.getElementById('beforeImg');
-    if (beforeImg) beforeImg.src = futurePhotoBase64 || _blankPixel;
-    switchTimeline('12weeks');
-
     // Disable generate button
     var genBtn = document.getElementById('generateBtn');
-    if (genBtn) genBtn.disabled = true;
+    if (genBtn) { genBtn.disabled = true; genBtn.textContent = 'Building your future self...'; }
+
+    // IMPLODE the upload zone, then show result gallery
+    var uploadWrap = document.getElementById('fsUploadWrap');
+    var uploadZone = document.getElementById('uploadZone');
+    var result = document.getElementById('fsResult');
+
+    if (uploadZone) uploadZone.classList.add('imploding');
+
+    setTimeout(function() {
+      if (uploadWrap) uploadWrap.style.display = 'none';
+      if (uploadZone) uploadZone.classList.remove('imploding');
+      // EXPLODE in the result gallery
+      if (result) { result.classList.add('active'); }
+      switchTimeline('12weeks');
+    }, 650);
 
     // Fire all three in parallel
     var timelines = ['12weeks', '6months', '1year'];
@@ -4149,9 +4283,7 @@
         if (tl === '12weeks') awardXP(50, 'Future Self generated');
 
         // Mark tab ready
-        var s = document.getElementById('status-' + tl);
-        if (s) s.innerHTML = '<div class="tab-check"></div>';
-        var tab = document.querySelector('[data-timeline="' + tl + '"]');
+        var tab = document.querySelector('.fs-tab[data-timeline="' + tl + '"]');
         if (tab) tab.classList.add('ready');
 
         // If this is the active tab, show immediately
@@ -4167,7 +4299,7 @@
       .catch(function(err) {
         console.error(tl + ' failed:', err.message);
         var s = document.getElementById('status-' + tl);
-        if (s) s.innerHTML = '<div class="tab-error">!</div>';
+        if (s) s.innerHTML = '<span style="color:rgba(220,80,80,0.8);font-size:10px;">!</span>';
         if (_activeTimeline === tl) {
           var lt = document.getElementById('loadingText');
           if (lt) lt.textContent = 'Generation failed. Try again.';
@@ -4176,60 +4308,24 @@
     });
 
     Promise.allSettled(promises).then(function() {
-      if (genBtn) genBtn.disabled = false;
-      var wrap = document.getElementById('revealWrap');
-      if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      if (genBtn) { genBtn.disabled = false; genBtn.textContent = 'Build My Future Self \u2192'; }
     });
   }
 
   function resetFutureSelf() {
     _generatedImages = { '12weeks': null, '6months': null, '1year': null };
     _activeTimeline = '12weeks';
-    var wrap = document.getElementById('revealWrap');
-    if (wrap) wrap.style.display = 'none';
+    var result = document.getElementById('fsResult');
+    var uploadWrap = document.getElementById('fsUploadWrap');
+    if (result) result.classList.remove('active');
+    if (uploadWrap) uploadWrap.style.display = 'block';
     clearFuturePhoto(null);
   }
 
-  // Keep old name as alias for any remaining references
+  // Aliases for compat
   function generateFutureSelf() { generateAllTimelines(); }
-  function revealFutureSelf() {}  // no-op, slider handles reveal
+  function revealFutureSelf() {}
   function resetPhoto() { resetFutureSelf(); }
-
-  // Drag slider
-  (function initSlider() {
-    var _dragging = false;
-    function setPos(clientX) {
-      var slider = document.getElementById('revealSlider');
-      if (!slider) return;
-      var rect = slider.getBoundingClientRect();
-      var pct = Math.max(5, Math.min(95, ((clientX - rect.left) / rect.width) * 100));
-      _sliderPct = pct;
-      var line = document.getElementById('revealLine');
-      var handle = document.getElementById('revealHandle');
-      var after = document.getElementById('revealAfter');
-      if (line) line.style.left = pct + '%';
-      if (handle) handle.style.left = pct + '%';
-      if (after) after.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
-    }
-    document.addEventListener('mousedown', function(e) {
-      if (e.target.closest && e.target.closest('#revealSlider')) {
-        _dragging = true; setPos(e.clientX); e.preventDefault();
-      }
-    });
-    window.addEventListener('mousemove', function(e) { if (_dragging) setPos(e.clientX); });
-    window.addEventListener('mouseup', function() { _dragging = false; });
-    document.addEventListener('touchstart', function(e) {
-      if (e.target.closest && e.target.closest('#revealSlider')) {
-        _dragging = true; setPos(e.touches[0].clientX); e.preventDefault();
-      }
-    }, { passive: false });
-    window.addEventListener('touchmove', function(e) {
-      if (_dragging) setPos(e.touches[0].clientX);
-    }, { passive: false });
-    window.addEventListener('touchend', function() { _dragging = false; });
-  })();
-
-  // revealFutureSelf and resetPhoto aliased above near generateAllTimelines
 
   // PROGRAM GENERATOR
   var programs = {
@@ -4533,25 +4629,60 @@
     var classStr = (state.classPreferences && state.classPreferences.length > 0) ? state.classPreferences.join(', ') : 'none';
     var constraintLine = constraint ? '\nAdjustment requested: ' + constraint : '';
 
-    var prompt = 'You are an expert personal trainer and strength coach. Create a detailed ' + state.days + ' per week workout program for the following person:\n\n' +
+    var genderStr = state.gender || 'not specified';
+    var heightStr = state.height || 'not specified';
+    var weightStr = state.weight ? (state.weight + ' ' + (state.weightUnit || 'lbs')) : 'not specified';
+    var dietStr = (state.diet && state.diet.length > 0) ? state.diet.join(', ') : 'none';
+    var dietNotesStr = state.dietNotes || 'none';
+
+    // Build goal-aware training style guidance
+    var goalKeys = goalsStr.toLowerCase();
+    var trainingStyle = '';
+    if (goalKeys.match(/burn|fat|los|weight|slim/) && goalKeys.match(/muscle|bulk|build|mass|size|strong/)) {
+      trainingStyle = 'This person wants body recomposition — program should combine heavy compound lifts (progressive overload) with strategic conditioning. Prioritize strength training to preserve/build muscle while creating a caloric deficit through activity. Supersets and circuits are useful for efficiency and calorie burn.';
+    } else if (goalKeys.match(/burn|fat|los|weight|slim/)) {
+      trainingStyle = 'Fat loss is the priority — program should include compound movements for maximum calorie burn, HIIT or conditioning finishers, and higher volume. Keep rest periods moderate (60-90s) to maintain elevated heart rate.';
+    } else if (goalKeys.match(/muscle|bulk|build|mass|size|strong/)) {
+      trainingStyle = 'Muscle building is the priority — program should focus on progressive overload with heavy compound lifts and targeted isolation work. Longer rest periods (2-3 min on compounds). Prioritize time under tension and hypertrophy rep ranges (8-12).';
+    } else if (goalKeys.match(/lean|tone|defin|cut|shred/)) {
+      trainingStyle = 'Getting lean and defined is the goal — combine moderate-heavy resistance training with higher rep isolation work and active recovery days. Include some metabolic conditioning.';
+    } else if (goalKeys.match(/athlet|perform|sport|agil|function|endur/)) {
+      trainingStyle = 'Athletic performance is the goal — program should include explosive movements, plyometrics, unilateral work, and functional patterns. Balance strength, power, and conditioning.';
+    } else if (goalKeys.match(/confiden|feel|health|well|energy/)) {
+      trainingStyle = 'Overall wellness and confidence is the goal — build a balanced, sustainable program mixing strength, mobility, and light conditioning. Make it enjoyable and progressive without being intimidating.';
+    }
+
+    var prompt = 'You are an elite personal trainer and strength coach who has coached hundreds of body transformations. You are designing a program for a SPECIFIC person — not a template. Every detail below matters. Build a ' + state.days + '-day/week program that feels like it was made for them.\n\n' +
+      '── CLIENT PROFILE ──\n' +
       'Name: ' + state.name + '\n' +
+      'Gender: ' + genderStr + '\n' +
       'Age range: ' + (state.age || 'not specified') + '\n' +
-      'Goals: ' + goalsStr + '\n' +
+      'Height: ' + heightStr + '\n' +
+      'Weight: ' + weightStr + '\n' +
       'Fitness level: ' + state.level + '\n' +
+      'Goals: ' + goalsStr + '\n' +
       'Days per week: ' + state.days + '\n' +
       'Equipment at home: ' + equipStr + '\n' +
       'Gym access: ' + gymStr + '\n' +
       'Open to classes: ' + classStr + '\n' +
+      'Dietary approach: ' + dietStr + '\n' +
+      'Dietary notes: ' + dietNotesStr + '\n' +
       'Health concerns: ' + healthStr + '\n' +
       'Additional notes: ' + notesStr + constraintLine + '\n\n' +
-      'Return ONLY a JSON array with no markdown, no backticks, no extra text. Each element: {"day":"Day 01","focus":"Focus Label","exercises":[["Full Exercise Name","sets x reps","one-line movement cue describing form and motion"],...]}\n' +
-      'IMPORTANT RULES:\n' +
-      '- Use precise, full exercise names (e.g. "Flat Barbell Bench Press" not "Bench Press", "Cable Chest Fly" not "Cable Flyes", "Standing Barbell Curl" not "Curls")\n' +
-      '- The third element in each exercise array is a brief coaching cue explaining the movement (10-20 words)\n' +
-      '- Include 5-6 exercises per day\n' +
+      (trainingStyle ? '── TRAINING APPROACH ──\n' + trainingStyle + '\n\n' : '') +
+      '── PROGRAMMING RULES ──\n' +
+      '- Tailor exercise selection to this person\'s body, goals, and experience level\n' +
+      '- If they are a beginner, favor machines and guided movements before free weights\n' +
+      '- If they are experienced, include advanced techniques (drop sets, supersets, tempo work) where appropriate\n' +
+      '- Account for their height/weight — a 5\'2" person and a 6\'4" person need different movement selections\n' +
+      '- If they have dietary restrictions (vegan, keto, etc.), consider energy availability when programming intensity\n' +
       '- Account for equipment availability and gym access — if no gym, use bodyweight/home exercises\n' +
       '- If the user is open to classes, incorporate 1-2 class-based sessions (e.g. yoga, spin) into the weekly plan\n' +
-      '- Account for ALL listed goals, health concerns, and any adjustment requested\n' +
+      '- Account for ALL listed health concerns — modify or substitute exercises as needed\n' +
+      '- Include 5-6 exercises per day\n' +
+      '- Use precise, full exercise names (e.g. "Flat Barbell Bench Press" not "Bench Press", "Cable Chest Fly" not "Cable Flyes")\n' +
+      '- The third element in each exercise array is a brief coaching cue explaining the movement (10-20 words)\n\n' +
+      'Return ONLY a JSON array with no markdown, no backticks, no extra text. Each element: {"day":"Day 01","focus":"Focus Label","exercises":[["Full Exercise Name","sets x reps","one-line movement cue describing form and motion"],...]}\n' +
       'Return only the JSON array.';
 
     fetch('/api/openai', {
@@ -4596,9 +4727,9 @@
 
     var goalsStr = (state.goals && state.goals.length > 0) ? state.goals.join(', ') : (state.goal || 'General fitness');
     var constraintNote = constraint ? 'Constraint: ' + constraint + '.' : 'No specific constraints.';
-    var prompt = 'You are an expert personal trainer. The user needs an alternative workout for ' + dayName + ' (originally: ' + dayFocus + ').\n' +
-      constraintNote + '\nUser: Goals: ' + goalsStr + ', Level: ' + state.level + ', Equipment: ' + (state.equipment || 'not specified') + ', Gym: ' + (state.gymAccess || 'not specified') + ', Health: ' + (state.health.join(', ') || 'none') + '\n' +
-      'Return ONLY a JSON object: {"focus":"Label","exercises":[["Full Exercise Name","sets x reps","brief movement cue describing form"],...]}\nUse precise full exercise names. Include 5 exercises. Return only the JSON.';
+    var prompt = 'You are an elite personal trainer. The user needs an alternative workout for ' + dayName + ' (originally: ' + dayFocus + ').\n' +
+      constraintNote + '\nClient profile: ' + state.name + ', ' + (state.gender || '') + ', ' + (state.age || '') + ', ' + (state.weight ? state.weight + ' ' + (state.weightUnit || 'lbs') : '') + ', ' + (state.height || '') + '. Goals: ' + goalsStr + ', Level: ' + state.level + ', Equipment: ' + (state.equipment || 'not specified') + ', Gym: ' + (state.gymAccess || 'not specified') + ', Health: ' + (state.health.join(', ') || 'none') + ', Diet: ' + ((state.diet && state.diet.length > 0) ? state.diet.join(', ') : 'none') + '\n' +
+      'Return ONLY a JSON object: {"focus":"Label","exercises":[["Full Exercise Name","sets x reps","brief movement cue describing form"],...]}\nUse precise full exercise names. Tailor to this specific person. Include 5 exercises. Return only the JSON.';
 
     fetch('/api/openai', {
       method: 'POST',

@@ -90,27 +90,28 @@ ${has.muscle ? '- Arms are visibly more muscular — biceps have clear shape, tr
 - Skin looks healthy and vibrant.
 This should look like a legitimate before/after transformation photo you'd see on a fitness coach's Instagram — the kind that makes people say "what program are you on?" The change from the original should be OBVIOUS and motivating. Think: body recomposition — less fat, more muscle, tighter everywhere.`,
 
-    '6months': `Show a DRAMATIC 6-month body transformation. This person trained 4-5x/week with progressive overload, strict nutrition, and an AI coach for 6 straight months. This is a completely different body than the 12-week version.
-REQUIRED physical changes at 6 months:
-${has.fat ? '- Body fat is LOW — 13-16% for males, 20-24% for females. Waist is 4+ inches smaller than original. No love handles. Face is lean and angular — sharp jawline, visible cheekbones.' : '- Body fat clearly athletic level. Waist dramatically smaller.'}
-${has.muscle ? '- Significant muscle mass. Arms are thick with visible bicep peak and tricep horseshoe. Shoulders are wide, round, and capped — clear shoulder-to-waist V-taper. Chest is full and developed with visible upper chest. Back is wider.' : ''}
-- Clear 4-pack abs visible. Obliques showing. Serratus starting to appear.
-- Arm veins visible. Muscle separation clear between all major groups.
-- Legs have visible quad sweep and definition.
-- The body looks athletic and powerful — like someone who clearly lives in the gym.
-- This person looks like a fitness enthusiast or amateur athlete.
-This should be a head-turning transformation — the kind where old friends wouldn't recognize the body. The difference from the 12-week version must be dramatically obvious. Think: the person you see at the gym and think "they've been at this for a while."`,
+    '6months': `Show a DRAMATICALLY DIFFERENT body at 6 months. This person has been training 5x/week with an AI coach, progressive overload, caloric surplus/deficit cycling, and has not deviated from the protocol for 6 months. The body should look like a COMPLETELY DIFFERENT PERSON from the 12-week version.
+MANDATORY physical changes — the image MUST show ALL of these:
+${has.fat ? '- Body fat is 12-14% for males, 19-22% for females. The midsection is TIGHT — clearly visible abs, defined obliques. Waist is 4-5 inches smaller than original. Face is lean with sharp angular jawline and cheekbones. ZERO love handles.' : '- Body fat clearly very low. Midsection is tight and lean.'}
+${has.muscle ? '- SUBSTANTIAL muscle mass increase. Arms are noticeably thick — bicep peak is prominent, tricep horseshoe is clearly defined even unflexed. Shoulders are wide, round, capped, and striated — the kind that fill out a t-shirt. The V-taper from shoulders to waist is DRAMATIC. Chest is full and squared with visible upper chest separation. Back is noticeably wider — lats flare. Traps are visible from the front.' : ''}
+- VISIBLE 4-6 pack abs depending on lighting. This is NON-NEGOTIABLE at 6 months.
+- Forearm and bicep veins clearly visible. Muscle separation between deltoid heads is clear.
+- Legs show visible quad sweep — the teardrop shape above the knee. Calves have definition.
+- The entire body looks like it has been RECOMPOSED — dramatically less fat, dramatically more muscle.
+- Posture is powerful and confident — chest up, shoulders back, commanding stance.
+IMPORTANT: This must look like a Men's Health or Women's Health cover model transformation. The kind where people see the before/after and say "that can't be the same person." This is NOT a subtle improvement from 12 weeks — it is a QUANTUM LEAP. If the 12-week version makes friends notice, the 6-month version makes STRANGERS stop and stare. Think Chris Hemsworth preparing for Thor, or someone who could compete in a physique show.`,
 
-    '1year': `Show a COMPLETE 1-year body transformation. This person trained 5x/week for an entire year with progressive overload, periodized programming, strict nutrition, and zero quit. This is peak natural physique for this person.
-REQUIRED physical changes at 1 year:
-${has.fat ? '- Body fat is at peak lean levels — 10-13% for males, 18-21% for females. ZERO excess body fat visible anywhere. Face is chiseled — razor jawline, hollow cheeks, angular features.' : '- Body fat extremely low and athletic.'}
-${has.muscle ? '- Maximum natural muscle development. Arms are thick and vascular with clear separation between every head. Shoulders are wide, striated, and capped — the V-taper is dramatic. Chest is full with visible striations. Back is wide with lat spread. Traps developed. Forearms are vascular and defined.' : ''}
-- Full 6-pack abs clearly visible. Obliques defined and sharp. Serratus visible. Lower abs showing.
-- Vascularity throughout — veins visible on arms, forearms, and potentially abs.
-- Every muscle group is defined and separated — this body has been sculpted over 12 months.
-- Legs are powerful — quads have visible individual heads, hamstrings defined, calves developed.
-- Posture is commanding and athletic. This person radiates physical discipline.
-This should look like a fitness model or natural bodybuilding competitor — the absolute peak of what dedicated natural training achieves. People assume this person is a personal trainer or athlete. The transformation from the original photo should be SHOCKING. The difference from the 6-month version should still be clearly visible — more definition, more vascularity, more polish.`,
+    '1year': `Show the ABSOLUTE PEAK natural physique transformation at 1 year. This person trained 5-6x/week for 365 days straight — periodized programming, strict nutrition, supplements, sleep optimization, and total dedication. This body represents the pinnacle of what this person can achieve naturally.
+MANDATORY physical changes — EVERY SINGLE ONE of these must be visible:
+${has.fat ? '- Body fat is at COMPETITION levels — 8-12% for males, 16-20% for females. There is NO excess body fat ANYWHERE on the body. The face is CHISELED — razor sharp jawline, defined cheekbones, lean angular features. Skin sits tight against muscle everywhere.' : '- Body fat is extremely low — every muscle is visible through the skin.'}
+${has.muscle ? '- MAXIMUM natural muscle development. Arms are THICK and VASCULAR — every head of the bicep and tricep is distinctly visible. Shoulders are WIDE, STRIATED, and have visible muscle fibers — they look like cannonballs. The V-taper is EXTREME. Chest is FULL with visible striations when the light hits. Back has a wide dramatic lat spread. Traps create a visible slope from neck to shoulder. Forearms are thick with road-map vascularity.' : ''}
+- FULL 6-PACK ABS with deep separations between each block. Obliques are CARVED. Serratus anterior fans are visible along the ribs. Lower abs show — the V-lines (Adonis belt) are clearly defined.
+- VASCULARITY is prominent — veins visible across forearms, biceps, deltoids, and possibly across the lower abs.
+- Every single muscle group shows clear separation and definition — deltoid heads, quad heads, hamstrings, calves.
+- Legs are POWERFUL — quadriceps show 3-4 distinct heads, hamstrings visible from behind, calves are diamond-shaped.
+- The body has the dry, full, polished look of someone who has been training for a full year without stopping.
+- Posture is COMMANDING — this person walks into a room and everyone notices. They radiate physical discipline and power.
+CRITICAL: This should look like a FITNESS MODEL, NATURAL BODYBUILDER, or ELITE ATHLETE at their absolute peak. Think: magazine cover, fitness competition stage, or movie star physique. The difference from the 6-month version must STILL be clearly visible — more size, more definition, more vascularity, more visual impact. The transformation from the ORIGINAL photo should be UNRECOGNIZABLE — the same face on a completely rebuilt body. This is what a full year of ZERO COMPROMISE looks like.`,
   };
 
   const timelineBlock = timelineBlocks[timeline] || timelineBlocks['12weeks'];
