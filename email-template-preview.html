@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Email Template Preview</title></head>
+<body style="margin:0;padding:0;">
+
+<!-- SUPABASE MAGIC LINK EMAIL TEMPLATE — Wylde Self -->
+<!-- Paste into: Supabase Dashboard → Authentication → Email Templates → Magic Link -->
+<!-- Subject line: You're in — Wylde Self Early Access -->
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#F7F6F3;padding:40px 20px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <tr>
+    <td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#FFFFFF;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+
+        <!-- Header -->
+        <tr>
+          <td style="padding:40px 40px 12px;text-align:center;">
+            <p style="font-size:18px;font-weight:700;letter-spacing:0.12em;color:#1A1A1A;margin:0;">WYLDE <span style="color:#7A8E76;">SELF</span></p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 40px 28px;text-align:center;">
+            <img src="https://www.wyldeself.com/logo-icon.png" alt="Wylde Self" width="80" height="80" style="display:inline-block;border-radius:16px;" />
+          </td>
+        </tr>
+
+        <!-- Divider -->
+        <tr>
+          <td style="padding:0 40px;">
+            <div style="height:1px;background:linear-gradient(to right,transparent,rgba(122,142,118,0.2),transparent);"></div>
+          </td>
+        </tr>
+
+        <!-- Welcome -->
+        <tr>
+          <td style="padding:32px 40px 0;">
+            <h1 style="font-size:24px;font-weight:700;color:#1A1A1A;margin:0 0 8px;letter-spacing:-0.02em;">You're in.</h1>
+            <p style="font-size:15px;line-height:1.65;color:#666666;margin:0 0 24px;">Welcome to Wylde Self early access. You're about to meet the version of you that already followed through.</p>
+          </td>
+        </tr>
+
+        <!-- What to expect -->
+        <tr>
+          <td style="padding:0 40px 24px;">
+            <p style="font-size:13px;font-weight:600;color:#1A1A1A;margin:0 0 10px;letter-spacing:0.02em;">Here's what's waiting for you:</p>
+            <table cellpadding="0" cellspacing="0" style="width:100%;">
+              <tr>
+                <td style="padding:6px 0;font-size:14px;color:#666666;line-height:1.5;">
+                  <span style="color:#7A8E76;font-weight:600;">→</span>&nbsp;&nbsp;An AI-generated image of your future self
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0;font-size:14px;color:#666666;line-height:1.5;">
+                  <span style="color:#7A8E76;font-weight:600;">→</span>&nbsp;&nbsp;A training program built around your body and goals
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0;font-size:14px;color:#666666;line-height:1.5;">
+                  <span style="color:#7A8E76;font-weight:600;">→</span>&nbsp;&nbsp;A personal AI coach that knows your patterns
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0;font-size:14px;color:#666666;line-height:1.5;">
+                  <span style="color:#7A8E76;font-weight:600;">→</span>&nbsp;&nbsp;Daily missions designed to close the gap
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- CTA Button -->
+        <tr>
+          <td style="padding:0 40px 28px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%;">
+              <tr>
+                <td align="center">
+                  <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;padding:16px 40px;background:#1A1A1A;color:#FFFFFF;font-size:15px;font-weight:600;text-decoration:none;border-radius:10px;letter-spacing:0.01em;">Enter Wylde Self →</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Secondary link -->
+        <tr>
+          <td style="padding:0 40px 28px;">
+            <p style="font-size:12px;color:#999999;line-height:1.5;margin:0;">If the button doesn't work, copy and paste this link:</p>
+            <p style="font-size:11px;color:#7A8E76;word-break:break-all;margin:8px 0 0;">{{ .ConfirmationURL }}</p>
+          </td>
+        </tr>
+
+        <!-- Beta disclaimer -->
+        <tr>
+          <td style="padding:0 40px;">
+            <div style="height:1px;background:rgba(0,0,0,0.06);"></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:20px 40px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%;background:#F7F6F3;border-radius:10px;">
+              <tr>
+                <td style="padding:16px 20px;">
+                  <p style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#7A8E76;margin:0 0 6px;">Early Access Beta</p>
+                  <p style="font-size:12px;color:#888888;line-height:1.6;margin:0;">You're one of a small group testing Wylde Self before public launch. Some features are still in progress. Your experience and feedback will directly shape the product. Thank you for being here early.</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="padding:20px 40px 36px;text-align:center;">
+            <p style="font-size:11px;color:#999999;margin:0;line-height:1.6;">This link expires in 1 hour. If you didn't request access, you can ignore this email.</p>
+            <p style="font-size:11px;color:#CCCCCC;margin:12px 0 0;">&copy; 2026 Wylde Self</p>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

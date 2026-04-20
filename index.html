@@ -2589,14 +2589,17 @@
       <p class="cta-body reveal d2">The person you keep imagining is either getting closer — or further away. Every single day.</p>
       <div class="reveal d3">
         <div class="waitlist-block">
-          <form class="waitlist-form" id="ctaForm" action="https://formspree.io/f/mkoponoz" method="POST">
+          <form class="waitlist-form" id="ctaForm">
             <input class="waitlist-input" type="text" name="name" placeholder="Your first name" required />
             <div class="waitlist-row">
               <input class="waitlist-input" type="email" name="email" placeholder="Your email address" required />
               <button class="waitlist-btn" type="submit">See My Future Self →</button>
             </div>
           </form>
-          <div class="form-success" id="ctaSuccess">You're in. The gap starts closing now.</div>
+          <div class="form-success" id="ctaSuccess">
+            <p style="font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:6px;">Check your email</p>
+            <p style="font-size:14px;color:var(--text-secondary);line-height:1.5;">We sent a sign-in link to <strong id="ctaSentEmail"></strong>. Click it to access the app.</p>
+          </div>
           <p class="form-note">Free during early access. No credit card required.</p>
         </div>
       </div>
@@ -2994,7 +2997,15 @@
       return false;
     }
 
-    // WAITLIST — Formspree AJAX + EmailJS auto-reply
+    // SUPABASE — Magic link signup/signin
+    var SUPABASE_URL = 'https://huclolzxzpitdpyogolu.supabase.co';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1Y2xvbHp4enBpdGRweW9nb2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNzQ1MzIsImV4cCI6MjA5MDg1MDUzMn0.dwJ-NYSgGYnYu6w5GcuDt-VQOZsj6-WgeultiUZ0KwU';
+    var sb = null;
+    function getSb() {
+      if (!sb && window.supabase) sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      return sb;
+    }
+
     document.querySelectorAll('.waitlist-form').forEach(function(form) {
       form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -3004,38 +3015,58 @@
         var userName = nameInput ? nameInput.value.trim() : '';
         var userEmail = emailInput ? emailInput.value.trim() : '';
 
-        btn.textContent = 'Sending...';
+        if (!userEmail) return;
+
+        btn.textContent = 'Sending link...';
         btn.disabled = true;
 
-        fetch('https://formspree.io/f/mkoponoz', {
-          method: 'POST',
-          body: new FormData(form),
-          headers: { 'Accept': 'application/json' }
-        }).then(function(res) {
-          if (res.ok) {
-            emailjs.send('Wylde_service', 'template_5th6z59', {
-              name: userName,
-              email: userEmail
-            }).catch(function() {});
+        var client = getSb();
+        if (!client) {
+          btn.textContent = 'Error — refresh and try again';
+          btn.disabled = false;
+          return;
+        }
 
-            localStorage.setItem('wylde_submitted', '1');
-            localStorage.setItem('wylde_name', userName);
-            localStorage.setItem('wylde_email', userEmail);
-
-            form.style.display = 'none';
-            var successEl = form.closest('.waitlist-block')
-              ? form.closest('.waitlist-block').querySelector('.form-success')
-              : document.getElementById('ctaSuccess');
-            if (successEl) successEl.style.display = 'block';
-
-            document.querySelectorAll('a[onclick*="checkDemo"]').forEach(function(btn) {
-              btn.textContent = 'Try the Demo →';
-            });
-          } else {
-            btn.textContent = 'Try Again';
-            btn.disabled = false;
+        client.auth.signInWithOtp({
+          email: userEmail,
+          options: {
+            emailRedirectTo: window.location.origin + '/app.html',
+            data: { name: userName }
           }
-        }).catch(function() {
+        }).then(function(result) {
+          if (result.error) {
+            btn.textContent = result.error.message || 'Try Again';
+            btn.disabled = false;
+            return;
+          }
+
+          // Save to localStorage
+          localStorage.setItem('wylde_submitted', '1');
+          localStorage.setItem('wylde_gate_passed', '1');
+          localStorage.setItem('wylde_name', userName);
+          localStorage.setItem('wylde_email', userEmail);
+
+          // Show success state
+          form.style.display = 'none';
+          var block = form.closest('.waitlist-block');
+          var successEl = block
+            ? block.querySelector('.form-success')
+            : document.getElementById('ctaSuccess');
+          if (successEl) {
+            successEl.style.display = 'block';
+            var sentEmailEl = successEl.querySelector('strong');
+            if (sentEmailEl) sentEmailEl.textContent = userEmail;
+          }
+
+          // Update nav/hero CTAs
+          document.querySelectorAll('a[onclick*="checkDemo"]').forEach(function(b) {
+            b.textContent = 'Check Your Email →';
+            b.onclick = function(ev) {
+              ev.preventDefault();
+              document.getElementById('cta').scrollIntoView({ behavior: 'smooth' });
+            };
+          });
+        }).catch(function(err) {
           btn.textContent = 'Try Again';
           btn.disabled = false;
         });
@@ -3043,8 +3074,7 @@
     });
   </script>
 
-  <!-- EmailJS -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>emailjs.init('nj1F_Dh0xYh31o_kS');</script>
+  <!-- Supabase client (must load before form submission) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
 </body>
 </html>

@@ -1229,27 +1229,29 @@
       <button class="btn ob-next auth-cta" onclick="continueAsGuest()">Get Started</button>
 
       <p class="auth-switch">
-        <button class="auth-switch-btn" onclick="showAuthForm()">I have an account — <span>Sign in</span></button>
+        <button class="auth-switch-btn" onclick="showAuthForm()">Sign in with email <span>→</span></button>
       </p>
     </div>
 
-    <!-- Sign-in form (hidden by default) -->
+    <!-- Magic link sign-in form (hidden by default) -->
     <div id="authFormWrap" style="display:none;">
       <div class="auth-logo" style="margin-bottom:28px;">
         <img src="/logo-icon.png" alt="Wylde Self" class="auth-logo-img auth-logo-img-sm" />
       </div>
 
-      <div class="auth-tab-bar">
-        <button id="authTabSignIn" class="auth-tab active" onclick="switchAuthTab('signin')">Sign In</button>
-        <button id="authTabCreate" class="auth-tab" onclick="switchAuthTab('create')">Create Account</button>
-      </div>
+      <p style="font-family:var(--ff-body);font-size:14px;color:var(--text2);margin-bottom:20px;line-height:1.5;">Enter your email and we'll send you a sign-in link. No password needed.</p>
 
       <div id="authError" class="auth-error"></div>
 
       <div class="auth-fields">
         <input id="authEmail" class="input" type="email" placeholder="Email address" autocomplete="email"/>
-        <input id="authPassword" class="input" type="password" placeholder="Password" autocomplete="current-password"/>
-        <button id="authSubmitBtn" class="btn ob-next auth-cta" onclick="submitAuth()">SIGN IN</button>
+        <button id="authSubmitBtn" class="btn ob-next auth-cta" onclick="submitAuth()">SEND SIGN-IN LINK</button>
+      </div>
+
+      <div id="authMagicSent" style="display:none;text-align:center;padding:20px 0;">
+        <p style="font-family:var(--ff-body);font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px;">Check your email</p>
+        <p style="font-family:var(--ff-body);font-size:13px;color:var(--text2);line-height:1.5;">We sent a sign-in link to <strong id="authSentEmail"></strong>. Click it to access the app.</p>
+        <button class="auth-switch-btn" style="margin-top:16px;" onclick="resetMagicLink()">Use a different email</button>
       </div>
 
       <p class="auth-switch">
@@ -2148,7 +2150,6 @@
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1Y2xvbHp4enBpdGRweW9nb2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNzQ1MzIsImV4cCI6MjA5MDg1MDUzMn0.dwJ-NYSgGYnYu6w5GcuDt-VQOZsj6-WgeultiUZ0KwU';
   var _supabase = null;
   var currentUser = null;
-  var _authMode = 'signin';
 
   function _getSupabase() {
     if (!_supabase && window.supabase && SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
@@ -2172,13 +2173,12 @@
   }
 
   function initAuth() {
-    // ── GATE CHECK — runs once, never loops back ──
+    // ── GATE CHECK — if user came from waitlist or gate, mark as passed ──
     var gatePassed = localStorage.getItem('wylde_gate_passed') || localStorage.getItem('wylde_submitted');
-    if (!gatePassed) {
-      // User hasn't passed the gate yet — send them there
-      window.location.replace('/gate.html');
-      return;
+    if (gatePassed) {
+      localStorage.setItem('wylde_gate_passed', '1');
     }
+    // No redirect — show auth screen if not signed in
 
     var sb = _getSupabase();
     if (!sb) {
@@ -2202,6 +2202,17 @@
       if (event === 'SIGNED_IN' && session) {
         currentUser = session.user;
         localStorage.setItem('wylde_gate_passed', '1');
+        localStorage.setItem('wylde_submitted', '1');
+        // Pull name from magic link metadata if not already saved
+        if (session.user && session.user.user_metadata && session.user.user_metadata.name) {
+          if (!localStorage.getItem('wylde_name')) {
+            localStorage.setItem('wylde_name', session.user.user_metadata.name);
+          }
+        }
+        // Save email
+        if (session.user && session.user.email) {
+          localStorage.setItem('wylde_email', session.user.email);
+        }
         _hideAuthScreen();
         var signOutBtn = document.getElementById('navSignOutBtn');
         if (signOutBtn) signOutBtn.style.display = 'block';
@@ -2216,65 +2227,52 @@
     });
   }
 
-  function switchAuthTab(mode) {
-    _authMode = mode;
-    var si = document.getElementById('authTabSignIn');
-    var ca = document.getElementById('authTabCreate');
-    var btn = document.getElementById('authSubmitBtn');
-    if (mode === 'signin') {
-      si.classList.add('active'); ca.classList.remove('active');
-      if (btn) btn.textContent = 'SIGN IN';
-    } else {
-      ca.classList.add('active'); si.classList.remove('active');
-      if (btn) btn.textContent = 'CREATE ACCOUNT';
-    }
-    var err = document.getElementById('authError');
-    if (err) err.style.display = 'none';
-  }
-
   function submitAuth() {
     var sb = _getSupabase();
     if (!sb) { continueAsGuest(); return; }
     var email = (document.getElementById('authEmail').value || '').trim();
-    var password = (document.getElementById('authPassword').value || '').trim();
     var err = document.getElementById('authError');
     var btn = document.getElementById('authSubmitBtn');
-    if (!email || !password) {
-      if (err) { err.textContent = 'Please enter email and password.'; err.style.display = 'block'; }
+    if (!email) {
+      if (err) { err.textContent = 'Please enter your email address.'; err.style.display = 'block'; }
       return;
     }
     btn.disabled = true;
-    btn.textContent = _authMode === 'signin' ? 'Signing in...' : 'Creating account...';
+    btn.textContent = 'Sending link...';
     if (err) err.style.display = 'none';
-    var p = _authMode === 'signin'
-      ? sb.auth.signInWithPassword({ email: email, password: password })
-      : sb.auth.signUp({ email: email, password: password });
-    p.then(function(result) {
-      console.log('Auth result:', result);
+
+    sb.auth.signInWithOtp({
+      email: email,
+      options: {
+        emailRedirectTo: window.location.origin + '/app.html'
+      }
+    }).then(function(result) {
+      console.log('Magic link result:', result);
       if (result.error) {
         if (err) { err.textContent = result.error.message; err.style.display = 'block'; }
         btn.disabled = false;
-        btn.textContent = _authMode === 'signin' ? 'SIGN IN' : 'CREATE ACCOUNT';
-      } else if (_authMode === 'create') {
-        // Signup succeeded
-        if (result.data && result.data.session) {
-          // Auto-confirmed — user is signed in
-          btn.disabled = false;
-          btn.textContent = 'CREATE ACCOUNT';
-        } else {
-          // Needs email confirmation
-          if (err) { err.textContent = 'Account created! Check your email to confirm, then sign in.'; err.style.display = 'block'; err.style.color = 'var(--gold)'; }
-          btn.disabled = false;
-          btn.textContent = 'CREATE ACCOUNT';
-          switchAuthTab('signin');
-        }
+        btn.textContent = 'SEND SIGN-IN LINK';
+      } else {
+        // Show "check your email" state
+        document.querySelector('.auth-fields').style.display = 'none';
+        document.getElementById('authMagicSent').style.display = 'block';
+        document.getElementById('authSentEmail').textContent = email;
+        btn.disabled = false;
+        btn.textContent = 'SEND SIGN-IN LINK';
       }
     }).catch(function(e) {
       console.error('Auth error:', e);
-      if (err) { err.textContent = e.message || 'Authentication failed.'; err.style.display = 'block'; }
+      if (err) { err.textContent = e.message || 'Something went wrong. Try again.'; err.style.display = 'block'; }
       btn.disabled = false;
-      btn.textContent = _authMode === 'signin' ? 'SIGN IN' : 'CREATE ACCOUNT';
+      btn.textContent = 'SEND SIGN-IN LINK';
     });
+  }
+
+  function resetMagicLink() {
+    document.querySelector('.auth-fields').style.display = 'block';
+    document.getElementById('authMagicSent').style.display = 'none';
+    document.getElementById('authEmail').value = '';
+    document.getElementById('authEmail').focus();
   }
 
   function continueAsGuest() {
@@ -2729,6 +2727,14 @@
     }
     // Auth check (Supabase if configured, else localStorage gate)
     initAuth();
+
+    // Enter key on email field triggers magic link
+    var authEmailInput = document.getElementById('authEmail');
+    if (authEmailInput) {
+      authEmailInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') submitAuth();
+      });
+    }
   })();
 
   // After images by gender — glowing silhouettes (placeholder until real AI generation)
@@ -2795,6 +2801,12 @@
   function showAuthForm() {
     document.getElementById('authWelcome').style.display = 'none';
     document.getElementById('authFormWrap').style.display = 'block';
+    // Pre-fill email from waitlist if available
+    var savedEmail = localStorage.getItem('wylde_email');
+    var emailInput = document.getElementById('authEmail');
+    if (savedEmail && emailInput && !emailInput.value) {
+      emailInput.value = savedEmail;
+    }
   }
   function hideAuthForm() {
     document.getElementById('authFormWrap').style.display = 'none';
@@ -2804,6 +2816,15 @@
   // ONBOARD STEP NAVIGATION
   var _obStep = 1;
   var _obTotal = 4;
+
+  // Pre-fill name from waitlist signup
+  (function() {
+    var savedName = localStorage.getItem('wylde_name');
+    var nameInput = document.getElementById('userName');
+    if (savedName && nameInput && !nameInput.value) {
+      nameInput.value = savedName;
+    }
+  })();
 
   function obGoTo(step) {
     for (var i = 1; i <= _obTotal; i++) {
