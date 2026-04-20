@@ -23,8 +23,8 @@ function buildPrompt(timeline, goals, gender, hasImage) {
 
   // BASE
   const base = hasImage
-    ? `Transform this person's physique to show what they will realistically look like after following through on their training protocol. Keep their face, skin tone, hair, and identity identical. Same person, same lighting direction, same camera angle. Only change the body composition and musculature.`
-    : `Generate a photorealistic fitness transformation image showing a ${genderLabel} person. Natural lighting. Athletic posture. This is what they will look like after following their protocol.`;
+    ? `Transform this person's physique SIGNIFICANTLY to show their body after dedicated training with an AI coach, strict nutrition, and zero missed sessions. Keep their face, skin tone, hair, tattoos, and identity identical. Same person, same lighting, same camera angle. ONLY change the body — reduce body fat, add muscle mass, improve definition. The transformation must be CLEARLY VISIBLE and dramatic — not subtle. This is a real transformation, not a minor tweak.`
+    : `Generate a photorealistic fitness transformation image showing a ${genderLabel} person with a clearly athletic, transformed physique. Natural lighting. Athletic posture. The body should show obvious signs of dedicated training — visible muscle definition, low body fat, athletic build.`;
 
   // --- GOAL CLASSIFICATION ---
   // Detect which goal categories are active
@@ -77,43 +77,45 @@ function buildPrompt(timeline, goals, gender, hasImage) {
     goalBlock += ` This person has multiple transformation goals, so the result should show a well-rounded, complete physical transformation — not biased toward any single goal, but showing clear progress in ALL areas: less fat, more muscle, better definition, improved posture, and overall athleticism.`;
   }
 
-  // --- TIMELINE BLOCKS — goal-aware physical markers ---
+  // --- TIMELINE BLOCKS — aggressive, real results for dedicated training ---
   const timelineBlocks = {
-    '12weeks': `Show what this person will realistically look like after 12 weeks of consistent 4-day/week training and clean eating. This is week 12 — they followed through on the protocol.
-Physical changes (subtle but real — the early wins):
-${has.fat ? '- Waist is 1-2 inches smaller. Face is noticeably leaner. Clothes fit looser around the midsection.' : '- Body fat slightly reduced. Waist is a bit tighter.'}
-${has.muscle ? '- Arms show a hint of new muscle when flexed — slightly fuller biceps, emerging tricep shape. Shoulders are marginally rounder.' : '- Muscle tone is starting to show — arms have slightly more definition.'}
-${has.lean ? '- First signs of definition appearing — faint lines on arms, slightly more visible collarbone and shoulder caps.' : ''}
-${has.athletic ? '- Posture is noticeably better. Stands taller, moves more confidently. Legs look slightly more toned.' : '- Posture is slightly improved. Stands a bit taller.'}
-- Skin looks healthier — better color, more vibrant.
-- Face is marginally leaner, jawline slightly more defined.
-Overall impression: "They've been working out" — friends notice, strangers don't yet. This is the START of a real transformation. Visible enough to be motivating, but clearly just the beginning. DO NOT over-transform — this must look like an honest 12 weeks of work.`,
+    '12weeks': `Show a SIGNIFICANT 12-week body transformation. This person trained 4x/week with an AI coach, strict nutrition, and did not miss sessions. 12 weeks of real dedication produces REAL visible results — do NOT make this subtle.
+REQUIRED physical changes at 12 weeks:
+${has.fat ? '- Body fat dropped significantly — waist is 2-3 inches smaller. Love handles visibly reduced. Face is noticeably leaner with sharper jawline. Midsection is tighter and flatter.' : '- Noticeable body fat reduction. Waist visibly smaller. Face leaner.'}
+${has.muscle ? '- Arms are visibly more muscular — biceps have clear shape, triceps showing. Shoulders are rounder and wider. Chest is fuller. The body carries noticeably more muscle mass than the original.' : ''}
+- Abs are starting to show — at minimum a visible 2-pack or flat defined stomach. Core is tight.
+- Shoulders and arms have clear muscle definition even at rest — not just when flexing.
+- The V-taper from shoulders to waist is beginning to form.
+- Posture is upright, chest open, confident stance.
+- Skin looks healthy and vibrant.
+This should look like a legitimate before/after transformation photo you'd see on a fitness coach's Instagram — the kind that makes people say "what program are you on?" The change from the original should be OBVIOUS and motivating. Think: body recomposition — less fat, more muscle, tighter everywhere.`,
 
-    '6months': `Show what this person will realistically look like after 6 months of dedicated 4-5 day/week training and disciplined nutrition. They followed through on the protocol for half a year.
-Physical changes (clearly visible — a dramatic step up from 12 weeks):
-${has.fat ? '- Body fat reduced by 15-25 lbs from original. Waist is 3-4 inches smaller. Face is noticeably lean — sharp jawline, defined cheekbones. Love handles gone or nearly gone. Clothes hang differently — everything is looser around the middle.' : '- Body fat is lower. Waist is 2-3 inches smaller. Face is leaner.'}
-${has.muscle ? '- Arms are visibly bigger — clear bicep peak, tricep horseshoe forming. Shoulders are noticeably wider and rounder. Chest is fuller with visible upper chest. Back is wider. The body looks like it carries more mass than before.' : '- Arms show visible definition. Shoulders are slightly broader.'}
-${has.lean ? '- Muscle definition is clear — visible arm veins, shoulder striations, upper abs emerging. The body has clean lines. Obliques are starting to show.' : '- Upper abs are faintly visible. Arms show separation between muscle groups.'}
-${has.athletic ? '- Body moves and looks athletic — visible quad sweep, developed calves, strong-looking core. Proportioned like someone who trains for performance.' : '- Legs are more defined. Quads have visible shape.'}
-- Posture is confident and upright. This person carries themselves differently.
-- The transformation from the 12-week version should be OBVIOUSLY more advanced — this is not a subtle difference.
-Overall impression: friends say "you look amazing" unprompted. People ask what you've been doing. This person has clearly been training hard for months — the dedication shows in every part of their body.`,
+    '6months': `Show a DRAMATIC 6-month body transformation. This person trained 4-5x/week with progressive overload, strict nutrition, and an AI coach for 6 straight months. This is a completely different body than the 12-week version.
+REQUIRED physical changes at 6 months:
+${has.fat ? '- Body fat is LOW — 13-16% for males, 20-24% for females. Waist is 4+ inches smaller than original. No love handles. Face is lean and angular — sharp jawline, visible cheekbones.' : '- Body fat clearly athletic level. Waist dramatically smaller.'}
+${has.muscle ? '- Significant muscle mass. Arms are thick with visible bicep peak and tricep horseshoe. Shoulders are wide, round, and capped — clear shoulder-to-waist V-taper. Chest is full and developed with visible upper chest. Back is wider.' : ''}
+- Clear 4-pack abs visible. Obliques showing. Serratus starting to appear.
+- Arm veins visible. Muscle separation clear between all major groups.
+- Legs have visible quad sweep and definition.
+- The body looks athletic and powerful — like someone who clearly lives in the gym.
+- This person looks like a fitness enthusiast or amateur athlete.
+This should be a head-turning transformation — the kind where old friends wouldn't recognize the body. The difference from the 12-week version must be dramatically obvious. Think: the person you see at the gym and think "they've been at this for a while."`,
 
-    '1year': `Show what this person will realistically look like after a full year of consistent 5-day/week training and strict nutrition discipline. They followed the protocol for an entire year without quitting.
-Physical changes (dramatic — a completely different-looking person from the start):
-${has.fat ? '- Body fat is at lean/athletic levels — 10-14% for males, 18-22% for females. Waist is 4-6 inches smaller than the start. Face is angular and lean. NO visible excess body fat. The transformation from the original is striking.' : '- Body fat is at a fit athletic level — 12-15% for males, 20-23% for females.'}
-${has.muscle ? '- Significant muscle mass gained. Arms are thick with clear separation — biceps, triceps, and deltoids all distinctly visible. Shoulders are wide, capped, and round — creating an obvious V-taper. Chest is full and developed. Back is wide with visible lat spread. Traps are developed. Legs are powerful — visible quad sweep and hamstring development.' : '- Clear muscle definition throughout. Arms show separation between all muscle groups.'}
-${has.lean ? '- Razor sharp definition — visible abs (4-6 pack depending on genetics), defined obliques, serratus visible. Arm veins are prominent. Shoulder striations visible. Every muscle group has clean, visible separation. This person looks CARVED.' : '- 4-pack or 6-pack visible. Obliques defined. Overall lean and defined.'}
-${has.athletic ? '- Athletic proportions — powerful legs, strong core, balanced upper and lower body. Looks like someone who can perform: explosive, agile, and strong. Think elite amateur athlete.' : '- Athletic posture. Commanding presence.'}
-- Face is lean and angular. Looks healthy and vital, not gaunt.
-- Posture is commanding. This person walks into a room and people notice.
-- The difference from BOTH the original AND the 6-month version should be immediately, dramatically obvious.
-Overall impression: strangers notice. People assume this person is an athlete or personal trainer. They have fundamentally transformed their body over a full year — this is what complete follow-through looks like. NOT a professional bodybuilder — but someone who has clearly made fitness a core part of their identity.`,
+    '1year': `Show a COMPLETE 1-year body transformation. This person trained 5x/week for an entire year with progressive overload, periodized programming, strict nutrition, and zero quit. This is peak natural physique for this person.
+REQUIRED physical changes at 1 year:
+${has.fat ? '- Body fat is at peak lean levels — 10-13% for males, 18-21% for females. ZERO excess body fat visible anywhere. Face is chiseled — razor jawline, hollow cheeks, angular features.' : '- Body fat extremely low and athletic.'}
+${has.muscle ? '- Maximum natural muscle development. Arms are thick and vascular with clear separation between every head. Shoulders are wide, striated, and capped — the V-taper is dramatic. Chest is full with visible striations. Back is wide with lat spread. Traps developed. Forearms are vascular and defined.' : ''}
+- Full 6-pack abs clearly visible. Obliques defined and sharp. Serratus visible. Lower abs showing.
+- Vascularity throughout — veins visible on arms, forearms, and potentially abs.
+- Every muscle group is defined and separated — this body has been sculpted over 12 months.
+- Legs are powerful — quads have visible individual heads, hamstrings defined, calves developed.
+- Posture is commanding and athletic. This person radiates physical discipline.
+This should look like a fitness model or natural bodybuilding competitor — the absolute peak of what dedicated natural training achieves. People assume this person is a personal trainer or athlete. The transformation from the original photo should be SHOCKING. The difference from the 6-month version should still be clearly visible — more definition, more vascularity, more polish.`,
   };
 
   const timelineBlock = timelineBlocks[timeline] || timelineBlocks['12weeks'];
 
-  return `${base}\n\n${timelineBlock}\n\nGoal direction: ${goalBlock}\n\nCRITICAL RULES: Photorealistic only. Natural lighting. High quality. No text, watermarks, or graphics. The person must look like a REAL human being, not AI-generated. Maintain the same person's identity throughout — same face, same skin tone, same distinguishing features. This image represents what they WILL look like after following through.`;
+  return `${base}\n\n${timelineBlock}\n\nGoal direction: ${goalBlock}\n\nCRITICAL RULES:\n- Photorealistic only. Natural lighting. High quality.\n- No text, watermarks, or graphics anywhere in the image.\n- The person must look like a REAL human being — not AI-generated or CGI.\n- Keep the same face, skin tone, hair, tattoos, and distinguishing features.\n- DO NOT be conservative with the body transformation — show REAL results that reflect dedicated training.\n- The body change should be the FIRST thing anyone notices when comparing before and after.\n- Err on the side of MORE transformation, not less. Users want to see what's possible when they follow through.`;
 }
 
 export default async function handler(req) {

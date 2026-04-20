@@ -1455,13 +1455,18 @@
     opacity: 1; transform: translateY(0);
   }
   .geo-welcome-label {
-    font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
-    color: rgba(122,154,110,0.7); margin-bottom: 12px;
+    font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase;
+    color: rgba(200,169,110,0.6); margin-bottom: 14px;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.5);
   }
   .geo-welcome-name {
     font-family: 'Bebas Neue', var(--ff-display), sans-serif;
-    font-size: clamp(32px, 8vw, 56px); color: #f5f4f0;
-    letter-spacing: 0.04em; line-height: 1;
+    font-size: clamp(44px, 12vw, 72px);
+    letter-spacing: 0.06em; line-height: 1;
+    background: linear-gradient(180deg, #e8d5a3 0%, #c8a96e 40%, #a6843a 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.7)) drop-shadow(0 0 30px rgba(200,169,110,0.25));
   }
   .geo-transition.dissolving {
     animation: geoDissolve 0.7s ease-out forwards;
