@@ -272,9 +272,7 @@
     .rest-status { font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px; }
     .rest-skip { font-size:11px;letter-spacing:0.06em;color:var(--text);background:var(--surface);border:1px solid rgba(0,0,0,0.08);cursor:pointer;font-family:var(--ff-body);text-transform:uppercase;font-weight:500;padding:10px 18px;border-radius:8px;transition:background 0.2s,border-color 0.2s;white-space:nowrap; }
     .rest-skip:hover { background:rgba(0,0,0,0.04);border-color:rgba(0,0,0,0.14); }
-    .log-set-btn { font-family:var(--ff-body);font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:6px 12px;cursor:pointer;border-radius:6px;background:rgba(60,170,90,0.18);border:1px solid rgba(60,170,90,0.45);color:#50e080;transition:background 0.2s;margin-top:6px; }
-    .log-set-btn:hover { background:rgba(60,170,90,0.30); }
-    .log-set-btn:disabled { opacity:0.3;cursor:not-allowed; }
+    /* legacy log-set-btn removed — replaced by .set-log-btn in set-by-set system */
 
     /* COACH */
     .coach-container { padding-bottom: 0; }
@@ -337,12 +335,24 @@
     .ex-name-btn { background: none; border: none; color: var(--text); font-size: 14px; font-family: var(--ff-body); cursor: pointer; text-align: left; padding: 0; text-decoration: underline; text-decoration-color: rgba(122,142,118,0.3); text-underline-offset: 3px; transition: color 0.2s; }
     .ex-name-btn:hover { color: var(--gold); }
     .ex-desc { font-size: 12px; color: var(--text3); line-height: 1.5; margin: 4px 0 2px; font-style: italic; }
-    .ex-track { display: flex; gap: 6px; margin-top: 7px; }
-    .ex-track-col { display: flex; flex-direction: column; align-items: center; }
-    .ex-track-input { width: 54px; background: var(--bg-soft); border: 1px solid var(--border); color: var(--text); font-family: var(--ff-body); font-size: 12px; padding: 5px 6px; outline: none; text-align: center; transition: border-color 0.2s; -moz-appearance: textfield; border-radius: 8px; }
-    .ex-track-input::-webkit-outer-spin-button, .ex-track-input::-webkit-inner-spin-button { -webkit-appearance: none; }
-    .ex-track-input:focus { border-color: var(--gold); }
-    .ex-track-lbl { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: #444; margin-top: 3px; }
+    /* SET-BY-SET LOGGING */
+    .set-log-list { margin-top:10px;display:flex;flex-direction:column;gap:6px; }
+    .set-row { display:flex;align-items:center;gap:8px; }
+    .set-label { font-size:11px;font-weight:600;color:var(--muted);width:38px;flex-shrink:0;letter-spacing:0.02em; }
+    .set-input { width:52px;background:var(--bg-soft);border:1px solid var(--border);color:var(--text);font-family:var(--ff-body);font-size:13px;padding:7px 4px;outline:none;text-align:center;border-radius:8px;-moz-appearance:textfield;transition:border-color 0.2s; }
+    .set-input::-webkit-outer-spin-button,.set-input::-webkit-inner-spin-button { -webkit-appearance:none; }
+    .set-input:focus { border-color:var(--sage); }
+    .set-input-label { font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:#888;text-align:center;margin-top:2px; }
+    .set-log-btn { font-family:var(--ff-body);font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:7px 12px;cursor:pointer;border-radius:6px;background:rgba(60,170,90,0.15);border:1px solid rgba(60,170,90,0.4);color:#3a8a50;transition:all 0.2s;white-space:nowrap; }
+    .set-log-btn:hover { background:rgba(60,170,90,0.25); }
+    .set-log-btn:disabled { opacity:0.3;cursor:not-allowed; }
+    .set-row.logged .set-log-btn { background:rgba(60,170,90,0.08);border-color:rgba(60,170,90,0.2);color:#7aba88;pointer-events:none; }
+    .set-row.logged .set-input { opacity:0.5;pointer-events:none; }
+    .set-row.logged .set-label { color:#7aba88; }
+    .add-set-btn { font-family:var(--ff-body);font-size:11px;color:var(--muted);background:none;border:1px dashed var(--border);padding:6px 14px;border-radius:6px;cursor:pointer;margin-top:4px;transition:all 0.2s;align-self:flex-start; }
+    .add-set-btn:hover { border-color:var(--sage);color:var(--sage); }
+    .set-header-row { display:flex;gap:8px;align-items:center;margin-bottom:2px;padding-left:38px; }
+    .set-header-row span { font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:#999;width:52px;text-align:center; }
     .day-body.open { max-height: 2000px; padding: 0 24px 20px; }
     .ex-anim-wrap { display: flex; justify-content: center; margin-bottom: 24px; }
     .ex-anim-wrap svg { width: 120px; height: 120px; }
@@ -3599,7 +3609,6 @@
     var statusEl = timerWrap.querySelector('.rest-status');
     var circum = 339;
 
-    btn.disabled = true;
     timerWrap.classList.add('active');
 
     ring.style.stroke = '#5a9ecf';
@@ -3618,7 +3627,6 @@
         setTimeout(function() {
           exercise.style.backgroundColor = '';
           timerWrap.classList.remove('active');
-          btn.disabled = false;
         }, 2000);
       } else if (remaining <= 10) {
         ring.style.stroke = '#d4622a';
@@ -3634,39 +3642,66 @@
     timerWrap.querySelector('.rest-skip').onclick = function() {
       clearInterval(interval);
       timerWrap.classList.remove('active');
-      btn.disabled = false;
       exercise.style.backgroundColor = '';
     };
   }
 
-  // Build exercise HTML with tracking inputs and clickable form guide
+  // Build exercise HTML with set-by-set logging
   function buildExHTML(exercises, dayTag) {
     return exercises.map(function(ex, idx) {
       var name = ex[0], sets = ex[1], desc = ex[2] || '';
       var sk = 'wylde_' + dayTag + '_' + idx;
-      var saved = {};
-      try { saved = JSON.parse(localStorage.getItem(sk) || '{}'); } catch(e) {}
+
       // Parse recommended sets x reps (e.g. "3x12", "4 x 8-10")
-      var recSets = '', recReps = '';
+      var recSetCount = 3, recReps = '';
       if (sets) {
         var match = String(sets).match(/(\d+)\s*[xX×]\s*(\d+)/);
-        if (match) { recSets = match[1]; recReps = match[2]; }
+        if (match) { recSetCount = parseInt(match[1]); recReps = match[2]; }
       }
+
+      // Load saved set data
+      var savedSets = [];
+      try { savedSets = JSON.parse(localStorage.getItem(sk) || '[]'); } catch(e) { savedSets = []; }
+      if (!Array.isArray(savedSets)) savedSets = [];
+
+      // Ensure we have at least recSetCount rows
+      var totalSets = Math.max(recSetCount, savedSets.length);
+
       var descHTML = desc ? '<p class="ex-desc">' + esc(desc) + '</p>' : '';
-      return '<div class="exercise" style="flex-direction:column;align-items:flex-start;">' +
+
+      // Build set rows
+      var setRows = '';
+      for (var s = 0; s < totalSets; s++) {
+        var sd = savedSets[s] || {};
+        var isLogged = sd.logged ? true : false;
+        var prevWeight = '';
+        // Carry weight from previous set if not set
+        if (!sd.weight && s > 0 && savedSets[s-1] && savedSets[s-1].weight) {
+          prevWeight = savedSets[s-1].weight;
+        }
+        var weightVal = sd.weight || prevWeight || '';
+        var repsVal = sd.reps || recReps || '';
+
+        setRows +=
+          '<div class="set-row' + (isLogged ? ' logged' : '') + '" data-set="' + s + '">' +
+            '<span class="set-label">' + (s + 1) + '</span>' +
+            '<input class="set-input" type="number" min="0" placeholder="' + (recReps || '—') + '" value="' + esc(repsVal) + '" data-field="reps" />' +
+            '<input class="set-input" type="number" min="0" placeholder="—" value="' + esc(weightVal) + '" data-field="weight" />' +
+            '<button class="set-log-btn" data-sk="' + sk + '" data-setidx="' + s + '" data-exname="' + esc(name) + '" onclick="logSetRow(this)">' + (isLogged ? '\u2713 Done' : 'Log') + '</button>' +
+          '</div>';
+      }
+
+      return '<div class="exercise" style="flex-direction:column;align-items:flex-start;" data-sk="' + sk + '" data-recsets="' + recSetCount + '" data-recreps="' + esc(recReps) + '">' +
         '<div style="display:flex;justify-content:space-between;width:100%;align-items:flex-start;">' +
           '<div style="flex:1;">' +
             '<button class="ex-name-btn" data-ex="' + esc(name) + '" onclick="showFormGuide(this.dataset.ex)">' + esc(name) + '</button>' +
             descHTML +
-            '<div class="ex-track">' +
-              '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="' + (recSets || '—') + '" value="' + esc(saved.sets || recSets) + '" data-sk="' + sk + '" data-field="sets" oninput="saveTracking(this)" /><p class="ex-track-lbl">Sets</p></div>' +
-              '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="' + (recReps || '—') + '" value="' + esc(saved.reps || recReps) + '" data-sk="' + sk + '" data-field="reps" oninput="saveTracking(this)" /><p class="ex-track-lbl">Reps</p></div>' +
-              '<div class="ex-track-col"><input class="ex-track-input" type="number" min="0" placeholder="—" value="' + esc(saved.weight || '') + '" data-sk="' + sk + '" data-field="weight" oninput="saveTracking(this)" /><p class="ex-track-lbl">lbs</p></div>' +
-            '</div>' +
-            '<button class="log-set-btn" data-exname="' + esc(name) + '" onclick="startRestTimer(this, this.dataset.exname)">Log Set \u2713</button>' +
           '</div>' +
           '<span class="ex-sets" style="margin-left:12px;flex-shrink:0;">' + esc(sets) + '</span>' +
         '</div>' +
+        '<div class="set-header-row"><span>Reps</span><span>lbs</span></div>' +
+        '<div class="set-log-list">' + setRows + '</div>' +
+        '<button class="add-set-btn" onclick="addSetRow(this)">+ Add Set</button>' +
         '<div class="rest-timer-wrap">' +
           '<div class="rest-timer-inner">' +
             '<div class="rest-status">Resting...</div>' +
@@ -3681,13 +3716,75 @@
     }).join('');
   }
 
-  // Save tracking data to localStorage
-  function saveTracking(input) {
-    var sk = input.dataset.sk, field = input.dataset.field;
-    var saved = {};
-    try { saved = JSON.parse(localStorage.getItem(sk) || '{}'); } catch(e) {}
-    saved[field] = input.value;
-    localStorage.setItem(sk, JSON.stringify(saved));
+  // Log a single set row
+  function logSetRow(btn) {
+    var row = btn.closest('.set-row');
+    var exercise = btn.closest('.exercise');
+    var sk = btn.dataset.sk;
+    var setIdx = parseInt(btn.dataset.setidx);
+    var exName = btn.dataset.exname;
+
+    var repsInput = row.querySelector('[data-field="reps"]');
+    var weightInput = row.querySelector('[data-field="weight"]');
+    var reps = repsInput ? repsInput.value : '';
+    var weight = weightInput ? weightInput.value : '';
+
+    // Save to localStorage
+    var savedSets = [];
+    try { savedSets = JSON.parse(localStorage.getItem(sk) || '[]'); } catch(e) { savedSets = []; }
+    if (!Array.isArray(savedSets)) savedSets = [];
+    // Extend array if needed
+    while (savedSets.length <= setIdx) savedSets.push({});
+    savedSets[setIdx] = { reps: reps, weight: weight, logged: true, time: new Date().toISOString() };
+    localStorage.setItem(sk, JSON.stringify(savedSets));
+
+    // Carry weight to next unlogged set
+    var nextRow = row.nextElementSibling;
+    if (nextRow && nextRow.classList.contains('set-row') && !nextRow.classList.contains('logged')) {
+      var nextWeight = nextRow.querySelector('[data-field="weight"]');
+      if (nextWeight && !nextWeight.value && weight) nextWeight.value = weight;
+    }
+
+    // Mark row as logged
+    row.classList.add('logged');
+    btn.textContent = '\u2713 Done';
+
+    // Save to Supabase
+    logSet(exName, parseFloat(weight) || 0, parseInt(reps) || 0);
+
+    // Start rest timer
+    startRestTimer(btn, exName);
+  }
+
+  // Add an extra set row
+  function addSetRow(btn) {
+    var exercise = btn.closest('.exercise');
+    var list = exercise.querySelector('.set-log-list');
+    var sk = exercise.dataset.sk;
+    var recReps = exercise.dataset.recreps || '';
+    var existingRows = list.querySelectorAll('.set-row');
+    var newIdx = existingRows.length;
+
+    // Grab weight from last row
+    var lastRow = existingRows[existingRows.length - 1];
+    var lastWeight = '';
+    if (lastRow) {
+      var lw = lastRow.querySelector('[data-field="weight"]');
+      if (lw) lastWeight = lw.value || '';
+    }
+
+    var row = document.createElement('div');
+    row.className = 'set-row';
+    row.dataset.set = newIdx;
+    row.innerHTML =
+      '<span class="set-label">' + (newIdx + 1) + '</span>' +
+      '<input class="set-input" type="number" min="0" placeholder="' + (recReps || '—') + '" value="' + recReps + '" data-field="reps" />' +
+      '<input class="set-input" type="number" min="0" placeholder="—" value="' + lastWeight + '" data-field="weight" />' +
+      '<button class="set-log-btn" data-sk="' + sk + '" data-setidx="' + newIdx + '" data-exname="' + exercise.querySelector('.ex-name-btn').dataset.ex + '" onclick="logSetRow(this)">Log</button>';
+    list.appendChild(row);
+
+    // Focus the reps input
+    row.querySelector('[data-field="reps"]').focus();
   }
 
   function renderPlan(plan, container, btn) {
