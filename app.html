@@ -574,6 +574,131 @@
   @keyframes ovFadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes ovFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+  /* ═══ MORNING PROTOCOL ═══ */
+  .mp-card {
+    margin: 0 0 16px; padding: 0;
+    background: var(--card-bg, #FFFFFF);
+    border: 1px solid var(--border, rgba(0,0,0,0.06));
+    border-radius: 16px; overflow: hidden;
+  }
+  .mp-header {
+    padding: 20px 20px 0;
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .mp-day-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--sage, #7a9a6e);
+  }
+  .mp-day-count {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text3, #999);
+  }
+  .mp-title {
+    font-size: 20px; font-weight: 700; color: var(--text, #1A1A1A);
+    padding: 6px 20px 4px; letter-spacing: -0.01em;
+  }
+  .mp-subtitle {
+    font-size: 13px; color: var(--text3, #999); padding: 0 20px 16px;
+    line-height: 1.5;
+  }
+  .mp-progress-bar {
+    height: 2px; background: rgba(0,0,0,0.04); margin: 0 20px 16px;
+    border-radius: 2px; overflow: hidden;
+  }
+  .mp-progress-fill {
+    height: 100%; background: var(--sage, #7a9a6e);
+    border-radius: 2px; transition: width 0.5s ease; width: 0%;
+  }
+  .mp-list { padding: 0 12px 12px; list-style: none; }
+  .mp-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 12px; border-radius: 12px;
+    cursor: pointer; transition: all 0.2s ease;
+    position: relative;
+  }
+  .mp-item:hover { background: rgba(0,0,0,0.02); }
+  .mp-item.done { opacity: 0.5; }
+  .mp-item.done .mp-check { background: var(--sage, #7a9a6e); border-color: var(--sage, #7a9a6e); }
+  .mp-item.done .mp-check::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
+  .mp-item.done .mp-item-name { text-decoration: line-through; color: var(--text3, #999); }
+  .mp-check {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 1.5px solid rgba(0,0,0,0.15); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease;
+  }
+  .mp-item-content { flex: 1; min-width: 0; }
+  .mp-item-name { font-size: 15px; font-weight: 500; color: var(--text, #1A1A1A); line-height: 1.3; }
+  .mp-item-dur { font-size: 11px; color: var(--text3, #999); margin-top: 2px; }
+  .mp-done-wrap {
+    text-align: center; padding: 24px 20px 20px;
+    display: none; animation: ovFadeIn 0.5s ease both;
+  }
+  .mp-done-icon { font-size: 28px; margin-bottom: 8px; }
+  .mp-done-msg {
+    font-size: 16px; font-weight: 600; color: var(--text, #1A1A1A);
+    line-height: 1.4; margin-bottom: 4px;
+  }
+  .mp-done-sub { font-size: 13px; color: var(--text3, #999); font-style: italic; }
+  .mp-item.completing {
+    animation: mpComplete 0.4s ease both;
+  }
+  @keyframes mpComplete {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.02); }
+    100% { transform: scale(1); opacity: 0.5; }
+  }
+
+  /* ── Protocol Setup (choose actions) ── */
+  .mp-setup { padding: 20px; }
+  .mp-setup-title {
+    font-size: 20px; font-weight: 700; color: var(--text, #1A1A1A);
+    margin-bottom: 4px; letter-spacing: -0.01em;
+  }
+  .mp-setup-sub {
+    font-size: 13px; color: var(--text3, #999); margin-bottom: 20px; line-height: 1.5;
+  }
+  .mp-setup-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--sage, #7a9a6e); margin-bottom: 14px;
+  }
+  .mp-action-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .mp-action-opt {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px; border-radius: 12px;
+    border: 1px solid var(--border, rgba(0,0,0,0.06));
+    cursor: pointer; transition: all 0.2s ease;
+    background: transparent;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mp-action-opt:hover { border-color: rgba(122,154,110,0.25); }
+  .mp-action-opt.selected { border-color: var(--sage, #7a9a6e); background: rgba(122,154,110,0.04); }
+  .mp-action-opt.selected .mp-action-check {
+    background: var(--sage, #7a9a6e); border-color: var(--sage, #7a9a6e);
+  }
+  .mp-action-opt.selected .mp-action-check::after { content: '✓'; color: #fff; font-size: 10px; font-weight: 700; }
+  .mp-action-check {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 1.5px solid rgba(0,0,0,0.12); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease;
+  }
+  .mp-action-text { flex: 1; }
+  .mp-action-name { font-size: 15px; font-weight: 500; color: var(--text, #1A1A1A); }
+  .mp-action-desc { font-size: 12px; color: var(--text3, #999); margin-top: 2px; }
+  .mp-setup-btn {
+    width: 100%; padding: 14px; border: none; border-radius: 12px;
+    font-size: 14px; font-weight: 600; letter-spacing: 0.02em;
+    cursor: pointer; transition: opacity 0.2s;
+    background: var(--text, #1A1A1A); color: #fff;
+  }
+  .mp-setup-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .mp-setup-btn:hover:not(:disabled) { opacity: 0.85; }
+  .mp-setup-count {
+    text-align: center; font-size: 12px; color: var(--text3, #999);
+    margin-bottom: 16px;
+  }
+
   /* ── Hidden legacy (keep functional, hide visually) ── */
   .ov-section-card { display: none; }
   .ov-quick-row { display: none; }
@@ -1605,6 +1730,84 @@
     <p class="ov-complete-sub">You kept your word today.</p>
   </div>
 
+  <!-- ═══ MORNING PROTOCOL ═══ -->
+  <div class="mp-card" id="mpCard">
+
+    <!-- SETUP MODE — choose your ritual actions (shown once) -->
+    <div id="mpSetup" class="mp-setup" style="display:none;">
+      <p class="mp-setup-label">Design Your Ritual</p>
+      <h2 class="mp-setup-title">Morning Protocol</h2>
+      <p class="mp-setup-sub">Choose 3–5 actions that define how you start every day. This isn't habit tracking — it's identity.</p>
+
+      <div class="mp-action-list" id="mpActionList">
+        <div class="mp-action-opt" onclick="toggleMPAction(this)" data-action="stillness" data-name="Sit in stillness" data-desc="Breathe. Ground yourself before the noise begins.">
+          <div class="mp-action-check"></div>
+          <div class="mp-action-text">
+            <p class="mp-action-name">Sit in stillness</p>
+            <p class="mp-action-desc">Breathe. Ground yourself before the noise begins.</p>
+          </div>
+        </div>
+        <div class="mp-action-opt" onclick="toggleMPAction(this)" data-action="standard" data-name="Set your standard" data-desc="Declare one thing you will not compromise on today.">
+          <div class="mp-action-check"></div>
+          <div class="mp-action-text">
+            <p class="mp-action-name">Set your standard</p>
+            <p class="mp-action-desc">Declare one thing you will not compromise on today.</p>
+          </div>
+        </div>
+        <div class="mp-action-opt" onclick="toggleMPAction(this)" data-action="visualize" data-name="See who you're becoming" data-desc="Spend a moment with your future self.">
+          <div class="mp-action-check"></div>
+          <div class="mp-action-text">
+            <p class="mp-action-name">See who you're becoming</p>
+            <p class="mp-action-desc">Spend a moment with your future self.</p>
+          </div>
+        </div>
+        <div class="mp-action-opt" onclick="toggleMPAction(this)" data-action="move" data-name="Move your body" data-desc="Any movement. Walk, stretch, train. Just move.">
+          <div class="mp-action-check"></div>
+          <div class="mp-action-text">
+            <p class="mp-action-name">Move your body</p>
+            <p class="mp-action-desc">Any movement. Walk, stretch, train. Just move.</p>
+          </div>
+        </div>
+        <div class="mp-action-opt" onclick="toggleMPAction(this)" data-action="learn" data-name="Feed your mind" data-desc="Read, listen, or watch something that sharpens you.">
+          <div class="mp-action-check"></div>
+          <div class="mp-action-text">
+            <p class="mp-action-name">Feed your mind</p>
+            <p class="mp-action-desc">Read, listen, or watch something that sharpens you.</p>
+          </div>
+        </div>
+        <div class="mp-action-opt" onclick="toggleMPAction(this)" data-action="write" data-name="Write with intention" data-desc="Journal, plan, or write down what matters today.">
+          <div class="mp-action-check"></div>
+          <div class="mp-action-text">
+            <p class="mp-action-name">Write with intention</p>
+            <p class="mp-action-desc">Journal, plan, or write down what matters today.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="mp-setup-count" id="mpSetupCount">Select 3–5 actions</p>
+      <button class="mp-setup-btn" id="mpSetupBtn" disabled onclick="saveMPSetup()">Lock In My Protocol</button>
+    </div>
+
+    <!-- DAILY MODE — execute your protocol -->
+    <div id="mpDaily" style="display:none;">
+      <div class="mp-header">
+        <span class="mp-day-label">Morning Protocol</span>
+        <span class="mp-day-count" id="mpDayCount">Day 1</span>
+      </div>
+      <h3 class="mp-title" id="mpDailyTitle">Your ritual.</h3>
+      <p class="mp-subtitle" id="mpDailySub">Complete each action to start the day as the person you're becoming.</p>
+      <div class="mp-progress-bar"><div class="mp-progress-fill" id="mpProgressFill"></div></div>
+      <ul class="mp-list" id="mpDailyList">
+        <!-- Populated by JS -->
+      </ul>
+      <div class="mp-done-wrap" id="mpDoneWrap">
+        <p class="mp-done-icon">&#10024;</p>
+        <p class="mp-done-msg" id="mpDoneMsg">You showed up. This is who you are now.</p>
+        <p class="mp-done-sub" id="mpDoneSub"></p>
+      </div>
+    </div>
+  </div>
+
   <!-- B. TODAY STACK -->
   <div class="ov-stack">
     <p class="ov-stack-label">Today's Focus</p>
@@ -1945,6 +2148,223 @@
       } else {
         thumb.querySelector('img').src = _generatedImages['12weeks'];
       }
+    }
+  }
+
+  // ═══ MORNING PROTOCOL LOGIC ═══
+  var _mpActions = [
+    { id: 'stillness',  name: 'Sit in stillness',        dur: 5, desc: 'Breathe. Ground yourself.' },
+    { id: 'standard',   name: 'Set your standard',       dur: 3, desc: 'Declare what you won\'t compromise on.' },
+    { id: 'visualize',  name: 'See who you\'re becoming', dur: 3, desc: 'Spend a moment with your future self.' },
+    { id: 'move',       name: 'Move your body',          dur: 7, desc: 'Walk, stretch, or train.' },
+    { id: 'learn',      name: 'Feed your mind',          dur: 5, desc: 'Read, listen, or watch.' },
+    { id: 'write',      name: 'Write with intention',    dur: 5, desc: 'Journal or plan what matters.' }
+  ];
+
+  // Identity-based completion messages
+  var _mpDoneMessages = [
+    { msg: 'You showed up. This is who you are now.', sub: '' },
+    { msg: 'Before most people opened their eyes, you chose yourself.', sub: '' },
+    { msg: 'The protocol is complete. The standard is set.', sub: '' },
+    { msg: 'This is the version of you that follows through.', sub: '' },
+    { msg: 'Discipline isn\'t motivation. It\'s identity.', sub: 'You just proved that.' },
+    { msg: 'Another morning claimed.', sub: 'Consistency is becoming your default.' },
+    { msg: 'You didn\'t negotiate with yourself today.', sub: 'That\'s the difference.' },
+  ];
+
+  function mpGetToday() {
+    return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  }
+
+  function mpLoad() {
+    try { return JSON.parse(localStorage.getItem('wylde_mp') || 'null'); } catch(e) { return null; }
+  }
+
+  function mpSave(data) {
+    try { localStorage.setItem('wylde_mp', JSON.stringify(data)); } catch(e) {}
+    // Also persist to Supabase if available
+    var sb = typeof _getSupabase === 'function' ? _getSupabase() : null;
+    if (sb && typeof currentUser !== 'undefined' && currentUser) {
+      sb.from('profiles').upsert({
+        id: currentUser.id,
+        morning_protocol: data,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' }).catch(function(){});
+    }
+  }
+
+  // Calculate protocol day number
+  function mpDayNumber(data) {
+    if (!data || !data.startDate) return 1;
+    var start = new Date(data.startDate);
+    var now = new Date(mpGetToday());
+    return Math.max(1, Math.floor((now - start) / 86400000) + 1);
+  }
+
+  // Setup: toggle action selection
+  window.toggleMPAction = function(el) {
+    el.classList.toggle('selected');
+    var selected = document.querySelectorAll('#mpActionList .mp-action-opt.selected');
+    var count = selected.length;
+    var countEl = document.getElementById('mpSetupCount');
+    var btn = document.getElementById('mpSetupBtn');
+
+    if (count < 3) {
+      countEl.textContent = count + ' selected — choose at least 3';
+      btn.disabled = true;
+    } else if (count > 5) {
+      countEl.textContent = count + ' selected — max 5';
+      btn.disabled = true;
+      // Remove the latest selection
+      el.classList.remove('selected');
+      countEl.textContent = '5 selected — you\'re locked in';
+      btn.disabled = false;
+    } else {
+      countEl.textContent = count + ' selected' + (count < 3 ? '' : ' — ready');
+      btn.disabled = count < 3;
+    }
+  };
+
+  // Save the setup and switch to daily mode
+  window.saveMPSetup = function() {
+    var selected = document.querySelectorAll('#mpActionList .mp-action-opt.selected');
+    if (selected.length < 3) return;
+
+    var actions = [];
+    var totalMinutes = 0;
+    selected.forEach(function(el) {
+      var actionId = el.getAttribute('data-action');
+      var action = _mpActions.find(function(a) { return a.id === actionId; });
+      if (action) {
+        // Smart duration: keep total under 15 min
+        var dur = action.dur;
+        if (totalMinutes + dur > 15 && actions.length > 0) dur = Math.max(3, 15 - totalMinutes);
+        totalMinutes += dur;
+        actions.push({ id: action.id, name: action.name, desc: action.desc, dur: dur });
+      }
+    });
+
+    var data = {
+      actions: actions,
+      startDate: mpGetToday(),
+      completedDays: {},
+      streak: 0
+    };
+
+    mpSave(data);
+    mpRenderDaily(data);
+  };
+
+  // Render the daily protocol checklist
+  function mpRenderDaily(data) {
+    if (!data || !data.actions) return;
+
+    document.getElementById('mpSetup').style.display = 'none';
+    document.getElementById('mpDaily').style.display = 'block';
+
+    var dayNum = mpDayNumber(data);
+    document.getElementById('mpDayCount').textContent = 'Day ' + dayNum;
+
+    // Check today's completion status
+    var today = mpGetToday();
+    var todayData = data.completedDays[today] || {};
+
+    var list = document.getElementById('mpDailyList');
+    list.innerHTML = '';
+
+    var completedCount = 0;
+    var totalCount = data.actions.length;
+
+    data.actions.forEach(function(action, idx) {
+      var isDone = todayData[action.id] === true;
+      if (isDone) completedCount++;
+
+      var li = document.createElement('li');
+      li.className = 'mp-item' + (isDone ? ' done' : '');
+      li.setAttribute('data-action-id', action.id);
+      li.setAttribute('data-idx', idx);
+      li.onclick = function() { if (!isDone) mpCompleteAction(action.id, li, data); };
+
+      li.innerHTML =
+        '<div class="mp-check"></div>' +
+        '<div class="mp-item-content">' +
+          '<p class="mp-item-name">' + action.name + '</p>' +
+          '<p class="mp-item-dur">' + action.dur + ' min</p>' +
+        '</div>';
+
+      list.appendChild(li);
+    });
+
+    // Update progress bar
+    var pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+    document.getElementById('mpProgressFill').style.width = pct + '%';
+
+    // Show completion state if all done
+    var doneWrap = document.getElementById('mpDoneWrap');
+    if (completedCount === totalCount) {
+      doneWrap.style.display = 'block';
+      var msg = _mpDoneMessages[dayNum % _mpDoneMessages.length];
+      document.getElementById('mpDoneMsg').textContent = msg.msg;
+      document.getElementById('mpDoneSub').textContent = msg.sub;
+      document.getElementById('mpDailyTitle').textContent = 'Protocol complete.';
+      document.getElementById('mpDailySub').textContent = 'Day ' + dayNum + ' is claimed.';
+    } else {
+      doneWrap.style.display = 'none';
+      var remaining = totalCount - completedCount;
+      document.getElementById('mpDailyTitle').textContent = remaining === totalCount ? 'Your ritual.' : remaining + ' remaining.';
+      document.getElementById('mpDailySub').textContent = completedCount === 0
+        ? 'Complete each action to start the day as the person you\'re becoming.'
+        : 'Keep going. You\'re already ahead of yesterday.';
+    }
+  }
+
+  // Complete a single action
+  function mpCompleteAction(actionId, liEl, data) {
+    var today = mpGetToday();
+    if (!data.completedDays[today]) data.completedDays[today] = {};
+    data.completedDays[today][actionId] = true;
+
+    // Animate
+    liEl.classList.add('completing');
+    setTimeout(function() {
+      liEl.classList.add('done');
+      liEl.classList.remove('completing');
+      liEl.onclick = null;
+    }, 400);
+
+    // Update streak
+    var dayNum = mpDayNumber(data);
+    var allDone = data.actions.every(function(a) { return data.completedDays[today][a.id]; });
+    if (allDone) {
+      // Check if yesterday was completed too
+      var yesterday = new Date(new Date(today).getTime() - 86400000).toISOString().slice(0, 10);
+      var yData = data.completedDays[yesterday];
+      var yComplete = yData && data.actions.every(function(a) { return yData[a.id]; });
+      data.streak = yComplete ? (data.streak || 0) + 1 : 1;
+
+      // Award XP
+      if (typeof awardXP === 'function') awardXP(25, 'Morning Protocol completed');
+    }
+
+    mpSave(data);
+
+    // Re-render to update progress
+    setTimeout(function() { mpRenderDaily(data); }, 450);
+  }
+
+  // Initialize Morning Protocol on the Today screen
+  function mpInit() {
+    var data = mpLoad();
+    var card = document.getElementById('mpCard');
+    if (!card) return;
+
+    if (!data || !data.actions || data.actions.length === 0) {
+      // Show setup mode
+      document.getElementById('mpSetup').style.display = 'block';
+      document.getElementById('mpDaily').style.display = 'none';
+    } else {
+      // Show daily mode
+      mpRenderDaily(data);
     }
   }
 
@@ -2833,7 +3253,7 @@
     document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
     if (id === 'nutrition' && state.weight) { calculateMacros(); }
-    if (id === 'overview') { updateOverview(); }
+    if (id === 'overview') { updateOverview(); mpInit(); }
     // Map screens to bottom tab indices (4-tab nav: Today=0, Future=1, Coach=2, Optimize=3)
     var tabs = { overview:0, future:1, coach:2, progress:3 };
     // Sub-screens map to their parent tab
