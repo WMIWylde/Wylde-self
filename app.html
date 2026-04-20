@@ -2254,7 +2254,7 @@
     sb.auth.signInWithOtp({
       email: email,
       options: {
-        emailRedirectTo: window.location.origin + '/app.html'
+        emailRedirectTo: 'https://www.wyldeself.com/app.html'
       }
     }).then(function(result) {
       console.log('Magic link result:', result);
@@ -3434,7 +3434,8 @@
   function generateAllTimelines() {
     var profile = {};
     try { profile = JSON.parse(localStorage.getItem('wylde_profile') || '{}'); } catch(ex) {}
-    var userGoal = profile.goal || 'balanced';
+    var userGoals = (profile.goals && profile.goals.length > 0) ? profile.goals : [profile.goal || 'Get lean & athletic'];
+    var userGoal = profile.goal || userGoals[0] || 'balanced';
     var gender = profile.gender || 'male';
 
     // Reset stored images
@@ -3462,7 +3463,7 @@
     // Fire all three in parallel
     var timelines = ['12weeks', '6months', '1year'];
     var promises = timelines.map(function(tl) {
-      var payload = { timeline: tl, goal: userGoal, userGoal: userGoal, gender: gender };
+      var payload = { timeline: tl, goal: userGoal, userGoal: userGoal, goals: userGoals, gender: gender };
       if (futurePhotoBase64) payload.image_base64 = futurePhotoBase64;
       if (window._protocolImageAddition) payload.protocolAddition = window._protocolImageAddition;
 
