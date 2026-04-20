@@ -1602,7 +1602,7 @@
     }
     .preview-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.10);
     }
     .preview-icon {
       width: 40px; height: 40px;
@@ -1669,6 +1669,145 @@
       line-height: 1.1;
       margin-bottom: 60px;
     }
+    /* SOCIAL PROOF */
+    .social-proof {
+      padding: 72px 32px;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .social-proof-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+    }
+    .proof-counter {
+      font-size: 15px;
+      color: var(--text-secondary);
+      letter-spacing: -0.01em;
+    }
+    .proof-number {
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 17px;
+    }
+    .proof-quotes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      width: 100%;
+    }
+    .proof-quote {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-soft);
+      border-radius: 14px;
+      padding: 28px 24px;
+      text-align: left;
+    }
+    .proof-quote p {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+    .proof-quote em {
+      font-style: italic;
+      font-weight: 600;
+    }
+    .proof-attr {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .proof-trust {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .trust-badge {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: var(--bg-soft);
+      padding: 8px 16px;
+      border-radius: 100px;
+      letter-spacing: 0.01em;
+    }
+
+    /* FEATURES STRIP (5 items) */
+    .features-strip {
+      grid-template-columns: repeat(5, 1fr) !important;
+    }
+    @media (max-width: 960px) {
+      .features-strip { grid-template-columns: repeat(3, 1fr) !important; }
+    }
+    @media (max-width: 640px) {
+      .features-strip { grid-template-columns: repeat(2, 1fr) !important; }
+    }
+    @media (max-width: 380px) {
+      .features-strip { grid-template-columns: 1fr !important; }
+    }
+
+    /* FAQ */
+    .faq-section { padding-top: 80px; padding-bottom: 80px; }
+    .faq-list {
+      max-width: 680px;
+      margin: 40px auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .faq-item:first-child {
+      border-top: 1px solid var(--border-soft);
+    }
+    .faq-q {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+      text-align: left;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: -0.01em;
+    }
+    .faq-q:hover { color: var(--accent-sage); }
+    .faq-chevron {
+      transition: transform 0.3s ease;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      margin-left: 16px;
+    }
+    .faq-item.open .faq-chevron {
+      transform: rotate(180deg);
+    }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+      padding: 0 0;
+    }
+    .faq-item.open .faq-a {
+      max-height: 200px;
+      padding: 0 0 20px;
+    }
+    .faq-a p {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
     .steps-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -1685,7 +1824,7 @@
     }
     .step-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.10);
     }
     .step-number {
       font-size: 11px; font-weight: 700;
@@ -1835,7 +1974,7 @@
     }
     .opt-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.10);
     }
     .opt-icon {
       width: 40px; height: 40px;
@@ -1971,6 +2110,8 @@
       .phone-strip { grid-template-columns: repeat(2, 1fr); gap: 16px; max-width: 520px; }
       .preview-grid { grid-template-columns: repeat(2, 1fr); gap: var(--grid-gap-mobile); }
       .steps-grid { grid-template-columns: repeat(2, 1fr); gap: var(--grid-gap-mobile); }
+      .proof-quotes { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+      .social-proof { padding: 56px 28px; }
       #different .preview-grid { grid-template-columns: repeat(3, 1fr) !important; }
       .optimize-cards { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
       .section { padding: 90px 28px; }
@@ -2081,7 +2222,7 @@
       <!-- TODAY — real photo -->
       <div class="device-grid-item reveal d1">
         <div class="device-photo">
-          <img src="/app-inhand.png" alt="Wylde Self app in hand" />
+          <img src="/app-inhand.png" alt="Wylde Self app in hand" width="280" height="560" loading="lazy" />
         </div>
         <div class="device-grid-caption">
           <strong>Today</strong>
@@ -2139,7 +2280,7 @@
       <!-- WORKOUT — real video demo -->
       <div class="device-grid-item reveal d3">
         <div class="device-photo">
-          <video autoplay loop muted playsinline>
+          <video autoplay loop muted playsinline poster="/app-inhand.png">
             <source src="/app-demo.mp4" type="video/mp4" />
           </video>
         </div>
@@ -2204,6 +2345,34 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- SOCIAL PROOF -->
+  <div class="social-proof">
+    <div class="social-proof-inner">
+      <div class="proof-counter reveal">
+        <span class="proof-number">200+</span> people joined early access this week
+      </div>
+      <div class="proof-quotes">
+        <div class="proof-quote reveal d1">
+          <p>"I've tried everything. This is the first thing that made me actually <em>want</em> to show up."</p>
+          <span class="proof-attr">— Early access member</span>
+        </div>
+        <div class="proof-quote reveal d2">
+          <p>"Seeing my future self every morning changed something. I stopped negotiating with myself."</p>
+          <span class="proof-attr">— Early access member</span>
+        </div>
+        <div class="proof-quote reveal d3">
+          <p>"It doesn't feel like a fitness app. It feels like accountability from someone who knows me."</p>
+          <span class="proof-attr">— Early access member</span>
+        </div>
+      </div>
+      <div class="proof-trust reveal d3">
+        <span class="trust-badge">AI-Powered</span>
+        <span class="trust-badge">No Credit Card Required</span>
+        <span class="trust-badge">Cancel Anytime</span>
+      </div>
     </div>
   </div>
 
@@ -2275,7 +2444,7 @@
       <p class="slider-caption">AI-generated future self preview</p>
     </div>
 
-    <div class="preview-grid" style="grid-template-columns:repeat(5,1fr);">
+    <div class="preview-grid features-strip">
       <div class="preview-card reveal d1">
         <div class="card-inner" style="align-items:center;text-align:center;">
           <div class="preview-icon today">
@@ -2357,6 +2526,59 @@
     </div>
   </div>
 
+  <!-- FAQ -->
+  <div class="section faq-section" id="faq">
+    <p class="label reveal">Questions</p>
+    <h2 class="reveal d1">Before you decide</h2>
+    <div class="faq-list">
+      <div class="faq-item reveal d1">
+        <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <span>Is this a fitness app?</span>
+          <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Not in the traditional sense. It's an identity execution system. You're not counting reps — you're closing the gap between who you are and who you're becoming. The workouts, coaching, and tracking are just the mechanism.</p>
+        </div>
+      </div>
+      <div class="faq-item reveal d1">
+        <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <span>What does "future self" actually mean?</span>
+          <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Using AI, we generate a visual representation of who you're working to become — based on your goals, body, and timeline. It's not fantasy. It's a reference point you train toward every day.</p>
+        </div>
+      </div>
+      <div class="faq-item reveal d2">
+        <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <span>Do I need equipment or a gym?</span>
+          <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>No. Your program is built around what you have access to — full gym, some basics at home, or nothing at all. It adapts to you.</p>
+        </div>
+      </div>
+      <div class="faq-item reveal d2">
+        <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <span>How is this different from other AI fitness apps?</span>
+          <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Most AI fitness apps optimize sets and reps. We optimize identity. The AI coach knows your patterns, the future self image keeps you accountable, and the system is designed to make you <em>want</em> to show up — not just remind you to.</p>
+        </div>
+      </div>
+      <div class="faq-item reveal d3">
+        <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <span>What does it cost?</span>
+          <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Free during early access. No credit card required. We'll introduce pricing later — early members get locked in at the best rate.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="section-divider"></div>
 
   <!-- CLOSING CTA -->
@@ -2365,21 +2587,17 @@
     <div class="cta-inner">
       <h2 class="cta-h2 reveal d1">You've thought about<br>this long enough.</h2>
       <p class="cta-body reveal d2">The person you keep imagining is either getting closer — or further away. Every single day.</p>
-      <p class="reveal d2" style="font-size:16px;color:var(--text-primary);font-weight:600;margin-bottom:40px;letter-spacing:-0.01em;">Decide now.</p>
       <div class="reveal d3">
         <div class="waitlist-block">
           <form class="waitlist-form" id="ctaForm" action="https://formspree.io/f/mkoponoz" method="POST">
             <input class="waitlist-input" type="text" name="name" placeholder="Your first name" required />
             <div class="waitlist-row">
               <input class="waitlist-input" type="email" name="email" placeholder="Your email address" required />
-              <button class="waitlist-btn" type="submit">Get Early Access</button>
+              <button class="waitlist-btn" type="submit">See My Future Self →</button>
             </div>
           </form>
           <div class="form-success" id="ctaSuccess">You're in. The gap starts closing now.</div>
-          <p class="form-note">Free to start. Limited early access.</p>
-          <div style="margin-top:24px;">
-            <a href="/gate.html" onclick="return checkDemo(event)" class="btn-primary">See My Future Self →</a>
-          </div>
+          <p class="form-note">Free during early access. No credit card required.</p>
         </div>
       </div>
     </div>
