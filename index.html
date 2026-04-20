@@ -1,25 +1,25 @@
 <!DOCTYPE html>
-<html lang="en" style="background:#111010;">
+<html lang="en" style="background:#F7F6F3;">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#121212" />
+  <meta name="theme-color" content="#F7F6F3" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <link rel="icon" type="image/png" href="/logo-icon.png" />
   <link rel="apple-touch-icon" href="/logo-icon.png" />
-  <title>Wylde Self — Become the person you said you would</title>
+  <title>Wylde Self — Train with the person you're becoming</title>
 
   <!-- SOCIAL SHARE META -->
-  <meta name="description" content="Wylde Self turns your future into something you train with — every day. See it. Follow it. Close the gap." />
-  <meta property="og:title" content="Wylde Self — Become the person you said you would" />
-  <meta property="og:description" content="An AI-powered identity system where you train alongside a future version of yourself." />
+  <meta name="description" content="AI-powered workouts built around your goals, your body, and the future version of you. Train with the person you're becoming." />
+  <meta property="og:title" content="Wylde Self — Train with the person you're becoming" />
+  <meta property="og:description" content="AI-powered workouts and identity-driven transformation. See your future self. Follow the plan. Close the gap." />
   <meta property="og:image" content="https://wyldeself.com/og-image.png" />
   <meta property="og:url" content="https://wyldeself.com" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Wylde Self — Become the person you said you would" />
-  <meta name="twitter:description" content="An AI-powered identity system where you train alongside a future version of yourself." />
+  <meta name="twitter:title" content="Wylde Self — Train with the person you're becoming" />
+  <meta name="twitter:description" content="AI-powered workouts and identity-driven transformation. See your future self. Follow the plan. Close the gap." />
   <meta name="twitter:image" content="https://wyldeself.com/og-image.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -29,28 +29,28 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg-main: #111010;
-      --bg-surface: #1B1A17;
-      --bg-soft: #242424;
-      --bg-elevated: #2C2C2C;
+      --bg-main: #F7F6F3;
+      --bg-surface: #FFFFFF;
+      --bg-soft: #F0EDE5;
+      --bg-elevated: #E8E3D9;
       --card-light: #F5F2EC;
       --sand: #E8E3D9;
       --cream: #F0EDE5;
-      --text-primary: #F5F2ED;
-      --text-secondary: #9E9A90;
-      --text-muted: #6B675E;
+      --text-primary: #1A1A1A;
+      --text-secondary: #666666;
+      --text-muted: #999999;
       --text-dark: #1A1A1A;
       --accent-sage: #7A8E76;
       --accent-sage-soft: #8FA08B;
       --accent-sage-glow: rgba(122,142,118,0.15);
       --accent-gold: #C9AD6E;
       --accent-gold-glow: rgba(201,173,110,0.1);
-      --border-soft: rgba(255,248,235,0.06);
-      --border-warm: rgba(201,173,110,0.08);
-      --shadow-soft: 0 8px 32px rgba(0,0,0,0.35);
-      --shadow-card: 0 1px 2px rgba(0,0,0,0.25), 0 4px 16px rgba(0,0,0,0.2), 0 16px 48px rgba(0,0,0,0.12);
+      --border-soft: rgba(0,0,0,0.06);
+      --border-warm: rgba(0,0,0,0.04);
+      --shadow-soft: 0 8px 32px rgba(0,0,0,0.08);
+      --shadow-card: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
       --shadow-glow: 0 0 60px rgba(122,142,118,0.06);
-      --shadow-hover: 0 2px 4px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25), 0 24px 64px rgba(0,0,0,0.15);
+      --shadow-hover: 0 2px 4px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.08), 0 24px 64px rgba(0,0,0,0.04);
       --radius: 16px;
       --radius-sm: 12px;
       --radius-xs: 8px;
@@ -59,14 +59,14 @@
       --device-radius: 24px;
       --device-screen-radius: 20px;
       --device-padding: 0px;
-      --device-bg: #1C1C1C;
-      --device-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      --device-bg: #FFFFFF;
+      --device-shadow: 0 20px 50px rgba(0,0,0,0.08);
       --card-padding: 20px;
       --card-padding-mobile: 18px;
       --card-radius: 16px;
-      --card-bg: #1C1C1C;
+      --card-bg: #FFFFFF;
       --card-border: none;
-      --card-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      --card-shadow: 0 10px 30px rgba(0,0,0,0.06);
       --grid-gap: 16px;
       --grid-gap-mobile: 12px;
       --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -91,7 +91,7 @@
       content: '';
       position: fixed; inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      opacity: 0.022;
+      opacity: 0.015;
       pointer-events: none;
       z-index: 9000;
       mix-blend-mode: soft-light;
@@ -102,7 +102,7 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 200;
       padding: 16px 32px;
       display: flex; justify-content: space-between; align-items: center;
-      background: rgba(19,18,16,0.82);
+      background: rgba(247,246,243,0.88);
       backdrop-filter: blur(24px) saturate(1.2);
       -webkit-backdrop-filter: blur(24px) saturate(1.2);
       border-bottom: 1px solid var(--border-soft);
@@ -118,7 +118,7 @@
       letter-spacing: 0.18em; text-transform: uppercase;
       color: var(--text-primary);
     }
-    .logo-text span { color: var(--accent-gold); }
+    .logo-text span { color: var(--accent-sage); }
     .nav-right { display: flex; align-items: center; gap: 24px; }
     .nav-link {
       font-size: 13px; font-weight: 500;
@@ -130,15 +130,15 @@
     .nav-link:hover { color: var(--text-primary); }
     .nav-cta {
       font-size: 13px; font-weight: 600;
-      color: var(--text-dark);
-      background: var(--cream);
+      color: #FFFFFF;
+      background: #1A1A1A;
       padding: 10px 26px;
       border-radius: 100px;
       text-decoration: none;
       transition: all 0.25s ease;
       letter-spacing: 0.01em;
     }
-    .nav-cta:hover { background: var(--text-primary); transform: translateY(-1px) scale(1.02); }
+    .nav-cta:hover { background: var(--accent-sage); color: #FFFFFF; transform: translateY(-1px) scale(1.02); }
     .nav-cta:active { transform: scale(0.97); transition-duration: 0.1s; }
 
     /* HERO */
@@ -161,7 +161,7 @@
       background:
         radial-gradient(ellipse 70% 50% at 50% 25%, rgba(122,142,118,0.07) 0%, transparent 55%),
         radial-gradient(ellipse 50% 40% at 50% 80%, rgba(201,173,110,0.04) 0%, transparent 50%),
-        linear-gradient(to bottom, var(--bg-main) 0%, rgba(19,18,16,0.3) 25%, rgba(19,18,16,0.3) 75%, var(--bg-main) 100%);
+        linear-gradient(to bottom, var(--bg-main) 0%, rgba(247,246,243,0.3) 25%, rgba(247,246,243,0.3) 75%, var(--bg-main) 100%);
       pointer-events: none;
     }
     .hero-content {
@@ -219,21 +219,21 @@
       display: inline-flex; align-items: center; gap: 10px;
       font-family: 'Inter', sans-serif;
       font-size: 15px; font-weight: 600;
-      color: var(--text-dark);
-      background: var(--cream);
+      color: #FFFFFF;
+      background: #1A1A1A;
       border: none;
       padding: 17px 40px;
       border-radius: 100px;
       cursor: pointer;
       transition: all 0.35s var(--ease-out);
       text-decoration: none;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 4px 20px rgba(240,237,229,0.1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 20px rgba(0,0,0,0.06);
       letter-spacing: 0.01em;
     }
     .btn-primary:hover {
-      background: var(--text-primary);
+      background: var(--accent-sage);
       transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15), 0 8px 32px rgba(240,237,229,0.14);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1), 0 8px 32px rgba(122,142,118,0.12);
     }
     .btn-primary:active {
       transform: translateY(0) scale(0.98);
@@ -244,8 +244,8 @@
       font-family: 'Inter', sans-serif;
       font-size: 14px; font-weight: 500;
       color: var(--text-secondary);
-      background: rgba(255,248,235,0.03);
-      border: 1px solid rgba(255,248,235,0.08);
+      background: rgba(0,0,0,0.02);
+      border: 1px solid rgba(0,0,0,0.12);
       padding: 14px 32px;
       border-radius: 100px;
       cursor: pointer;
@@ -254,9 +254,9 @@
       letter-spacing: 0.01em;
     }
     .btn-secondary:hover {
-      border-color: rgba(255,248,235,0.16);
+      border-color: rgba(0,0,0,0.2);
       color: var(--text-primary);
-      background: rgba(255,248,235,0.06);
+      background: rgba(0,0,0,0.04);
       transform: translateY(-1px);
     }
     .btn-secondary:active {
@@ -283,7 +283,7 @@
     .section-divider {
       width: 100%; max-width: 400px; margin: 0 auto;
       height: 1px;
-      background: linear-gradient(to right, transparent, rgba(201,173,110,0.1), transparent);
+      background: linear-gradient(to right, transparent, rgba(122,142,118,0.12), transparent);
     }
     .label {
       font-size: 11px; font-weight: 600;
@@ -331,7 +331,7 @@
       width: 100%;
       aspect-ratio: 9 / 17;
       background: var(--bg-surface);
-      border: 1px solid rgba(255,248,235,0.07);
+      border: 1px solid rgba(0,0,0,0.08);
       border-radius: 28px;
       overflow: hidden;
       position: relative;
@@ -340,7 +340,7 @@
     }
     .phone-frame:hover .phone-body {
       box-shadow: var(--shadow-hover);
-      border-color: rgba(255,248,235,0.1);
+      border-color: rgba(0,0,0,0.12);
     }
     .phone-body::before {
       content: '';
@@ -446,8 +446,8 @@
       transform: translateX(-50%);
       font-size: 9px; font-weight: 600;
       letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--cream);
-      background: rgba(19,18,16,0.7);
+      color: #1A1A1A;
+      background: rgba(255,255,255,0.8);
       backdrop-filter: blur(8px);
       padding: 5px 14px;
       border-radius: 100px;
@@ -640,7 +640,7 @@
     }
     .device-notch {
       width: 90px; height: 24px;
-      background: #141414;
+      background: #F0EDE5;
       border-radius: 14px;
       margin: 10px auto 0;
       position: relative; z-index: 10;
@@ -657,7 +657,7 @@
     }
     .device-home {
       width: 100px; height: 4px;
-      background: rgba(245,242,237,0.12);
+      background: rgba(0,0,0,0.08);
       border-radius: 2px;
       margin: auto auto 8px;
       flex-shrink: 0;
@@ -668,14 +668,14 @@
       display: flex; justify-content: space-between; align-items: center;
       padding: 0 0 14px;
       font-size: 11px; font-weight: 600;
-      color: rgba(245,242,237,0.5);
+      color: rgba(0,0,0,0.4);
     }
     .ds-dots { display: flex; gap: 3px; }
     .ds-dots span {
       width: 4px; height: 4px; border-radius: 50%;
-      background: rgba(245,242,237,0.35);
+      background: rgba(0,0,0,0.2);
     }
-    .ds-dots span:first-child { background: rgba(245,242,237,0.6); }
+    .ds-dots span:first-child { background: rgba(0,0,0,0.4); }
     .ds-day {
       font-size: 22px; font-weight: 800;
       color: var(--text-primary);
@@ -705,7 +705,7 @@
     }
     .ds-divider {
       height: 1px;
-      background: rgba(255,248,235,0.05);
+      background: rgba(0,0,0,0.04);
       margin: 18px 0;
     }
     .ds-label {
@@ -718,7 +718,7 @@
       padding: 11px 14px;
       background: var(--bg-soft);
       border-radius: 11px; margin-bottom: 6px;
-      border: 1px solid rgba(255,248,235,0.03);
+      border: 1px solid rgba(0,0,0,0.03);
     }
     .ds-row-left {
       display: flex; align-items: center; gap: 8px;
@@ -745,7 +745,7 @@
     .ds-workout {
       display: flex; align-items: center; gap: 10px;
       padding: 9px 0;
-      border-bottom: 1px solid rgba(255,248,235,0.03);
+      border-bottom: 1px solid rgba(0,0,0,0.03);
     }
     .ds-workout:last-child { border-bottom: none; }
     .ds-workout-dot {
@@ -765,7 +765,7 @@
       padding: 10px 14px;
       background: var(--bg-soft);
       border-radius: 11px; margin-bottom: 6px;
-      border: 1px solid rgba(255,248,235,0.03);
+      border: 1px solid rgba(0,0,0,0.03);
     }
     .ds-protocol-name {
       font-size: 13px; font-weight: 600;
@@ -782,7 +782,7 @@
     }
     .ds-nav-dot {
       width: 5px; height: 5px; border-radius: 50%;
-      background: rgba(245,242,237,0.15);
+      background: rgba(0,0,0,0.1);
     }
     .ds-nav-dot.active {
       background: var(--accent-sage);
@@ -842,10 +842,10 @@
       top: 0; bottom: 0;
       left: 40%;
       width: 2px;
-      background: rgba(245,242,237,0.35);
+      background: rgba(0,0,0,0.2);
       z-index: 4;
       pointer-events: none;
-      box-shadow: 0 0 8px rgba(0,0,0,0.4);
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
     }
     .ds-future-divider::after {
       content: '';
@@ -854,11 +854,11 @@
       transform: translate(-50%, -50%);
       width: 22px; height: 22px;
       border-radius: 50%;
-      background: rgba(27,26,23,0.7);
-      border: 1.5px solid rgba(245,242,237,0.3);
+      background: rgba(255,255,255,0.8);
+      border: 1.5px solid rgba(0,0,0,0.15);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     /* Arrows inside handle */
     .ds-future-divider-arrows {
@@ -880,7 +880,7 @@
       position: absolute;
       bottom: 0; left: 0; right: 0;
       height: 50%;
-      background: linear-gradient(to top, var(--device-bg) 0%, rgba(28,28,28,0.9) 35%, transparent 100%);
+      background: linear-gradient(to top, var(--device-bg) 0%, rgba(255,255,255,0.9) 35%, transparent 100%);
       z-index: 3;
       pointer-events: none;
     }
@@ -905,8 +905,8 @@
     }
     .ds-future-tag.before {
       color: var(--text-muted);
-      background: rgba(27,26,23,0.6);
-      border: 1px solid rgba(255,248,235,0.06);
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(0,0,0,0.08);
     }
     .ds-future-tag.after {
       color: var(--accent-sage-soft);
@@ -927,7 +927,7 @@
       color: var(--text-primary);
       letter-spacing: -0.03em;
       line-height: 1.15;
-      text-shadow: 0 2px 20px rgba(0,0,0,0.6);
+      text-shadow: 0 2px 20px rgba(0,0,0,0.15);
     }
     /* Bottom card */
     .ds-future-bottom {
@@ -1201,7 +1201,7 @@
       display: block; width: 100%;
       padding: 15px;
       background: var(--accent-sage);
-      color: #111010;
+      color: #FFFFFF;
       font-family: 'Inter', sans-serif;
       font-size: 14px; font-weight: 700;
       letter-spacing: 0.01em;
@@ -1289,7 +1289,7 @@
       display: block; width: 100%;
       padding: 14px;
       background: var(--accent-sage);
-      color: #111010;
+      color: #FFFFFF;
       font-family: 'Inter', sans-serif;
       font-size: 13px; font-weight: 700;
       letter-spacing: 0.01em;
@@ -1409,7 +1409,7 @@
       display: flex; align-items: center; justify-content: center;
       margin: 0 auto 14px;
       font-size: 30px;
-      border: 1px solid rgba(255,248,235,0.04);
+      border: 1px solid rgba(0,0,0,0.04);
     }
     .ds-food-name {
       font-size: 18px; font-weight: 800;
@@ -1446,7 +1446,7 @@
       border-radius: 12px;
       padding: 12px 6px;
       text-align: center;
-      border: 1px solid rgba(255,248,235,0.03);
+      border: 1px solid rgba(0,0,0,0.03);
     }
     .ds-food-macro-val {
       font-size: 16px; font-weight: 800;
@@ -1494,7 +1494,7 @@
       display: block; width: 100%;
       padding: 14px;
       background: var(--accent-sage);
-      color: #111010;
+      color: #FFFFFF;
       font-family: 'Inter', sans-serif;
       font-size: 13px; font-weight: 700;
       letter-spacing: 0.01em;
@@ -1684,7 +1684,7 @@
       letter-spacing: -0.005em;
     }
     .diff-list li:hover {
-      background: rgba(255,248,235,0.03);
+      background: rgba(0,0,0,0.03);
     }
     .diff-check {
       width: 28px; height: 28px;
@@ -1720,7 +1720,7 @@
       background: var(--cream);
       transform: translateX(-50%);
       pointer-events: none;
-      box-shadow: 0 0 12px rgba(240,237,229,0.15);
+      box-shadow: 0 0 12px rgba(0,0,0,0.08);
     }
     .slider-handle {
       position: absolute; top: 50%; left: 50%;
@@ -1729,7 +1729,7 @@
       border-radius: 50%;
       background: var(--cream);
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.5), 0 0 24px rgba(240,237,229,0.1);
+      box-shadow: 0 2px 16px rgba(0,0,0,0.12), 0 0 24px rgba(0,0,0,0.06);
       transition: transform 0.15s ease;
     }
     .slider-wrap:active .slider-handle { transform: translate(-50%, -50%) scale(1.08); }
@@ -1737,10 +1737,10 @@
       position: absolute; top: 14px;
       font-size: 10px; font-weight: 600;
       letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--cream);
+      color: var(--text-primary);
       padding: 6px 14px;
       border-radius: var(--radius-xs);
-      background: rgba(19,18,16,0.75);
+      background: rgba(247,246,243,0.85);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       pointer-events: none;
@@ -1858,8 +1858,8 @@
     .waitlist-btn {
       font-family: 'Inter', sans-serif;
       font-size: 14px; font-weight: 600;
-      color: var(--text-dark);
-      background: var(--cream);
+      color: #FFFFFF;
+      background: #1A1A1A;
       border: none;
       padding: 15px 30px;
       border-radius: var(--radius-sm);
@@ -1868,7 +1868,7 @@
       transition: all 0.25s ease;
       letter-spacing: 0.01em;
     }
-    .waitlist-btn:hover { background: var(--text-primary); transform: translateY(-1px) scale(1.02); }
+    .waitlist-btn:hover { background: var(--accent-sage); transform: translateY(-1px) scale(1.02); }
     .waitlist-btn:active { transform: scale(0.97); transition-duration: 0.08s; }
     .form-note {
       font-size: 12px; color: var(--text-muted);
@@ -1904,7 +1904,7 @@
       letter-spacing: 0.14em; text-transform: uppercase;
       color: var(--text-muted);
     }
-    .footer-name span { color: var(--accent-gold); opacity: 0.7; }
+    .footer-name span { color: var(--accent-sage); opacity: 0.7; }
     .footer-links { display: flex; gap: 28px; }
     .footer-links a {
       font-size: 13px; color: var(--text-muted);
@@ -2004,9 +2004,9 @@
     <div class="hero-bg"></div>
     <div class="hero-gradient"></div>
     <div class="hero-content">
-      <div class="badge"><span class="badge-dot"></span> Early access — limited spots</div>
-      <h1 class="hero-h1">Become the person<br>you said you would.</h1>
-      <p class="hero-sub">See your future. Follow the plan. Keep moving.</p>
+      <div class="badge"><span class="badge-dot"></span> Now in early access</div>
+      <h1 class="hero-h1">Train with the person<br>you're becoming.</h1>
+      <p class="hero-sub">AI-powered workouts built around your goals, your body, and the future version of you.</p>
       <div class="hero-actions" style="margin-top:36px;">
         <a href="/gate.html" id="heroDemoBtn" onclick="return checkDemo(event)" class="btn-primary">
           Try the App
@@ -2023,8 +2023,8 @@
 
   <!-- PRODUCT PREVIEW -->
   <div class="section" id="preview">
-    <h2 class="reveal d1" style="font-size:clamp(28px,5vw,44px);font-weight:700;letter-spacing:-0.035em;line-height:1.1;margin-bottom:14px;">This is what your day looks like</h2>
-    <p class="reveal d1" style="font-size:16px;color:var(--text-secondary);max-width:520px;margin:0 auto 56px;line-height:1.65;">Open the app. See who you're becoming. Execute today's mission. Track it instantly. Watch the gap close.</p>
+    <h2 class="reveal d1" style="font-size:clamp(28px,5vw,44px);font-weight:700;letter-spacing:-0.035em;line-height:1.1;margin-bottom:14px;">Your daily system, simplified</h2>
+    <p class="reveal d1" style="font-size:16px;color:var(--text-secondary);max-width:520px;margin:0 auto 56px;line-height:1.65;">Open the app. See your future self. Start today's workout. Track progress. That's it.</p>
 
     <div class="device-grid">
 
@@ -2295,34 +2295,34 @@
   <!-- HOW IT WORKS -->
   <div class="section" id="how">
     <p class="label reveal">How It Works</p>
-    <h2 class="reveal d1">Four steps. Zero guesswork.</h2>
+    <h2 class="reveal d1">How it works</h2>
     <div class="steps-grid">
       <div class="step-card reveal d1">
         <div class="card-inner">
           <div class="step-number">1</div>
-          <h3 class="card-title">Meet your future self</h3>
-          <p class="card-sub">A version of you that followed through.</p>
+          <h3 class="card-title">Build your profile</h3>
+          <p class="card-sub">Tell us your goals, equipment, and fitness level.</p>
         </div>
       </div>
       <div class="step-card reveal d2">
         <div class="card-inner">
           <div class="step-number">2</div>
-          <h3 class="card-title">Follow today's plan</h3>
-          <p class="card-sub">Workout. Nutrition. Protocol. Already laid out.</p>
+          <h3 class="card-title">Get your AI program</h3>
+          <p class="card-sub">A personalized workout plan generated instantly.</p>
         </div>
       </div>
       <div class="step-card reveal d3">
         <div class="card-inner">
           <div class="step-number">3</div>
-          <h3 class="card-title">Track in seconds</h3>
-          <p class="card-sub">Scan meals. Log workouts. Mark progress.</p>
+          <h3 class="card-title">Train with your future self</h3>
+          <p class="card-sub">See who you're becoming. Let that drive you.</p>
         </div>
       </div>
       <div class="step-card reveal d4">
         <div class="card-inner">
           <div class="step-number">4</div>
-          <h3 class="card-title">Watch it adapt</h3>
-          <p class="card-sub">Your system evolves as you do.</p>
+          <h3 class="card-title">Watch yourself evolve</h3>
+          <p class="card-sub">Your program adapts as you grow stronger.</p>
         </div>
       </div>
     </div>
@@ -2333,9 +2333,9 @@
   <!-- WHY IT'S DIFFERENT -->
   <div class="section" id="different" style="display:block;text-align:center;">
     <p class="label reveal">Why It's Different</p>
-    <h2 class="reveal d1" style="font-size:clamp(32px,5vw,48px);font-weight:700;letter-spacing:-0.035em;line-height:1.1;margin-bottom:16px;">Most apps track behavior.</h2>
-    <p class="reveal d1" style="font-size:clamp(22px,3.5vw,30px);font-weight:600;color:var(--text-primary);letter-spacing:-0.02em;margin-bottom:28px;">Wylde Self builds identity.</p>
-    <p class="reveal d2" style="font-size:17px;color:var(--text-secondary);max-width:460px;margin:0 auto 48px;line-height:1.7;">You don't fail from lack of knowledge.<br>You lose momentum because nothing reinforces who you're becoming.<br>This is built to fix that.</p>
+    <h2 class="reveal d1" style="font-size:clamp(32px,5vw,48px);font-weight:700;letter-spacing:-0.035em;line-height:1.1;margin-bottom:16px;">Most apps give you a plan.</h2>
+    <p class="reveal d1" style="font-size:clamp(22px,3.5vw,30px);font-weight:600;color:var(--text-primary);letter-spacing:-0.02em;margin-bottom:28px;">Wylde Self gives you a reason to follow it.</p>
+    <p class="reveal d2" style="font-size:17px;color:var(--text-secondary);max-width:460px;margin:0 auto 48px;line-height:1.7;">You don't quit because the workout was bad.<br>You quit because nothing reminded you why you started.<br>This changes that.</p>
 
     <!-- Before/After Slider -->
     <div class="reveal d2" style="max-width:480px;margin:0 auto 56px;">
@@ -2406,35 +2406,35 @@
 
   <!-- OPTIMIZATION LAYER -->
   <div class="section" id="optimize">
-    <p class="label reveal">Optimization</p>
-    <h2 class="reveal d1">Built to go deeper</h2>
-    <p class="section-sub reveal d2">Guided protocols, weekly reviews, and clinician-connected tracking — for users who want more.</p>
+    <p class="label reveal">What's Inside</p>
+    <h2 class="reveal d1">More than a workout app</h2>
+    <p class="section-sub reveal d2">AI coaching, identity reinforcement, and adaptive programs — all in one place.</p>
     <div class="optimize-cards">
       <div class="opt-card reveal d1">
         <div class="card-inner">
           <div class="opt-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C6A96B" stroke-width="2" stroke-linecap="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A8E76" stroke-width="2" stroke-linecap="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
           </div>
-          <h3 class="card-title">Adaptive Protocols</h3>
-          <p class="card-sub">Adjusts based on progress and recovery.</p>
+          <h3 class="card-title">AI-Built Programs</h3>
+          <p class="card-sub">Tailored to your goals, equipment, and level.</p>
         </div>
       </div>
       <div class="opt-card reveal d2">
         <div class="card-inner">
           <div class="opt-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C6A96B" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A8E76" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           </div>
-          <h3 class="card-title">Weekly Check-ins</h3>
-          <p class="card-sub">Surfaces what's working and what isn't.</p>
+          <h3 class="card-title">AI Coach</h3>
+          <p class="card-sub">Ask anything. Get guidance that knows your history.</p>
         </div>
       </div>
       <div class="opt-card reveal d3">
         <div class="card-inner">
           <div class="opt-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C6A96B" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A8E76" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </div>
-          <h3 class="card-title">Clinician Visibility</h3>
-          <p class="card-sub">Share your progress for connected guidance.</p>
+          <h3 class="card-title">Future Self Visualization</h3>
+          <p class="card-sub">See the version of you that followed through.</p>
         </div>
       </div>
     </div>
@@ -2446,9 +2446,9 @@
   <section id="cta">
     <div class="cta-glow"></div>
     <div class="cta-inner">
-      <h2 class="cta-h2 reveal d1">The version of you<br>you're thinking about<br>already exists.</h2>
-      <p class="cta-body reveal d2">You're either moving toward that version — or away from it.</p>
-      <p class="reveal d2" style="font-size:16px;color:var(--text-primary);font-weight:600;margin-bottom:40px;letter-spacing:-0.01em;">Start becoming that version.</p>
+      <h2 class="cta-h2 reveal d1">Your future self<br>is waiting.</h2>
+      <p class="cta-body reveal d2">Every day you show up, the gap closes.</p>
+      <p class="reveal d2" style="font-size:16px;color:var(--text-primary);font-weight:600;margin-bottom:40px;letter-spacing:-0.01em;">Start your transformation today.</p>
       <div class="reveal d3">
         <div class="waitlist-block">
           <form class="waitlist-form" id="ctaForm" action="https://formspree.io/f/mkoponoz" method="POST">
@@ -2458,8 +2458,8 @@
               <button class="waitlist-btn" type="submit">Get Early Access</button>
             </div>
           </form>
-          <div class="form-success" id="ctaSuccess">You're in. Access is on the way.</div>
-          <p class="form-note">Free to try. Limited spots.</p>
+          <div class="form-success" id="ctaSuccess">You're in. Welcome to the future.</div>
+          <p class="form-note">Free to start. No credit card required.</p>
           <div class="hero-form-actions">
             <a href="/gate.html" onclick="return checkDemo(event)" class="btn-primary" style="flex:1;">Try the App →</a>
             <a href="javascript:void(0)" onclick="document.querySelector('#ctaForm input[name=&quot;name&quot;]').focus()" class="btn-secondary" style="flex:1;">Get Early Access →</a>
