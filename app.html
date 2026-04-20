@@ -1329,8 +1329,6 @@
         <div class="pill-group" id="genderGroup">
           <button class="pill" onclick="selectPill(this,'genderGroup')">Male</button>
           <button class="pill" onclick="selectPill(this,'genderGroup')">Female</button>
-          <button class="pill" onclick="selectPill(this,'genderGroup')">Non-binary</button>
-          <button class="pill" onclick="selectPill(this,'genderGroup')">Prefer not to say</button>
         </div>
       </div>
 
@@ -2759,8 +2757,6 @@
   var afterImages = {
     'Male':              ['glow_male.png'],
     'Female':            ['glow_female.png'],
-    'Non-binary':        ['glow_neutral.png'],
-    'Prefer not to say': ['glow_neutral.png']
   };
 
   function getAfterImage() {
@@ -2900,7 +2896,7 @@
     var notes   = document.getElementById('healthNotes').value.trim();
 
     state.name             = name;
-    state.gender           = gender    ? gender.textContent    : 'Prefer not to say';
+    state.gender           = gender    ? gender.textContent    : 'Male';
     state.age              = age       ? age.textContent        : '';
     state.height           = height    ? height.textContent     : '';
     state.weight           = weight    || '';
