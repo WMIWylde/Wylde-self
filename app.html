@@ -4599,13 +4599,16 @@
           '</div>';
       }
 
-      return '<div class="exercise" style="flex-direction:column;align-items:flex-start;" data-sk="' + sk + '" data-recsets="' + recSetCount + '" data-recreps="' + esc(recReps) + '">' +
+      return '<div class="exercise" style="flex-direction:column;align-items:flex-start;" data-sk="' + sk + '" data-recsets="' + recSetCount + '" data-recreps="' + esc(recReps) + '" data-exname="' + esc(name) + '">' +
         '<div style="display:flex;justify-content:space-between;width:100%;align-items:flex-start;">' +
           '<div style="flex:1;">' +
             '<button class="ex-name-btn" data-ex="' + esc(name) + '" onclick="showFormGuide(this.dataset.ex)">' + esc(name) + '</button>' +
             descHTML +
           '</div>' +
-          '<span class="ex-sets" style="margin-left:12px;flex-shrink:0;">' + esc(sets) + '</span>' +
+          '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:12px;">' +
+            '<button class="swap-ex-btn" onclick="swapExercise(this)" title="Equipment busy? Get alternative" style="font-size:11px;padding:4px 8px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;">⟳ Swap</button>' +
+            '<span class="ex-sets">' + esc(sets) + '</span>' +
+          '</div>' +
         '</div>' +
         '<div class="set-header-row"><span>Reps</span><span>lbs</span></div>' +
         '<div class="set-log-list">' + setRows + '</div>' +
@@ -4982,6 +4985,72 @@
 
     // Hide confirmation after a few seconds
     setTimeout(function() { confirm.style.display = 'none'; }, 4000);
+  }
+
+  // SWAP EXERCISE — equipment busy, suggest alternative hitting same muscle
+  function swapExercise(btn) {
+    var exerciseDiv = btn.closest('.exercise');
+    var exName = exerciseDiv.dataset.exname;
+    btn.textContent = '...';
+    btn.disabled = true;
+
+    // Get user's available equipment
+    var gymEquip = (state.gymEquipment && state.gymEquipment.length > 0) ? state.gymEquipment.join(', ') : 'general gym equipment';
+    var level = state.level || 'Intermediate';
+
+    var prompt = 'The user is at the gym and the equipment for "' + exName + '" is currently in use. ' +
+      'Suggest ONE alternative exercise that hits the SAME primary muscle group but uses DIFFERENT equipment. ' +
+      'Available equipment: ' + gymEquip + '. Fitness level: ' + level + '.\n\n' +
+      'Return ONLY a JSON object: {"name":"Full Exercise Name","sets":"sets x reps","cue":"brief form cue 10-15 words"}\n' +
+      'No markdown, no backticks, just the JSON.';
+
+    fetch('/api/openai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      var text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+      if (!text) throw new Error('No response');
+      text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
+      var start = text.indexOf('{'), end = text.lastIndexOf('}');
+      if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
+      var alt = JSON.parse(text);
+
+      // Update the exercise in-place
+      var nameBtn = exerciseDiv.querySelector('.ex-name-btn');
+      var descEl = exerciseDiv.querySelector('.ex-desc');
+      var setsEl = exerciseDiv.querySelector('.ex-sets');
+
+      if (nameBtn) { nameBtn.textContent = alt.name; nameBtn.dataset.ex = alt.name; }
+      if (descEl) { descEl.textContent = alt.cue || ''; }
+      else if (alt.cue) {
+        var newDesc = document.createElement('p');
+        newDesc.className = 'ex-desc';
+        newDesc.textContent = alt.cue;
+        nameBtn.parentNode.appendChild(newDesc);
+      }
+      if (setsEl && alt.sets) setsEl.textContent = alt.sets;
+      exerciseDiv.dataset.exname = alt.name;
+
+      // Update log buttons with new exercise name
+      exerciseDiv.querySelectorAll('.set-log-btn').forEach(function(logBtn) {
+        logBtn.dataset.exname = alt.name;
+      });
+
+      btn.textContent = '⟳ Swap';
+      btn.disabled = false;
+
+      // Brief highlight
+      exerciseDiv.style.background = 'rgba(122,154,110,0.08)';
+      setTimeout(function() { exerciseDiv.style.background = ''; }, 1500);
+    })
+    .catch(function(err) {
+      console.error('Swap exercise error:', err);
+      btn.textContent = '⟳ Swap';
+      btn.disabled = false;
+    });
   }
 
   // EXERCISE FORM GUIDE
