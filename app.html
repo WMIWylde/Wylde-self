@@ -2510,7 +2510,7 @@
   }
 
   // Initialize Morning Protocol on the Today screen
-  function mpInit() {
+  window.mpInit = function mpInit() {
     var data = mpLoad();
     var card = document.getElementById('mpCard');
     if (!card) return;
@@ -2543,11 +2543,12 @@
   if (typeof origShowScreen === 'function') {
     window.showScreen = function(name) {
       origShowScreen(name);
-      if (name === 'overview') { setTimeout(ovSyncData, 100); setTimeout(ovSyncHeroImage, 200); }
+      if (name === 'overview') { setTimeout(ovSyncData, 100); setTimeout(ovSyncHeroImage, 200); setTimeout(window.mpInit, 300); }
     };
   }
 
   setTimeout(ovSyncData, 500);
+  setTimeout(window.mpInit, 600);
 })();
 </script>
 
