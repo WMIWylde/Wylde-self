@@ -3420,6 +3420,7 @@
     if (id === 'nutrition' && state.weight) { calculateMacros(); }
     if (id === 'overview') { updateOverview(); mpInit(); }
     if (id === 'future') { updateFsSilhouette(); }
+    if (id === 'program') { autoLoadProgram(); }
     // Map screens to bottom tab indices (4-tab nav: Today=0, Future=1, Coach=2, Optimize=3)
     var tabs = { overview:0, future:1, coach:2, progress:3 };
     // Sub-screens map to their parent tab
@@ -4661,6 +4662,15 @@
     }
   }
 
+  // Auto-load saved program or generate one if none exists
+  function autoLoadProgram() {
+    var hasSaved = loadSavedProgram();
+    if (!hasSaved && state.name) {
+      // No saved program but user has a profile — auto-generate
+      generateProgram();
+    }
+  }
+
   function loadSavedProgram() {
     var container = document.getElementById('programDays');
     var btn = document.getElementById('generateProgramBtn');
@@ -4739,6 +4749,9 @@
       'Additional notes: ' + notesStr + constraintLine + '\n\n' +
       (trainingStyle ? '── TRAINING APPROACH ──\n' + trainingStyle + '\n\n' : '') +
       '── PROGRAMMING RULES ──\n' +
+      '- EVERY workout day MUST start with a 10-minute dynamic warmup as the first exercise. Name it "Dynamic Warmup" with "10 min" as the sets field. Include a cue like "Foam roll, arm circles, leg swings, hip openers, light jog or jump rope to raise heart rate."\n' +
+      '- EVERY workout day MUST end with 15-20 minutes of cardio as the LAST exercise. Vary the type across days — options include: treadmill incline walk, rowing machine, stairmaster, cycling, battle ropes, jump rope, or a HIIT circuit. Name it specifically (e.g. "Incline Treadmill Walk" not just "Cardio"). Include duration and intensity in the sets field (e.g. "20 min @ 3.5mph 12% incline").\n' +
+      '- Between warmup and cardio, include 5-6 strength/resistance exercises\n' +
       '- Tailor exercise selection to this person\'s body, goals, and experience level\n' +
       '- If they are a beginner, favor machines and guided movements before free weights\n' +
       '- If they are experienced, include advanced techniques (drop sets, supersets, tempo work) where appropriate\n' +
@@ -4747,7 +4760,6 @@
       '- Account for equipment availability and gym access — if no gym, use bodyweight/home exercises\n' +
       '- If the user is open to classes, incorporate 1-2 class-based sessions (e.g. yoga, spin) into the weekly plan\n' +
       '- Account for ALL listed health concerns — modify or substitute exercises as needed\n' +
-      '- Include 5-6 exercises per day\n' +
       '- Use precise, full exercise names (e.g. "Flat Barbell Bench Press" not "Bench Press", "Cable Chest Fly" not "Cable Flyes")\n' +
       '- The third element in each exercise array is a brief coaching cue explaining the movement (10-20 words)\n\n' +
       'Return ONLY a JSON array with no markdown, no backticks, no extra text. Each element: {"day":"Day 01","focus":"Focus Label","exercises":[["Full Exercise Name","sets x reps","one-line movement cue describing form and motion"],...]}\n' +
@@ -4797,7 +4809,7 @@
     var constraintNote = constraint ? 'Constraint: ' + constraint + '.' : 'No specific constraints.';
     var prompt = 'You are an elite personal trainer. The user needs an alternative workout for ' + dayName + ' (originally: ' + dayFocus + ').\n' +
       constraintNote + '\nClient profile: ' + state.name + ', ' + (state.gender || '') + ', ' + (state.age || '') + ', ' + (state.weight ? state.weight + ' ' + (state.weightUnit || 'lbs') : '') + ', ' + (state.height || '') + '. Goals: ' + goalsStr + ', Level: ' + state.level + ', Equipment: ' + (state.equipment || 'not specified') + ', Gym: ' + (state.gymAccess || 'not specified') + ', Health: ' + (state.health.join(', ') || 'none') + ', Diet: ' + ((state.diet && state.diet.length > 0) ? state.diet.join(', ') : 'none') + '\n' +
-      'Return ONLY a JSON object: {"focus":"Label","exercises":[["Full Exercise Name","sets x reps","brief movement cue describing form"],...]}\nUse precise full exercise names. Tailor to this specific person. Include 5 exercises. Return only the JSON.';
+      'Return ONLY a JSON object: {"focus":"Label","exercises":[["Full Exercise Name","sets x reps","brief movement cue describing form"],...]}\nRULES: Start with a 10-min Dynamic Warmup. End with 15-20 min cardio (specific type, not just "Cardio"). Include 5 strength exercises between warmup and cardio. Use precise full exercise names. Tailor to this specific person. Return only the JSON.';
 
     fetch('/api/openai', {
       method: 'POST',
