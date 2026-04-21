@@ -242,9 +242,10 @@
       pointer-events: none;
     }
     .fs-silhouette {
-      position: absolute; top: 0; right: -10%; bottom: 0; width: 65%;
-      object-fit: contain; object-position: center bottom;
-      opacity: 0.5; pointer-events: none; mix-blend-mode: soft-light;
+      position: absolute; top: -10%; left: 50%; transform: translateX(-50%);
+      width: 90%; height: 120%;
+      object-fit: contain; object-position: center center;
+      opacity: 0.45; pointer-events: none;
     }
 
     .future-upload-icon { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; position: relative; z-index: 2; }
@@ -2565,6 +2566,7 @@
     <div id="fsUploadWrap" class="future-upload-wrap">
       <div class="future-upload" id="uploadZone" onclick="document.getElementById('photoInput').click()">
         <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handlePhoto(event.target.files[0])" />
+        <img class="fs-silhouette" id="fsSilhouette" src="images/futureselfman.png" alt="" />
         <img class="future-upload-preview" id="uploadPreview" src="" alt="" />
         <div id="uploadPlaceholder">
           <div class="future-upload-icon"><span>↑</span></div>
@@ -3412,6 +3414,7 @@
     document.getElementById('screen-' + id).classList.add('active');
     if (id === 'nutrition' && state.weight) { calculateMacros(); }
     if (id === 'overview') { updateOverview(); mpInit(); }
+    if (id === 'future') { updateFsSilhouette(); }
     // Map screens to bottom tab indices (4-tab nav: Today=0, Future=1, Coach=2, Optimize=3)
     var tabs = { overview:0, future:1, coach:2, progress:3 };
     // Sub-screens map to their parent tab
@@ -4211,6 +4214,16 @@
   var _activeTimeline = '12weeks';
   var _timelineLabels = { '12weeks': '12 Weeks', '6months': '6 Months', '1year': '1 Year' };
   var _blankPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+  // Set silhouette image based on gender profile
+  function updateFsSilhouette() {
+    var sil = document.getElementById('fsSilhouette');
+    if (!sil) return;
+    var profile = {};
+    try { profile = JSON.parse(localStorage.getItem('wylde_profile') || '{}'); } catch(e) {}
+    var gender = (profile.gender || 'Male').toLowerCase();
+    sil.src = gender === 'female' ? 'images/futureselfwoman.png' : 'images/futureselfman.png';
+  }
 
   function switchTimeline(tl) {
     _activeTimeline = tl;
