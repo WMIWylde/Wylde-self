@@ -1629,6 +1629,67 @@
   }
 </style>
 
+<!-- ═══ MORNING PROTOCOL SETUP OVERLAY (post-onboarding) ═══ -->
+<div id="mpSetupOverlay" style="display:none;position:fixed;inset:0;z-index:9997;background:#0B0B0B;overflow-y:auto;">
+  <div style="max-width:480px;margin:0 auto;padding:60px 24px 100px;">
+    <p style="font-size:11px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:rgba(200,169,110,0.6);margin-bottom:12px;">One Last Thing</p>
+    <h1 style="font-family:var(--ff-display);font-size:28px;font-weight:700;color:#fff;margin:0 0 8px;">Design Your Morning Protocol</h1>
+    <p style="font-size:15px;color:rgba(255,255,255,0.55);line-height:1.5;margin:0 0 32px;">Choose 3–5 actions that define how you start every day. This isn't habit tracking — it's identity.</p>
+
+    <div id="mpSetupOverlayList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
+      <button class="mp-overlay-opt" onclick="toggleMPOverlayOpt(this)" data-action="stillness" data-name="Sit in stillness">
+        <span class="mp-ov-check"></span>
+        <span class="mp-ov-text"><strong>Sit in stillness</strong><br><span style="color:rgba(255,255,255,0.45);font-size:13px;">Breathe. Ground yourself before the noise begins.</span></span>
+      </button>
+      <button class="mp-overlay-opt" onclick="toggleMPOverlayOpt(this)" data-action="standard" data-name="Set your standard">
+        <span class="mp-ov-check"></span>
+        <span class="mp-ov-text"><strong>Set your standard</strong><br><span style="color:rgba(255,255,255,0.45);font-size:13px;">Declare one thing you will not compromise on today.</span></span>
+      </button>
+      <button class="mp-overlay-opt" onclick="toggleMPOverlayOpt(this)" data-action="visualize" data-name="See who you're becoming">
+        <span class="mp-ov-check"></span>
+        <span class="mp-ov-text"><strong>See who you're becoming</strong><br><span style="color:rgba(255,255,255,0.45);font-size:13px;">Spend a moment with your future self.</span></span>
+      </button>
+      <button class="mp-overlay-opt" onclick="toggleMPOverlayOpt(this)" data-action="move" data-name="Move your body">
+        <span class="mp-ov-check"></span>
+        <span class="mp-ov-text"><strong>Move your body</strong><br><span style="color:rgba(255,255,255,0.45);font-size:13px;">Any movement. Walk, stretch, train. Just move.</span></span>
+      </button>
+      <button class="mp-overlay-opt" onclick="toggleMPOverlayOpt(this)" data-action="learn" data-name="Feed your mind">
+        <span class="mp-ov-check"></span>
+        <span class="mp-ov-text"><strong>Feed your mind</strong><br><span style="color:rgba(255,255,255,0.45);font-size:13px;">Read, listen, or watch something that sharpens you.</span></span>
+      </button>
+      <button class="mp-overlay-opt" onclick="toggleMPOverlayOpt(this)" data-action="write" data-name="Write with intention">
+        <span class="mp-ov-check"></span>
+        <span class="mp-ov-text"><strong>Write with intention</strong><br><span style="color:rgba(255,255,255,0.45);font-size:13px;">Journal, plan, or write down what matters today.</span></span>
+      </button>
+    </div>
+
+    <p id="mpOverlayCount" style="font-size:13px;color:rgba(255,255,255,0.4);text-align:center;margin-bottom:16px;">Select 3–5 actions</p>
+    <button id="mpOverlayBtn" disabled onclick="confirmMPOverlay()" style="width:100%;padding:16px;border-radius:12px;border:none;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.3);font-size:15px;font-weight:600;cursor:not-allowed;transition:all 0.3s;">Lock In My Protocol</button>
+    <button onclick="skipMPOverlay()" style="display:block;margin:16px auto 0;background:none;border:none;color:rgba(255,255,255,0.3);font-size:13px;cursor:pointer;padding:8px 16px;">Skip for now</button>
+  </div>
+</div>
+<style>
+  .mp-overlay-opt {
+    display:flex;align-items:center;gap:14px;padding:16px 18px;
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+    border-radius:14px;cursor:pointer;text-align:left;width:100%;
+    transition:all 0.2s;color:#fff;font-size:14px;line-height:1.4;
+  }
+  .mp-overlay-opt:hover { background:rgba(255,255,255,0.06); }
+  .mp-overlay-opt.selected { background:rgba(122,154,110,0.15);border-color:rgba(122,154,110,0.4); }
+  .mp-ov-check {
+    width:22px;height:22px;border-radius:50%;flex-shrink:0;
+    border:2px solid rgba(255,255,255,0.2);transition:all 0.2s;
+  }
+  .mp-overlay-opt.selected .mp-ov-check {
+    background:var(--sage,#7a9a6e);border-color:var(--sage,#7a9a6e);
+    box-shadow:0 0 8px rgba(122,154,110,0.3);
+  }
+  #mpOverlayBtn:not(:disabled) {
+    background:#fff;color:#0B0B0B;cursor:pointer;
+  }
+</style>
+
 <!-- ═══ ONBOARDING — Step-by-step ═══ -->
 <div class="screen active" id="screen-onboard">
   <div class="container ob-container">
@@ -1916,11 +1977,23 @@
   <!-- ═══ MORNING PROTOCOL ═══ -->
   <div class="mp-card" id="mpCard">
 
-    <!-- SETUP MODE — choose your ritual actions (shown once) -->
+    <!-- Collapsible header -->
+    <div class="mp-collapse-header" onclick="toggleMPCollapse()" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0;cursor:pointer;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--sage,#7a9a6e);">Morning Protocol</span>
+        <span class="mp-day-count" id="mpDayCountHeader" style="font-size:11px;color:var(--muted);"></span>
+      </div>
+      <span id="mpCollapseIcon" style="font-size:18px;color:var(--muted);font-weight:300;line-height:1;">−</span>
+    </div>
+
+    <!-- Collapsible body -->
+    <div id="mpBody">
+
+    <!-- SETUP MODE — fallback if they skipped overlay -->
     <div id="mpSetup" class="mp-setup" style="display:none;">
-      <p class="mp-setup-label">Design Your Ritual</p>
-      <h2 class="mp-setup-title">Morning Protocol</h2>
-      <p class="mp-setup-sub">Choose 3–5 actions that define how you start every day. This isn't habit tracking — it's identity.</p>
+      <p class="mp-setup-label" style="display:none;">Design Your Ritual</p>
+      <h2 class="mp-setup-title" style="font-size:18px;margin-top:8px;">Set up your Morning Protocol</h2>
+      <p class="mp-setup-sub">Choose 3–5 actions that define how you start every day.</p>
 
       <div class="mp-action-list" id="mpActionList">
         <div class="mp-action-opt" onclick="toggleMPAction(this)" data-action="stillness" data-name="Sit in stillness" data-desc="Breathe. Ground yourself before the noise begins.">
@@ -1973,12 +2046,12 @@
 
     <!-- DAILY MODE — execute your protocol -->
     <div id="mpDaily" style="display:none;">
-      <div class="mp-header">
+      <div class="mp-header" style="display:none;">
         <span class="mp-day-label">Morning Protocol</span>
         <span class="mp-day-count" id="mpDayCount">Day 1</span>
       </div>
-      <h3 class="mp-title" id="mpDailyTitle">Your ritual.</h3>
-      <p class="mp-subtitle" id="mpDailySub">Complete each action to start the day as the person you're becoming.</p>
+      <h3 class="mp-title" id="mpDailyTitle" style="padding:12px 20px 0;margin:0;font-size:16px;font-weight:600;">Your ritual.</h3>
+      <p class="mp-subtitle" id="mpDailySub" style="padding:4px 20px 0;margin:0;font-size:13px;color:var(--muted);">Complete each action to start your day.</p>
       <div class="mp-progress-bar"><div class="mp-progress-fill" id="mpProgressFill"></div></div>
       <ul class="mp-list" id="mpDailyList">
         <!-- Populated by JS -->
@@ -1989,6 +2062,8 @@
         <p class="mp-done-sub" id="mpDoneSub"></p>
       </div>
     </div>
+
+    </div><!-- /mpBody -->
   </div>
 
   <!-- B. TODAY STACK -->
@@ -2535,6 +2610,58 @@
     setTimeout(function() { mpRenderDaily(data); }, 450);
   }
 
+  // ── MP SETUP OVERLAY (post-onboarding) ──
+  window.toggleMPOverlayOpt = function(el) {
+    el.classList.toggle('selected');
+    var count = document.querySelectorAll('#mpSetupOverlayList .selected').length;
+    var countEl = document.getElementById('mpOverlayCount');
+    var btn = document.getElementById('mpOverlayBtn');
+    if (count > 5) { el.classList.remove('selected'); return; }
+    if (count >= 3) {
+      countEl.textContent = count + ' selected — ready';
+      btn.disabled = false;
+    } else {
+      countEl.textContent = count + ' selected — choose at least 3';
+      btn.disabled = true;
+    }
+  };
+
+  window.confirmMPOverlay = function() {
+    var selected = document.querySelectorAll('#mpSetupOverlayList .selected');
+    if (selected.length < 3) return;
+    var actions = [];
+    selected.forEach(function(el) {
+      var actionId = el.getAttribute('data-action');
+      var action = _mpActions.find(function(a) { return a.id === actionId; });
+      if (action) actions.push({ id: action.id, name: action.name, desc: action.desc, dur: action.dur });
+    });
+    var data = { actions: actions, startDate: mpGetToday(), completedDays: {}, streak: 0 };
+    mpSave(data);
+    // Close overlay and go to app
+    document.getElementById('mpSetupOverlay').style.display = 'none';
+    if (window._mpOverlayCallback) { window._mpOverlayCallback(); window._mpOverlayCallback = null; }
+  };
+
+  window.skipMPOverlay = function() {
+    document.getElementById('mpSetupOverlay').style.display = 'none';
+    if (window._mpOverlayCallback) { window._mpOverlayCallback(); window._mpOverlayCallback = null; }
+  };
+
+  window.showMPSetupOverlay = function(callback) {
+    window._mpOverlayCallback = callback;
+    document.getElementById('mpSetupOverlay').style.display = 'block';
+  };
+
+  window.toggleMPCollapse = function() {
+    var body = document.getElementById('mpBody');
+    var icon = document.getElementById('mpCollapseIcon');
+    if (!body) return;
+    var isCollapsed = body.style.display === 'none';
+    body.style.display = isCollapsed ? 'block' : 'none';
+    icon.textContent = isCollapsed ? '−' : '+';
+    localStorage.setItem('wylde_mp_collapsed', isCollapsed ? '0' : '1');
+  };
+
   // Initialize Morning Protocol on the Today screen
   window.mpInit = function mpInit() {
     var data = mpLoad();
@@ -2542,13 +2669,26 @@
     if (!card) return;
 
     if (!data || !data.actions || data.actions.length === 0) {
-      // Show setup mode
-      document.getElementById('mpSetup').style.display = 'block';
+      // No protocol set up — hide daily, show inline setup prompt
       document.getElementById('mpDaily').style.display = 'none';
+      document.getElementById('mpSetup').style.display = 'block';
+      var hdr = document.getElementById('mpDayCountHeader');
+      if (hdr) hdr.textContent = '';
     } else {
-      // Show daily mode
+      // Show daily mode (collapsible)
+      document.getElementById('mpSetup').style.display = 'none';
       mpRenderDaily(data);
+      var dayNum = mpDayNumber(data);
+      var hdr = document.getElementById('mpDayCountHeader');
+      if (hdr) hdr.textContent = 'Day ' + dayNum;
     }
+
+    // Restore collapse state
+    var collapsed = localStorage.getItem('wylde_mp_collapsed') === '1';
+    var body = document.getElementById('mpBody');
+    if (body) body.style.display = collapsed ? 'none' : 'block';
+    var toggle = document.getElementById('mpCollapseIcon');
+    if (toggle) toggle.textContent = collapsed ? '+' : '−';
   }
 
   // Legacy compat stubs
@@ -3665,8 +3805,15 @@
     // Auto-generate workout program after profile completion
     setTimeout(function() { generateProgram(); }, 500);
 
-    // Play intro animation for first-time users
-    playIntro(function(){ showScreen('future'); });
+    // Play intro animation, then show Morning Protocol setup before landing in app
+    playIntro(function(){
+      var mpData = mpLoad();
+      if (!mpData || !mpData.actions || mpData.actions.length === 0) {
+        showMPSetupOverlay(function() { showScreen('overview'); });
+      } else {
+        showScreen('overview');
+      }
+    });
   }
 
   function playIntro(callback) {
