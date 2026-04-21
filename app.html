@@ -226,33 +226,40 @@
     /* Upload zone — glass card with silhouette bg */
     .future-upload-wrap { padding: 24px 16px 0; }
     .future-upload {
-      background: rgba(255,255,255,0.12);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 20px; padding: 48px 24px; text-align: center;
+      background: rgba(255,255,255,0.85);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px; padding: 52px 24px; text-align: center;
       cursor: pointer; transition: all 0.3s;
       position: relative; overflow: hidden;
     }
-    .future-upload:hover { background: rgba(255,255,255,0.16); }
+    .future-upload:hover { background: rgba(255,255,255,0.9); }
 
-    /* Silhouette figure behind upload — uses image if available, CSS fallback */
-    .future-upload::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 55% 45%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.08) 30%, transparent 60%);
-      pointer-events: none;
-    }
+    /* Layer 1: Silhouette image — low opacity, blurred */
     .fs-silhouette {
       position: absolute; top: -10%; left: 50%; transform: translateX(-50%);
-      width: 90%; height: 120%;
+      width: 95%; height: 130%;
       object-fit: contain; object-position: center center;
-      opacity: 0.45; pointer-events: none;
+      opacity: 0.4; pointer-events: none;
+      filter: blur(1.5px);
     }
 
-    .future-upload-icon { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; position: relative; z-index: 2; }
-    .future-upload-icon span { font-size: 22px; color: rgba(255,255,255,0.7); }
-    .future-upload-label { font-size: 16px; color: #FFFFFF; margin-bottom: 4px; font-weight: 600; position: relative; z-index: 2; }
-    .future-upload-hint { font-size: 13px; color: rgba(255,255,255,0.45); position: relative; z-index: 2; }
-    .future-upload-preview { width: 100%; max-height: 300px; object-fit: cover; border-radius: 12px; display: none; position: relative; z-index: 2; }
+    /* Layer 2: Soft sage/white gradient overlay on top of silhouette */
+    .future-upload::after {
+      content: ''; position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(180deg,
+        rgba(255,255,255,0.7) 0%,
+        rgba(240,245,238,0.6) 30%,
+        rgba(200,220,195,0.35) 60%,
+        rgba(255,255,255,0.75) 100%
+      );
+      pointer-events: none;
+    }
+
+    .future-upload-icon { width: 52px; height: 52px; border-radius: 50%; background: rgba(122,154,110,0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; position: relative; z-index: 3; }
+    .future-upload-icon span { font-size: 22px; color: #5a7a4e; opacity: 0.7; }
+    .future-upload-label { font-size: 16px; color: #1a1a1a; margin-bottom: 4px; font-weight: 600; position: relative; z-index: 3; }
+    .future-upload-hint { font-size: 13px; color: #888; position: relative; z-index: 3; }
+    .future-upload-preview { width: 100%; max-height: 300px; object-fit: cover; border-radius: 12px; display: none; position: relative; z-index: 3; }
 
     /* Motivational line above CTA */
     .fs-motivation {
