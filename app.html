@@ -191,102 +191,141 @@
     .timeline-btn.active { border-color:rgba(122,142,118,0.3); background:var(--sage-dim); color:var(--sage); }
 
     /* FUTURE SELF */
-    .future-container { max-width: 520px; }
+    .future-container { max-width: 430px; width: 100%; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; }
 
-    /* Full sage background for Future Self screen */
     #screen-future {
-      background: linear-gradient(170deg, #6b8b5e 0%, #5a7a4e 40%, #4a6a40 100%);
-      min-height: 100vh;
+      --sage-top: #557553; --sage-bottom: #6f8b63; --sage-dark: #3f5d40;
+      --fs-text-main: rgba(255,255,255,0.96); --fs-text-soft: rgba(255,255,255,0.7);
+      --fs-text-faint: rgba(255,255,255,0.56);
+      --fs-gold-1: #d6b36a; --fs-gold-2: #b99247;
+      --fs-card-radius: 30px;
+      --fs-shadow-soft: 0 20px 50px rgba(0,0,0,0.16);
+      --fs-shadow-gold: 0 8px 24px rgba(214,179,106,0.28);
+      position: relative; min-height: 100vh; overflow: hidden;
+      background: radial-gradient(circle at 50% 30%, rgba(230,209,141,0.16), transparent 28%),
+        linear-gradient(180deg, var(--sage-top) 0%, var(--sage-bottom) 100%);
+      padding: 32px 20px 40px;
+      display: flex; justify-content: center;
     }
 
-    /* Header text — directly on sage bg, no card */
-    .fs-header-text {
-      text-align: center; padding: 24px 16px 0; position: relative;
+    /* Ambient glow behind card */
+    .fs-bg-glow {
+      position: absolute; inset: auto 50% 120px 50%;
+      width: 520px; height: 520px; transform: translateX(-50%);
+      background: radial-gradient(circle, rgba(223,192,118,0.18) 0%, rgba(223,192,118,0) 70%);
+      pointer-events: none; filter: blur(10px);
     }
+
+    /* Header */
+    .fs-header-text { text-align: center; margin-top: 4px; margin-bottom: 26px; }
     .future-label {
-      font-size: 11px; font-weight: 600; letter-spacing: 0.25em;
-      text-transform: uppercase; color: rgba(255,255,255,0.35);
-      margin-bottom: 18px;
+      font-size: 14px; line-height: 1; letter-spacing: 0.28em; font-weight: 700;
+      color: rgba(244,235,212,0.72); margin-bottom: 18px;
+      text-transform: uppercase;
       animation: fsGoldPulse 3s ease-in-out infinite;
     }
     @keyframes fsGoldPulse {
-      0%, 100% { color: rgba(255,255,255,0.35); text-shadow: none; }
+      0%, 100% { color: rgba(244,235,212,0.72); text-shadow: none; }
       40% { color: #e8d5a3; text-shadow: 0 0 12px rgba(200,169,110,0.5), 0 0 30px rgba(200,169,110,0.2); }
       60% { color: #e8d5a3; text-shadow: 0 0 12px rgba(200,169,110,0.5), 0 0 30px rgba(200,169,110,0.2); }
     }
     .future-title {
-      font-size: clamp(28px, 7vw, 36px); font-weight: 700;
-      color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.12; margin: 0 0 12px;
+      margin: 0; font-size: clamp(2.15rem, 5vw, 3.4rem); line-height: 0.96;
+      font-weight: 700; letter-spacing: -0.045em; color: var(--fs-text-main);
+      text-shadow: 0 2px 10px rgba(0,0,0,0.12);
     }
     .future-sub {
-      font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.6;
-      max-width: 300px; margin: 0 auto;
+      margin: 20px 0 0; font-size: 1.05rem; line-height: 1.55;
+      color: var(--fs-text-soft); font-weight: 500;
     }
 
-    /* Upload zone — glass card with silhouette bg */
-    .future-upload-wrap { padding: 24px 16px 0; }
+    /* Upload card — glass with silhouette layers */
+    .future-upload-wrap { width: 100%; }
     .future-upload {
-      background: rgba(255,255,255,0.85);
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 20px; padding: 52px 24px; text-align: center;
-      cursor: pointer; transition: all 0.3s;
-      position: relative; overflow: hidden;
+      position: relative; width: 100%; min-height: 325px;
+      border-radius: var(--fs-card-radius); overflow: hidden;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.26), rgba(255,255,255,0.18));
+      border: 1px solid rgba(255,255,255,0.28);
+      box-shadow: var(--fs-shadow-soft);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      transition: all 0.3s;
     }
-    .future-upload:hover { background: rgba(255,255,255,0.9); }
 
-    /* Layer 1: Silhouette image — low opacity, blurred */
+    /* Silhouette layer */
+    .fs-silhouette-wrap { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
     .fs-silhouette {
-      position: absolute; top: -10%; left: 50%; transform: translateX(-50%);
-      width: 95%; height: 130%;
-      object-fit: contain; object-position: center center;
-      opacity: 0.4; pointer-events: none;
-      filter: blur(1.5px);
+      position: absolute; right: 16px; top: 18px;
+      height: 88%; width: auto; object-fit: contain;
+      opacity: 0.18; filter: blur(10px);
+      transform: scale(1.03); transform-origin: center;
+      transition: opacity 0.5s ease, transform 0.6s ease, filter 0.6s ease;
+    }
+    .future-upload.is-uploaded .fs-silhouette {
+      opacity: 0.24; filter: blur(6px); transform: scale(1.06);
     }
 
-    /* Layer 2: Soft sage/white gradient overlay on top of silhouette */
-    .future-upload::after {
-      content: ''; position: absolute; inset: 0; z-index: 1;
+    /* White overlay on top of silhouette */
+    .fs-upload-overlay {
+      position: absolute; inset: 0; z-index: 2;
       background: linear-gradient(180deg,
-        rgba(255,255,255,0.7) 0%,
-        rgba(240,245,238,0.6) 30%,
-        rgba(200,220,195,0.35) 60%,
-        rgba(255,255,255,0.75) 100%
-      );
-      pointer-events: none;
+        rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.68) 38%, rgba(255,255,255,0.78) 100%);
     }
 
-    .future-upload-icon { width: 52px; height: 52px; border-radius: 50%; background: rgba(122,154,110,0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; position: relative; z-index: 3; }
-    .future-upload-icon span { font-size: 22px; color: #5a7a4e; opacity: 0.7; }
-    .future-upload-label { font-size: 16px; color: #1a1a1a; margin-bottom: 4px; font-weight: 600; position: relative; z-index: 3; }
-    .future-upload-hint { font-size: 13px; color: #888; position: relative; z-index: 3; }
+    /* Foreground content */
+    .fs-upload-content {
+      position: relative; z-index: 3; text-align: center;
+      padding: 28px 24px; display: flex; flex-direction: column; align-items: center;
+    }
+    .future-upload-icon {
+      width: 96px; height: 96px; border-radius: 999px;
+      display: grid; place-items: center; margin-bottom: 28px;
+      background: rgba(255,255,255,0.68); color: #9ab08d;
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.75), 0 8px 24px rgba(0,0,0,0.06);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+    .future-upload:hover .future-upload-icon {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.75), 0 12px 30px rgba(0,0,0,0.08);
+    }
+    .future-upload-label { font-size: 1.05rem; line-height: 1.2; font-weight: 700; color: rgba(22,22,22,0.92); margin-bottom: 8px; }
+    .future-upload-hint { font-size: 0.95rem; color: rgba(22,22,22,0.52); font-weight: 500; }
     .future-upload-preview { width: 100%; max-height: 300px; object-fit: cover; border-radius: 12px; display: none; position: relative; z-index: 3; }
 
-    /* Motivational line above CTA */
+    /* Trigger line */
     .fs-motivation {
-      text-align: center; margin-top: 20px;
-      font-size: 13px; font-style: italic; color: rgba(255,255,255,0.4);
-      letter-spacing: 0.01em;
+      margin-top: 26px; margin-bottom: 18px;
+      font-size: 0.98rem; font-weight: 600; color: var(--fs-text-faint);
+      text-align: center; text-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-    /* Gold CTA — larger, rounder, more premium */
+    /* Gold CTA */
     .future-generate-btn {
-      width: 100%; margin-top: 12px; padding: 18px; border: none; border-radius: 50px;
-      font-family: var(--font-ui); font-size: 17px; font-weight: 700;
-      cursor: pointer; letter-spacing: 0.01em;
-      background: linear-gradient(135deg, #d4b87a 0%, #c8a96e 40%, #b5944e 100%);
-      color: #FFFFFF; transition: all 0.25s;
-      box-shadow: 0 4px 20px rgba(200,169,110,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
-      text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+      width: 100%; border: 0; border-radius: 24px; padding: 22px 24px;
+      font-family: var(--font-ui); font-size: 1.15rem; line-height: 1; font-weight: 700;
+      color: rgba(255,255,255,0.97); cursor: pointer;
+      background: linear-gradient(180deg, #d8b96d 0%, #bd984f 100%);
+      box-shadow: var(--fs-shadow-gold), inset 0 1px 0 rgba(255,255,255,0.24);
+      transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.25s ease;
     }
-    .future-generate-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(200,169,110,0.45), inset 0 1px 0 rgba(255,255,255,0.2); }
+    .future-generate-btn:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(214,179,106,0.34), inset 0 1px 0 rgba(255,255,255,0.28); filter: brightness(1.02); }
+    .future-generate-btn:active { transform: translateY(1px); }
     .future-generate-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-    .future-skip-wrap { text-align: center; margin-top: 16px; margin-bottom: 24px; }
-    .future-skip { background: none; border: none; color: rgba(255,255,255,0.35); font-family: var(--font-ui); font-size: 13px; cursor: pointer; letter-spacing: 0.02em; }
-    .future-skip:hover { color: rgba(255,255,255,0.55); }
+    .future-skip-wrap { text-align: center; margin-top: 18px; margin-bottom: 24px; }
+    .future-skip { border: 0; background: transparent; color: rgba(255,255,255,0.5); font-family: var(--font-ui); font-size: 1rem; font-weight: 500; cursor: pointer; transition: color 0.2s ease; }
+    .future-skip:hover { color: rgba(255,255,255,0.72); }
+
+    @media (max-width: 480px) {
+      #screen-future { padding: 24px 16px 32px; }
+      .future-title { font-size: 2.15rem; }
+      .future-sub { font-size: 1rem; }
+      .future-upload { min-height: 295px; border-radius: 28px; }
+      .future-upload-icon { width: 84px; height: 84px; margin-bottom: 22px; }
+    }
 
     /* Implode animation on upload zone */
-    .future-upload.imploding {
+    .future-upload.imploding, label.future-upload.imploding {
       animation: fsImplode 0.6s ease-in forwards;
     }
     @keyframes fsImplode {
@@ -2562,29 +2601,38 @@
 <div class="screen" id="screen-future">
   <div class="container future-container">
 
-    <!-- Header copy — on sage bg -->
+    <div class="fs-bg-glow"></div>
+
+    <!-- Header copy -->
     <div class="fs-header-text">
       <p class="future-label">Future Self</p>
-      <h1 class="future-title">Meet the version of you who followed through.</h1>
-      <p class="future-sub">Upload a photo. We'll generate the version of you who stayed disciplined.</p>
+      <h1 class="future-title">Meet the version of you<br/>who followed through.</h1>
+      <p class="future-sub">Upload a photo. We'll generate the version<br/>of you who stayed disciplined.</p>
     </div>
 
     <!-- UPLOAD ZONE (implodes on generate) -->
     <div id="fsUploadWrap" class="future-upload-wrap">
-      <div class="future-upload" id="uploadZone" onclick="document.getElementById('photoInput').click()">
-        <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handlePhoto(event.target.files[0])" />
-        <img class="fs-silhouette" id="fsSilhouette" src="futureselfman.png" alt="" />
-        <img class="future-upload-preview" id="uploadPreview" src="" alt="" />
-        <div id="uploadPlaceholder">
-          <div class="future-upload-icon"><span>↑</span></div>
-          <p class="future-upload-label">Upload a reference photo</p>
-          <p class="future-upload-hint">This is where it starts</p>
+      <label class="future-upload" id="uploadZone">
+        <div class="fs-silhouette-wrap">
+          <img class="fs-silhouette" id="fsSilhouette" src="futureselfman.png" alt="" />
         </div>
-      </div>
+        <div class="fs-upload-overlay"></div>
+        <div class="fs-upload-content">
+          <img class="future-upload-preview" id="uploadPreview" src="" alt="" />
+          <div id="uploadPlaceholder">
+            <div class="future-upload-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="M5 12l7-7 7 7"></path></svg>
+            </div>
+            <p class="future-upload-label">Upload a reference photo</p>
+            <p class="future-upload-hint">This is where it starts</p>
+          </div>
+        </div>
+        <input type="file" id="photoInput" accept="image/*" hidden onchange="handlePhoto(event.target.files[0])" />
+      </label>
 
       <p class="fs-motivation">Most people never follow through.</p>
 
-      <button class="future-generate-btn" id="generateBtn" onclick="generateAllTimelines()">Reveal My Future Self →</button>
+      <button class="future-generate-btn" id="generateBtn" onclick="generateAllTimelines()">Reveal My Future Self <span>→</span></button>
 
       <p class="future-skip-wrap">
         <button class="future-skip" onclick="showScreen('program')">Not ready yet</button>
@@ -3061,7 +3109,7 @@
 
   function logSet(exerciseName, weight, reps, sessionId) {
     var sb = _getSupabase();
-    if (!sb || !currentUser) return;
+    if (!sb || !currentUser) { console.warn('[logSet] No supabase or user — skipping DB save'); return; }
     sb.from('workout_sets').insert({
       user_id: currentUser.id,
       session_id: sessionId || null,
@@ -3069,7 +3117,10 @@
       weight: weight || 0,
       reps: reps || 0,
       logged_at: new Date().toISOString()
-    }).catch(function(){});
+    }).then(function(res) {
+      if (res.error) console.error('[logSet] workout_sets insert error:', res.error.message);
+      else console.log('[logSet] Saved:', exerciseName, weight, reps);
+    });
     var volume = (weight || 0) * (reps || 0);
     sb.from('personal_bests').upsert({
       user_id: currentUser.id,
@@ -3078,7 +3129,9 @@
       best_reps: reps || 0,
       best_volume: volume,
       updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id,exercise' }).catch(function(){});
+    }, { onConflict: 'user_id,exercise' }).then(function(res) {
+      if (res.error) console.warn('[logSet] personal_bests upsert error:', res.error.message);
+    });
   }
 
   // ═══ COMMUNITY ═══
@@ -4231,6 +4284,27 @@
     var gender = (profile.gender || 'Male').toLowerCase();
     sil.src = gender === 'female' ? 'futureselfwoman.png' : 'futureselfman.png';
   }
+
+  // Upload card pulse animation
+  (function() {
+    var photoInput = document.getElementById('photoInput');
+    var uploadCard = document.getElementById('uploadZone');
+    if (photoInput && uploadCard) {
+      photoInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          uploadCard.classList.add('is-uploaded');
+          uploadCard.animate(
+            [
+              { transform: 'scale(1)', filter: 'brightness(1)' },
+              { transform: 'scale(1.015)', filter: 'brightness(1.03)' },
+              { transform: 'scale(1)', filter: 'brightness(1)' }
+            ],
+            { duration: 650, easing: 'ease-in-out' }
+          );
+        }
+      });
+    }
+  })();
 
   function switchTimeline(tl) {
     _activeTimeline = tl;
