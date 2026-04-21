@@ -1712,9 +1712,35 @@
       <div class="form-group ob-field">
         <label>Do you have access to a gym?</label>
         <div class="pill-group" id="gymGroup">
-          <button class="pill" onclick="selectPill(this,'gymGroup')">Yes</button>
-          <button class="pill" onclick="selectPill(this,'gymGroup')">No</button>
-          <button class="pill" onclick="selectPill(this,'gymGroup')">Sometimes</button>
+          <button class="pill" onclick="selectPill(this,'gymGroup'); toggleGymDetails()">Yes</button>
+          <button class="pill" onclick="selectPill(this,'gymGroup'); toggleGymDetails()">No</button>
+          <button class="pill" onclick="selectPill(this,'gymGroup'); toggleGymDetails()">Sometimes</button>
+        </div>
+      </div>
+
+      <!-- Gym details (shown when Yes/Sometimes selected) -->
+      <div id="gymDetailsSection" style="display:none;">
+        <div class="form-group ob-field">
+          <label>Which gym? <span class="ob-optional">(optional)</span></label>
+          <input class="input" id="gymNameInput" type="text" placeholder="e.g. LA Fitness, Planet Fitness, home gym..." style="font-size:15px;" />
+        </div>
+
+        <div class="form-group ob-field">
+          <label>What equipment is available?</label>
+          <div class="pill-group" id="gymEquipGroup">
+            <button class="pill" onclick="togglePill(this)">Dumbbells</button>
+            <button class="pill" onclick="togglePill(this)">Barbells & Rack</button>
+            <button class="pill" onclick="togglePill(this)">Cable Machine</button>
+            <button class="pill" onclick="togglePill(this)">Smith Machine</button>
+            <button class="pill" onclick="togglePill(this)">Leg Press</button>
+            <button class="pill" onclick="togglePill(this)">Pull-up Bar</button>
+            <button class="pill" onclick="togglePill(this)">Bench (flat/incline)</button>
+            <button class="pill" onclick="togglePill(this)">Resistance Bands</button>
+            <button class="pill" onclick="togglePill(this)">Kettlebells</button>
+            <button class="pill" onclick="togglePill(this)">Cardio Machines</button>
+            <button class="pill" onclick="togglePill(this)">TRX / Suspension</button>
+            <button class="pill" onclick="togglePill(this)">Battle Ropes</button>
+          </div>
         </div>
       </div>
 
@@ -2650,6 +2676,33 @@
     <div class="program-output" id="programOutput">
       <div id="programDays"></div>
 
+      <!-- Log a Class (optional, not part of program) -->
+      <div class="log-class-section" id="logClassSection" style="margin-top:20px;padding:20px;background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div>
+            <p style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--sage);margin:0;">Optional</p>
+            <p style="font-size:16px;font-weight:600;color:var(--text);margin:4px 0 0;">Log a Class</p>
+          </div>
+          <span style="font-size:24px;">🧘</span>
+        </div>
+        <p style="font-size:13px;color:var(--muted);margin:0 0 14px;">Did a yoga class, spin session, or anything extra? Log it here — your AI coach tracks everything.</p>
+        <div class="pill-group" id="classLogGroup" style="margin-bottom:12px;">
+          <button class="pill" onclick="togglePill(this)">Yoga</button>
+          <button class="pill" onclick="togglePill(this)">Pilates</button>
+          <button class="pill" onclick="togglePill(this)">Spin</button>
+          <button class="pill" onclick="togglePill(this)">HIIT</button>
+          <button class="pill" onclick="togglePill(this)">Boxing</button>
+          <button class="pill" onclick="togglePill(this)">Swimming</button>
+          <button class="pill" onclick="togglePill(this)">Dance</button>
+          <button class="pill" onclick="togglePill(this)">Other</button>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <input class="input" id="classLogNotes" placeholder="Notes (optional)..." style="flex:1;font-size:14px;padding:10px 14px;" />
+          <button class="ov-btn" onclick="logClassSession()" style="white-space:nowrap;padding:10px 18px;font-size:13px;">Log It</button>
+        </div>
+        <p id="classLogConfirm" style="display:none;font-size:13px;color:var(--sage);margin:10px 0 0;font-weight:500;"></p>
+      </div>
+
       <!-- Adjust Program -->
       <div class="alt-program-section" id="altProgramSection">
         <p class="alt-section-label">Adjust Program</p>
@@ -3334,7 +3387,7 @@
   var state = {
     name: '', gender: '', age: '', height: '', weight: '', weightUnit: 'lbs',
     goals: [], level: '', days: '',
-    equipment: '', gymAccess: '', classPreferences: [],
+    equipment: '', gymAccess: '', gymName: '', gymEquipment: [], classPreferences: [],
     health: [], healthNotes: '', diet: [], dietNotes: '',
     sessions: 0, streak: 0,
     log: [],
@@ -3473,6 +3526,15 @@
     el.classList.toggle('selected');
   }
 
+  // Show/hide gym details when gym access is Yes or Sometimes
+  function toggleGymDetails() {
+    var sel = document.querySelector('#gymGroup .selected');
+    var section = document.getElementById('gymDetailsSection');
+    if (!section) return;
+    var val = sel ? sel.textContent : '';
+    section.style.display = (val === 'Yes' || val === 'Sometimes') ? 'block' : 'none';
+  }
+
   // AUTH FORM TOGGLE
   function showAuthForm() {
     document.getElementById('authWelcome').style.display = 'none';
@@ -3568,6 +3630,8 @@
     state.days             = days      ? days.textContent       : '4 days';
     state.equipment        = equipment ? equipment.textContent  : '';
     state.gymAccess        = gym       ? gym.textContent        : '';
+    state.gymName          = document.getElementById('gymNameInput').value.trim();
+    state.gymEquipment     = Array.from(document.querySelectorAll('#gymEquipGroup .selected')).map(function(p){ return p.textContent; });
     state.classPreferences = classes.filter(function(c){ return c !== 'Not interested'; });
     var diet   = Array.from(document.querySelectorAll('#dietGroup .selected')).map(function(p){ return p.textContent; });
     var dNotes = document.getElementById('dietNotes').value.trim();
@@ -3862,6 +3926,20 @@
         if (p.textContent === state.gymAccess) p.classList.add('selected');
       });
     }
+    // Pre-fill gym name
+    if (state.gymName) {
+      var gymInput = document.getElementById('gymNameInput');
+      if (gymInput) gymInput.value = state.gymName;
+    }
+    // Pre-fill gym equipment (multi-select)
+    if (state.gymEquipment && state.gymEquipment.length > 0) {
+      document.querySelectorAll('#gymEquipGroup .pill').forEach(function(p){
+        p.classList.remove('selected');
+        if (state.gymEquipment.indexOf(p.textContent) !== -1) p.classList.add('selected');
+      });
+    }
+    // Show gym details section if gym access is Yes/Sometimes
+    toggleGymDetails();
     // Pre-fill classes (multi-select)
     if (state.classPreferences && state.classPreferences.length > 0) {
       document.querySelectorAll('#classGroup .pill').forEach(function(p){
@@ -3890,7 +3968,7 @@
     Object.assign(state, {
       name: '', gender: '', age: '', height: '', weight: '', weightUnit: 'lbs',
       goals: [], goal: '', level: '', days: '',
-      equipment: '', gymAccess: '', classPreferences: [],
+      equipment: '', gymAccess: '', gymName: '', gymEquipment: [], classPreferences: [],
       health: [], healthNotes: '', diet: [], dietNotes: '',
       avatarUrl: ''
     });
@@ -4705,7 +4783,10 @@
     var notesStr = state.healthNotes || 'none';
     var equipStr = state.equipment || 'not specified';
     var gymStr = state.gymAccess || 'not specified';
-    var classStr = (state.classPreferences && state.classPreferences.length > 0) ? state.classPreferences.join(', ') : 'none';
+    var gymNameStr = state.gymName || '';
+    var gymEquipStr = (state.gymEquipment && state.gymEquipment.length > 0) ? state.gymEquipment.join(', ') : '';
+    if (gymNameStr) gymStr += ' (' + gymNameStr + ')';
+    if (gymEquipStr) gymStr += ' — Available equipment: ' + gymEquipStr;
     var constraintLine = constraint ? '\nAdjustment requested: ' + constraint : '';
 
     var genderStr = state.gender || 'not specified';
@@ -4743,7 +4824,6 @@
       'Days per week: ' + state.days + '\n' +
       'Equipment at home: ' + equipStr + '\n' +
       'Gym access: ' + gymStr + '\n' +
-      'Open to classes: ' + classStr + '\n' +
       'Dietary approach: ' + dietStr + '\n' +
       'Dietary notes: ' + dietNotesStr + '\n' +
       'Health concerns: ' + healthStr + '\n' +
@@ -4759,7 +4839,8 @@
       '- Account for their height/weight — a 5\'2" person and a 6\'4" person need different movement selections\n' +
       '- If they have dietary restrictions (vegan, keto, etc.), consider energy availability when programming intensity\n' +
       '- Account for equipment availability and gym access — if no gym, use bodyweight/home exercises\n' +
-      '- If the user is open to classes, incorporate 1-2 class-based sessions (e.g. yoga, spin) into the weekly plan\n' +
+      '- If the user specified gym equipment, USE those machines/equipment in the program. Be specific (e.g. "Cable Machine Tricep Pushdown" not just "Tricep Pushdown")\n' +
+      '- Do NOT include workout classes (yoga, pilates, spin, etc.) in the program — the user can log those separately. The program should be pure strength/resistance training + warmup + cardio.\n' +
       '- Account for ALL listed health concerns — modify or substitute exercises as needed\n' +
       '- Use precise, full exercise names (e.g. "Flat Barbell Bench Press" not "Bench Press", "Cable Chest Fly" not "Cable Flyes")\n' +
       '- The third element in each exercise array is a brief coaching cue explaining the movement (10-20 words)\n\n' +
@@ -4851,6 +4932,56 @@
     btn.disabled = true;
     btn.textContent = 'Rebuilding...';
     generateProgram(constraint || undefined);
+  }
+
+  // LOG A CLASS SESSION (optional, separate from program)
+  function logClassSession() {
+    var selected = Array.from(document.querySelectorAll('#classLogGroup .selected')).map(function(p){ return p.textContent; });
+    if (selected.length === 0) return;
+    var notes = document.getElementById('classLogNotes').value.trim();
+    var entry = {
+      type: 'class',
+      classes: selected,
+      notes: notes,
+      date: new Date().toISOString(),
+      dateKey: new Date().toISOString().slice(0, 10)
+    };
+
+    // Save to localStorage
+    var classLog = [];
+    try { classLog = JSON.parse(localStorage.getItem('wylde_class_log') || '[]'); } catch(e) {}
+    classLog.push(entry);
+    localStorage.setItem('wylde_class_log', JSON.stringify(classLog));
+
+    // Save to Supabase if available
+    var sb = typeof _getSupabase === 'function' ? _getSupabase() : null;
+    if (sb && typeof currentUser !== 'undefined' && currentUser) {
+      sb.from('workout_sets').insert({
+        user_id: currentUser.id,
+        exercise_name: 'Class: ' + selected.join(', '),
+        weight: 0,
+        reps: 0,
+        notes: notes,
+        created_at: new Date().toISOString()
+      }).then(function(res) {
+        if (res.error) console.error('[logClass] Error:', res.error.message);
+      });
+    }
+
+    // Award XP
+    if (typeof awardXP === 'function') awardXP(15, 'Logged class: ' + selected.join(', '));
+
+    // UI feedback
+    var confirm = document.getElementById('classLogConfirm');
+    confirm.textContent = '✓ Logged: ' + selected.join(', ') + (notes ? ' — ' + notes : '');
+    confirm.style.display = 'block';
+
+    // Clear selections
+    document.querySelectorAll('#classLogGroup .pill').forEach(function(p){ p.classList.remove('selected'); });
+    document.getElementById('classLogNotes').value = '';
+
+    // Hide confirmation after a few seconds
+    setTimeout(function() { confirm.style.display = 'none'; }, 4000);
   }
 
   // EXERCISE FORM GUIDE
