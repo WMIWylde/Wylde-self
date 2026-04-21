@@ -2566,7 +2566,7 @@
     <div id="fsUploadWrap" class="future-upload-wrap">
       <div class="future-upload" id="uploadZone" onclick="document.getElementById('photoInput').click()">
         <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handlePhoto(event.target.files[0])" />
-        <img class="fs-silhouette" id="fsSilhouette" src="images/futureselfman.png" alt="" />
+        <img class="fs-silhouette" id="fsSilhouette" src="futureselfman.png" alt="" />
         <img class="future-upload-preview" id="uploadPreview" src="" alt="" />
         <div id="uploadPlaceholder">
           <div class="future-upload-icon"><span>↑</span></div>
@@ -4222,7 +4222,7 @@
     var profile = {};
     try { profile = JSON.parse(localStorage.getItem('wylde_profile') || '{}'); } catch(e) {}
     var gender = (profile.gender || 'Male').toLowerCase();
-    sil.src = gender === 'female' ? 'images/futureselfwoman.png' : 'images/futureselfman.png';
+    sil.src = gender === 'female' ? 'futureselfwoman.png' : 'futureselfman.png';
   }
 
   function switchTimeline(tl) {
