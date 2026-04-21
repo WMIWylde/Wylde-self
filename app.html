@@ -3611,7 +3611,7 @@
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
-    if (id === 'nutrition' && state.weight) { calculateMacros(); }
+    if (id === 'nutrition' && state.weight) { calculateMacros(); loadSavedMealPlan(); }
     if (id === 'overview') { updateOverview(); mpInit(); }
     if (id === 'future') { updateFsSilhouette(); }
     if (id === 'program') { autoLoadProgram(); }
@@ -5576,26 +5576,28 @@
   function generateMealPlan() {
     if (!state.macros) calculateMacros();
     var btn = document.getElementById('generateMealBtn');
-    btn.textContent = 'Building your plan...';
+    btn.textContent = 'Building...';
     btn.disabled = true;
     var output = document.getElementById('mealPlanOutput');
-    output.innerHTML = '<div style="padding:24px 0;text-align:center;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);">Your AI nutritionist is building your meal plan...</p></div>';
+    output.innerHTML = '<div style="padding:24px 0;text-align:center;"><p style="font-size:14px;color:var(--muted);">Your AI nutritionist is building your plan...</p></div>';
 
+    var dietStr = (state.diet && state.diet.length > 0) ? state.diet.join(', ') : 'no restrictions';
     var prompt = 'You are an expert nutritionist. Create a 5-day meal plan for:\n' +
-      'Goal: ' + state.goal + '\n' +
-      'Daily targets: ' + state.macros.calories + ' calories, ' + state.macros.protein + 'g protein, ' + state.macros.carbs + 'g carbs, ' + state.macros.fat + 'g fat\n' +
+      'Goal: ' + (state.goals ? state.goals.join(', ') : state.goal) + '\n' +
+      'Daily targets: ' + state.macros.calories + ' cal, ' + state.macros.protein + 'g protein, ' + state.macros.carbs + 'g carbs, ' + state.macros.fat + 'g fat\n' +
+      'Diet: ' + dietStr + '\n' +
       'Health concerns: ' + (state.health.join(', ') || 'none') + '\n\n' +
-      'Return ONLY a JSON array. Each element: {"day":"Monday","meals":[{"name":"Breakfast","foods":"description","calories":number,"protein":number},...]}\n' +
-      'Include breakfast, lunch, dinner, snack per day. No markdown, no backticks, just the JSON array.';
+      'For EACH meal, include the recipe with ingredients and step-by-step cooking instructions.\n\n' +
+      'Return ONLY a JSON array. Each element:\n' +
+      '{"day":"Monday","meals":[{"name":"Breakfast","title":"Meal Title","foods":"brief description of the dish","calories":number,"protein":number,"carbs":number,"fat":number,"prep":"15 min","ingredients":["ingredient 1","ingredient 2"],"steps":["Step 1 instruction","Step 2 instruction"]},...]}\n' +
+      'Include breakfast, lunch, dinner, snack per day. Keep ingredient lists practical (5-8 items). Keep steps concise (3-6 steps). No markdown, no backticks, just the JSON array.';
 
     fetch('/api/anthropic', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 3000,
+        max_tokens: 6000,
         messages: [{ role: 'user', content: prompt }]
       })
     })
@@ -5608,90 +5610,121 @@
       var end = text.lastIndexOf(']');
       if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
       var plan = JSON.parse(text);
+      localStorage.setItem('wylde_meal_plan', JSON.stringify(plan));
       renderMealPlan(plan);
       btn.textContent = 'Regenerate';
       btn.disabled = false;
     })
     .catch(function(err) {
       console.error('Meal plan error:', err);
-      output.innerHTML = '<div style="padding:24px;text-align:center;"><p style="color:var(--muted);font-size:13px;">Could not generate meal plan. Please try again.</p></div>';
+      output.innerHTML = '<div style="padding:24px;text-align:center;"><p style="color:var(--muted);font-size:13px;">Could not generate meal plan. Try again.</p></div>';
       btn.textContent = 'Try Again';
       btn.disabled = false;
     });
   }
 
+  // Load saved meal plan on screen show
+  function loadSavedMealPlan() {
+    try {
+      var saved = JSON.parse(localStorage.getItem('wylde_meal_plan'));
+      if (saved && saved.length > 0) { renderMealPlan(saved); return true; }
+    } catch(e) {}
+    return false;
+  }
+
   function renderMealPlan(plan) {
     var output = document.getElementById('mealPlanOutput');
     output.innerHTML = '';
-    plan.forEach(function(day) {
-      var card = document.createElement('div');
-      card.className = 'day-card';
-      var mealsHTML = day.meals.map(function(m) {
-        return '<div class="exercise"><span class="ex-name" style="flex:1;">' + m.name + ' — ' + m.foods + '</span><span class="ex-sets">' + m.calories + ' cal · ' + m.protein + 'g P</span></div>';
-      }).join('');
-      card.innerHTML = '<div class="day-header" onclick="toggleDay(this)"><span class="day-name">' + day.day + '</span><span class="day-focus">Tap to expand</span></div><div class="day-body"><div style="padding-top:4px;">' + mealsHTML + '</div></div>';
-      output.appendChild(card);
+    plan.forEach(function(day, dayIdx) {
+      var dayDiv = document.createElement('div');
+      dayDiv.style.cssText = 'margin-bottom:8px;border:1px solid rgba(0,0,0,0.06);border-radius:12px;overflow:hidden;';
+
+      // Day header — collapsible
+      var header = document.createElement('div');
+      header.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;background:rgba(0,0,0,0.02);';
+      header.innerHTML = '<span style="font-size:14px;font-weight:600;color:var(--text);">' + esc(day.day) + '</span><span style="font-size:12px;color:var(--muted);">' + day.meals.length + ' meals ›</span>';
+      header.onclick = function() {
+        var body = this.nextElementSibling;
+        body.style.display = body.style.display === 'none' ? 'block' : 'none';
+        var arrow = this.querySelector('span:last-child');
+        arrow.textContent = body.style.display === 'none' ? day.meals.length + ' meals ›' : day.meals.length + ' meals ⌄';
+      };
+
+      var body = document.createElement('div');
+      body.style.display = dayIdx === 0 ? 'block' : 'none';
+
+      day.meals.forEach(function(m, mealIdx) {
+        var mealId = 'meal_' + dayIdx + '_' + mealIdx;
+        var mealDiv = document.createElement('div');
+        mealDiv.style.cssText = 'padding:14px 16px;border-top:1px solid rgba(0,0,0,0.04);';
+
+        var macroLine = '<span style="font-size:11px;color:var(--sage);font-weight:500;">' + (m.calories||0) + ' cal</span>' +
+          '<span style="font-size:11px;color:var(--muted);margin-left:8px;">P ' + (m.protein||0) + 'g</span>' +
+          '<span style="font-size:11px;color:var(--muted);margin-left:6px;">C ' + (m.carbs||0) + 'g</span>' +
+          '<span style="font-size:11px;color:var(--muted);margin-left:6px;">F ' + (m.fat||0) + 'g</span>';
+
+        var hasRecipe = (m.ingredients && m.ingredients.length > 0) || (m.steps && m.steps.length > 0);
+
+        mealDiv.innerHTML =
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
+            '<div style="flex:1;">' +
+              '<p style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin:0 0 4px;">' + esc(m.name) + '</p>' +
+              '<p style="font-size:14px;font-weight:600;color:var(--text);margin:0 0 4px;">' + esc(m.title || m.foods) + '</p>' +
+              (m.title && m.foods ? '<p style="font-size:12px;color:var(--muted);margin:0 0 6px;">' + esc(m.foods) + '</p>' : '') +
+              '<div>' + macroLine + '</div>' +
+            '</div>' +
+            (m.prep ? '<span style="font-size:11px;color:var(--muted);flex-shrink:0;margin-left:12px;">⏱ ' + esc(m.prep) + '</span>' : '') +
+          '</div>' +
+          '<div style="display:flex;gap:8px;margin-top:10px;">' +
+            (hasRecipe ? '<button onclick="toggleMealRecipe(\'' + mealId + '\')" style="font-size:11px;padding:6px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:var(--text);cursor:pointer;">View Recipe</button>' : '') +
+            '<button onclick="logMealFromPlan(' + (m.calories||0) + ',' + (m.protein||0) + ',' + (m.carbs||0) + ',' + (m.fat||0) + ',\'' + esc(m.title || m.foods).replace(/'/g, "\\'") + '\')" style="font-size:11px;padding:6px 12px;border-radius:8px;border:1px solid var(--sage);background:transparent;color:var(--sage);cursor:pointer;">Log This Meal</button>' +
+          '</div>' +
+          (hasRecipe ? '<div id="' + mealId + '" style="display:none;margin-top:12px;padding:14px;background:rgba(0,0,0,0.02);border-radius:10px;">' +
+            (m.ingredients && m.ingredients.length > 0 ?
+              '<p style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--sage);margin:0 0 8px;">Ingredients</p>' +
+              '<ul style="margin:0 0 14px;padding-left:18px;list-style:disc;">' + m.ingredients.map(function(i) { return '<li style="font-size:13px;color:var(--text);margin-bottom:4px;line-height:1.4;">' + esc(i) + '</li>'; }).join('') + '</ul>'
+            : '') +
+            (m.steps && m.steps.length > 0 ?
+              '<p style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--sage);margin:0 0 8px;">Instructions</p>' +
+              '<ol style="margin:0;padding-left:18px;">' + m.steps.map(function(s) { return '<li style="font-size:13px;color:var(--text);margin-bottom:6px;line-height:1.5;">' + esc(s) + '</li>'; }).join('') + '</ol>'
+            : '') +
+          '</div>' : '');
+
+        body.appendChild(mealDiv);
+      });
+
+      dayDiv.appendChild(header);
+      dayDiv.appendChild(body);
+      output.appendChild(dayDiv);
     });
+
+    // Update first day header arrow since it's open
+    var firstArrow = output.querySelector('div > div:first-child span:last-child');
+    if (firstArrow) firstArrow.textContent = firstArrow.textContent.replace('›', '⌄');
   }
 
-  function generateRecipes() {
-    if (!state.macros) calculateMacros();
-    var output = document.getElementById('recipeOutput');
-    output.innerHTML = '<div style="padding:24px 0;text-align:center;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);">Finding recipes that hit your macros...</p></div>';
-
-    var prompt = 'You are an expert nutritionist. Suggest 4 high-protein recipes for someone with goal: ' + state.goal + ', targeting ' + (state.macros ? state.macros.protein : 150) + 'g protein per day.\n' +
-      'Health concerns: ' + (state.health.join(', ') || 'none') + '\n\n' +
-      'Return ONLY a JSON array. Each element: {"name":"Recipe Name","ingredients":"brief list","macros":"calories/protein/carbs/fat","prep":"X mins","difficulty":"Easy/Medium"}\n' +
-      'No markdown, no backticks, just the JSON array.';
-
-    fetch('/api/anthropic', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1500,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    })
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
-      var text = data.content && data.content[0] && data.content[0].text;
-      if (!text) throw new Error('No response');
-      text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
-      var start = text.indexOf('[');
-      var end = text.lastIndexOf(']');
-      if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
-      var recipes = JSON.parse(text);
-      renderRecipes(recipes);
-    })
-    .catch(function(err) {
-      console.error('Recipe error:', err);
-      output.innerHTML = '<div style="padding:24px;text-align:center;"><p style="color:var(--muted);font-size:13px;">Could not load recipes. Please try again.</p></div>';
-    });
+  function toggleMealRecipe(mealId) {
+    var el = document.getElementById(mealId);
+    if (!el) return;
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
   }
 
-  function renderRecipes(recipes) {
-    var output = document.getElementById('recipeOutput');
-    output.innerHTML = '';
-    recipes.forEach(function(r) {
-      var card = document.createElement('div');
-      card.className = 'card';
-      card.style.marginBottom = '8px';
-      card.innerHTML =
-        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
-          '<p style="font-family:var(--ff-serif);font-size:17px;color:var(--text);">' + r.name + '</p>' +
-          '<span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,173,110,0.3);padding:3px 8px;">' + r.difficulty + '</span>' +
-        '</div>' +
-        '<p style="font-size:12px;color:var(--muted);margin-bottom:8px;">' + r.ingredients + '</p>' +
-        '<div style="display:flex;justify-content:space-between;">' +
-          '<span style="font-size:11px;color:var(--gold);">' + r.macros + '</span>' +
-          '<span style="font-size:11px;color:var(--muted);">⏱ ' + r.prep + '</span>' +
-        '</div>';
-      output.appendChild(card);
-    });
+  function logMealFromPlan(cal, protein, carbs, fat, name) {
+    appendFoodLogItem(name, cal, protein, carbs, fat);
+    // Brief visual confirmation
+    event.target.textContent = '✓ Logged';
+    event.target.style.color = 'var(--sage)';
+    event.target.style.borderColor = 'var(--sage)';
+    event.target.disabled = true;
+    setTimeout(function() {
+      event.target.textContent = 'Log This Meal';
+      event.target.disabled = false;
+    }, 2000);
   }
+
+  // Legacy compat — generateRecipes now unused, meal plan includes recipes
+  function generateRecipes() { generateMealPlan(); }
+  function renderRecipes() {}
 
   function logFood() {
     var input = document.getElementById('foodLogInput');
@@ -5792,21 +5825,29 @@
 
     var log = document.getElementById('foodLog');
     var item = document.createElement('div');
-    item.style.cssText = 'padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;';
-    item.innerHTML = '<span style="font-size:13px;color:var(--white);flex:1;">' + name + '</span>' +
-      '<div style="display:flex;gap:12px;flex-shrink:0;">' +
-        '<span style="font-size:11px;color:var(--gold);font-weight:500;">' + Math.round(cal) + ' cal</span>' +
-        '<span style="font-size:11px;color:var(--muted);">P ' + Math.round(protein) + 'g</span>' +
-        '<span style="font-size:11px;color:var(--muted);">C ' + Math.round(carbs) + 'g</span>' +
-        '<span style="font-size:11px;color:var(--muted);">F ' + Math.round(fat) + 'g</span>' +
+    item.style.cssText = 'padding:12px 16px;border-bottom:1px solid rgba(0,0,0,0.05);display:flex;justify-content:space-between;align-items:center;gap:12px;';
+    item.innerHTML = '<span style="font-size:13px;color:var(--text);flex:1;font-weight:500;">' + name + '</span>' +
+      '<div style="display:flex;gap:10px;flex-shrink:0;">' +
+        '<span style="font-size:11px;color:var(--sage);font-weight:600;">' + Math.round(cal) + '</span>' +
+        '<span style="font-size:11px;color:var(--muted);">P' + Math.round(protein) + '</span>' +
+        '<span style="font-size:11px;color:var(--muted);">C' + Math.round(carbs) + '</span>' +
+        '<span style="font-size:11px;color:var(--muted);">F' + Math.round(fat) + '</span>' +
       '</div>';
     log.appendChild(item);
 
-    document.getElementById('foodLogTotals').style.display = 'block';
+    // Update totals display
     document.getElementById('totalCalDisplay').textContent = Math.round(foodLogTotals.cal) + ' cal';
     document.getElementById('totalProtDisplay').textContent = Math.round(foodLogTotals.protein) + 'g protein';
     document.getElementById('totalCarbDisplay').textContent = Math.round(foodLogTotals.carbs) + 'g carbs';
     document.getElementById('totalFatDisplay').textContent = Math.round(foodLogTotals.fat) + 'g fat';
+
+    // Update calorie progress bar
+    var calBar = document.getElementById('calProgressBar');
+    if (calBar && state.macros && state.macros.calories) {
+      var pct = Math.min(Math.round(foodLogTotals.cal / state.macros.calories * 100), 100);
+      calBar.style.width = pct + '%';
+      if (pct > 100) calBar.style.background = '#c26b5a';
+    }
 
     var dc = document.getElementById('loggedCalories');
     if (dc) dc.textContent = Math.round(foodLogTotals.cal) + ' cal';
@@ -5997,99 +6038,104 @@
 
 <!-- ═══ NUTRITION ═══ -->
 <div class="screen" id="screen-nutrition">
-  <div class="container">
-    <p class="section-label">Nutrition</p>
-    <h1 class="screen-title"><span class="pulse-dot" style="margin-right:8px;"></span>Fuel your<br><span style="font-family:var(--ff-serif);font-style:italic;color:var(--gold);">becoming</span></h1>
-    <p class="screen-sub" id="nutritionSub">Your personalized macro targets and meal plan.</p>
-    <div class="gold-rule"></div>
+  <div class="container" style="padding-bottom:100px;">
 
-    <!-- MACRO TARGETS -->
-    <p class="section-label">Daily Macro Targets</p>
-    <div class="stats-grid" style="margin-bottom:32px;" id="macroGrid">
-      <div class="stat-box">
-        <div class="stat-num" id="macroCalories" style="font-size:32px;">—</div>
-        <div class="stat-label">Calories</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-num" id="macroProtein" style="font-size:32px;">—g</div>
-        <div class="stat-label">Protein</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-num" id="macroCarbs" style="font-size:32px;">—g</div>
-        <div class="stat-label">Carbs</div>
-      </div>
-    </div>
-    <div class="stats-grid" style="margin-bottom:32px;">
-      <div class="stat-box">
-        <div class="stat-num" id="macroFat" style="font-size:32px;">—g</div>
-        <div class="stat-label">Fat</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-num" id="macroWater" style="font-size:32px;">—oz</div>
-        <div class="stat-label">Water</div>
-      </div>
-      <div class="stat-box" style="cursor:pointer;" onclick="calculateMacros()">
-        <div class="stat-num" style="font-size:20px;color:var(--gold);">↻</div>
-        <div class="stat-label">Recalculate</div>
-      </div>
+    <!-- Header -->
+    <div style="margin-bottom:28px;">
+      <p style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--sage);margin:0 0 8px;">Nutrition</p>
+      <h1 style="font-size:24px;font-weight:700;color:var(--text);margin:0 0 6px;">Fuel your transformation</h1>
+      <p style="font-size:14px;color:var(--muted);margin:0;">Track meals, hit your macros, cook what moves you forward.</p>
     </div>
 
-    <!-- MEAL PLAN -->
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <p class="section-label" style="margin-bottom:0;">AI Meal Plan</p>
-      <button class="btn" id="generateMealBtn" onclick="generateMealPlan()" style="font-size:11px;padding:10px 20px;">Generate This Week</button>
-    </div>
-    <div id="mealPlanOutput"></div>
-
-    <!-- RECIPE GUIDE -->
-    <div style="margin-top:48px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <p class="section-label" style="margin-bottom:0;">Recipe Guide</p>
-        <button class="btn btn-outline" onclick="generateRecipes()" style="font-size:11px;padding:10px 20px;">Get Recipes</button>
+    <!-- MACRO DASHBOARD — compact row -->
+    <div style="background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:16px;padding:20px;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--sage);">Daily Targets</span>
+        <button onclick="calculateMacros()" style="font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;padding:4px 8px;">⟳ Recalculate</button>
       </div>
-      <div id="recipeOutput"></div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;text-align:center;">
+        <div>
+          <div style="font-size:22px;font-weight:700;color:var(--text);" id="macroCalories">—</div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;">Calories</div>
+        </div>
+        <div>
+          <div style="font-size:22px;font-weight:700;color:var(--sage);" id="macroProtein">—g</div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;">Protein</div>
+        </div>
+        <div>
+          <div style="font-size:22px;font-weight:700;color:var(--text);" id="macroCarbs">—g</div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;">Carbs</div>
+        </div>
+        <div>
+          <div style="font-size:22px;font-weight:700;color:var(--text);" id="macroFat">—g</div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;">Fat</div>
+        </div>
+        <div>
+          <div style="font-size:22px;font-weight:700;color:var(--text);" id="macroWater">—oz</div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;">Water</div>
+        </div>
+      </div>
+
+      <!-- Today's progress bar -->
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(0,0,0,0.06);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:11px;color:var(--muted);">Today's intake</span>
+          <span style="font-size:12px;font-weight:600;color:var(--text);" id="totalCalDisplay">0 cal</span>
+        </div>
+        <div style="height:6px;background:rgba(0,0,0,0.06);border-radius:3px;overflow:hidden;">
+          <div id="calProgressBar" style="height:100%;width:0%;background:var(--sage);border-radius:3px;transition:width 0.4s;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;">
+          <span style="font-size:11px;color:var(--sage);font-weight:500;" id="totalProtDisplay">0g protein</span>
+          <span style="font-size:11px;color:var(--muted);" id="totalCarbDisplay">0g carbs</span>
+          <span style="font-size:11px;color:var(--muted);" id="totalFatDisplay">0g fat</span>
+        </div>
+      </div>
     </div>
 
-    <!-- FOOD LOG -->
-    <div style="margin-top:48px;">
-      <p class="section-label">Food Log</p>
+    <!-- FOOD LOG — prominent, above meal plan -->
+    <div style="background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:16px;padding:20px;margin-bottom:20px;">
+      <p style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--sage);margin:0 0 14px;">Log a Meal</p>
 
       <!-- Text input -->
-      <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <input class="input" id="foodLogInput" placeholder="e.g. 2 scrambled eggs, oatmeal with banana..." style="flex:1;" onkeydown="if(event.key==='Enter')logFood()" />
-        <button class="btn" onclick="logFood()" style="padding:13px 20px;font-size:12px;white-space:nowrap;">+ Add</button>
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <input class="input" id="foodLogInput" placeholder="e.g. 2 scrambled eggs, oatmeal with banana..." style="flex:1;font-size:14px;padding:12px 14px;border-radius:10px;" onkeydown="if(event.key==='Enter')logFood()" />
+        <button class="ov-btn" onclick="logFood()" style="padding:12px 18px;font-size:13px;white-space:nowrap;border-radius:10px;">Log</button>
       </div>
 
       <!-- Photo upload -->
-      <div style="margin-bottom:16px;">
-        <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);border:1px dashed rgba(201,173,110,0.3);padding:10px 16px;transition:border-color 0.2s;" onmouseover="this.style.borderColor='rgba(201,173,110,0.6)'" onmouseout="this.style.borderColor='rgba(201,173,110,0.3)'">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          Scan food or nutrition label
-          <input type="file" accept="image/*" style="display:none;" onchange="logFoodPhoto(this)" />
-        </label>
-        <span id="photoScanStatus" style="display:none;font-size:11px;color:var(--gold);margin-left:12px;font-family:var(--ff-serif);font-style:italic;">Analyzing...</span>
-      </div>
+      <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--muted);padding:6px 0;transition:color 0.2s;" onmouseover="this.style.color='var(--sage)'" onmouseout="this.style.color='var(--muted)'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Scan food or nutrition label
+        <input type="file" accept="image/*" style="display:none;" onchange="logFoodPhoto(this)" />
+      </label>
+      <span id="photoScanStatus" style="display:none;font-size:12px;color:var(--sage);margin-left:8px;">Analyzing...</span>
 
       <!-- Log list -->
-      <div id="foodLog" style="background:#161616;border:1px solid var(--border);">
-        <div id="foodLogEmpty" style="padding:24px;text-align:center;">
-          <p style="font-family:var(--ff-serif);font-style:italic;font-size:14px;color:var(--muted);">Your food log is empty. Add your first meal above.</p>
-        </div>
-      </div>
-
-      <!-- Totals bar -->
-      <div id="foodLogTotals" style="display:none;background:#161616;border:1px solid rgba(201,173,110,0.2);padding:14px 16px;margin-top:2px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-          <span style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);">Today's totals</span>
-          <div style="display:flex;gap:20px;">
-            <span style="font-size:12px;color:var(--gold);" id="totalCalDisplay">0 cal</span>
-            <span style="font-size:12px;color:var(--muted);" id="totalProtDisplay">0g protein</span>
-            <span style="font-size:12px;color:var(--muted);" id="totalCarbDisplay">0g carbs</span>
-            <span style="font-size:12px;color:var(--muted);" id="totalFatDisplay">0g fat</span>
-          </div>
+      <div id="foodLog" style="margin-top:14px;border-radius:10px;overflow:hidden;">
+        <div id="foodLogEmpty" style="padding:20px;text-align:center;">
+          <p style="font-size:13px;color:var(--muted);margin:0;">No meals logged yet today.</p>
         </div>
       </div>
     </div>
+
+    <!-- Hidden totals element for backward compat -->
+    <div id="foodLogTotals" style="display:none;"></div>
+
+    <!-- AI MEAL PLAN -->
+    <div style="background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:16px;padding:20px;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div>
+          <p style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--sage);margin:0;">AI Meal Plan</p>
+          <p style="font-size:13px;color:var(--muted);margin:4px 0 0;">Meals with recipes, built around your macros.</p>
+        </div>
+        <button class="ov-btn" id="generateMealBtn" onclick="generateMealPlan()" style="font-size:12px;padding:10px 16px;white-space:nowrap;border-radius:10px;">Generate</button>
+      </div>
+      <div id="mealPlanOutput"></div>
+    </div>
+
+    <!-- RECIPE OUTPUT (hidden — now integrated into meal plan) -->
+    <div id="recipeOutput" style="display:none;"></div>
 
   </div>
 </div>
