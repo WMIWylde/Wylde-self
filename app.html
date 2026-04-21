@@ -1252,16 +1252,21 @@
   nav {
     position: fixed !important; top: auto !important; bottom: 0 !important;
     left: 0 !important; right: 0 !important; width: 100% !important;
-    max-width: 430px !important; margin: 0 auto !important; height: 60px !important;
+    max-width: 430px !important; margin: 0 auto !important; height: 72px !important;
     flex-direction: row !important; align-items: stretch !important;
     border-right: none !important;
-    border-top: 1px solid rgba(0,0,0,0.06) !important;
-    background: rgba(255,255,255,0.92) !important;
-    backdrop-filter: blur(20px) !important; -webkit-backdrop-filter: blur(20px) !important;
+    border-top: none !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 -1px 0 rgba(0,0,0,0.06), 0 -8px 24px rgba(0,0,0,0.06) !important;
     z-index: 500 !important; padding: 0 !important;
+    padding-bottom: env(safe-area-inset-bottom) !important;
   }
   .nav-logo { display: none !important; }
   .nav-footer { display: none !important; }
+  .nav-icon {
+    width: 22px; height: 22px; stroke-width: 1.8;
+    transition: all 0.2s;
+  }
   .nav-tabs {
     flex-direction: row !important; flex: 1 !important; padding: 0 !important;
     overflow: visible !important; justify-content: space-around !important;
@@ -1270,16 +1275,24 @@
   .nav-tab {
     display: flex !important; flex-direction: column !important;
     align-items: center !important; justify-content: center !important;
-    padding: 8px 4px !important; font-size: 10px !important;
-    font-weight: 500 !important; letter-spacing: 0.02em !important;
-    text-transform: none !important; color: var(--text3) !important;
+    padding: 10px 4px 8px !important; font-size: 10px !important;
+    font-weight: 500 !important; letter-spacing: 0.03em !important;
+    text-transform: none !important; color: #999 !important;
     border-left: none !important; border-bottom: none !important;
-    gap: 2px !important; min-width: 0 !important; white-space: nowrap !important;
-    transition: color 0.15s !important; flex: 1 !important;
+    gap: 4px !important; min-width: 0 !important; white-space: nowrap !important;
+    transition: color 0.2s !important; flex: 1 !important;
+    position: relative !important;
   }
   .nav-tab:hover { background: transparent !important; color: var(--text) !important; }
   .nav-tab.active { color: var(--sage) !important; background: transparent !important; border-left: none !important; font-weight: 600 !important; }
-  .nav-tab.active::after { display: none !important; }
+  .nav-tab.active .nav-icon { stroke-width: 2.2; }
+  .nav-tab.active::after {
+    content: '' !important; display: block !important;
+    position: absolute !important; top: 0 !important; left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 20px !important; height: 2px !important;
+    background: var(--sage) !important; border-radius: 0 0 2px 2px !important;
+  }
 
   /* Screens — phone width */
   .screen {
@@ -1543,10 +1556,22 @@
 <nav>
   <a href="/" class="nav-logo">W<span>S</span></a>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showScreen('overview')">Today</button>
-    <button class="nav-tab" onclick="showScreen('future')">Future</button>
-    <button class="nav-tab" onclick="showScreen('coach')">Coach</button>
-    <button class="nav-tab" onclick="showScreen('progress')">Optimize</button>
+    <button class="nav-tab active" onclick="showScreen('overview')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Today</span>
+    </button>
+    <button class="nav-tab" onclick="showScreen('future')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Future</span>
+    </button>
+    <button class="nav-tab" onclick="showScreen('coach')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <span>Coach</span>
+    </button>
+    <button class="nav-tab" onclick="showScreen('progress')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span>Optimize</span>
+    </button>
   </div>
   <div class="nav-footer">
     <div class="nav-user" id="navUser">
