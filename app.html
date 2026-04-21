@@ -970,12 +970,25 @@
   #xp-toast.xp-toast-show { opacity:1;transform:translateY(0); }
   #xp-toast.xp-toast-hide { opacity:0;transform:translateY(8px); }
 
-  /* LEVEL-UP OVERLAY */
-  #level-up-overlay { position:fixed;inset:0;z-index:3100;background:rgba(0,0,0,0.82);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px; }
-  .level-up-inner { text-align:center;animation:slideIn 0.4s ease-out; }
-  .level-up-label { font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:8px; }
-  .level-up-name { font-family:var(--ff-hero);font-size:52px;font-weight:900;color:var(--gold);letter-spacing:0.04em; }
-  .level-up-sub { font-family:var(--ff-serif);font-style:italic;font-size:18px;color:var(--muted);margin-top:6px; }
+  /* LEVEL-UP OVERLAY — Premium cinematic */
+  #level-up-overlay { position:fixed;inset:0;z-index:3100;background:#000;display:none; }
+  #level-up-overlay .lu-video { position:absolute;inset:0;width:100%;height:100%;object-fit:cover; }
+  #level-up-overlay .lu-gradient { position:absolute;inset:0;background:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,0.3) 30%,rgba(0,0,0,0.75) 65%,rgba(0,0,0,0.92) 100%);opacity:0;transition:opacity 1.2s ease; }
+  #level-up-overlay .lu-gradient.active { opacity:1; }
+  #level-up-overlay .lu-glow { position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(200,169,110,0.25) 0%,rgba(200,169,110,0.06) 50%,transparent 100%);opacity:0;transition:opacity 0.8s ease;animation:luGlowPulse 2.4s ease-in-out infinite; }
+  #level-up-overlay .lu-glow.active { opacity:1; }
+  @keyframes luGlowPulse { 0%,100%{transform:translate(-50%,-50%) scale(0.95);opacity:0.7;} 50%{transform:translate(-50%,-50%) scale(1.08);opacity:1;} }
+  #level-up-overlay .lu-content { position:absolute;bottom:0;left:0;right:0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 32px 60px; }
+  #level-up-overlay .lu-title { font-size:38px;font-weight:900;letter-spacing:6px;color:#fff;text-shadow:0 0 30px rgba(200,169,110,0.5);opacity:0;transform:scale(0.9);transition:opacity 0.6s ease,transform 0.6s cubic-bezier(0.34,1.56,0.64,1);margin-bottom:12px; }
+  #level-up-overlay .lu-title.active { opacity:1;transform:scale(1); }
+  #level-up-overlay .lu-subtitle { font-size:20px;font-weight:600;color:rgba(255,255,255,0.9);opacity:0;transform:translateY(10px);transition:opacity 0.5s ease,transform 0.5s ease;margin-bottom:8px; }
+  #level-up-overlay .lu-subtitle.active { opacity:1;transform:translateY(0); }
+  #level-up-overlay .lu-body { font-size:14px;font-weight:400;color:rgba(255,255,255,0.55);opacity:0;transition:opacity 0.5s ease;margin-bottom:40px; }
+  #level-up-overlay .lu-body.active { opacity:1; }
+  #level-up-overlay .lu-cta { background:#fff;color:#000;border:none;padding:14px 48px;border-radius:999px;font-size:16px;font-weight:600;letter-spacing:1px;cursor:pointer;box-shadow:0 4px 20px rgba(200,169,110,0.3);opacity:0;transform:translateY(16px);transition:opacity 0.5s ease,transform 0.5s ease;pointer-events:none; }
+  #level-up-overlay .lu-cta.active { opacity:1;transform:translateY(0);pointer-events:auto; }
+  #level-up-overlay .lu-skip { position:absolute;top:60px;right:20px;background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);border:none;color:rgba(255,255,255,0.6);font-size:12px;font-weight:500;letter-spacing:0.15em;padding:8px 20px;border-radius:20px;cursor:pointer;opacity:0;transition:opacity 0.4s ease;pointer-events:none; }
+  #level-up-overlay .lu-skip.active { opacity:1;pointer-events:auto; }
 
   /* COMMUNITY SCREEN */
   .comm-tab-bar { display:flex;border-bottom:1px solid var(--border);margin-bottom:28px; }
@@ -2197,11 +2210,7 @@
     </div>
   </div>
 
-  <!-- LEVEL UP VIDEO OVERLAY -->
-  <div id="levelUpOverlay" style="display:none;position:fixed;inset:0;z-index:99999;background:#000;">
-    <video id="levelUpVideo" style="width:100%;height:100%;object-fit:cover;" playsinline></video>
-    <button id="levelUpSkip" onclick="closeLevelUp()" style="display:none;position:absolute;top:60px;right:20px;background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);border:none;color:rgba(255,255,255,0.6);font-size:12px;font-weight:500;letter-spacing:0.15em;padding:8px 20px;border-radius:20px;cursor:pointer;">SKIP</button>
-  </div>
+  <!-- LEVEL UP VIDEO OVERLAY (premium sequenced) — handled by #level-up-overlay -->
 
   <!-- HIDDEN: legacy sections (kept for JS compat, display:none via CSS) -->
   <div class="ov-section-card" id="ov-workout-section">
@@ -2828,47 +2837,61 @@
   };
 
   function showLevelUpVideo() {
-    var overlay = document.getElementById('levelUpOverlay');
-    var video = document.getElementById('levelUpVideo');
-    var skip = document.getElementById('levelUpSkip');
-    if (!overlay || !video) return;
+    var overlay = document.getElementById('level-up-overlay');
+    var video = document.getElementById('lu-video');
+    var gradient = document.getElementById('lu-gradient');
+    var glow = document.getElementById('lu-glow');
+    var title = document.getElementById('lu-title');
+    var subtitle = document.getElementById('lu-subtitle');
+    var body = document.getElementById('lu-body');
+    var cta = document.getElementById('lu-cta');
+    var skip = document.getElementById('lu-skip');
+    if (!overlay) return;
 
-    // Try to load video — use levelup.mp4 from same directory
-    video.src = '/levelup.mp4';
-    video.oncanplay = function() {
-      overlay.style.display = 'block';
-      video.play();
-      setTimeout(function() { if (skip) skip.style.display = 'block'; }, 2000);
+    // Reset all states
+    [gradient, glow, title, subtitle, body, cta, skip].forEach(function(el) {
+      if (el) el.classList.remove('active');
+    });
+
+    // Show overlay
+    overlay.style.display = 'block';
+
+    // Try loading video
+    if (video) {
+      video.src = '/levelup1.mp4';
+      video.muted = true;
+      video.loop = true;
+      video.oncanplay = function() { video.play(); };
+      video.onerror = function() { /* video optional — overlay still works */ };
+      video.load();
+    }
+
+    // Sequenced animations
+    setTimeout(function() { if (gradient) gradient.classList.add('active'); }, 300);
+    setTimeout(function() { if (skip) skip.classList.add('active'); }, 2000);
+    setTimeout(function() { if (glow) glow.classList.add('active'); }, 2500);
+    setTimeout(function() { if (title) title.classList.add('active'); }, 3000);
+    setTimeout(function() { if (subtitle) subtitle.classList.add('active'); }, 3300);
+    setTimeout(function() { if (body) body.classList.add('active'); }, 3600);
+    setTimeout(function() {
+      if (cta) cta.classList.add('active');
+      if (skip) skip.classList.remove('active'); // hide skip once CTA appears
+    }, 4200);
+
+    // Tap-to-skip on the overlay background (before CTA appears)
+    overlay.onclick = function(e) {
+      if (e.target === overlay || e.target === video || e.target === gradient) {
+        if (!cta || !cta.classList.contains('active')) closeLevelUp();
+      }
     };
-    video.onended = function() { closeLevelUp(); };
-    video.onerror = function() {
-      // No video file available — show a CSS celebration instead
-      showCSSCelebration();
-    };
-    video.load();
   }
 
   window.closeLevelUp = function() {
-    var overlay = document.getElementById('levelUpOverlay');
-    var video = document.getElementById('levelUpVideo');
+    var overlay = document.getElementById('level-up-overlay');
+    var video = document.getElementById('lu-video');
     if (overlay) overlay.style.display = 'none';
     if (video) { video.pause(); video.src = ''; }
   };
-
-  function showCSSCelebration() {
-    // Fallback: full-screen celebration overlay with particles
-    var overlay = document.getElementById('levelUpOverlay');
-    if (!overlay) return;
-    overlay.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:40px;">' +
-      '<div style="font-size:64px;margin-bottom:24px;animation:ovPulse 0.6s ease both;">🔥</div>' +
-      '<p style="font-size:28px;font-weight:800;color:#fff;margin:0 0 8px;">Day 1 Complete</p>' +
-      '<p style="font-size:16px;color:rgba(255,255,255,0.6);margin:0 0 32px;font-style:italic;">The hardest day is behind you.</p>' +
-      '<p style="font-size:14px;color:var(--sage);font-weight:600;margin:0 0 8px;">+50 XP</p>' +
-      '<p style="font-size:13px;color:rgba(255,255,255,0.4);margin:0 0 40px;">You just became someone who follows through.</p>' +
-      '<button onclick="closeLevelUp()" style="background:var(--sage);color:#fff;border:none;padding:14px 40px;border-radius:12px;font-size:14px;font-weight:700;letter-spacing:0.08em;cursor:pointer;">CONTINUE</button>' +
-      '</div>';
-    overlay.style.display = 'block';
-  }
 
   // Init on overview show
   var _origOvSync = typeof ovSyncData === 'function' ? ovSyncData : null;
@@ -3393,13 +3416,10 @@
   }
 
   function showLevelUpAnimation(levelName) {
-    var overlay = document.getElementById('level-up-overlay');
-    var lbl = document.getElementById('level-up-name');
-    if (lbl) lbl.textContent = levelName;
-    if (overlay) {
-      overlay.style.display = 'flex';
-      setTimeout(function() { overlay.style.display = 'none'; }, 3500);
-    }
+    // For XP-based level-ups, reuse the premium overlay
+    var title = document.getElementById('lu-title');
+    if (title) title.textContent = levelName || 'LEVEL UP';
+    showLevelUpVideo();
   }
 
   function checkBadges() {
@@ -6411,13 +6431,18 @@
 <!-- XP TOAST -->
 <div id="xp-toast"></div>
 
-<!-- LEVEL-UP OVERLAY -->
+<!-- LEVEL-UP OVERLAY (premium cinematic) -->
 <div id="level-up-overlay">
-  <div class="level-up-inner">
-    <p class="level-up-label">Level Up</p>
-    <p class="level-up-name" id="level-up-name">Root</p>
-    <p class="level-up-sub">You're evolving. Keep going.</p>
+  <video class="lu-video" id="lu-video" playsinline muted></video>
+  <div class="lu-gradient" id="lu-gradient"></div>
+  <div class="lu-glow" id="lu-glow"></div>
+  <div class="lu-content">
+    <div class="lu-title" id="lu-title">LEVEL UP</div>
+    <div class="lu-subtitle" id="lu-subtitle">You showed up.</div>
+    <div class="lu-body" id="lu-body">A stronger version of you is being built.</div>
+    <button class="lu-cta" id="lu-cta" onclick="closeLevelUp()">Continue →</button>
   </div>
+  <button class="lu-skip" id="lu-skip" onclick="closeLevelUp()">SKIP</button>
 </div>
 
 <script>
