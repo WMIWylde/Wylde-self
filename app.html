@@ -2737,8 +2737,8 @@
         <img class="future-upload-preview" id="uploadPreview" src="" alt="" />
         <div id="uploadPlaceholder">
           <div class="future-upload-icon"><span>↑</span></div>
-          <p class="future-upload-label">Upload a reference photo</p>
-          <p class="future-upload-hint">This is where it starts</p>
+          <p class="future-upload-label">Upload or drop a photo</p>
+          <p class="future-upload-hint">Drag an image here, or tap to choose</p>
         </div>
       </div>
 
@@ -4458,6 +4458,34 @@
     };
     reader.readAsDataURL(file);
   }
+
+  // Drag-and-drop support for Future Self upload zone
+  (function() {
+    var zone = document.getElementById('uploadZone');
+    if (!zone) return;
+    zone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      zone.style.borderColor = 'rgba(200,169,110,0.6)';
+      zone.style.background = 'rgba(200,169,110,0.05)';
+    });
+    zone.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      zone.style.borderColor = '';
+      zone.style.background = '';
+    });
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      zone.style.borderColor = '';
+      zone.style.background = '';
+      var files = e.dataTransfer && e.dataTransfer.files;
+      if (files && files.length > 0 && files[0].type.startsWith('image/')) {
+        handlePhoto(files[0]);
+      }
+    });
+  })();
 
   function clearFuturePhoto(e) {
     if (e) e.stopPropagation();
