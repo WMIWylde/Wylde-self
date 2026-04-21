@@ -5582,15 +5582,27 @@
     output.innerHTML = '<div style="padding:24px 0;text-align:center;"><p style="font-size:14px;color:var(--muted);">Your AI nutritionist is building your plan...</p></div>';
 
     var dietStr = (state.diet && state.diet.length > 0) ? state.diet.join(', ') : 'no restrictions';
-    var prompt = 'You are an expert nutritionist. Create a 5-day meal plan for:\n' +
+    var cals = state.macros.calories, prot = state.macros.protein, carb = state.macros.carbs, fats = state.macros.fat;
+    var prompt = 'You are an expert sports nutritionist who builds precise meal plans. Create a 5-day meal plan.\n\n' +
+      '── CLIENT ──\n' +
       'Goal: ' + (state.goals ? state.goals.join(', ') : state.goal) + '\n' +
-      'Daily targets: ' + state.macros.calories + ' cal, ' + state.macros.protein + 'g protein, ' + state.macros.carbs + 'g carbs, ' + state.macros.fat + 'g fat\n' +
       'Diet: ' + dietStr + '\n' +
       'Health concerns: ' + (state.health.join(', ') || 'none') + '\n\n' +
-      'For EACH meal, include the recipe with ingredients and step-by-step cooking instructions.\n\n' +
+      '── EXACT DAILY TARGETS ──\n' +
+      'Calories: ' + cals + ' cal\n' +
+      'Protein: ' + prot + 'g\n' +
+      'Carbs: ' + carb + 'g\n' +
+      'Fat: ' + fats + 'g\n\n' +
+      '── CRITICAL RULES ──\n' +
+      '1. Each meal MUST have exact macros (calories, protein, carbs, fat) calculated from the actual ingredients and portions listed\n' +
+      '2. The 4 meals per day MUST add up to the daily targets above (within 5% tolerance)\n' +
+      '3. List specific portions for every ingredient (e.g. "6oz chicken breast" not just "chicken breast", "1 cup cooked rice" not just "rice")\n' +
+      '4. Macros must be realistic for the portions — 6oz chicken breast = ~38g protein, 1 large egg = ~6g protein, etc.\n' +
+      '5. Include breakfast (~25% of cals), lunch (~30%), dinner (~30%), snack (~15%)\n\n' +
+      'For EACH meal include the recipe: ingredients with exact portions, and step-by-step cooking instructions.\n\n' +
       'Return ONLY a JSON array. Each element:\n' +
-      '{"day":"Monday","meals":[{"name":"Breakfast","title":"Meal Title","foods":"brief description of the dish","calories":number,"protein":number,"carbs":number,"fat":number,"prep":"15 min","ingredients":["ingredient 1","ingredient 2"],"steps":["Step 1 instruction","Step 2 instruction"]},...]}\n' +
-      'Include breakfast, lunch, dinner, snack per day. Keep ingredient lists practical (5-8 items). Keep steps concise (3-6 steps). No markdown, no backticks, just the JSON array.';
+      '{"day":"Monday","meals":[{"name":"Breakfast","title":"Meal Title","foods":"1-line description","calories":number,"protein":number,"carbs":number,"fat":number,"prep":"15 min","ingredients":["6oz chicken breast","1 cup brown rice","1 tbsp olive oil"],"steps":["Step 1","Step 2"]},...]}\n' +
+      'Include breakfast, lunch, dinner, snack. Keep steps concise (3-6). No markdown, no backticks, just the JSON array.';
 
     fetch('/api/anthropic', {
       method: 'POST',
@@ -5636,18 +5648,24 @@
     var output = document.getElementById('mealPlanOutput');
     output.innerHTML = '';
     plan.forEach(function(day, dayIdx) {
+      // Calculate day totals
+      var dayCal = 0, dayP = 0, dayC = 0, dayF = 0;
+      day.meals.forEach(function(m) { dayCal += (m.calories||0); dayP += (m.protein||0); dayC += (m.carbs||0); dayF += (m.fat||0); });
+
       var dayDiv = document.createElement('div');
       dayDiv.style.cssText = 'margin-bottom:8px;border:1px solid rgba(0,0,0,0.06);border-radius:12px;overflow:hidden;';
 
-      // Day header — collapsible
+      // Day header — collapsible, shows day totals
       var header = document.createElement('div');
       header.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;background:rgba(0,0,0,0.02);';
-      header.innerHTML = '<span style="font-size:14px;font-weight:600;color:var(--text);">' + esc(day.day) + '</span><span style="font-size:12px;color:var(--muted);">' + day.meals.length + ' meals ›</span>';
+      header.innerHTML = '<div><span style="font-size:14px;font-weight:600;color:var(--text);">' + esc(day.day) + '</span>' +
+        '<span style="font-size:11px;color:var(--muted);margin-left:10px;">' + Math.round(dayCal) + ' cal · ' + Math.round(dayP) + 'g P · ' + Math.round(dayC) + 'g C · ' + Math.round(dayF) + 'g F</span></div>' +
+        '<span style="font-size:12px;color:var(--muted);">›</span>';
       header.onclick = function() {
         var body = this.nextElementSibling;
         body.style.display = body.style.display === 'none' ? 'block' : 'none';
         var arrow = this.querySelector('span:last-child');
-        arrow.textContent = body.style.display === 'none' ? day.meals.length + ' meals ›' : day.meals.length + ' meals ⌄';
+        arrow.textContent = body.style.display === 'none' ? '›' : '⌄';
       };
 
       var body = document.createElement('div');
@@ -5700,7 +5718,7 @@
 
     // Update first day header arrow since it's open
     var firstArrow = output.querySelector('div > div:first-child span:last-child');
-    if (firstArrow) firstArrow.textContent = firstArrow.textContent.replace('›', '⌄');
+    if (firstArrow) firstArrow.textContent = '⌄';
   }
 
   function toggleMealRecipe(mealId) {
