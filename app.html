@@ -4023,42 +4023,35 @@
     // Auto-generate workout program after profile completion
     setTimeout(function() { generateProgram(); }, 500);
 
-    // Play intro animation, then show Morning Protocol setup before landing in app
+    // Transition: geo assembly → Morning Protocol setup (if needed) → Today screen
     window._introSkipped = false;
-    var _landInApp = function() {
-      try {
-        var mpData = (typeof mpLoad === 'function') ? mpLoad() : null;
-        if (!mpData || !mpData.actions || mpData.actions.length === 0) {
-          showMPSetupOverlay(function() { showScreen('overview'); });
-        } else {
+    try {
+      playGeoTransition(function() {
+        try {
+          var mpData = (typeof mpLoad === 'function') ? mpLoad() : null;
+          if (!mpData || !mpData.actions || mpData.actions.length === 0) {
+            showMPSetupOverlay(function() { showScreen('overview'); });
+          } else {
+            showScreen('overview');
+          }
+        } catch(e) {
           showScreen('overview');
         }
-      } catch(e) {
-        console.warn('_landInApp error:', e);
-        showScreen('overview');
-      }
-    };
-    try {
-      playIntro(_landInApp);
+      });
     } catch(e) {
-      console.warn('playIntro error:', e);
-      _landInApp();
+      showScreen('overview');
     }
-    // Final safety net — if still on onboard after 20s, force overview
+    // Safety net — if still on onboard after 8s, force overview
     setTimeout(function() {
       var onboard = document.getElementById('screen-onboard');
       if (onboard && onboard.classList.contains('active')) {
-        console.warn('Safety net: forcing overview after timeout');
-        // Hide any overlays that might be stuck
-        var intro = document.getElementById('screen-intro');
         var geo = document.getElementById('geoTransition');
         var mpOv = document.getElementById('mpSetupOverlay');
-        if (intro) intro.style.display = 'none';
         if (geo) { geo.classList.remove('active', 'dissolving'); }
         if (mpOv) mpOv.style.display = 'none';
         showScreen('overview');
       }
-    }, 20000);
+    }, 8000);
   }
 
   function playIntro(callback) {
