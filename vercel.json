@@ -2,6 +2,18 @@
   "functions": {
     "api/generate-image.js": {
       "maxDuration": 30
+    },
+    "api/send-push.js": {
+      "maxDuration": 10
+    },
+    "api/cron-push.js": {
+      "maxDuration": 30
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron-push",
+      "schedule": "0 * * * *"
+    }
+  ]
 }
