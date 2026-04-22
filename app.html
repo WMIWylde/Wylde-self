@@ -4026,35 +4026,29 @@
     // Auto-generate workout program after profile completion
     setTimeout(function() { generateProgram(); }, 500);
 
-    // Transition: geo assembly → Morning Protocol setup (if needed) → Today screen
+    // Transition: geo assembly → Today screen
     window._introSkipped = false;
-    try {
-      playGeoTransition(function() {
-        try {
-          var mpData = (typeof mpLoad === 'function') ? mpLoad() : null;
-          if (!mpData || !mpData.actions || mpData.actions.length === 0) {
-            showMPSetupOverlay(function() { showScreen('overview'); });
-          } else {
-            showScreen('overview');
-          }
-        } catch(e) {
-          showScreen('overview');
-        }
-      });
-    } catch(e) {
+    window._onboardTransitionDone = false;
+
+    function finishOnboardTransition() {
+      if (window._onboardTransitionDone) return;
+      window._onboardTransitionDone = true;
+      // Clean up any overlays
+      var geo = document.getElementById('geoTransition');
+      var mpOv = document.getElementById('mpSetupOverlay');
+      if (geo) { geo.classList.remove('active', 'dissolving'); geo.style.display = 'none'; }
+      if (mpOv) mpOv.style.display = 'none';
       showScreen('overview');
     }
-    // Safety net — if still on onboard after 8s, force overview
-    setTimeout(function() {
-      var onboard = document.getElementById('screen-onboard');
-      if (onboard && onboard.classList.contains('active')) {
-        var geo = document.getElementById('geoTransition');
-        var mpOv = document.getElementById('mpSetupOverlay');
-        if (geo) { geo.classList.remove('active', 'dissolving'); }
-        if (mpOv) mpOv.style.display = 'none';
-        showScreen('overview');
-      }
-    }, 8000);
+
+    try {
+      playGeoTransition(function() { finishOnboardTransition(); });
+    } catch(e) {
+      finishOnboardTransition();
+    }
+
+    // Safety net — 5s hard cutoff
+    setTimeout(finishOnboardTransition, 5000);
   }
 
   function playIntro(callback) {
@@ -4217,6 +4211,17 @@
       ctx.restore();
     }
 
+    var callbackFired = false;
+    function safeCallback() {
+      if (callbackFired) return;
+      callbackFired = true;
+      overlay.classList.remove('active', 'dissolving');
+      overlay.style.display = 'none';
+      textEl.classList.remove('visible', 'dissolving');
+      try { ctx.clearRect(0, 0, W, H); } catch(e) {}
+      if (callback) callback();
+    }
+
     function animate(timestamp) {
       if (!startTime) startTime = timestamp;
       var elapsed = timestamp - startTime;
@@ -4267,17 +4272,15 @@
           setTimeout(function() {
             overlay.classList.add('dissolving');
           }, 200);
-          setTimeout(function() {
-            overlay.classList.remove('active', 'dissolving');
-            textEl.classList.remove('visible', 'dissolving');
-            ctx.clearRect(0, 0, W, H);
-            if (callback) callback();
-          }, 900);
+          setTimeout(safeCallback, 900);
         }, holdTime);
       }
     }
 
     requestAnimationFrame(animate);
+
+    // Hard safety — if animation never completes, fire callback after 4.5s
+    setTimeout(safeCallback, 4500);
   }
 
   // SETTINGS FUNCTIONS
