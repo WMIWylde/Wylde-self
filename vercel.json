@@ -8,6 +8,9 @@
     },
     "api/cron-push.js": {
       "maxDuration": 30
+    },
+    "api/exercise-demo.js": {
+      "maxDuration": 10
     }
   },
   "crons": [

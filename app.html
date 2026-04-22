@@ -497,17 +497,32 @@
     .set-header-row { display:flex;gap:8px;align-items:center;margin-bottom:2px;padding-left:38px; }
     .set-header-row span { font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:#999;width:52px;text-align:center; }
     .day-body.open { max-height: 2000px; padding: 0 24px 20px; }
-    .ex-anim-wrap { display: flex; justify-content: center; margin-bottom: 24px; }
-    .ex-anim-wrap svg { width: 120px; height: 120px; }
-    @keyframes squat-down { 0%,100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
-    @keyframes pushup-body { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(6px) rotate(2deg); } }
-    @keyframes deadlift-hinge { 0%,100% { transform: rotate(0deg); transform-origin: bottom center; } 50% { transform: rotate(30deg); transform-origin: bottom center; } }
-    @keyframes pullup-rise { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-    @keyframes plank-hold { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
-    @keyframes lunge-step { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
-    .form-modal-inner { background: var(--bg-surface); border: none; max-width: 540px; width: 100%; max-height: 85vh; overflow-y: auto; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+    .ex-demo-wrap { display: flex; justify-content: center; margin-bottom: 20px; background: #0a0a0a; border-radius: 14px; overflow: hidden; position: relative; }
+    .ex-demo-wrap img { width: 100%; max-width: 320px; height: auto; display: block; mix-blend-mode: normal; }
+    .ex-demo-wrap .ex-demo-loading { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; }
+    .ex-demo-wrap .ex-demo-loading::after { content: ''; width: 28px; height: 28px; border: 2px solid rgba(200,169,110,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .ex-muscle-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 20px; }
+    .ex-muscle-tag { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; background: rgba(122,154,110,0.1); color: var(--sage); border: 1px solid rgba(122,154,110,0.15); }
+    .ex-muscle-tag.primary { background: rgba(200,169,110,0.1); color: var(--gold); border-color: rgba(200,169,110,0.2); }
+    .ex-equip-tag { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 16px; }
+    .form-modal-overlay { display: none; position: fixed; inset: 0; z-index: 9990; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); align-items: flex-end; justify-content: center; }
+    .form-modal-inner { background: var(--bg-surface); border: none; max-width: 540px; width: 100%; max-height: 88vh; overflow-y: auto; border-radius: 20px 20px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); padding-bottom: env(safe-area-inset-bottom, 20px); animation: formSlideUp 0.3s ease-out; }
+    @keyframes formSlideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .form-modal-inner::-webkit-scrollbar { width: 4px; }
     .form-modal-inner::-webkit-scrollbar-thumb { background: rgba(201,173,110,0.2); }
+    .form-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 12px; position: sticky; top: 0; background: var(--bg-surface); z-index: 2; border-bottom: 1px solid var(--border); }
+    .form-modal-header h3 { font-family: var(--ff-body); font-size: 16px; font-weight: 600; margin: 0; color: var(--text); }
+    .form-modal-close { background: none; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--muted); cursor: pointer; font-size: 18px; transition: background 0.2s; }
+    .form-modal-close:hover { background: rgba(255,255,255,0.06); }
+    .form-modal-body { padding: 20px; }
+    .form-section { margin-bottom: 18px; }
+    .form-section-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+    .form-section p, .form-section li { font-size: 14px; color: var(--text-muted, #A0A0A0); line-height: 1.65; }
+    .form-section ul { padding-left: 16px; margin: 0; }
+    .form-section ul li { margin-bottom: 4px; }
+    .form-pro-tip { background: rgba(201,173,110,0.05); border: 1px solid rgba(201,173,110,0.15); border-radius: 12px; padding: 14px 16px; }
+    .form-pro-tip p { font-family: var(--ff-serif, Georgia); font-style: italic; font-size: 14px; color: var(--text); line-height: 1.6; }
 
     /* ALT PROGRAM REBUILD SECTION */
     .alt-program-section { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); display: none; }
@@ -1603,6 +1618,17 @@
 </div>
 
 <!-- ═══ INTRO VIDEO ═══ -->
+<!-- ═══ EXERCISE FORM GUIDE MODAL ═══ -->
+<div id="formModal" class="form-modal-overlay" onclick="if(event.target===this)closeFormModal()">
+  <div class="form-modal-inner">
+    <div class="form-modal-header">
+      <h3 id="formModalTitle">Exercise</h3>
+      <button class="form-modal-close" onclick="closeFormModal()">✕</button>
+    </div>
+    <div class="form-modal-body" id="formModalBody"></div>
+  </div>
+</div>
+
 <div id="screen-intro" style="display:none;position:fixed;inset:0;z-index:9999;background:#000000;display:none;align-items:center;justify-content:center;flex-direction:column;">
   <video id="introVideo" src="intro.mp4" playsinline webkit-playsinline style="width:100%;max-width:500px;border-radius:16px;"></video>
   <button onclick="skipIntro()" style="margin-top:24px;background:transparent;border:1px solid rgba(201,173,110,0.3);color:var(--gold,#c8a96e);padding:10px 32px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer;">SKIP</button>
@@ -5489,98 +5515,48 @@
   }
 
   // EXERCISE FORM GUIDE
-  function getExerciseAnimation(name) {
-    var n = name.toLowerCase();
-    var gold = '#c8a96e';
+  // ═══ EXERCISE DEMO + FORM GUIDE ═══
+  var _exDemoCache = {}; // { 'bench press': { gifUrl, target, ... } }
 
-    if (n.includes('squat')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <g style="animation: squat-down 1.4s ease-in-out infinite;">
-        <circle cx="60" cy="22" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
-        <line x1="60" y1="30" x2="60" y2="62" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="38" x2="44" y2="52" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="38" x2="76" y2="52" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="62" x2="44" y2="88" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="62" x2="76" y2="88" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="44" y1="88" x2="40" y2="100" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="76" y1="88" x2="80" y2="100" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-      </g>
-    </svg>`;
+  function closeFormModal() {
+    var modal = document.getElementById('formModal');
+    if (modal) modal.style.display = 'none';
+  }
 
-    if (n.includes('push')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <g style="animation: pushup-body 1.4s ease-in-out infinite;">
-        <circle cx="28" cy="52" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
-        <line x1="36" y1="52" x2="88" y2="60" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="28" y1="60" x2="20" y2="74" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="20" y1="74" x2="20" y2="88" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="88" y1="60" x2="96" y2="74" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="96" y1="74" x2="96" y2="88" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="16" y1="88" x2="100" y2="88" stroke="${gold}" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
-      </g>
-    </svg>`;
+  function fetchExerciseDemo(exerciseName) {
+    var key = exerciseName.toLowerCase().trim();
+    if (_exDemoCache[key]) return Promise.resolve(_exDemoCache[key]);
 
-    if (n.includes('deadlift') || n.includes('dead lift')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <g style="animation: deadlift-hinge 1.6s ease-in-out infinite; transform-origin: 60px 90px;">
-        <circle cx="60" cy="22" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
-        <line x1="60" y1="30" x2="60" y2="64" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="40" x2="42" y2="56" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="40" x2="78" y2="56" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="64" x2="48" y2="90" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="64" x2="72" y2="90" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="48" y1="90" x2="44" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="72" y1="90" x2="76" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-      </g>
-    </svg>`;
+    return fetch('/api/exercise-demo?name=' + encodeURIComponent(key))
+      .then(function(res) {
+        if (!res.ok) return null;
+        return res.json();
+      })
+      .then(function(data) {
+        if (data && data.gifUrl) {
+          _exDemoCache[key] = data;
+          return data;
+        }
+        return null;
+      })
+      .catch(function() { return null; });
+  }
 
-    if (n.includes('pull')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <line x1="20" y1="10" x2="100" y2="10" stroke="${gold}" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
-      <g style="animation: pullup-rise 1.4s ease-in-out infinite;">
-        <circle cx="60" cy="36" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
-        <line x1="60" y1="10" x2="60" y2="44" stroke="${gold}" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.5"/>
-        <line x1="60" y1="44" x2="60" y2="74" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="52" x2="42" y2="62" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="52" x2="78" y2="62" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="74" x2="50" y2="96" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="74" x2="70" y2="96" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-      </g>
-    </svg>`;
-
-    if (n.includes('plank')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <g style="animation: plank-hold 2s ease-in-out infinite;">
-        <circle cx="24" cy="56" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
-        <line x1="32" y1="56" x2="92" y2="64" stroke="${gold}" stroke-width="3" stroke-linecap="round"/>
-        <line x1="32" y1="64" x2="24" y2="80" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="24" y1="80" x2="24" y2="92" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="92" y1="64" x2="100" y2="80" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="100" y1="80" x2="100" y2="92" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="16" y1="92" x2="108" y2="92" stroke="${gold}" stroke-width="1.5" opacity="0.25"/>
-      </g>
-    </svg>`;
-
-    if (n.includes('lunge')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <g style="animation: lunge-step 1.4s ease-in-out infinite;">
-        <circle cx="56" cy="20" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
-        <line x1="56" y1="28" x2="56" y2="60" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="56" y1="38" x2="40" y2="52" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="56" y1="38" x2="72" y2="52" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="56" y1="60" x2="36" y2="88" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="56" y1="60" x2="72" y2="80" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="36" y1="88" x2="28" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="72" y1="80" x2="72" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-      </g>
-    </svg>`;
-
-    return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <g style="animation: squat-down 1.8s ease-in-out infinite;">
-        <circle cx="60" cy="22" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
-        <line x1="60" y1="30" x2="60" y2="64" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="40" x2="42" y2="54" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="40" x2="78" y2="54" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="64" x2="48" y2="90" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="64" x2="72" y2="90" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="48" y1="90" x2="44" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="72" y1="90" x2="76" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-      </g>
-    </svg>`;
+  function renderDemoGif(container, data) {
+    if (!data || !data.gifUrl) {
+      container.innerHTML = '<div style="padding:30px 0;text-align:center;color:var(--muted);font-size:12px;">Demo not available for this exercise</div>';
+      return;
+    }
+    var tagsHTML = '<span class="ex-muscle-tag primary">' + esc(data.target) + '</span>';
+    if (data.secondaryMuscles) {
+      data.secondaryMuscles.forEach(function(m) {
+        tagsHTML += '<span class="ex-muscle-tag">' + esc(m) + '</span>';
+      });
+    }
+    container.innerHTML =
+      '<div class="ex-demo-wrap"><img src="' + esc(data.gifUrl) + '" alt="' + esc(data.name) + ' demo" loading="eager" /></div>' +
+      '<div class="ex-muscle-tags">' + tagsHTML + '</div>' +
+      (data.equipment ? '<p class="ex-equip-tag">' + esc(data.equipment) + '</p>' : '');
   }
 
   function showFormGuide(exerciseName) {
@@ -5588,15 +5564,22 @@
     var title = document.getElementById('formModalTitle');
     var body  = document.getElementById('formModalBody');
     title.textContent = exerciseName;
-    body.innerHTML = '<div class="ex-anim-wrap">' + getExerciseAnimation(exerciseName) + '</div><div style="text-align:center;padding:0 0 24px;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);">Loading form guide...</p><div style="width:32px;height:1px;background:var(--gold);margin:14px auto 0;"></div></div>';
     modal.style.display = 'flex';
+
+    // Show loading state
+    body.innerHTML =
+      '<div class="ex-demo-wrap"><div class="ex-demo-loading"></div></div>' +
+      '<div style="text-align:center;padding:16px 0;"><p style="font-size:13px;color:var(--muted);">Loading form guide...</p></div>';
+
+    // Fetch demo GIF + form guide in parallel
+    var demoPromise = fetchExerciseDemo(exerciseName);
 
     var prompt = 'You are an expert strength coach. Give a clear, practical form guide for: ' + exerciseName + '.\n' +
       'Return ONLY a JSON object:\n' +
       '{"setup":"how to set up and position your body","execution":"step-by-step movement cues","breathing":"breathing pattern","common_mistakes":["mistake 1","mistake 2","mistake 3"],"pro_tip":"one expert cue that makes the biggest difference"}\n' +
       'Be specific and actionable. No markdown, no backticks. Return only the JSON.';
 
-    fetch('/api/anthropic', {
+    var guidePromise = fetch('/api/anthropic', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
@@ -5608,21 +5591,53 @@
       text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
       var start = text.indexOf('{'), end = text.lastIndexOf('}');
       if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
-      var g = JSON.parse(text);
-      var mistakesHTML = (g.common_mistakes || []).map(function(m){ return '<li>' + esc(m) + '</li>'; }).join('');
-      body.innerHTML = '<div class="ex-anim-wrap">' + getExerciseAnimation(exerciseName) + '</div>' +
-        '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Setup</p><p>' + esc(g.setup||'') + '</p></div>' +
-        '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
-        '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Execution</p><p>' + esc(g.execution||'') + '</p></div>' +
-        '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
-        '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Breathing</p><p>' + esc(g.breathing||'') + '</p></div>' +
-        '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
-        '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Common Mistakes</p><ul style="padding-left:18px;line-height:2;">' + mistakesHTML + '</ul></div>' +
-        '<div style="background:rgba(201,173,110,0.06);border:1px solid rgba(201,173,110,0.2);padding:14px 16px;"><p style="font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Pro Tip</p><p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--text);">' + esc(g.pro_tip||'') + '</p></div>';
+      return JSON.parse(text);
     })
-    .catch(function(err) {
-      console.error('Form guide error:', err);
-      body.innerHTML = '<div style="padding:24px;text-align:center;"><p style="color:var(--muted);font-size:13px;">Could not load form guide. Please try again.</p></div>';
+    .catch(function() { return null; });
+
+    Promise.all([demoPromise, guidePromise]).then(function(results) {
+      var demo = results[0];
+      var guide = results[1];
+
+      // Build demo section
+      var demoHTML = '';
+      if (demo && demo.gifUrl) {
+        var tagsHTML = '<span class="ex-muscle-tag primary">' + esc(demo.target) + '</span>';
+        if (demo.secondaryMuscles) {
+          demo.secondaryMuscles.forEach(function(m) {
+            tagsHTML += '<span class="ex-muscle-tag">' + esc(m) + '</span>';
+          });
+        }
+        demoHTML =
+          '<div class="ex-demo-wrap"><img src="' + esc(demo.gifUrl) + '" alt="' + esc(demo.name || exerciseName) + ' demo" loading="eager" /></div>' +
+          '<div class="ex-muscle-tags">' + tagsHTML + '</div>' +
+          (demo.equipment ? '<p class="ex-equip-tag">' + esc(demo.equipment) + '</p>' : '');
+      }
+
+      // Build guide section
+      var guideHTML = '';
+      if (guide) {
+        var mistakesHTML = (guide.common_mistakes || []).map(function(m){ return '<li>' + esc(m) + '</li>'; }).join('');
+        guideHTML =
+          '<div class="form-section"><p class="form-section-label">Setup</p><p>' + esc(guide.setup||'') + '</p></div>' +
+          '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
+          '<div class="form-section"><p class="form-section-label">Execution</p><p>' + esc(guide.execution||'') + '</p></div>' +
+          '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
+          '<div class="form-section"><p class="form-section-label">Breathing</p><p>' + esc(guide.breathing||'') + '</p></div>' +
+          '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
+          '<div class="form-section"><p class="form-section-label">Common Mistakes</p><ul>' + mistakesHTML + '</ul></div>' +
+          '<div class="form-pro-tip"><p class="form-section-label" style="margin-bottom:6px;">Pro Tip</p><p>' + esc(guide.pro_tip||'') + '</p></div>';
+      } else if (demo && demo.instructions && demo.instructions.length > 0) {
+        // Use ExerciseDB's built-in instructions as fallback
+        var stepsHTML = demo.instructions.map(function(step, i) {
+          return '<li>' + esc(step) + '</li>';
+        }).join('');
+        guideHTML = '<div class="form-section"><p class="form-section-label">How to Perform</p><ul>' + stepsHTML + '</ul></div>';
+      } else {
+        guideHTML = '<div style="padding:16px 0;text-align:center;"><p style="color:var(--muted);font-size:13px;">Form guide unavailable. Try again later.</p></div>';
+      }
+
+      body.innerHTML = demoHTML + guideHTML;
     });
   }
 
