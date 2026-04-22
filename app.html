@@ -3358,6 +3358,7 @@
           document.getElementById('navUserName').textContent = state.name.toUpperCase();
           document.querySelectorAll('.nav-tab.locked').forEach(function(t){ t.classList.remove('locked'); });
           if (!localStorage.getItem('wylde_intro_seen')) {
+            window._introSkipped = false;
             setTimeout(function(){ playIntro(function(){ showScreen('overview'); loadSavedProgram(); }); }, 100);
           } else {
             setTimeout(function(){ showScreen('overview'); loadSavedProgram(); }, 100);
@@ -4023,6 +4024,7 @@
     setTimeout(function() { generateProgram(); }, 500);
 
     // Play intro animation, then show Morning Protocol setup before landing in app
+    window._introSkipped = false;
     playIntro(function(){
       var mpData = mpLoad();
       if (!mpData || !mpData.actions || mpData.actions.length === 0) {
@@ -4036,18 +4038,34 @@
   function playIntro(callback) {
     var intro = document.getElementById('screen-intro');
     var vid = document.getElementById('introVideo');
+    if (!intro || !vid || !vid.src || vid.error) {
+      // No intro video — skip straight to geo transition
+      if (callback) {
+        playGeoTransition(function() { callback(); });
+      }
+      return;
+    }
     intro.style.display = 'flex';
     window._introCallback = callback;
     vid.currentTime = 0;
-    vid.play().catch(function(){ /* autoplay blocked — show skip */ });
+    vid.play().catch(function(){
+      // Autoplay blocked or video missing — auto-skip after brief delay
+      setTimeout(function() { skipIntro(); }, 500);
+    });
     vid.onended = function() { skipIntro(); };
+    vid.onerror = function() { skipIntro(); };
+    // Safety timeout — if nothing happens in 15s, force skip
+    window._introTimeout = setTimeout(function() { skipIntro(); }, 15000);
   }
 
   function skipIntro() {
+    if (window._introSkipped) return;
+    window._introSkipped = true;
+    if (window._introTimeout) { clearTimeout(window._introTimeout); window._introTimeout = null; }
     var intro = document.getElementById('screen-intro');
     var vid = document.getElementById('introVideo');
-    vid.pause();
-    intro.style.display = 'none';
+    if (vid) vid.pause();
+    if (intro) intro.style.display = 'none';
     localStorage.setItem('wylde_intro_seen', '1');
     // Play geometric assembly before showing the next screen
     playGeoTransition(function() {
