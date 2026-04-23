@@ -115,55 +115,93 @@ export default async function handler(req) {
     }
 
     // Try models in order — names change often, first success wins
-    // Updated April 2026: old 2.0-flash-exp models retired
     const models = [
       'gemini-2.5-flash-image',
       'gemini-3.1-flash-image-preview',
       'gemini-3-pro-image-preview',
     ];
 
-    const body = JSON.stringify({
-      contents,
-      generationConfig: {
-        responseModalities: ['TEXT', 'IMAGE']
-      }
-    });
-
-    let response, data, usedModel;
-    for (const model of models) {
-      console.log(`[generate-image] Trying model: ${model}`);
-      response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body
+    // Helper: attempt generation with given contents
+    async function tryGenerate(reqContents) {
+      const reqBody = JSON.stringify({
+        contents: reqContents,
+        generationConfig: {
+          responseModalities: ['TEXT', 'IMAGE'],
         }
-      );
-      data = await response.json();
-      usedModel = model;
-      if (response.ok || response.status !== 404) break;
-      console.log(`[generate-image] Model ${model} returned ${response.status}, trying next...`);
+      });
+
+      let response, data, usedModel;
+      for (const model of models) {
+        console.log(`[generate-image] Trying model: ${model}`);
+        response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: reqBody
+          }
+        );
+        data = await response.json();
+        usedModel = model;
+        if (response.ok || response.status !== 404) break;
+        console.log(`[generate-image] Model ${model} returned ${response.status}, trying next...`);
+      }
+
+      console.log(`[generate-image] Final model: ${usedModel}, status: ${response.status}`);
+
+      // Check for safety block (candidates blocked or finishReason SAFETY)
+      const candidate = data?.candidates?.[0];
+      const finishReason = candidate?.finishReason || '';
+      const blocked = data?.promptFeedback?.blockReason || '';
+      if (blocked || finishReason === 'SAFETY' || finishReason === 'RECITATION') {
+        console.warn(`[generate-image] Safety blocked: ${blocked || finishReason}`);
+        return { blocked: true, reason: blocked || finishReason };
+      }
+
+      if (!response.ok) {
+        const errMsg = data?.error?.message || `Gemini error ${response.status}`;
+        console.error(`[generate-image] API error:`, JSON.stringify(data?.error || data).substring(0, 500));
+        return { error: errMsg };
+      }
+
+      const parts = candidate?.content?.parts || [];
+      console.log(`[generate-image] Response parts: ${parts.length}, types: ${parts.map(p => p.text ? 'text' : p.inlineData ? 'image' : 'unknown').join(',')}`);
+      const imagePart = parts.find(p => p.inlineData);
+
+      if (!imagePart) {
+        console.error('[generate-image] No image part found. Full response:', JSON.stringify(data).substring(0, 500));
+        return { error: 'No image in response' };
+      }
+
+      return { success: true, imagePart };
     }
 
-    console.log(`[generate-image] Final model: ${usedModel}, status: ${response.status}`);
+    // Attempt 1: with user's photo (if provided)
+    let result = await tryGenerate(contents);
 
-    if (!response.ok) {
-      const errMsg = data?.error?.message || `Gemini error ${response.status}`;
-      console.error(`[generate-image] API error:`, JSON.stringify(data?.error || data).substring(0, 500));
-      throw new Error(errMsg);
+    // If safety-blocked and we had a photo, retry WITHOUT the photo
+    if ((result.blocked || result.error) && image_base64) {
+      console.log('[generate-image] Retrying WITHOUT user photo (safety fallback)...');
+      const textOnlyContents = [
+        {
+          role: 'user',
+          parts: [{ text: prompt }]
+        }
+      ];
+      result = await tryGenerate(textOnlyContents);
+      if (result.success) {
+        console.log('[generate-image] Text-only fallback succeeded');
+      }
     }
 
-    const parts = data?.candidates?.[0]?.content?.parts || [];
-    console.log(`[generate-image] Response parts: ${parts.length}, types: ${parts.map(p => p.text ? 'text' : p.inlineData ? 'image' : 'unknown').join(',')}`);
-    const imagePart = parts.find(p => p.inlineData);
-
-    if (!imagePart) {
-      console.error('[generate-image] No image part found. Full response:', JSON.stringify(data).substring(0, 500));
-      throw new Error('No image in response — model may not support image generation');
+    if (result.blocked) {
+      throw new Error('Image generation was blocked by safety filters. Try a different photo or generate without one.');
+    }
+    if (result.error) {
+      throw new Error(result.error);
     }
 
-    const { mimeType, data: imgData } = imagePart.inlineData;
+    const { mimeType, data: imgData } = result.imagePart.inlineData;
     return new Response(
       JSON.stringify({ success: true, image_base64: `data:${mimeType};base64,${imgData}` }),
       { status: 200, headers: { ...cors, 'Content-Type': 'application/json' } }

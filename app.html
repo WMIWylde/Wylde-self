@@ -4911,7 +4911,14 @@
         if (s) s.innerHTML = '<span style="color:rgba(220,80,80,0.8);font-size:10px;">!</span>';
         if (_activeTimeline === tl) {
           var lt = document.getElementById('loadingText');
-          if (lt) lt.textContent = 'Generation failed. Try again.';
+          var msg = err.message || 'Generation failed';
+          if (msg.indexOf('safety') !== -1 || msg.indexOf('blocked') !== -1) {
+            if (lt) lt.textContent = 'Your photo was blocked by safety filters. Try a different photo or tap Reset to generate without one.';
+          } else if (msg.indexOf('GEMINI') !== -1 || msg.indexOf('configured') !== -1) {
+            if (lt) lt.textContent = 'Image generation is not configured. Please try again later.';
+          } else {
+            if (lt) lt.textContent = 'Generation failed — ' + msg.substring(0, 60) + '. Tap Reset to try again.';
+          }
         }
       });
     });
