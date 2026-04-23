@@ -4052,29 +4052,8 @@
     // Auto-generate workout program after profile completion
     setTimeout(function() { generateProgram(); }, 500);
 
-    // Transition: geo assembly → Today screen
-    window._introSkipped = false;
-    window._onboardTransitionDone = false;
-
-    function finishOnboardTransition() {
-      if (window._onboardTransitionDone) return;
-      window._onboardTransitionDone = true;
-      // Clean up any overlays
-      var geo = document.getElementById('geoTransition');
-      var mpOv = document.getElementById('mpSetupOverlay');
-      if (geo) { geo.classList.remove('active', 'dissolving'); geo.style.display = 'none'; }
-      if (mpOv) mpOv.style.display = 'none';
-      showScreen('overview');
-    }
-
-    try {
-      playGeoTransition(function() { finishOnboardTransition(); });
-    } catch(e) {
-      finishOnboardTransition();
-    }
-
-    // Safety net — 5s hard cutoff
-    setTimeout(finishOnboardTransition, 5000);
+    // Go straight to Today screen — no transition animation
+    showScreen('overview');
   }
 
   function playIntro(callback) {
