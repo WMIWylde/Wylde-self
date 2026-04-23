@@ -497,17 +497,32 @@
     .set-header-row { display:flex;gap:8px;align-items:center;margin-bottom:2px;padding-left:38px; }
     .set-header-row span { font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:#999;width:52px;text-align:center; }
     .day-body.open { max-height: 2000px; padding: 0 24px 20px; }
-    .ex-anim-wrap { display: flex; justify-content: center; margin-bottom: 24px; }
-    .ex-anim-wrap svg { width: 120px; height: 120px; }
-    @keyframes squat-down { 0%,100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
-    @keyframes pushup-body { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(6px) rotate(2deg); } }
-    @keyframes deadlift-hinge { 0%,100% { transform: rotate(0deg); transform-origin: bottom center; } 50% { transform: rotate(30deg); transform-origin: bottom center; } }
-    @keyframes pullup-rise { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-    @keyframes plank-hold { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
-    @keyframes lunge-step { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
-    .form-modal-inner { background: var(--bg-surface); border: none; max-width: 540px; width: 100%; max-height: 85vh; overflow-y: auto; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+    .ex-demo-wrap { display: flex; justify-content: center; margin-bottom: 20px; background: #0a0a0a; border-radius: 14px; overflow: hidden; position: relative; }
+    .ex-demo-wrap img { width: 100%; max-width: 320px; height: auto; display: block; mix-blend-mode: normal; }
+    .ex-demo-wrap .ex-demo-loading { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; }
+    .ex-demo-wrap .ex-demo-loading::after { content: ''; width: 28px; height: 28px; border: 2px solid rgba(200,169,110,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .ex-muscle-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 20px; }
+    .ex-muscle-tag { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; background: rgba(122,154,110,0.1); color: var(--sage); border: 1px solid rgba(122,154,110,0.15); }
+    .ex-muscle-tag.primary { background: rgba(200,169,110,0.1); color: var(--gold); border-color: rgba(200,169,110,0.2); }
+    .ex-equip-tag { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 16px; }
+    .form-modal-overlay { display: none; position: fixed; inset: 0; z-index: 9990; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); align-items: flex-end; justify-content: center; }
+    .form-modal-inner { background: var(--bg-surface); border: none; max-width: 540px; width: 100%; max-height: 88vh; overflow-y: auto; border-radius: 20px 20px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); padding-bottom: env(safe-area-inset-bottom, 20px); animation: formSlideUp 0.3s ease-out; }
+    @keyframes formSlideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .form-modal-inner::-webkit-scrollbar { width: 4px; }
     .form-modal-inner::-webkit-scrollbar-thumb { background: rgba(201,173,110,0.2); }
+    .form-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 12px; position: sticky; top: 0; background: var(--bg-surface); z-index: 2; border-bottom: 1px solid var(--border); }
+    .form-modal-header h3 { font-family: var(--ff-body); font-size: 16px; font-weight: 600; margin: 0; color: var(--text); }
+    .form-modal-close { background: none; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--muted); cursor: pointer; font-size: 18px; transition: background 0.2s; }
+    .form-modal-close:hover { background: rgba(255,255,255,0.06); }
+    .form-modal-body { padding: 20px; }
+    .form-section { margin-bottom: 18px; }
+    .form-section-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+    .form-section p, .form-section li { font-size: 14px; color: var(--text-muted, #A0A0A0); line-height: 1.65; }
+    .form-section ul { padding-left: 16px; margin: 0; }
+    .form-section ul li { margin-bottom: 4px; }
+    .form-pro-tip { background: rgba(201,173,110,0.05); border: 1px solid rgba(201,173,110,0.15); border-radius: 12px; padding: 14px 16px; }
+    .form-pro-tip p { font-family: var(--ff-serif, Georgia); font-style: italic; font-size: 14px; color: var(--text); line-height: 1.6; }
 
     /* ALT PROGRAM REBUILD SECTION */
     .alt-program-section { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); display: none; }
@@ -970,12 +985,25 @@
   #xp-toast.xp-toast-show { opacity:1;transform:translateY(0); }
   #xp-toast.xp-toast-hide { opacity:0;transform:translateY(8px); }
 
-  /* LEVEL-UP OVERLAY */
-  #level-up-overlay { position:fixed;inset:0;z-index:3100;background:rgba(0,0,0,0.82);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px; }
-  .level-up-inner { text-align:center;animation:slideIn 0.4s ease-out; }
-  .level-up-label { font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:8px; }
-  .level-up-name { font-family:var(--ff-hero);font-size:52px;font-weight:900;color:var(--gold);letter-spacing:0.04em; }
-  .level-up-sub { font-family:var(--ff-serif);font-style:italic;font-size:18px;color:var(--muted);margin-top:6px; }
+  /* LEVEL-UP OVERLAY — Premium cinematic */
+  #level-up-overlay { position:fixed;inset:0;z-index:3100;background:#000;display:none; }
+  #level-up-overlay .lu-video { position:absolute;inset:0;width:100%;height:100%;object-fit:cover; }
+  #level-up-overlay .lu-gradient { position:absolute;inset:0;background:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,0.3) 30%,rgba(0,0,0,0.75) 65%,rgba(0,0,0,0.92) 100%);opacity:0;transition:opacity 1.2s ease; }
+  #level-up-overlay .lu-gradient.active { opacity:1; }
+  #level-up-overlay .lu-glow { position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(200,169,110,0.25) 0%,rgba(200,169,110,0.06) 50%,transparent 100%);opacity:0;transition:opacity 0.8s ease;animation:luGlowPulse 2.4s ease-in-out infinite; }
+  #level-up-overlay .lu-glow.active { opacity:1; }
+  @keyframes luGlowPulse { 0%,100%{transform:translate(-50%,-50%) scale(0.95);opacity:0.7;} 50%{transform:translate(-50%,-50%) scale(1.08);opacity:1;} }
+  #level-up-overlay .lu-content { position:absolute;bottom:0;left:0;right:0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 32px 60px; }
+  #level-up-overlay .lu-title { font-size:38px;font-weight:900;letter-spacing:6px;color:#fff;text-shadow:0 0 30px rgba(200,169,110,0.5);opacity:0;transform:scale(0.9);transition:opacity 0.6s ease,transform 0.6s cubic-bezier(0.34,1.56,0.64,1);margin-bottom:12px; }
+  #level-up-overlay .lu-title.active { opacity:1;transform:scale(1); }
+  #level-up-overlay .lu-subtitle { font-size:20px;font-weight:600;color:rgba(255,255,255,0.9);opacity:0;transform:translateY(10px);transition:opacity 0.5s ease,transform 0.5s ease;margin-bottom:8px; }
+  #level-up-overlay .lu-subtitle.active { opacity:1;transform:translateY(0); }
+  #level-up-overlay .lu-body { font-size:14px;font-weight:400;color:rgba(255,255,255,0.55);opacity:0;transition:opacity 0.5s ease;margin-bottom:40px; }
+  #level-up-overlay .lu-body.active { opacity:1; }
+  #level-up-overlay .lu-cta { background:#fff;color:#000;border:none;padding:14px 48px;border-radius:999px;font-size:16px;font-weight:600;letter-spacing:1px;cursor:pointer;box-shadow:0 4px 20px rgba(200,169,110,0.3);opacity:0;transform:translateY(16px);transition:opacity 0.5s ease,transform 0.5s ease;pointer-events:none; }
+  #level-up-overlay .lu-cta.active { opacity:1;transform:translateY(0);pointer-events:auto; }
+  #level-up-overlay .lu-skip { position:absolute;top:60px;right:20px;background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);border:none;color:rgba(255,255,255,0.6);font-size:12px;font-weight:500;letter-spacing:0.15em;padding:8px 20px;border-radius:20px;cursor:pointer;opacity:0;transition:opacity 0.4s ease;pointer-events:none; }
+  #level-up-overlay .lu-skip.active { opacity:1;pointer-events:auto; }
 
   /* COMMUNITY SCREEN */
   .comm-tab-bar { display:flex;border-bottom:1px solid var(--border);margin-bottom:28px; }
@@ -1590,6 +1618,17 @@
 </div>
 
 <!-- ═══ INTRO VIDEO ═══ -->
+<!-- ═══ EXERCISE FORM GUIDE MODAL ═══ -->
+<div id="formModal" class="form-modal-overlay" onclick="if(event.target===this)closeFormModal()">
+  <div class="form-modal-inner">
+    <div class="form-modal-header">
+      <h3 id="formModalTitle">Exercise</h3>
+      <button class="form-modal-close" onclick="closeFormModal()">✕</button>
+    </div>
+    <div class="form-modal-body" id="formModalBody"></div>
+  </div>
+</div>
+
 <div id="screen-intro" style="display:none;position:fixed;inset:0;z-index:9999;background:#000000;display:none;align-items:center;justify-content:center;flex-direction:column;">
   <video id="introVideo" src="intro.mp4" playsinline webkit-playsinline style="width:100%;max-width:500px;border-radius:16px;"></video>
   <button onclick="skipIntro()" style="margin-top:24px;background:transparent;border:1px solid rgba(201,173,110,0.3);color:var(--gold,#c8a96e);padding:10px 32px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer;">SKIP</button>
@@ -2177,7 +2216,7 @@
   </div>
 
   <!-- COMPLETE DAY BUTTON -->
-  <div id="completeDayCard" style="margin:20px 20px 0;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;">
+  <div id="completeDayCard" style="margin:20px 20px 24px;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;">
     <div id="completeDayReady">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
         <span style="font-size:18px;">🏁</span>
@@ -2197,11 +2236,7 @@
     </div>
   </div>
 
-  <!-- LEVEL UP VIDEO OVERLAY -->
-  <div id="levelUpOverlay" style="display:none;position:fixed;inset:0;z-index:99999;background:#000;">
-    <video id="levelUpVideo" style="width:100%;height:100%;object-fit:cover;" playsinline></video>
-    <button id="levelUpSkip" onclick="closeLevelUp()" style="display:none;position:absolute;top:60px;right:20px;background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);border:none;color:rgba(255,255,255,0.6);font-size:12px;font-weight:500;letter-spacing:0.15em;padding:8px 20px;border-radius:20px;cursor:pointer;">SKIP</button>
-  </div>
+  <!-- LEVEL UP VIDEO OVERLAY (premium sequenced) — handled by #level-up-overlay -->
 
   <!-- HIDDEN: legacy sections (kept for JS compat, display:none via CSS) -->
   <div class="ov-section-card" id="ov-workout-section">
@@ -2750,35 +2785,41 @@
   }
 
   function completeDayInit() {
-    var card = document.getElementById('completeDayCard');
-    if (!card) return;
-    var lastCompleted = localStorage.getItem('wylde_last_completed_day');
-    if (lastCompleted === getTodayKey()) {
-      document.getElementById('completeDayReady').style.display = 'none';
-      document.getElementById('completeDayDone').style.display = 'block';
-    } else {
-      document.getElementById('completeDayReady').style.display = 'block';
-      document.getElementById('completeDayDone').style.display = 'none';
-    }
+    try {
+      var card = document.getElementById('completeDayCard');
+      if (!card) return;
+      card.style.display = 'block';
 
-    // Render progress checks
-    var checks = document.getElementById('completeDayChecks');
-    if (checks) {
-      var mpData = mpLoad();
-      var mpDone = false;
-      if (mpData && mpData.actions) {
-        var td = mpData.completedDays[getTodayKey()] || {};
-        mpDone = mpData.actions.every(function(a) { return td[a.id]; });
+      var lastCompleted = localStorage.getItem('wylde_last_completed_day');
+      if (lastCompleted === getTodayKey()) {
+        document.getElementById('completeDayReady').style.display = 'none';
+        document.getElementById('completeDayDone').style.display = 'block';
+      } else {
+        document.getElementById('completeDayReady').style.display = 'block';
+        document.getElementById('completeDayDone').style.display = 'none';
       }
-      var sessionsDone = (state.sessions || 0) > 0;
-      var nutritionDone = (foodLogTotals && foodLogTotals.cal > 0);
 
-      checks.innerHTML = [
-        checkItem(mpDone, 'Protocol'),
-        checkItem(sessionsDone, 'Workout'),
-        checkItem(nutritionDone, 'Nutrition')
-      ].join('');
-    }
+      // Render progress checks
+      var checks = document.getElementById('completeDayChecks');
+      if (checks) {
+        var mpData = mpLoad();
+        var mpDone = false;
+        if (mpData && mpData.actions) {
+          var td = (mpData.completedDays || {})[getTodayKey()] || {};
+          mpDone = mpData.actions.every(function(a) { return td[a.id]; });
+        }
+        var _state = (typeof state !== 'undefined') ? state : (typeof window.state !== 'undefined' ? window.state : {});
+        var sessionsDone = (_state.sessions || 0) > 0;
+        var _flt = (typeof foodLogTotals !== 'undefined') ? foodLogTotals : (typeof window.foodLogTotals !== 'undefined' ? window.foodLogTotals : null);
+        var nutritionDone = (_flt && _flt.cal > 0);
+
+        checks.innerHTML = [
+          checkItem(mpDone, 'Protocol'),
+          checkItem(sessionsDone, 'Workout'),
+          checkItem(nutritionDone, 'Nutrition')
+        ].join('');
+      }
+    } catch(e) { console.warn('completeDayInit error:', e); }
   }
 
   function checkItem(done, label) {
@@ -2796,12 +2837,13 @@
     localStorage.setItem('wylde_day', currentDay + 1);
 
     // Update streak
+    var _st = (typeof state !== 'undefined') ? state : {};
     var lastDayKey = localStorage.getItem('wylde_last_day_key') || '';
     var yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
     if (lastDayKey === yesterday) {
-      state.streak = (state.streak || 0) + 1;
+      _st.streak = (_st.streak || 0) + 1;
     } else if (lastDayKey !== today) {
-      state.streak = 1;
+      _st.streak = 1;
     }
     localStorage.setItem('wylde_last_day_key', today);
 
@@ -2825,50 +2867,67 @@
 
     // Refresh overview data
     if (typeof ovSyncData === 'function') setTimeout(ovSyncData, 200);
+
+    // Prompt for push notifications after first day completion
+    if (typeof maybePromptPush === 'function') setTimeout(maybePromptPush, 1500);
   };
 
   function showLevelUpVideo() {
-    var overlay = document.getElementById('levelUpOverlay');
-    var video = document.getElementById('levelUpVideo');
-    var skip = document.getElementById('levelUpSkip');
-    if (!overlay || !video) return;
+    var overlay = document.getElementById('level-up-overlay');
+    var video = document.getElementById('lu-video');
+    var gradient = document.getElementById('lu-gradient');
+    var glow = document.getElementById('lu-glow');
+    var title = document.getElementById('lu-title');
+    var subtitle = document.getElementById('lu-subtitle');
+    var body = document.getElementById('lu-body');
+    var cta = document.getElementById('lu-cta');
+    var skip = document.getElementById('lu-skip');
+    if (!overlay) return;
 
-    // Try to load video — use levelup.mp4 from same directory
-    video.src = '/levelup.mp4';
-    video.oncanplay = function() {
-      overlay.style.display = 'block';
-      video.play();
-      setTimeout(function() { if (skip) skip.style.display = 'block'; }, 2000);
+    // Reset all states
+    [gradient, glow, title, subtitle, body, cta, skip].forEach(function(el) {
+      if (el) el.classList.remove('active');
+    });
+
+    // Show overlay
+    overlay.style.display = 'block';
+
+    // Try loading video
+    if (video) {
+      video.src = '/levelup1.mp4';
+      video.muted = true;
+      video.loop = true;
+      video.oncanplay = function() { video.play(); };
+      video.onerror = function() { /* video optional — overlay still works */ };
+      video.load();
+    }
+
+    // Sequenced animations
+    setTimeout(function() { if (gradient) gradient.classList.add('active'); }, 300);
+    setTimeout(function() { if (skip) skip.classList.add('active'); }, 2000);
+    setTimeout(function() { if (glow) glow.classList.add('active'); }, 2500);
+    setTimeout(function() { if (title) title.classList.add('active'); }, 3000);
+    setTimeout(function() { if (subtitle) subtitle.classList.add('active'); }, 3300);
+    setTimeout(function() { if (body) body.classList.add('active'); }, 3600);
+    setTimeout(function() {
+      if (cta) cta.classList.add('active');
+      if (skip) skip.classList.remove('active'); // hide skip once CTA appears
+    }, 4200);
+
+    // Tap-to-skip on the overlay background (before CTA appears)
+    overlay.onclick = function(e) {
+      if (e.target === overlay || e.target === video || e.target === gradient) {
+        if (!cta || !cta.classList.contains('active')) closeLevelUp();
+      }
     };
-    video.onended = function() { closeLevelUp(); };
-    video.onerror = function() {
-      // No video file available — show a CSS celebration instead
-      showCSSCelebration();
-    };
-    video.load();
   }
 
   window.closeLevelUp = function() {
-    var overlay = document.getElementById('levelUpOverlay');
-    var video = document.getElementById('levelUpVideo');
+    var overlay = document.getElementById('level-up-overlay');
+    var video = document.getElementById('lu-video');
     if (overlay) overlay.style.display = 'none';
     if (video) { video.pause(); video.src = ''; }
   };
-
-  function showCSSCelebration() {
-    // Fallback: full-screen celebration overlay with particles
-    var overlay = document.getElementById('levelUpOverlay');
-    if (!overlay) return;
-    overlay.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:40px;">' +
-      '<div style="font-size:64px;margin-bottom:24px;animation:ovPulse 0.6s ease both;">🔥</div>' +
-      '<p style="font-size:28px;font-weight:800;color:#fff;margin:0 0 8px;">Day 1 Complete</p>' +
-      '<p style="font-size:16px;color:rgba(255,255,255,0.6);margin:0 0 32px;font-style:italic;">The hardest day is behind you.</p>' +
-      '<p style="font-size:14px;color:var(--sage);font-weight:600;margin:0 0 8px;">+50 XP</p>' +
-      '<p style="font-size:13px;color:rgba(255,255,255,0.4);margin:0 0 40px;">You just became someone who follows through.</p>' +
-      '<button onclick="closeLevelUp()" style="background:var(--sage);color:#fff;border:none;padding:14px 40px;border-radius:12px;font-size:14px;font-weight:700;letter-spacing:0.08em;cursor:pointer;">CONTINUE</button>' +
-      '</div>';
-    overlay.style.display = 'block';
-  }
 
   // Init on overview show
   var _origOvSync = typeof ovSyncData === 'function' ? ovSyncData : null;
@@ -3328,6 +3387,7 @@
           document.getElementById('navUserName').textContent = state.name.toUpperCase();
           document.querySelectorAll('.nav-tab.locked').forEach(function(t){ t.classList.remove('locked'); });
           if (!localStorage.getItem('wylde_intro_seen')) {
+            window._introSkipped = false;
             setTimeout(function(){ playIntro(function(){ showScreen('overview'); loadSavedProgram(); }); }, 100);
           } else {
             setTimeout(function(){ showScreen('overview'); loadSavedProgram(); }, 100);
@@ -3393,13 +3453,10 @@
   }
 
   function showLevelUpAnimation(levelName) {
-    var overlay = document.getElementById('level-up-overlay');
-    var lbl = document.getElementById('level-up-name');
-    if (lbl) lbl.textContent = levelName;
-    if (overlay) {
-      overlay.style.display = 'flex';
-      setTimeout(function() { overlay.style.display = 'none'; }, 3500);
-    }
+    // For XP-based level-ups, reuse the premium overlay
+    var title = document.getElementById('lu-title');
+    if (title) title.textContent = levelName || 'LEVEL UP';
+    showLevelUpVideo();
   }
 
   function checkBadges() {
@@ -3995,32 +4052,41 @@
     // Auto-generate workout program after profile completion
     setTimeout(function() { generateProgram(); }, 500);
 
-    // Play intro animation, then show Morning Protocol setup before landing in app
-    playIntro(function(){
-      var mpData = mpLoad();
-      if (!mpData || !mpData.actions || mpData.actions.length === 0) {
-        showMPSetupOverlay(function() { showScreen('overview'); });
-      } else {
-        showScreen('overview');
-      }
-    });
+    // Go straight to Today screen — no transition animation
+    showScreen('overview');
   }
 
   function playIntro(callback) {
     var intro = document.getElementById('screen-intro');
     var vid = document.getElementById('introVideo');
+    if (!intro || !vid || !vid.src || vid.error) {
+      // No intro video — skip straight to geo transition
+      if (callback) {
+        playGeoTransition(function() { callback(); });
+      }
+      return;
+    }
     intro.style.display = 'flex';
     window._introCallback = callback;
     vid.currentTime = 0;
-    vid.play().catch(function(){ /* autoplay blocked — show skip */ });
+    vid.play().catch(function(){
+      // Autoplay blocked or video missing — auto-skip after brief delay
+      setTimeout(function() { skipIntro(); }, 500);
+    });
     vid.onended = function() { skipIntro(); };
+    vid.onerror = function() { skipIntro(); };
+    // Safety timeout — if nothing happens in 15s, force skip
+    window._introTimeout = setTimeout(function() { skipIntro(); }, 15000);
   }
 
   function skipIntro() {
+    if (window._introSkipped) return;
+    window._introSkipped = true;
+    if (window._introTimeout) { clearTimeout(window._introTimeout); window._introTimeout = null; }
     var intro = document.getElementById('screen-intro');
     var vid = document.getElementById('introVideo');
-    vid.pause();
-    intro.style.display = 'none';
+    if (vid) vid.pause();
+    if (intro) intro.style.display = 'none';
     localStorage.setItem('wylde_intro_seen', '1');
     // Play geometric assembly before showing the next screen
     playGeoTransition(function() {
@@ -4150,6 +4216,17 @@
       ctx.restore();
     }
 
+    var callbackFired = false;
+    function safeCallback() {
+      if (callbackFired) return;
+      callbackFired = true;
+      overlay.classList.remove('active', 'dissolving');
+      overlay.style.display = 'none';
+      textEl.classList.remove('visible', 'dissolving');
+      try { ctx.clearRect(0, 0, W, H); } catch(e) {}
+      if (callback) callback();
+    }
+
     function animate(timestamp) {
       if (!startTime) startTime = timestamp;
       var elapsed = timestamp - startTime;
@@ -4200,17 +4277,15 @@
           setTimeout(function() {
             overlay.classList.add('dissolving');
           }, 200);
-          setTimeout(function() {
-            overlay.classList.remove('active', 'dissolving');
-            textEl.classList.remove('visible', 'dissolving');
-            ctx.clearRect(0, 0, W, H);
-            if (callback) callback();
-          }, 900);
+          setTimeout(safeCallback, 900);
         }, holdTime);
       }
     }
 
     requestAnimationFrame(animate);
+
+    // Hard safety — if animation never completes, fire callback after 4.5s
+    setTimeout(safeCallback, 4500);
   }
 
   // SETTINGS FUNCTIONS
@@ -4815,7 +4890,14 @@
         if (s) s.innerHTML = '<span style="color:rgba(220,80,80,0.8);font-size:10px;">!</span>';
         if (_activeTimeline === tl) {
           var lt = document.getElementById('loadingText');
-          if (lt) lt.textContent = 'Generation failed. Try again.';
+          var msg = err.message || 'Generation failed';
+          if (msg.indexOf('safety') !== -1 || msg.indexOf('blocked') !== -1) {
+            if (lt) lt.textContent = 'Your photo was blocked by safety filters. Try a different photo or tap Reset to generate without one.';
+          } else if (msg.indexOf('GEMINI') !== -1 || msg.indexOf('configured') !== -1) {
+            if (lt) lt.textContent = 'Image generation is not configured. Please try again later.';
+          } else {
+            if (lt) lt.textContent = 'Generation failed — ' + msg.substring(0, 60) + '. Tap Reset to try again.';
+          }
         }
       });
     });
@@ -5419,98 +5501,48 @@
   }
 
   // EXERCISE FORM GUIDE
-  function getExerciseAnimation(name) {
-    var n = name.toLowerCase();
-    var gold = '#c8a96e';
+  // ═══ EXERCISE DEMO + FORM GUIDE ═══
+  var _exDemoCache = {}; // { 'bench press': { gifUrl, target, ... } }
 
-    if (n.includes('squat')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <g style="animation: squat-down 1.4s ease-in-out infinite;">
-        <circle cx="60" cy="22" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
-        <line x1="60" y1="30" x2="60" y2="62" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="38" x2="44" y2="52" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="38" x2="76" y2="52" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="62" x2="44" y2="88" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="62" x2="76" y2="88" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="44" y1="88" x2="40" y2="100" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="76" y1="88" x2="80" y2="100" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-      </g>
-    </svg>`;
+  function closeFormModal() {
+    var modal = document.getElementById('formModal');
+    if (modal) modal.style.display = 'none';
+  }
 
-    if (n.includes('push')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <g style="animation: pushup-body 1.4s ease-in-out infinite;">
-        <circle cx="28" cy="52" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
-        <line x1="36" y1="52" x2="88" y2="60" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="28" y1="60" x2="20" y2="74" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="20" y1="74" x2="20" y2="88" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="88" y1="60" x2="96" y2="74" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="96" y1="74" x2="96" y2="88" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="16" y1="88" x2="100" y2="88" stroke="${gold}" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
-      </g>
-    </svg>`;
+  function fetchExerciseDemo(exerciseName) {
+    var key = exerciseName.toLowerCase().trim();
+    if (_exDemoCache[key]) return Promise.resolve(_exDemoCache[key]);
 
-    if (n.includes('deadlift') || n.includes('dead lift')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <g style="animation: deadlift-hinge 1.6s ease-in-out infinite; transform-origin: 60px 90px;">
-        <circle cx="60" cy="22" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
-        <line x1="60" y1="30" x2="60" y2="64" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="40" x2="42" y2="56" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="40" x2="78" y2="56" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="64" x2="48" y2="90" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="64" x2="72" y2="90" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="48" y1="90" x2="44" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="72" y1="90" x2="76" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-      </g>
-    </svg>`;
+    return fetch('/api/exercise-demo?name=' + encodeURIComponent(key))
+      .then(function(res) {
+        if (!res.ok) return null;
+        return res.json();
+      })
+      .then(function(data) {
+        if (data && data.gifUrl) {
+          _exDemoCache[key] = data;
+          return data;
+        }
+        return null;
+      })
+      .catch(function() { return null; });
+  }
 
-    if (n.includes('pull')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <line x1="20" y1="10" x2="100" y2="10" stroke="${gold}" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
-      <g style="animation: pullup-rise 1.4s ease-in-out infinite;">
-        <circle cx="60" cy="36" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
-        <line x1="60" y1="10" x2="60" y2="44" stroke="${gold}" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.5"/>
-        <line x1="60" y1="44" x2="60" y2="74" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="52" x2="42" y2="62" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="52" x2="78" y2="62" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="74" x2="50" y2="96" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="74" x2="70" y2="96" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-      </g>
-    </svg>`;
-
-    if (n.includes('plank')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <g style="animation: plank-hold 2s ease-in-out infinite;">
-        <circle cx="24" cy="56" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
-        <line x1="32" y1="56" x2="92" y2="64" stroke="${gold}" stroke-width="3" stroke-linecap="round"/>
-        <line x1="32" y1="64" x2="24" y2="80" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="24" y1="80" x2="24" y2="92" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="92" y1="64" x2="100" y2="80" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="100" y1="80" x2="100" y2="92" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="16" y1="92" x2="108" y2="92" stroke="${gold}" stroke-width="1.5" opacity="0.25"/>
-      </g>
-    </svg>`;
-
-    if (n.includes('lunge')) return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <g style="animation: lunge-step 1.4s ease-in-out infinite;">
-        <circle cx="56" cy="20" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
-        <line x1="56" y1="28" x2="56" y2="60" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="56" y1="38" x2="40" y2="52" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="56" y1="38" x2="72" y2="52" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="56" y1="60" x2="36" y2="88" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="56" y1="60" x2="72" y2="80" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="36" y1="88" x2="28" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="72" y1="80" x2="72" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-      </g>
-    </svg>`;
-
-    return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <g style="animation: squat-down 1.8s ease-in-out infinite;">
-        <circle cx="60" cy="22" r="8" fill="none" stroke="${gold}" stroke-width="2.5"/>
-        <line x1="60" y1="30" x2="60" y2="64" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="40" x2="42" y2="54" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="40" x2="78" y2="54" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="64" x2="48" y2="90" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="60" y1="64" x2="72" y2="90" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="48" y1="90" x2="44" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="72" y1="90" x2="76" y2="104" stroke="${gold}" stroke-width="2.5" stroke-linecap="round"/>
-      </g>
-    </svg>`;
+  function renderDemoGif(container, data) {
+    if (!data || !data.gifUrl) {
+      container.innerHTML = '<div style="padding:30px 0;text-align:center;color:var(--muted);font-size:12px;">Demo not available for this exercise</div>';
+      return;
+    }
+    var tagsHTML = '<span class="ex-muscle-tag primary">' + esc(data.target) + '</span>';
+    if (data.secondaryMuscles) {
+      data.secondaryMuscles.forEach(function(m) {
+        tagsHTML += '<span class="ex-muscle-tag">' + esc(m) + '</span>';
+      });
+    }
+    container.innerHTML =
+      '<div class="ex-demo-wrap"><img src="' + esc(data.gifUrl) + '" alt="' + esc(data.name) + ' demo" loading="eager" /></div>' +
+      '<div class="ex-muscle-tags">' + tagsHTML + '</div>' +
+      (data.equipment ? '<p class="ex-equip-tag">' + esc(data.equipment) + '</p>' : '');
   }
 
   function showFormGuide(exerciseName) {
@@ -5518,15 +5550,22 @@
     var title = document.getElementById('formModalTitle');
     var body  = document.getElementById('formModalBody');
     title.textContent = exerciseName;
-    body.innerHTML = '<div class="ex-anim-wrap">' + getExerciseAnimation(exerciseName) + '</div><div style="text-align:center;padding:0 0 24px;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--muted);">Loading form guide...</p><div style="width:32px;height:1px;background:var(--gold);margin:14px auto 0;"></div></div>';
     modal.style.display = 'flex';
+
+    // Show loading state
+    body.innerHTML =
+      '<div class="ex-demo-wrap"><div class="ex-demo-loading"></div></div>' +
+      '<div style="text-align:center;padding:16px 0;"><p style="font-size:13px;color:var(--muted);">Loading form guide...</p></div>';
+
+    // Fetch demo GIF + form guide in parallel
+    var demoPromise = fetchExerciseDemo(exerciseName);
 
     var prompt = 'You are an expert strength coach. Give a clear, practical form guide for: ' + exerciseName + '.\n' +
       'Return ONLY a JSON object:\n' +
       '{"setup":"how to set up and position your body","execution":"step-by-step movement cues","breathing":"breathing pattern","common_mistakes":["mistake 1","mistake 2","mistake 3"],"pro_tip":"one expert cue that makes the biggest difference"}\n' +
       'Be specific and actionable. No markdown, no backticks. Return only the JSON.';
 
-    fetch('/api/anthropic', {
+    var guidePromise = fetch('/api/anthropic', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
@@ -5538,21 +5577,53 @@
       text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
       var start = text.indexOf('{'), end = text.lastIndexOf('}');
       if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
-      var g = JSON.parse(text);
-      var mistakesHTML = (g.common_mistakes || []).map(function(m){ return '<li>' + esc(m) + '</li>'; }).join('');
-      body.innerHTML = '<div class="ex-anim-wrap">' + getExerciseAnimation(exerciseName) + '</div>' +
-        '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Setup</p><p>' + esc(g.setup||'') + '</p></div>' +
-        '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
-        '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Execution</p><p>' + esc(g.execution||'') + '</p></div>' +
-        '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
-        '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Breathing</p><p>' + esc(g.breathing||'') + '</p></div>' +
-        '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
-        '<div style="margin-bottom:18px;"><p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Common Mistakes</p><ul style="padding-left:18px;line-height:2;">' + mistakesHTML + '</ul></div>' +
-        '<div style="background:rgba(201,173,110,0.06);border:1px solid rgba(201,173,110,0.2);padding:14px 16px;"><p style="font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Pro Tip</p><p style="font-family:var(--ff-serif);font-style:italic;font-size:15px;color:var(--text);">' + esc(g.pro_tip||'') + '</p></div>';
+      return JSON.parse(text);
     })
-    .catch(function(err) {
-      console.error('Form guide error:', err);
-      body.innerHTML = '<div style="padding:24px;text-align:center;"><p style="color:var(--muted);font-size:13px;">Could not load form guide. Please try again.</p></div>';
+    .catch(function() { return null; });
+
+    Promise.all([demoPromise, guidePromise]).then(function(results) {
+      var demo = results[0];
+      var guide = results[1];
+
+      // Build demo section
+      var demoHTML = '';
+      if (demo && demo.gifUrl) {
+        var tagsHTML = '<span class="ex-muscle-tag primary">' + esc(demo.target) + '</span>';
+        if (demo.secondaryMuscles) {
+          demo.secondaryMuscles.forEach(function(m) {
+            tagsHTML += '<span class="ex-muscle-tag">' + esc(m) + '</span>';
+          });
+        }
+        demoHTML =
+          '<div class="ex-demo-wrap"><img src="' + esc(demo.gifUrl) + '" alt="' + esc(demo.name || exerciseName) + ' demo" loading="eager" /></div>' +
+          '<div class="ex-muscle-tags">' + tagsHTML + '</div>' +
+          (demo.equipment ? '<p class="ex-equip-tag">' + esc(demo.equipment) + '</p>' : '');
+      }
+
+      // Build guide section
+      var guideHTML = '';
+      if (guide) {
+        var mistakesHTML = (guide.common_mistakes || []).map(function(m){ return '<li>' + esc(m) + '</li>'; }).join('');
+        guideHTML =
+          '<div class="form-section"><p class="form-section-label">Setup</p><p>' + esc(guide.setup||'') + '</p></div>' +
+          '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
+          '<div class="form-section"><p class="form-section-label">Execution</p><p>' + esc(guide.execution||'') + '</p></div>' +
+          '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
+          '<div class="form-section"><p class="form-section-label">Breathing</p><p>' + esc(guide.breathing||'') + '</p></div>' +
+          '<div style="height:1px;background:var(--border);margin-bottom:18px;"></div>' +
+          '<div class="form-section"><p class="form-section-label">Common Mistakes</p><ul>' + mistakesHTML + '</ul></div>' +
+          '<div class="form-pro-tip"><p class="form-section-label" style="margin-bottom:6px;">Pro Tip</p><p>' + esc(guide.pro_tip||'') + '</p></div>';
+      } else if (demo && demo.instructions && demo.instructions.length > 0) {
+        // Use ExerciseDB's built-in instructions as fallback
+        var stepsHTML = demo.instructions.map(function(step, i) {
+          return '<li>' + esc(step) + '</li>';
+        }).join('');
+        guideHTML = '<div class="form-section"><p class="form-section-label">How to Perform</p><ul>' + stepsHTML + '</ul></div>';
+      } else {
+        guideHTML = '<div style="padding:16px 0;text-align:center;"><p style="color:var(--muted);font-size:13px;">Form guide unavailable. Try again later.</p></div>';
+      }
+
+      body.innerHTML = demoHTML + guideHTML;
     });
   }
 
@@ -6411,13 +6482,18 @@
 <!-- XP TOAST -->
 <div id="xp-toast"></div>
 
-<!-- LEVEL-UP OVERLAY -->
+<!-- LEVEL-UP OVERLAY (premium cinematic) -->
 <div id="level-up-overlay">
-  <div class="level-up-inner">
-    <p class="level-up-label">Level Up</p>
-    <p class="level-up-name" id="level-up-name">Root</p>
-    <p class="level-up-sub">You're evolving. Keep going.</p>
+  <video class="lu-video" id="lu-video" playsinline muted></video>
+  <div class="lu-gradient" id="lu-gradient"></div>
+  <div class="lu-glow" id="lu-glow"></div>
+  <div class="lu-content">
+    <div class="lu-title" id="lu-title">LEVEL UP</div>
+    <div class="lu-subtitle" id="lu-subtitle">You showed up.</div>
+    <div class="lu-body" id="lu-body">A stronger version of you is being built.</div>
+    <button class="lu-cta" id="lu-cta" onclick="closeLevelUp()">Continue →</button>
   </div>
+  <button class="lu-skip" id="lu-skip" onclick="closeLevelUp()">SKIP</button>
 </div>
 
 <script>
@@ -7024,6 +7100,266 @@
       });
     });
   }, 1200);
+})();
+</script>
+
+<!-- ═══ PUSH NOTIFICATIONS ═══ -->
+<script>
+(function() {
+  var VAPID_PUBLIC = 'BNGQFMUQu7IPUrks8ibBTzsrR_m22cwdI-fpPe7cz0A8GX-GaGvYFfhvQ5mOkdDV242WXPOIXVUzg531eh289m4';
+
+  // ── Register Service Worker ──
+  function initPush() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    navigator.serviceWorker.register('/sw.js').then(function(reg) {
+      window._swReg = reg;
+      // Check if already subscribed
+      reg.pushManager.getSubscription().then(function(sub) {
+        if (sub) {
+          window._pushSub = sub;
+          savePushSubscription(sub);
+        }
+      });
+    }).catch(function(err) { console.warn('SW registration failed:', err); });
+  }
+
+  // ── Request Permission (call after onboarding or from settings) ──
+  window.requestPushPermission = function() {
+    if (!('Notification' in window)) return Promise.resolve(false);
+    if (Notification.permission === 'granted') return subscribeToPush();
+    if (Notification.permission === 'denied') return Promise.resolve(false);
+
+    return Notification.requestPermission().then(function(perm) {
+      if (perm === 'granted') return subscribeToPush();
+      return false;
+    });
+  };
+
+  function subscribeToPush() {
+    if (!window._swReg) return Promise.resolve(false);
+    return window._swReg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC)
+    }).then(function(sub) {
+      window._pushSub = sub;
+      savePushSubscription(sub);
+      scheduleLocalNotifications();
+      return true;
+    }).catch(function(err) {
+      console.warn('Push subscribe failed:', err);
+      return false;
+    });
+  }
+
+  // ── Save subscription to Supabase ──
+  function savePushSubscription(sub) {
+    var sb = (typeof _getSupabase === 'function') ? _getSupabase() : null;
+    var user = (typeof currentUser !== 'undefined') ? currentUser : null;
+    if (!sb || !user) {
+      // Save locally, sync later
+      try { localStorage.setItem('wylde_push_sub', JSON.stringify(sub.toJSON())); } catch(e) {}
+      return;
+    }
+
+    var subData = sub.toJSON();
+    sb.from('push_subscriptions').upsert({
+      user_id: user.id,
+      endpoint: subData.endpoint,
+      keys_p256dh: subData.keys ? subData.keys.p256dh : null,
+      keys_auth: subData.keys ? subData.keys.auth : null,
+      platform: 'web',
+      created_at: new Date().toISOString(),
+      notification_prefs: getNotificationPrefs()
+    }, { onConflict: 'user_id,platform' }).catch(function(err) {
+      console.warn('Push sub save error:', err);
+    });
+  }
+
+  function getNotificationPrefs() {
+    return {
+      morning_protocol: { enabled: true, time: '07:00' },
+      streak_protection: { enabled: true, time: '20:00' },
+      workout_reminder: { enabled: true },
+      macro_reminder: { enabled: true, time: '12:00' },
+      unfinished_day: { enabled: true, time: '21:00' },
+      weekly_recap: { enabled: true, day: 'sunday', time: '10:00' }
+    };
+  }
+
+  // ── Schedule local notifications (fallback when server push isn't available) ──
+  function scheduleLocalNotifications() {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+    // Clear existing scheduled checks
+    if (window._notifInterval) clearInterval(window._notifInterval);
+
+    // Check every minute if a notification should fire
+    window._notifInterval = setInterval(checkScheduledNotifications, 60000);
+    // Also check immediately
+    setTimeout(checkScheduledNotifications, 5000);
+  }
+
+  function checkScheduledNotifications() {
+    var now = new Date();
+    var hh = String(now.getHours()).padStart(2, '0');
+    var mm = String(now.getMinutes()).padStart(2, '0');
+    var time = hh + ':' + mm;
+    var dayName = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'][now.getDay()];
+    var todayKey = now.toISOString().slice(0, 10);
+
+    // Dedupe: track what we've sent today
+    var sent = {};
+    try { sent = JSON.parse(localStorage.getItem('wylde_notif_sent_' + todayKey) || '{}'); } catch(e) {}
+
+    var prefs = getNotificationPrefs();
+
+    // 1. Morning Protocol reminder (7:00 AM)
+    if (prefs.morning_protocol.enabled && time === prefs.morning_protocol.time && !sent.morning) {
+      var mpData = (typeof mpLoad === 'function') ? mpLoad() : null;
+      if (mpData && mpData.actions && mpData.actions.length > 0) {
+        var td = (mpData.completedDays || {})[todayKey] || {};
+        var allDone = mpData.actions.every(function(a) { return td[a.id]; });
+        if (!allDone) {
+          fireLocalNotif('Your Protocol Awaits', 'Start your morning with intention. ' + mpData.actions.length + ' actions to ground your day.', 'morning');
+          sent.morning = true;
+        }
+      }
+    }
+
+    // 2. Macro / nutrition reminder (12:00 PM)
+    if (prefs.macro_reminder.enabled && time === prefs.macro_reminder.time && !sent.macro) {
+      var flt = (typeof foodLogTotals !== 'undefined') ? foodLogTotals : null;
+      if (!flt || flt.cal < 100) {
+        fireLocalNotif('Log Your Fuel', "You haven't logged any meals today. Stay on track with your plan.", 'macro');
+        sent.macro = true;
+      }
+    }
+
+    // 3. Streak protection (8:00 PM)
+    if (prefs.streak_protection.enabled && time === prefs.streak_protection.time && !sent.streak) {
+      var lastCompleted = localStorage.getItem('wylde_last_completed_day');
+      if (lastCompleted !== todayKey) {
+        var streak = parseInt(localStorage.getItem('wylde_streak') || '0');
+        var msg = streak > 0
+          ? "You're on a " + streak + "-day streak. Don't let it slip."
+          : "You haven't completed today yet. Show up.";
+        fireLocalNotif("Don't Break Your Streak", msg, 'streak');
+        sent.streak = true;
+      }
+    }
+
+    // 4. Unfinished day nudge (9:00 PM)
+    if (prefs.unfinished_day.enabled && time === prefs.unfinished_day.time && !sent.unfinished) {
+      var lastCompleted2 = localStorage.getItem('wylde_last_completed_day');
+      if (lastCompleted2 !== todayKey) {
+        fireLocalNotif('Day Incomplete', 'Your workout, protocol, or nutrition still needs attention. Finish what you started.', 'unfinished');
+        sent.unfinished = true;
+      }
+    }
+
+    // 5. Workout reminder — check if today is a training day
+    if (prefs.workout_reminder.enabled && time === '09:00' && !sent.workout) {
+      var _st = (typeof state !== 'undefined') ? state : {};
+      var daysStr = _st.days || '';
+      var numDays = parseInt(daysStr) || 0;
+      if (numDays > 0) {
+        // Simple: notify on weekdays up to numDays per week (Mon-Fri bias)
+        var weekday = now.getDay(); // 0=Sun
+        if (weekday >= 1 && weekday <= Math.min(numDays, 5)) {
+          fireLocalNotif("Today's a Training Day", 'Your program is ready. Time to build the version of you that doesn\'t quit.', 'workout');
+          sent.workout = true;
+        }
+      }
+    }
+
+    // 6. Weekly recap (Sunday 10:00 AM)
+    if (prefs.weekly_recap.enabled && dayName === 'sunday' && time === prefs.weekly_recap.time && !sent.recap) {
+      var totalSessions = parseInt(localStorage.getItem('wylde_sessions') || '0');
+      var streak2 = parseInt(localStorage.getItem('wylde_streak') || '0');
+      var xp = parseInt(localStorage.getItem('wylde_xp') || '0');
+      fireLocalNotif('Your Week in Review', 'Sessions: ' + totalSessions + ' | Streak: ' + streak2 + ' days | ' + xp + ' XP earned. Keep building.', 'recap');
+      sent.recap = true;
+    }
+
+    try { localStorage.setItem('wylde_notif_sent_' + todayKey, JSON.stringify(sent)); } catch(e) {}
+  }
+
+  function fireLocalNotif(title, body, tag) {
+    if (window._swReg) {
+      window._swReg.showNotification(title, {
+        body: body,
+        icon: '/Wyldeselflogo2.png',
+        badge: '/Wyldeselflogo2.png',
+        tag: 'wylde-' + tag,
+        renotify: true,
+        data: { url: '/' }
+      });
+    } else if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, { body: body, icon: '/Wyldeselflogo2.png', tag: 'wylde-' + tag });
+    }
+  }
+
+  // ── Permission Prompt UI ──
+  window.showPushPrompt = function() {
+    if (Notification.permission === 'granted') return; // Already enabled
+    if (Notification.permission === 'denied') return; // Browser blocked
+
+    var overlay = document.createElement('div');
+    overlay.id = 'pushPromptOverlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.6);display:flex;align-items:flex-end;justify-content:center;padding:0 16px 32px;animation:fadeIn 0.3s ease;';
+    overlay.innerHTML = '<div style="background:var(--card,#fff);border-radius:20px;padding:28px 24px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2);">' +
+      '<div style="font-size:32px;margin-bottom:12px;">🔔</div>' +
+      '<h3 style="font-size:18px;font-weight:700;color:var(--text,#1A1A1A);margin:0 0 8px;">Stay Accountable</h3>' +
+      '<p style="font-size:14px;color:var(--text2,#888);margin:0 0 24px;line-height:1.5;">Get reminders for your Morning Protocol, streak protection, workout days, and weekly recaps. No spam — just accountability.</p>' +
+      '<button onclick="acceptPushPrompt()" style="width:100%;padding:14px;border:none;border-radius:12px;background:var(--sage,#7A9A6E);color:#fff;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;">Enable Notifications</button>' +
+      '<button onclick="dismissPushPrompt()" style="width:100%;padding:10px;border:none;background:none;color:var(--text2,#888);font-size:13px;cursor:pointer;">Not now</button>' +
+      '</div>';
+    document.body.appendChild(overlay);
+  };
+
+  window.acceptPushPrompt = function() {
+    dismissPushPrompt();
+    requestPushPermission().then(function(ok) {
+      if (ok) localStorage.setItem('wylde_push_enabled', '1');
+    });
+  };
+
+  window.dismissPushPrompt = function() {
+    var el = document.getElementById('pushPromptOverlay');
+    if (el) el.remove();
+    localStorage.setItem('wylde_push_prompted', '1');
+  };
+
+  // ── Auto-prompt after first day complete or after 2nd app open ──
+  window.maybePromptPush = function() {
+    if (!('Notification' in window) || !('PushManager' in window)) return;
+    if (Notification.permission !== 'default') return; // Already granted or denied
+    if (localStorage.getItem('wylde_push_prompted')) return; // Already asked
+    showPushPrompt();
+  };
+
+  // ── Utility ──
+  function urlBase64ToUint8Array(base64String) {
+    var padding = '='.repeat((4 - base64String.length % 4) % 4);
+    var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    var rawData = window.atob(base64);
+    var outputArray = new Uint8Array(rawData.length);
+    for (var i = 0; i < rawData.length; i++) outputArray[i] = rawData.charCodeAt(i);
+    return outputArray;
+  }
+
+  // ── Boot ──
+  initPush();
+
+  // Prompt push after 2nd visit or after day completion
+  var visits = parseInt(localStorage.getItem('wylde_visits') || '0') + 1;
+  localStorage.setItem('wylde_visits', visits);
+  if (visits >= 2) setTimeout(maybePromptPush, 3000);
+
+  // Also schedule if already granted
+  if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+    setTimeout(scheduleLocalNotifications, 2000);
+  }
 })();
 </script>
 
