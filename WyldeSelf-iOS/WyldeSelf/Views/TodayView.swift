@@ -377,6 +377,4 @@ struct TodayView: View {
     }
 }
 
-extension Notification.Name {
-    static let navigateToScreen = Notification.Name("navigateToScreen")
-}
+// Note: `Notification.Name.navigateToScreen` is declared in AppDelegate.swift
