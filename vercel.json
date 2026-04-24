@@ -10,7 +10,12 @@
       "maxDuration": 30
     },
     "api/exercise-demo.js": {
-      "maxDuration": 10
+      "maxDuration": 10,
+      "includeFiles": "data/exercises.json"
+    },
+    "api/exercises.js": {
+      "maxDuration": 10,
+      "includeFiles": "data/exercises.json"
     }
   },
   "crons": [

@@ -501,6 +501,10 @@
     .ex-demo-wrap img { width: 100%; max-width: 320px; height: auto; display: block; mix-blend-mode: normal; }
     .ex-demo-wrap .ex-demo-loading { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; }
     .ex-demo-wrap .ex-demo-loading::after { content: ''; width: 28px; height: 28px; border: 2px solid rgba(200,169,110,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    /* Multi-frame demo animation (start/end position cycle) */
+    .ex-demo-anim { min-height: 200px; }
+    .ex-demo-anim .ex-demo-frame { position: absolute; top: 0; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.18s ease-in-out; }
+    .ex-demo-anim .ex-demo-frame.active { opacity: 1; position: relative; left: auto; transform: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .ex-muscle-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 20px; }
     .ex-muscle-tag { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; background: rgba(122,154,110,0.1); color: var(--sage); border: 1px solid rgba(122,154,110,0.15); }
@@ -5528,8 +5532,37 @@
       .catch(function() { return null; });
   }
 
+  // Animate between frames (start + end position) to mimic a GIF when source is local JPGs
+  function buildExerciseDemoHTML(data) {
+    var frames = (data.images && data.images.length) ? data.images : (data.gifUrl ? [data.gifUrl] : []);
+    if (!frames.length) return '';
+    if (frames.length === 1) {
+      return '<div class="ex-demo-wrap"><img src="' + esc(frames[0]) + '" alt="' + esc(data.name || 'exercise') + ' demo" loading="eager" /></div>';
+    }
+    var imgs = frames.map(function(src, i) {
+      return '<img class="ex-demo-frame' + (i === 0 ? ' active' : '') + '" data-i="' + i + '" src="' + esc(src) + '" alt="" loading="eager" />';
+    }).join('');
+    return '<div class="ex-demo-wrap ex-demo-anim" data-frames="' + frames.length + '">' + imgs + '</div>';
+  }
+
+  function startDemoAnimations(root) {
+    var wraps = (root || document).querySelectorAll('.ex-demo-anim');
+    wraps.forEach(function(wrap) {
+      var frames = wrap.querySelectorAll('.ex-demo-frame');
+      if (frames.length < 2) return;
+      var idx = 0;
+      // 700ms per frame -> ~1.4s per cycle, comfortable pace
+      var timer = setInterval(function() {
+        if (!document.body.contains(wrap)) { clearInterval(timer); return; }
+        frames[idx].classList.remove('active');
+        idx = (idx + 1) % frames.length;
+        frames[idx].classList.add('active');
+      }, 700);
+    });
+  }
+
   function renderDemoGif(container, data) {
-    if (!data || !data.gifUrl) {
+    if (!data || (!data.gifUrl && !(data.images && data.images.length))) {
       container.innerHTML = '<div style="padding:30px 0;text-align:center;color:var(--muted);font-size:12px;">Demo not available for this exercise</div>';
       return;
     }
@@ -5540,9 +5573,10 @@
       });
     }
     container.innerHTML =
-      '<div class="ex-demo-wrap"><img src="' + esc(data.gifUrl) + '" alt="' + esc(data.name) + ' demo" loading="eager" /></div>' +
+      buildExerciseDemoHTML(data) +
       '<div class="ex-muscle-tags">' + tagsHTML + '</div>' +
       (data.equipment ? '<p class="ex-equip-tag">' + esc(data.equipment) + '</p>' : '');
+    startDemoAnimations(container);
   }
 
   function showFormGuide(exerciseName) {
@@ -5587,15 +5621,15 @@
 
       // Build demo section
       var demoHTML = '';
-      if (demo && demo.gifUrl) {
-        var tagsHTML = '<span class="ex-muscle-tag primary">' + esc(demo.target) + '</span>';
+      if (demo && (demo.gifUrl || (demo.images && demo.images.length))) {
+        var tagsHTML = '<span class="ex-muscle-tag primary">' + esc(demo.target || '') + '</span>';
         if (demo.secondaryMuscles) {
           demo.secondaryMuscles.forEach(function(m) {
             tagsHTML += '<span class="ex-muscle-tag">' + esc(m) + '</span>';
           });
         }
         demoHTML =
-          '<div class="ex-demo-wrap"><img src="' + esc(demo.gifUrl) + '" alt="' + esc(demo.name || exerciseName) + ' demo" loading="eager" /></div>' +
+          buildExerciseDemoHTML({ name: demo.name || exerciseName, gifUrl: demo.gifUrl, images: demo.images }) +
           '<div class="ex-muscle-tags">' + tagsHTML + '</div>' +
           (demo.equipment ? '<p class="ex-equip-tag">' + esc(demo.equipment) + '</p>' : '');
       }
@@ -5624,6 +5658,7 @@
       }
 
       body.innerHTML = demoHTML + guideHTML;
+      startDemoAnimations(body);
     });
   }
 
