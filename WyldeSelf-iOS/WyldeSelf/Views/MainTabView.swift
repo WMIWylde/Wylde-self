@@ -5,20 +5,16 @@ struct MainTabView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            // Screen content
-            Group {
-                switch appState.selectedTab {
-                case .today:
-                    TodayView()
-                case .exercises:
-                    ExercisesView()
-                case .future:
-                    WebViewScreen(path: "#future")
-                case .coach:
-                    WebViewScreen(path: "#coach")
-                case .optimize:
-                    WebViewScreen(path: "#optimize")
-                }
+            // All 5 tab views stay mounted simultaneously. We toggle which
+            // one is visible/interactive so WKWebViews don't reload, local
+            // @State doesn't reset, and scroll positions are preserved when
+            // the user switches tabs.
+            ZStack {
+                tabContent(.today) { TodayView() }
+                tabContent(.exercises) { ExercisesView() }
+                tabContent(.future) { WebViewScreen(path: "#future") }
+                tabContent(.coach) { WebViewScreen(path: "#coach") }
+                tabContent(.optimize) { WebViewScreen(path: "#optimize") }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
@@ -27,6 +23,19 @@ struct MainTabView: View {
         }
         .background(Theme.background)
         .ignoresSafeArea(.keyboard)
+    }
+
+    /// Wraps a tab view so it stays in the hierarchy even when not selected.
+    /// Hidden tabs are made fully transparent and ignore touches, but the
+    /// view (and any WKWebView it contains) is preserved in memory.
+    @ViewBuilder
+    private func tabContent<Content: View>(_ tab: AppState.Tab, @ViewBuilder content: () -> Content) -> some View {
+        let isActive = appState.selectedTab == tab
+        content()
+            .opacity(isActive ? 1 : 0)
+            .allowsHitTesting(isActive)
+            // Don't expose hidden tabs to VoiceOver
+            .accessibilityHidden(!isActive)
     }
 }
 
