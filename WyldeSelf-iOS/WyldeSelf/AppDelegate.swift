@@ -11,8 +11,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         NotificationManager.shared.requestPermission()
         UNUserNotificationCenter.current().delegate = self
 
-        // Initialize HealthKit
-        HealthKitManager.shared.requestAuthorization()
+        // Initialize HealthKit (async — fire and forget)
+        Task {
+            _ = await HealthKitManager.shared.requestAuthorization()
+        }
 
         return true
     }

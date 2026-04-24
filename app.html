@@ -1695,6 +1695,33 @@
     50%  { transform: scale(1.1); opacity: 0.8; filter: drop-shadow(0 0 40px rgba(200,169,110,0.5)); }
     100% { transform: scale(1.3); opacity: 0; filter: blur(8px) drop-shadow(0 0 60px rgba(200,169,110,0.3)); }
   }
+
+  /* ─── PANTRY ─── */
+  .pantry-cat { border: 1px solid rgba(0,0,0,0.06); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: var(--surface); }
+  .pantry-cat-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; cursor: pointer; user-select: none; }
+  .pantry-cat-head:hover { background: rgba(0,0,0,0.02); }
+  .pantry-cat-title { display: flex; align-items: center; gap: 10px; }
+  .pantry-cat-icon { font-size: 16px; }
+  .pantry-cat-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .pantry-cat-count { font-size: 11px; color: var(--muted); margin-left: 4px; }
+  .pantry-cat-count.has-items { color: var(--sage); font-weight: 600; }
+  .pantry-cat-arrow { font-size: 12px; color: var(--muted); transition: transform 0.2s; }
+  .pantry-cat-arrow.open { transform: rotate(90deg); }
+  .pantry-cat-body { display: none; padding: 4px 14px 14px; border-top: 1px solid rgba(0,0,0,0.04); }
+  .pantry-cat-body.open { display: block; }
+  .pantry-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 10px; }
+  .pantry-chip { font-size: 12px; padding: 6px 12px; border-radius: 18px; border: 1px solid rgba(0,0,0,0.1); background: var(--surface); color: var(--text3); cursor: pointer; transition: all 0.15s; user-select: none; }
+  .pantry-chip:hover { border-color: var(--sage); }
+  .pantry-chip.active { background: var(--sage); color: white; border-color: var(--sage); }
+  .pantry-chip.custom { background: rgba(200,169,110,0.12); color: var(--gold); border-color: rgba(200,169,110,0.3); padding-right: 6px; display: inline-flex; align-items: center; gap: 4px; }
+  .pantry-chip.custom .chip-x { font-size: 14px; opacity: 0.6; padding: 0 4px; line-height: 1; }
+  .pantry-chip.custom:hover .chip-x { opacity: 1; }
+  .pantry-add-row { display: flex; gap: 6px; margin-top: 6px; }
+  .pantry-add-input { flex: 1; font-size: 12px; padding: 8px 10px; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; background: var(--surface); color: var(--text); outline: none; }
+  .pantry-add-input:focus { border-color: var(--sage); }
+  .pantry-add-btn { font-size: 12px; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--sage); background: transparent; color: var(--sage); cursor: pointer; font-weight: 600; }
+  .pantry-add-btn:hover { background: var(--sage); color: white; }
+  .pantry-summary { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(122,154,110,0.08); border-radius: 10px; margin-top: 8px; font-size: 11px; color: var(--sage); }
 </style>
 
 <!-- ═══ MORNING PROTOCOL SETUP OVERLAY (post-onboarding) ═══ -->
@@ -3863,6 +3890,7 @@
     document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
     if (id === 'nutrition' && state.weight) { calculateMacros(); loadSavedMealPlan(); }
+    if (id === 'nutrition') { renderPantry(); }
     if (id === 'overview') { updateOverview(); mpInit(); }
     if (id === 'future') { updateFsSilhouette(); }
     if (id === 'program') { autoLoadProgram(); }
@@ -5869,6 +5897,176 @@
     state.macros = { calories, protein, carbs, fat, water };
   }
 
+  // ─── PANTRY ───
+  // Persistent record of what proteins / carbs / veg / fats / snacks the user has on hand.
+  // Used to scope the AI meal plan to ingredients they actually have.
+  var PANTRY_KEY = 'wylde_pantry_v1';
+  var PANTRY_CATEGORIES = [
+    { key:'proteins',   label:'Proteins',   icon:'🥩', defaults:[
+      'Chicken breast','Chicken thighs','Ground beef','Steak','Ground turkey',
+      'Salmon','Tuna','Shrimp','Eggs','Greek yogurt',
+      'Cottage cheese','Tofu','Tempeh','Black beans','Lentils','Whey protein'
+    ]},
+    { key:'carbs',      label:'Carbs',      icon:'🍚', defaults:[
+      'White rice','Brown rice','Pasta','Sweet potato','Potato',
+      'Oats','Quinoa','Bread','Tortillas','Bagels','Couscous'
+    ]},
+    { key:'vegetables', label:'Vegetables', icon:'🥦', defaults:[
+      'Broccoli','Spinach','Kale','Bell peppers','Onion','Garlic',
+      'Tomatoes','Cucumber','Carrots','Zucchini','Asparagus','Mushrooms','Avocado'
+    ]},
+    { key:'fats',       label:'Fats',       icon:'🫒', defaults:[
+      'Olive oil','Butter','Coconut oil','Almonds','Peanut butter',
+      'Almond butter','Cheese','Cream cheese','Hummus'
+    ]},
+    { key:'snacks',     label:'Snacks',     icon:'🍓', defaults:[
+      'Berries','Banana','Apple','Granola bar','Protein bar',
+      'Dark chocolate','Trail mix','Beef jerky','Rice cakes'
+    ]}
+  ];
+
+  function emptyPantry() {
+    return { proteins:[], carbs:[], vegetables:[], fats:[], snacks:[], custom:{ proteins:[], carbs:[], vegetables:[], fats:[], snacks:[] } };
+  }
+  function loadPantry() {
+    try {
+      var p = JSON.parse(localStorage.getItem(PANTRY_KEY) || 'null');
+      if (!p) return emptyPantry();
+      // Backfill any missing keys (forward-compat)
+      var fresh = emptyPantry();
+      Object.keys(fresh).forEach(function(k){ if (k === 'custom') return; if (!Array.isArray(p[k])) p[k] = []; });
+      if (!p.custom) p.custom = {};
+      Object.keys(fresh.custom).forEach(function(k){ if (!Array.isArray(p.custom[k])) p.custom[k] = []; });
+      return p;
+    } catch(e) { return emptyPantry(); }
+  }
+  function savePantry(p) {
+    try { localStorage.setItem(PANTRY_KEY, JSON.stringify(p)); } catch(e){}
+  }
+  function pantryHasAny(p) {
+    return PANTRY_CATEGORIES.some(function(c){ return (p[c.key] || []).length > 0; });
+  }
+  function pantryTotal(p) {
+    return PANTRY_CATEGORIES.reduce(function(n, c){ return n + (p[c.key] || []).length; }, 0);
+  }
+
+  function renderPantry() {
+    var container = document.getElementById('pantryContainer');
+    if (!container) return;
+    var pantry = loadPantry();
+
+    container.innerHTML = PANTRY_CATEGORIES.map(function(cat) {
+      var selected = pantry[cat.key] || [];
+      var customs = (pantry.custom && pantry.custom[cat.key]) || [];
+      var allChips = cat.defaults.concat(customs.filter(function(c){ return cat.defaults.indexOf(c) === -1; }));
+      var open = selected.length > 0;
+
+      var chipsHTML = allChips.map(function(item) {
+        var isActive = selected.indexOf(item) !== -1;
+        var isCustom = customs.indexOf(item) !== -1;
+        if (isCustom && isActive) {
+          return '<span class="pantry-chip custom active" onclick="togglePantryItem(\''+cat.key+'\',\''+esc(item).replace(/\'/g,"\\'")+'\')">'+esc(item)+
+                 '<span class="chip-x" onclick="event.stopPropagation();removePantryCustom(\''+cat.key+'\',\''+esc(item).replace(/\'/g,"\\'")+'\')">×</span></span>';
+        }
+        return '<span class="pantry-chip'+(isActive?' active':'')+'" onclick="togglePantryItem(\''+cat.key+'\',\''+esc(item).replace(/\'/g,"\\'")+'\')">'+esc(item)+'</span>';
+      }).join('');
+
+      return '<div class="pantry-cat">' +
+        '<div class="pantry-cat-head" onclick="togglePantryCat(\''+cat.key+'\')">' +
+          '<div class="pantry-cat-title">' +
+            '<span class="pantry-cat-icon">'+cat.icon+'</span>' +
+            '<span class="pantry-cat-name">'+cat.label+'</span>' +
+            '<span class="pantry-cat-count'+(selected.length?' has-items':'')+'" id="pantryCount-'+cat.key+'">'+(selected.length?selected.length+' selected':'tap to add')+'</span>' +
+          '</div>' +
+          '<span class="pantry-cat-arrow'+(open?' open':'')+'" id="pantryArrow-'+cat.key+'">›</span>' +
+        '</div>' +
+        '<div class="pantry-cat-body'+(open?' open':'')+'" id="pantryBody-'+cat.key+'">' +
+          '<div class="pantry-chips">'+chipsHTML+'</div>' +
+          '<div class="pantry-add-row">' +
+            '<input class="pantry-add-input" id="pantryAdd-'+cat.key+'" placeholder="Add custom..." onkeydown="if(event.key===\'Enter\')addPantryCustom(\''+cat.key+'\')" />' +
+            '<button class="pantry-add-btn" onclick="addPantryCustom(\''+cat.key+'\')">Add</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    updatePantrySummary();
+  }
+
+  function updatePantrySummary() {
+    var pantry = loadPantry();
+    var summary = document.getElementById('pantrySummary');
+    var text = document.getElementById('pantrySummaryText');
+    if (!summary || !text) return;
+    var total = pantryTotal(pantry);
+    if (total === 0) { summary.style.display = 'none'; return; }
+    summary.style.display = 'flex';
+    text.innerHTML = '<strong>' + total + '</strong> ingredient' + (total === 1 ? '' : 's') +
+      ' in your pantry. Generate a meal plan and the AI will build around what you have.';
+  }
+
+  window.togglePantryCat = function(key) {
+    var body  = document.getElementById('pantryBody-'+key);
+    var arrow = document.getElementById('pantryArrow-'+key);
+    if (!body || !arrow) return;
+    var willOpen = !body.classList.contains('open');
+    body.classList.toggle('open', willOpen);
+    arrow.classList.toggle('open', willOpen);
+  };
+
+  window.togglePantryItem = function(key, item) {
+    var pantry = loadPantry();
+    if (!pantry[key]) pantry[key] = [];
+    var idx = pantry[key].indexOf(item);
+    if (idx === -1) pantry[key].push(item);
+    else pantry[key].splice(idx, 1);
+    savePantry(pantry);
+    renderPantry();
+    // keep this category open after a toggle
+    var body  = document.getElementById('pantryBody-'+key);
+    var arrow = document.getElementById('pantryArrow-'+key);
+    if (body)  body.classList.add('open');
+    if (arrow) arrow.classList.add('open');
+  };
+
+  window.addPantryCustom = function(key) {
+    var input = document.getElementById('pantryAdd-'+key);
+    if (!input) return;
+    var val = (input.value || '').trim();
+    if (!val) return;
+    if (val.length > 40) val = val.substring(0, 40);
+    var pantry = loadPantry();
+    if (!pantry.custom) pantry.custom = {};
+    if (!pantry.custom[key]) pantry.custom[key] = [];
+    if (!pantry[key]) pantry[key] = [];
+    // Add to customs (if new) and select it
+    if (pantry.custom[key].indexOf(val) === -1 && PANTRY_CATEGORIES.find(function(c){return c.key===key;}).defaults.indexOf(val) === -1) {
+      pantry.custom[key].push(val);
+    }
+    if (pantry[key].indexOf(val) === -1) pantry[key].push(val);
+    savePantry(pantry);
+    input.value = '';
+    renderPantry();
+    var body  = document.getElementById('pantryBody-'+key);
+    var arrow = document.getElementById('pantryArrow-'+key);
+    if (body)  body.classList.add('open');
+    if (arrow) arrow.classList.add('open');
+  };
+
+  window.removePantryCustom = function(key, item) {
+    var pantry = loadPantry();
+    if (pantry.custom && pantry.custom[key]) {
+      var ci = pantry.custom[key].indexOf(item);
+      if (ci !== -1) pantry.custom[key].splice(ci, 1);
+    }
+    if (pantry[key]) {
+      var i = pantry[key].indexOf(item);
+      if (i !== -1) pantry[key].splice(i, 1);
+    }
+    savePantry(pantry);
+    renderPantry();
+  };
+
   function generateMealPlan() {
     if (!state.macros) calculateMacros();
     var btn = document.getElementById('generateMealBtn');
@@ -5877,14 +6075,37 @@
     var output = document.getElementById('mealPlanOutput');
     output.innerHTML = '<div style="padding:24px 0;text-align:center;"><p style="font-size:14px;color:var(--muted);">Your AI nutritionist is building your plan...</p></div>';
 
-    var dietStr = (state.diet && state.diet.length > 0) ? state.diet.join(', ') : 'no restrictions';
+    // Defensive guards — old localStorage profiles may not have these arrays
+    var safeArr = function(a){ return (Array.isArray(a) && a.length) ? a : []; };
+    var dietList   = safeArr(state.diet);
+    var healthList = safeArr(state.health);
+    var goalList   = safeArr(state.goals).length ? safeArr(state.goals) : (state.goal ? [state.goal] : []);
+
+    var dietStr   = dietList.length   ? dietList.join(', ')   : 'no restrictions';
+    var healthStr = healthList.length ? healthList.join(', ') : 'none';
+    var goalStr   = goalList.length   ? goalList.join(', ')   : 'general fitness';
+
+    // Pantry — what proteins/carbs/veg/fats/snacks the user has on hand
+    var pantry = loadPantry();
+    var pantrySection = '';
+    if (pantryHasAny(pantry)) {
+      pantrySection = '\n── PANTRY (BUILD MEALS FROM THESE) ──\n' +
+        (pantry.proteins.length   ? 'Proteins: '   + pantry.proteins.join(', ')   + '\n' : '') +
+        (pantry.carbs.length      ? 'Carbs: '      + pantry.carbs.join(', ')      + '\n' : '') +
+        (pantry.vegetables.length ? 'Vegetables: ' + pantry.vegetables.join(', ') + '\n' : '') +
+        (pantry.fats.length       ? 'Fats: '       + pantry.fats.join(', ')       + '\n' : '') +
+        (pantry.snacks.length     ? 'Snacks: '     + pantry.snacks.join(', ')     + '\n' : '') +
+        '\nUse these as the BACKBONE of every meal. Common spices, salt, pepper, lemon, vinegar, and small amounts of cooking oil are OK to add. Avoid introducing major ingredients (other proteins, grains, or vegetables) that are not in this pantry. If a meal needs a small extra ingredient (e.g. soy sauce), add it sparingly.\n';
+    }
+
     var cals = state.macros.calories, prot = state.macros.protein, carb = state.macros.carbs, fats = state.macros.fat;
     var prompt = 'You are an expert sports nutritionist who builds precise meal plans. Create a 5-day meal plan.\n\n' +
       '── CLIENT ──\n' +
-      'Goal: ' + (state.goals ? state.goals.join(', ') : state.goal) + '\n' +
+      'Goal: ' + goalStr + '\n' +
       'Diet: ' + dietStr + '\n' +
-      'Health concerns: ' + (state.health.join(', ') || 'none') + '\n\n' +
-      '── EXACT DAILY TARGETS ──\n' +
+      'Health concerns: ' + healthStr + '\n' +
+      pantrySection +
+      '\n── EXACT DAILY TARGETS ──\n' +
       'Calories: ' + cals + ' cal\n' +
       'Protein: ' + prot + 'g\n' +
       'Carbs: ' + carb + 'g\n' +
@@ -5905,19 +6126,29 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 6000,
+        max_tokens: 8000,
         messages: [{ role: 'user', content: prompt }]
       })
     })
-    .then(function(res) { return res.json(); })
+    .then(function(res) {
+      if (!res.ok) {
+        return res.text().then(function(t) { throw new Error('API ' + res.status + ': ' + t.substring(0, 200)); });
+      }
+      return res.json();
+    })
     .then(function(data) {
+      if (data.error) throw new Error('API error: ' + (data.error.message || JSON.stringify(data.error)));
       var text = data.content && data.content[0] && data.content[0].text;
-      if (!text) throw new Error('No response');
+      if (!text) throw new Error('Empty response from AI');
       text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
       var start = text.indexOf('[');
       var end = text.lastIndexOf(']');
-      if (start !== -1 && end !== -1) text = text.substring(start, end + 1);
-      var plan = JSON.parse(text);
+      if (start === -1 || end === -1) throw new Error('No JSON array in response');
+      text = text.substring(start, end + 1);
+      var plan;
+      try { plan = JSON.parse(text); }
+      catch (e) { throw new Error('Plan was malformed JSON (Claude may have been cut off). Try again.'); }
+      if (!Array.isArray(plan) || plan.length === 0) throw new Error('Plan was empty');
       localStorage.setItem('wylde_meal_plan', JSON.stringify(plan));
       renderMealPlan(plan);
       btn.textContent = 'Regenerate';
@@ -5925,7 +6156,10 @@
     })
     .catch(function(err) {
       console.error('Meal plan error:', err);
-      output.innerHTML = '<div style="padding:24px;text-align:center;"><p style="color:var(--muted);font-size:13px;">Could not generate meal plan. Try again.</p></div>';
+      var msg = err && err.message ? err.message : 'Unknown error';
+      output.innerHTML = '<div style="padding:18px;text-align:center;background:rgba(220,80,80,0.06);border:1px solid rgba(220,80,80,0.2);border-radius:10px;">' +
+        '<p style="color:#c14545;font-size:13px;margin:0 0 6px;font-weight:600;">Couldn\'t build your meal plan</p>' +
+        '<p style="color:var(--muted);font-size:12px;margin:0;">' + esc(msg) + '</p></div>';
       btn.textContent = 'Try Again';
       btn.disabled = false;
     });
@@ -6463,12 +6697,26 @@
     <!-- Hidden totals element for backward compat -->
     <div id="foodLogTotals" style="display:none;"></div>
 
+    <!-- MY PANTRY -->
+    <div style="background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:16px;padding:20px;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div>
+          <p style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--sage);margin:0;">My Pantry</p>
+          <p style="font-size:13px;color:var(--muted);margin:4px 0 0;">Tap what you have on hand. The AI will build meals around it.</p>
+        </div>
+      </div>
+      <div id="pantryContainer" style="margin-top:14px;"></div>
+      <div id="pantrySummary" class="pantry-summary" style="display:none;">
+        <span id="pantrySummaryText"></span>
+      </div>
+    </div>
+
     <!-- AI MEAL PLAN -->
     <div style="background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:16px;padding:20px;margin-bottom:20px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
         <div>
           <p style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--sage);margin:0;">AI Meal Plan</p>
-          <p style="font-size:13px;color:var(--muted);margin:4px 0 0;">Meals with recipes, built around your macros.</p>
+          <p style="font-size:13px;color:var(--muted);margin:4px 0 0;">Meals with recipes, built around your macros and pantry.</p>
         </div>
         <button class="ov-btn" id="generateMealBtn" onclick="generateMealPlan()" style="font-size:12px;padding:10px 16px;white-space:nowrap;border-radius:10px;">Generate</button>
       </div>
