@@ -3583,6 +3583,234 @@
     });
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  // USER CONTEXT — single source of truth for "what does the system
+  // know about this user" that every AI call should reference.
+  // Aggregates from Supabase (workouts, PRs, profile) + localStorage
+  // (food logs, check-ins, meal plans) so the AI can adapt instead
+  // of generating from scratch every time.
+  // ═══════════════════════════════════════════════════════════════
+  var _userContextCache = null;
+  var _userContextCacheTime = 0;
+
+  async function getUserContext(forceRefresh) {
+    // 60-second cache so a single screen-load doesn't hammer Supabase
+    if (!forceRefresh && _userContextCache && (Date.now() - _userContextCacheTime < 60000)) {
+      return _userContextCache;
+    }
+
+    var s = (typeof state === 'object' && state) ? state : {};
+    var ctx = {
+      profile: {
+        name: s.name || '',
+        gender: s.gender || '',
+        age: s.age || null,
+        weight: s.weight ? (s.weight + (s.weightUnit || 'lbs')) : '',
+        goal: s.goal || '',
+        level: s.level || 'Ember',
+        days: s.days || '',
+        streak: s.streak || 0,
+        sessions: s.sessions || 0,
+        diet: Array.isArray(s.diet) ? s.diet : [],
+        health: Array.isArray(s.health) ? s.health : [],
+        goals: Array.isArray(s.goals) ? s.goals : (s.goal ? [s.goal] : [])
+      },
+      recentSets: [],          // last 25 logged sets
+      personalBests: [],       // top PRs
+      recentCheckIns: [],      // last 14 days of mood/sleep/recovery
+      todayFood: [],           // foods logged today
+      recentFoodNames: [],     // distinct foods logged in last 7 days
+      lastMealPlan: null,      // last AI-generated meal plan
+      pantry: null
+    };
+
+    var sb = (typeof _getSupabase === 'function') ? _getSupabase() : null;
+    if (sb && typeof currentUser !== 'undefined' && currentUser) {
+      var weekAgo = new Date(Date.now() - 14 * 86400000).toISOString();
+      try {
+        var pulls = await Promise.all([
+          sb.from('workout_sets')
+            .select('exercise_name,weight,reps,created_at')
+            .eq('user_id', currentUser.id)
+            .order('created_at', { ascending: false })
+            .limit(40),
+          sb.from('personal_bests')
+            .select('exercise_name,weight,reps,updated_at')
+            .eq('user_id', currentUser.id)
+            .order('weight', { ascending: false })
+            .limit(10),
+          sb.from('weekly_check_ins')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .gte('created_at', weekAgo)
+            .order('created_at', { ascending: false })
+            .limit(14)
+            .then(function(r){ return r; }, function(){ return { data: [] }; }) // tolerate missing table
+        ]);
+        ctx.recentSets = (pulls[0] && pulls[0].data) || [];
+        ctx.personalBests = (pulls[1] && pulls[1].data) || [];
+        ctx.recentCheckIns = (pulls[2] && pulls[2].data) || [];
+      } catch (e) {
+        console.warn('[userContext] Supabase pull failed:', e.message);
+      }
+    }
+
+    // Local fallbacks — these always work, even logged-out
+    var today = new Date().toISOString().slice(0, 10);
+    try { ctx.todayFood = JSON.parse(localStorage.getItem('wylde_food_log_' + today) || '[]'); } catch(_) {}
+    try { ctx.lastMealPlan = JSON.parse(localStorage.getItem('wylde_meal_plan') || 'null'); } catch(_) {}
+    try { ctx.pantry = JSON.parse(localStorage.getItem('wylde_pantry_v1') || 'null'); } catch(_) {}
+
+    // Pull last 7 days of food names from localStorage (any day key wylde_food_log_YYYY-MM-DD)
+    try {
+      var nameSet = {};
+      for (var i = 0; i < 7; i++) {
+        var d = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10);
+        var dayLog = JSON.parse(localStorage.getItem('wylde_food_log_' + d) || '[]');
+        dayLog.forEach(function(f) { if (f && f.name) nameSet[f.name.toLowerCase()] = f.name; });
+      }
+      ctx.recentFoodNames = Object.keys(nameSet).map(function(k){ return nameSet[k]; }).slice(0, 30);
+    } catch(_) {}
+
+    // If Supabase check-ins are empty, fall back to local check-in cache
+    if (!ctx.recentCheckIns.length) {
+      try {
+        var localCk = JSON.parse(localStorage.getItem('wylde_checkins') || '[]');
+        ctx.recentCheckIns = localCk.slice(0, 14);
+      } catch(_) {}
+    }
+
+    _userContextCache = ctx;
+    _userContextCacheTime = Date.now();
+    return ctx;
+  }
+
+  // Format a context object into a compact, prompt-ready text block.
+  // Use this in the `system` field of any /api/anthropic call so the model
+  // can reference the user's actual history rather than guess.
+  function formatContextForPrompt(ctx) {
+    if (!ctx) return '';
+    var lines = ['── WHAT YOU KNOW ABOUT THIS USER (use it; do not generic-coach them) ──'];
+
+    // Profile snapshot
+    var p = ctx.profile;
+    var prof = (p.name || 'Client') + ', ' + (p.gender || 'unspecified');
+    if (p.age) prof += ', age ' + p.age;
+    if (p.weight) prof += ', ' + p.weight;
+    if (p.goal) prof += ' — goal: ' + p.goal;
+    if (p.goals.length > 1) prof += ' (also: ' + p.goals.filter(function(g){return g!==p.goal}).join(', ') + ')';
+    if (p.days) prof += ', training ' + p.days + 'd/wk';
+    prof += ', level: ' + p.level + ', streak: ' + p.streak + ' days, ' + p.sessions + ' sessions completed';
+    lines.push(prof);
+    if (p.diet.length) lines.push('Diet: ' + p.diet.join(', '));
+    if (p.health.length) lines.push('Health concerns: ' + p.health.join(', '));
+
+    // Personal bests — gives Coach actual numbers to reference
+    if (ctx.personalBests.length) {
+      var prs = ctx.personalBests.slice(0, 6).map(function(pr) {
+        return pr.exercise_name + ' ' + pr.weight + 'lbs×' + pr.reps;
+      });
+      lines.push('\nPersonal bests: ' + prs.join('; '));
+    }
+
+    // Recent training — group sets by exercise so it's compact
+    if (ctx.recentSets.length) {
+      var byEx = {};
+      ctx.recentSets.forEach(function(s) {
+        var k = s.exercise_name;
+        if (!byEx[k]) byEx[k] = [];
+        if (byEx[k].length < 5) byEx[k].push(s.weight + 'lbs×' + s.reps);
+      });
+      var exNames = Object.keys(byEx).slice(0, 8);
+      if (exNames.length) {
+        lines.push('\nRecent training:');
+        exNames.forEach(function(name) {
+          lines.push('  • ' + name + ' — ' + byEx[name].join(', '));
+        });
+      }
+    }
+
+    // Recovery / mood / sleep — 14-day average + trend hint
+    if (ctx.recentCheckIns.length) {
+      var avg = function(field) {
+        var vals = ctx.recentCheckIns
+          .map(function(c){ return c[field]; })
+          .filter(function(v){ return typeof v === 'number'; });
+        if (!vals.length) return null;
+        return Math.round(10 * (vals.reduce(function(a,b){return a+b;},0) / vals.length)) / 10;
+      };
+      var e = avg('energy_level'), sl = avg('sleep_quality'), r = avg('recovery_score'), m = avg('mood_score'), pa = avg('pain_level');
+      var parts = [];
+      if (e != null)  parts.push('energy ' + e);
+      if (sl != null) parts.push('sleep ' + sl);
+      if (r != null)  parts.push('recovery ' + r);
+      if (m != null)  parts.push('mood ' + m);
+      if (pa != null && pa > 0) parts.push('pain ' + pa);
+      if (parts.length) lines.push('\n14-day check-in avg (out of 10): ' + parts.join(', '));
+    }
+
+    // Today's eating
+    if (ctx.todayFood.length) {
+      var tot = { cal: 0, p: 0, c: 0, f: 0 };
+      ctx.todayFood.forEach(function(f) {
+        tot.cal += +f.cal || 0; tot.p += +f.protein || 0; tot.c += +f.carbs || 0; tot.f += +f.fat || 0;
+      });
+      lines.push('\nToday so far: ' + Math.round(tot.cal) + 'cal · ' + Math.round(tot.p) + 'gP · ' + Math.round(tot.c) + 'gC · ' + Math.round(tot.f) + 'gF');
+      lines.push('Foods today: ' + ctx.todayFood.map(function(f){return f.name;}).slice(0, 8).join('; '));
+    }
+    if (ctx.recentFoodNames.length) {
+      lines.push('Foods this week: ' + ctx.recentFoodNames.slice(0, 12).join('; '));
+    }
+
+    // Last meal plan — let AI know what we already gave them so it varies
+    if (ctx.lastMealPlan && ctx.lastMealPlan.length) {
+      var titles = [];
+      ctx.lastMealPlan.forEach(function(d) {
+        (d.meals || []).forEach(function(m) { if (m.title || m.name) titles.push(m.title || m.name); });
+      });
+      if (titles.length) lines.push('\nLast meal plan included: ' + titles.slice(0, 8).join('; ') + (titles.length > 8 ? ', ...' : ''));
+    }
+
+    return lines.join('\n');
+  }
+
+  // Save a food log entry to localStorage (and Supabase if available)
+  // so getUserContext can surface it back to AI calls.
+  function persistFoodLog(name, cal, protein, carbs, fat) {
+    var today = new Date().toISOString().slice(0, 10);
+    var key = 'wylde_food_log_' + today;
+    try {
+      var arr = JSON.parse(localStorage.getItem(key) || '[]');
+      arr.push({ name: name, cal: cal, protein: protein, carbs: carbs, fat: fat, time: new Date().toISOString() });
+      localStorage.setItem(key, JSON.stringify(arr));
+    } catch(_) {}
+    // Bust the context cache so next AI call sees the new food
+    _userContextCache = null;
+    // Best-effort Supabase write (table may not exist yet — silent fail)
+    try {
+      var sb = _getSupabase && _getSupabase();
+      if (sb && currentUser) {
+        sb.from('food_logs').insert({
+          user_id: currentUser.id,
+          name: name, calories: cal, protein: protein, carbs: carbs, fat: fat,
+          logged_at: new Date().toISOString()
+        }).then(function(){}, function(){}); // swallow errors
+      }
+    } catch(_) {}
+  }
+
+  // Save a check-in to localStorage so it's available even when no protocol
+  // is active. submitWeeklyLog still writes to Supabase when a protocol exists.
+  function persistCheckInLocal(payload) {
+    try {
+      var arr = JSON.parse(localStorage.getItem('wylde_checkins') || '[]');
+      arr.unshift(Object.assign({ created_at: new Date().toISOString() }, payload));
+      arr = arr.slice(0, 30);
+      localStorage.setItem('wylde_checkins', JSON.stringify(arr));
+      _userContextCache = null;
+    } catch(_) {}
+  }
+
   // ═══ COMMUNITY ═══
   var _activeCommunityTab = 'feed';
   var _feedRealtime = null;
@@ -5980,19 +6208,32 @@
     chatHistory.push({ role: 'user', content: msg });
     if (chatHistory.length > 8) chatHistory = chatHistory.slice(chatHistory.length - 8);
 
-    var profile = state.name
-      ? 'Client: ' + state.name + ', ' + state.gender + ', goal: ' + state.goal + ', level: ' + state.level + ', ' + state.days + '/week, weight: ' + state.weight + state.weightUnit + '.'
-      : 'Client has not set up profile yet.';
+    // Pull the user's actual history (workouts, PRs, mood, food) so the Coach
+    // can reference real numbers instead of giving generic motivation.
+    getUserContext().then(function(ctx) {
+      var contextBlock = formatContextForPrompt(ctx);
+      var systemPrompt =
+        'You are the Wylde Coach — a direct, grounded, world-class personal coach inside the Wylde Self app. ' +
+        'You speak like a trusted mentor who has already been where this person is going. ' +
+        'You are motivating but never cheesy. Keep responses to 2-4 sentences max unless detail is specifically asked for.\n\n' +
+        contextBlock + '\n\n' +
+        'COACHING RULES:\n' +
+        '• When relevant, reference SPECIFIC things from the context above (a recent lift, their streak, a sleep dip, a food they ate). One concrete callback beats a paragraph of generic encouragement.\n' +
+        '• If recovery/sleep/mood is low, prioritize that over pushing harder.\n' +
+        '• If they are progressing on a lift, name the number and tell them the next one to chase.\n' +
+        '• Never invent data not shown above. If you don\'t have the info, say so or ask.\n' +
+        '• Talk to them like you remember everything — because you do.';
 
-    fetch('/api/anthropic', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 300,
-        system: 'You are the Wylde Coach — a direct, grounded, world-class personal coach inside the Wylde Self app. You speak like a trusted mentor who has already been where this person is going. You are motivating but never cheesy. Keep responses to 2-4 sentences max unless detail is specifically asked for. You know this person deeply. ' + profile,
-        messages: chatHistory.slice(0, -1).concat([{ role: 'user', content: msg }])
-      })
+      return fetch('/api/anthropic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 400,
+          system: systemPrompt,
+          messages: chatHistory.slice(0, -1).concat([{ role: 'user', content: msg }])
+        })
+      });
     })
     .then(function(r) { return r.json(); })
     .then(function(data) {
@@ -6355,36 +6596,74 @@
     }
 
     var cals = state.macros.calories, prot = state.macros.protein, carb = state.macros.carbs, fats = state.macros.fat;
-    var prompt = 'You are an expert sports nutritionist who builds precise meal plans. Create a 5-day meal plan.\n\n' +
-      '── CLIENT ──\n' +
-      'Goal: ' + goalStr + '\n' +
-      'Diet: ' + dietStr + '\n' +
-      'Health concerns: ' + healthStr + '\n' +
-      pantrySection +
-      '\n── EXACT DAILY TARGETS ──\n' +
-      'Calories: ' + cals + ' cal\n' +
-      'Protein: ' + prot + 'g\n' +
-      'Carbs: ' + carb + 'g\n' +
-      'Fat: ' + fats + 'g\n\n' +
-      '── CRITICAL RULES ──\n' +
-      '1. Each meal MUST have exact macros (calories, protein, carbs, fat) calculated from the actual ingredients and portions listed\n' +
-      '2. The 4 meals per day MUST add up to the daily targets above (within 5% tolerance)\n' +
-      '3. List specific portions for every ingredient (e.g. "6oz chicken breast" not just "chicken breast", "1 cup cooked rice" not just "rice")\n' +
-      '4. Macros must be realistic for the portions — 6oz chicken breast = ~38g protein, 1 large egg = ~6g protein, etc.\n' +
-      '5. Include breakfast (~25% of cals), lunch (~30%), dinner (~30%), snack (~15%)\n\n' +
-      'For EACH meal include the recipe: ingredients with exact portions, and step-by-step cooking instructions.\n\n' +
-      'Return ONLY a JSON array. Each element:\n' +
-      '{"day":"Monday","meals":[{"name":"Breakfast","title":"Meal Title","foods":"1-line description","calories":number,"protein":number,"carbs":number,"fat":number,"prep":"15 min","ingredients":["6oz chicken breast","1 cup brown rice","1 tbsp olive oil"],"steps":["Step 1","Step 2"]},...]}\n' +
-      'Include breakfast, lunch, dinner, snack. Keep steps concise (3-6). No markdown, no backticks, just the JSON array.';
 
-    fetch('/api/anthropic', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 8000,
-        messages: [{ role: 'user', content: prompt }]
-      })
+    // Pull recent meals + last plan so the new plan VARIES instead of repeating
+    getUserContext().then(function(ctx) {
+      var historyBlock = '';
+      if (ctx.recentFoodNames && ctx.recentFoodNames.length) {
+        historyBlock += '\n── WHAT THIS USER HAS BEEN EATING (vary from these — keep it fresh) ──\n' +
+          ctx.recentFoodNames.slice(0, 15).join(', ') + '\n';
+      }
+      if (ctx.lastMealPlan && ctx.lastMealPlan.length) {
+        var prevTitles = [];
+        ctx.lastMealPlan.forEach(function(d) {
+          (d.meals || []).forEach(function(m) { if (m.title || m.name) prevTitles.push(m.title || m.name); });
+        });
+        if (prevTitles.length) {
+          historyBlock += '\n── LAST PLAN INCLUDED (DO NOT REPEAT THESE EXACT MEALS) ──\n' +
+            prevTitles.slice(0, 12).join('; ') + '\n';
+        }
+      }
+      // Recovery / mood context — adjust portions / complexity if user is fried
+      if (ctx.recentCheckIns && ctx.recentCheckIns.length) {
+        var avg = function(field) {
+          var vals = ctx.recentCheckIns.map(function(c){return c[field];}).filter(function(v){return typeof v === 'number';});
+          if (!vals.length) return null;
+          return vals.reduce(function(a,b){return a+b;},0) / vals.length;
+        };
+        var energy = avg('energy_level'), recovery = avg('recovery_score'), sleep = avg('sleep_quality');
+        var moodHints = [];
+        if (energy != null && energy < 5) moodHints.push('lower energy than usual — favor easy 1-pan meals and quick prep');
+        if (sleep != null && sleep < 5) moodHints.push('poor sleep — emphasize anti-inflammatory ingredients (berries, fatty fish, leafy greens)');
+        if (recovery != null && recovery < 5) moodHints.push('recovery is low — slightly more carbs around training, more magnesium-rich foods');
+        if (moodHints.length) {
+          historyBlock += '\n── ADJUST FOR HOW THEY FEEL THIS WEEK ──\n' + moodHints.join('; ') + '\n';
+        }
+      }
+
+      var prompt = 'You are an expert sports nutritionist who builds precise meal plans. Create a 5-day meal plan.\n\n' +
+        '── CLIENT ──\n' +
+        'Goal: ' + goalStr + '\n' +
+        'Diet: ' + dietStr + '\n' +
+        'Health concerns: ' + healthStr + '\n' +
+        pantrySection +
+        historyBlock +
+        '\n── EXACT DAILY TARGETS ──\n' +
+        'Calories: ' + cals + ' cal\n' +
+        'Protein: ' + prot + 'g\n' +
+        'Carbs: ' + carb + 'g\n' +
+        'Fat: ' + fats + 'g\n\n' +
+        '── CRITICAL RULES ──\n' +
+        '1. Each meal MUST have exact macros (calories, protein, carbs, fat) calculated from the actual ingredients and portions listed\n' +
+        '2. The 4 meals per day MUST add up to the daily targets above (within 5% tolerance)\n' +
+        '3. List specific portions for every ingredient (e.g. "6oz chicken breast" not just "chicken breast", "1 cup cooked rice" not just "rice")\n' +
+        '4. Macros must be realistic for the portions — 6oz chicken breast = ~38g protein, 1 large egg = ~6g protein, etc.\n' +
+        '5. Include breakfast (~25% of cals), lunch (~30%), dinner (~30%), snack (~15%)\n' +
+        '6. If a previous plan is shown above, use DIFFERENT meal titles and rotate the protein/carb pairings so the user does not get bored\n\n' +
+        'For EACH meal include the recipe: ingredients with exact portions, and step-by-step cooking instructions.\n\n' +
+        'Return ONLY a JSON array. Each element:\n' +
+        '{"day":"Monday","meals":[{"name":"Breakfast","title":"Meal Title","foods":"1-line description","calories":number,"protein":number,"carbs":number,"fat":number,"prep":"15 min","ingredients":["6oz chicken breast","1 cup brown rice","1 tbsp olive oil"],"steps":["Step 1","Step 2"]},...]}\n' +
+        'Include breakfast, lunch, dinner, snack. Keep steps concise (3-6). No markdown, no backticks, just the JSON array.';
+
+      return fetch('/api/anthropic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 8000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
     })
     .then(function(res) {
       if (!res.ok) {
@@ -6641,6 +6920,12 @@
   function appendFoodLogItem(name, cal, protein, carbs, fat) {
     var empty = document.getElementById('foodLogEmpty');
     if (empty) empty.style.display = 'none';
+
+    // Persist to localStorage by date + Supabase if available so AI calls
+    // can reference what the user has actually been eating.
+    if (typeof persistFoodLog === 'function') {
+      try { persistFoodLog(name, cal, protein, carbs, fat); } catch(_) {}
+    }
 
     foodLogTotals.cal += cal;
     foodLogTotals.protein += protein;
@@ -7492,24 +7777,56 @@
   }
 
   async function submitWeeklyLog() {
-    if (!currentUser) { alert('Please sign in first.'); return; }
-    var protocolEl = document.getElementById('hist-protocol');
-    if (!protocolEl) { alert('No active protocol selected.'); return; }
-    var protocols = window._activeProtocols || [];
-    var protocol = protocols.find(function(p) { return p.id === protocolEl.value; });
-    var currentWeek = 1;
-    if (protocol) {
-      currentWeek = Math.max(1, Math.floor((new Date() - new Date(protocol.start_date)) / (7*24*60*60*1000)) + 1);
+    // Read all slider values up front
+    var payload = {
+      energy_level:   parseInt(document.getElementById('hist-energy').value),
+      sleep_quality:  parseInt(document.getElementById('hist-sleep').value),
+      recovery_score: parseInt(document.getElementById('hist-recovery').value),
+      mood_score:     parseInt(document.getElementById('hist-mood').value),
+      pain_level:     parseInt(document.getElementById('hist-pain').value),
+      body_weight:    parseFloat(document.getElementById('hist-weight').value) || null,
+      notes:          document.getElementById('hist-notes').value || ''
+    };
+
+    // ALWAYS persist locally so getUserContext can reach it, even when
+    // the user has no protocol or isn't signed in.
+    if (typeof persistCheckInLocal === 'function') {
+      try { persistCheckInLocal(payload); } catch(_) {}
     }
-    try {
-      var res = await fetch('/api/protocol-checklist', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ action:'log_weekly', userId:currentUser.id, protocolId:protocolEl.value, weekNumber:currentWeek, energyLevel:parseInt(document.getElementById('hist-energy').value), sleepQuality:parseInt(document.getElementById('hist-sleep').value), recoveryScore:parseInt(document.getElementById('hist-recovery').value), moodScore:parseInt(document.getElementById('hist-mood').value), painLevel:parseInt(document.getElementById('hist-pain').value), bodyWeight:parseFloat(document.getElementById('hist-weight').value) || null, notes:document.getElementById('hist-notes').value }) });
-      if (res.ok) {
-        if (typeof showXPToast === 'function') showXPToast('+15 XP');
-        document.getElementById('hist-notes').value = '';
-        loadHistoryLogs();
-        alert('Weekly check-in logged!');
+
+    // Best-effort: also write to a standalone Supabase table so it syncs across devices
+    var sb = (typeof _getSupabase === 'function') ? _getSupabase() : null;
+    if (sb && currentUser) {
+      try {
+        sb.from('weekly_check_ins').insert(Object.assign({
+          user_id: currentUser.id,
+          created_at: new Date().toISOString()
+        }, payload)).then(function(){}, function(){}); // tolerate missing table
+      } catch(_) {}
+    }
+
+    // Existing protocol-checklist path: only fire when user has an active protocol
+    var protocolEl = document.getElementById('hist-protocol');
+    if (currentUser && protocolEl && protocolEl.value) {
+      var protocols = window._activeProtocols || [];
+      var protocol = protocols.find(function(p) { return p.id === protocolEl.value; });
+      var currentWeek = 1;
+      if (protocol) {
+        currentWeek = Math.max(1, Math.floor((new Date() - new Date(protocol.start_date)) / (7*24*60*60*1000)) + 1);
       }
-    } catch(e) { console.error('Weekly log error:', e); }
+      try {
+        await fetch('/api/protocol-checklist', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({
+          action:'log_weekly', userId:currentUser.id, protocolId:protocolEl.value, weekNumber:currentWeek,
+          energyLevel: payload.energy_level, sleepQuality: payload.sleep_quality, recoveryScore: payload.recovery_score,
+          moodScore: payload.mood_score, painLevel: payload.pain_level, bodyWeight: payload.body_weight, notes: payload.notes
+        }) });
+      } catch(e) { console.error('Weekly log error:', e); }
+    }
+
+    if (typeof showXPToast === 'function') showXPToast('+15 XP');
+    document.getElementById('hist-notes').value = '';
+    if (typeof loadHistoryLogs === 'function') { try { loadHistoryLogs(); } catch(_) {} }
+    alert('Check-in logged. Your coach can see it now.');
   }
 
 })();
