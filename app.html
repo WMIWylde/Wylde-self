@@ -510,24 +510,65 @@
     .ex-name-btn { background: none; border: none; color: var(--text); font-size: 14px; font-family: var(--ff-body); cursor: pointer; text-align: left; padding: 0; text-decoration: underline; text-decoration-color: rgba(122,142,118,0.3); text-underline-offset: 3px; transition: color 0.2s; }
     .ex-name-btn:hover { color: var(--gold); }
     .ex-desc { font-size: 12px; color: var(--text3); line-height: 1.5; margin: 4px 0 2px; font-style: italic; }
-    /* SET-BY-SET LOGGING */
-    .set-log-list { margin-top:10px;display:flex;flex-direction:column;gap:6px; }
-    .set-row { display:flex;align-items:center;gap:8px; }
-    .set-label { font-size:11px;font-weight:600;color:var(--muted);width:38px;flex-shrink:0;letter-spacing:0.02em; }
-    .set-input { width:52px;background:var(--bg-soft);border:1px solid var(--border);color:var(--text);font-family:var(--ff-body);font-size:13px;padding:7px 4px;outline:none;text-align:center;border-radius:8px;-moz-appearance:textfield;transition:border-color 0.2s; }
-    .set-input::-webkit-outer-spin-button,.set-input::-webkit-inner-spin-button { -webkit-appearance:none; }
-    .set-input:focus { border-color:var(--sage); }
-    .set-input-label { font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:#888;text-align:center;margin-top:2px; }
-    .set-log-btn { font-family:var(--ff-body);font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:7px 12px;cursor:pointer;border-radius:6px;background:rgba(60,170,90,0.15);border:1px solid rgba(60,170,90,0.4);color:#3a8a50;transition:all 0.2s;white-space:nowrap; }
-    .set-log-btn:hover { background:rgba(60,170,90,0.25); }
+    /* SET-BY-SET LOGGING — redesigned for tactile, scannable feel */
+    /* PR + Last Weight reference cards (Fitonomy-inspired, sage/gold palette) */
+    .ex-stat-cards { display:flex;gap:8px;margin:12px 0 6px;width:100%; }
+    .ex-stat-card { flex:1;padding:9px 11px;background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;min-width:0; }
+    .ex-stat-label { font-size:9px;letter-spacing:0.09em;text-transform:uppercase;color:var(--text2);margin-bottom:3px;font-weight:500; }
+    .ex-stat-value { font-size:13px;font-weight:600;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .ex-stat-value.empty { color:var(--text2);font-weight:400;font-style:italic; }
+    .ex-stat-card.pr { background:linear-gradient(135deg,rgba(184,155,94,0.10),rgba(184,155,94,0.04));border-color:rgba(184,155,94,0.28); }
+    .ex-stat-card.pr .ex-stat-label { color:var(--gold); }
+    .ex-stat-card.pr .ex-stat-value:not(.empty) { color:var(--gold); }
+    /* Set list */
+    .set-log-list { margin-top:6px;display:flex;flex-direction:column;gap:8px; }
+    .set-row { display:flex;align-items:center;gap:6px;padding:2px 0;transition:opacity 0.2s; }
+    .set-label-num { width:22px;font-size:13px;font-weight:600;color:var(--text2);text-align:center;flex-shrink:0;line-height:1; }
+    .set-row.logged .set-label-num { color:var(--sage); }
+    .set-row.logged .set-label-num::after { content:'\u2713';display:block;font-size:11px;line-height:1;margin-top:1px; }
+    /* Stepper input — touch-friendly +/- */
+    .set-stepper { display:flex;align-items:stretch;background:var(--bg-soft);border:1px solid var(--border);border-radius:9px;overflow:hidden;height:38px;flex:1;min-width:0; }
+    .set-stepper:focus-within { border-color:var(--sage);box-shadow:0 0 0 2px rgba(110,127,102,0.10); }
+    .stepper-btn { width:30px;border:none;background:transparent;color:var(--text2);font-size:18px;font-weight:400;cursor:pointer;display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none;touch-action:manipulation;padding:0;flex-shrink:0; }
+    .stepper-btn:active { background:rgba(110,127,102,0.12);color:var(--sage); }
+    .stepper-input { flex:1;width:100%;min-width:0;border:none;background:transparent;color:var(--text);font-family:var(--ff-body);font-size:14px;font-weight:600;text-align:center;outline:none;-moz-appearance:textfield;padding:0; }
+    .stepper-input::-webkit-outer-spin-button,.stepper-input::-webkit-inner-spin-button { -webkit-appearance:none;margin:0; }
+    .set-row.logged .set-stepper { opacity:0.5;pointer-events:none; }
+    /* Log button — sage-filled when active, ghost when logged */
+    .set-log-btn { font-family:var(--ff-body);font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:0 14px;cursor:pointer;border-radius:9px;background:var(--sage);border:1px solid var(--sage);color:#fff;transition:all 0.15s;white-space:nowrap;height:38px;min-width:54px;flex-shrink:0; }
+    .set-log-btn:hover { filter:brightness(1.08); }
+    .set-log-btn:active { transform:scale(0.96); }
     .set-log-btn:disabled { opacity:0.3;cursor:not-allowed; }
-    .set-row.logged .set-log-btn { background:rgba(60,170,90,0.08);border-color:rgba(60,170,90,0.2);color:#7aba88;pointer-events:none; }
-    .set-row.logged .set-input { opacity:0.5;pointer-events:none; }
-    .set-row.logged .set-label { color:#7aba88; }
-    .add-set-btn { font-family:var(--ff-body);font-size:11px;color:var(--muted);background:none;border:1px dashed var(--border);padding:6px 14px;border-radius:6px;cursor:pointer;margin-top:4px;transition:all 0.2s;align-self:flex-start; }
+    .set-row.logged .set-log-btn { background:rgba(110,127,102,0.12);color:var(--sage);border-color:rgba(110,127,102,0.25);pointer-events:none; }
+    /* Header row above stepper grid */
+    .set-header-row { display:flex;gap:6px;align-items:center;margin-bottom:2px;padding-left:28px; }
+    .set-header-row span { font-size:9px;letter-spacing:0.09em;text-transform:uppercase;color:var(--text2);font-weight:500;text-align:center;flex:1;min-width:0; }
+    .set-header-row .header-spacer { flex:0 0 54px; }
+    /* Add set button */
+    .add-set-btn { font-family:var(--ff-body);font-size:11px;color:var(--text2);background:none;border:1px dashed var(--border);padding:7px 16px;border-radius:9px;cursor:pointer;margin-top:6px;transition:all 0.2s;align-self:flex-start; }
     .add-set-btn:hover { border-color:var(--sage);color:var(--sage); }
-    .set-header-row { display:flex;gap:8px;align-items:center;margin-bottom:2px;padding-left:38px; }
-    .set-header-row span { font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:#999;width:52px;text-align:center; }
+    /* Workout feel-prompt overlay (post-workout finale) */
+    .feel-prompt-overlay { position:fixed;inset:0;background:rgba(20,20,20,0.55);display:flex;align-items:center;justify-content:center;z-index:10000;animation:feelFadeIn 0.3s ease-out;padding:20px; }
+    @keyframes feelFadeIn { from { opacity:0; } to { opacity:1; } }
+    .feel-prompt-card { background:var(--cream);border:1px solid var(--border);border-radius:18px;padding:28px 22px 22px;max-width:360px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:feelCardIn 0.4s cubic-bezier(0.2,0.8,0.2,1);text-align:center; }
+    @keyframes feelCardIn { from { transform:translateY(20px) scale(0.96);opacity:0; } to { transform:translateY(0) scale(1);opacity:1; } }
+    .feel-prompt-title { font-family:var(--ff-display,var(--ff-body));font-size:19px;font-weight:600;color:var(--text);margin:0 0 6px;letter-spacing:-0.01em; }
+    .feel-prompt-sub { font-size:13px;color:var(--text2);margin:0 0 22px; }
+    .feel-prompt-btns { display:grid;grid-template-columns:repeat(4,1fr);gap:8px; }
+    .feel-btn { background:var(--bg-soft);border:1px solid var(--border);border-radius:13px;padding:14px 4px;cursor:pointer;font-family:var(--ff-body);display:flex;flex-direction:column;align-items:center;gap:5px;transition:all 0.15s; }
+    .feel-btn:hover { border-color:var(--sage);transform:translateY(-1px);background:rgba(110,127,102,0.06); }
+    .feel-btn:active { transform:scale(0.95); }
+    .feel-btn-emoji { font-size:26px;line-height:1; }
+    .feel-btn-label { font-size:10px;letter-spacing:0.05em;text-transform:uppercase;color:var(--text2);font-weight:500; }
+    .feel-prompt-skip { margin-top:14px;background:none;border:none;color:var(--text2);font-size:12px;cursor:pointer;padding:6px 12px;font-family:var(--ff-body); }
+    .feel-prompt-skip:hover { color:var(--text); }
+    /* Inline food feel buttons */
+    .food-feel-row { display:inline-flex;gap:3px;margin-left:6px;vertical-align:middle; }
+    .food-feel-btn { width:24px;height:24px;border:1px solid var(--border);border-radius:6px;background:var(--bg-soft);font-size:12px;cursor:pointer;padding:0;display:inline-flex;align-items:center;justify-content:center;transition:all 0.15s;line-height:1; }
+    .food-feel-btn:hover { border-color:var(--sage);transform:translateY(-1px); }
+    .food-feel-btn.selected { background:rgba(110,127,102,0.18);border-color:var(--sage); }
+    .food-feel-btn.selected.bad { background:rgba(194,107,90,0.18);border-color:rgba(194,107,90,0.5); }
+    .food-feel-btn.selected.gross { background:rgba(140,90,90,0.20);border-color:rgba(140,90,90,0.55); }
     .day-body.open { max-height: 2000px; padding: 0 24px 20px; }
     .ex-demo-wrap { display: flex; justify-content: center; margin-bottom: 20px; background: #0a0a0a; border-radius: 14px; overflow: hidden; position: relative; }
     .ex-demo-wrap img { width: 100%; max-width: 320px; height: auto; display: block; mix-blend-mode: normal; }
@@ -3332,6 +3373,8 @@
         _hideAuthScreen();
         var signOutBtn = document.getElementById('navSignOutBtn');
         if (signOutBtn) signOutBtn.style.display = 'block';
+        // Warm the PR + last-weight caches so set-logger reference cards populate
+        if (typeof _refreshPRCache === 'function') _refreshPRCache();
       } else {
         // No session — show auth screen (user already passed gate)
         _showAuthScreen();
@@ -3356,6 +3399,8 @@
         var signOutBtn = document.getElementById('navSignOutBtn');
         if (signOutBtn) signOutBtn.style.display = 'block';
         _loadProfileFromSupabase();
+        // Warm the PR + last-weight caches so set-logger reference cards populate
+        if (typeof _refreshPRCache === 'function') _refreshPRCache();
       } else if (event === 'SIGNED_OUT') {
         currentUser = null;
         var signOutBtn = document.getElementById('navSignOutBtn');
@@ -3621,23 +3666,26 @@
       todayFood: [],           // foods logged today
       recentFoodNames: [],     // distinct foods logged in last 7 days
       lastMealPlan: null,      // last AI-generated meal plan
-      pantry: null
+      pantry: null,
+      workoutFeels: [],        // recent post-workout 1-4 ratings
+      foodFeels: []            // recent thumbs / yuck on logged foods
     };
 
     var sb = (typeof _getSupabase === 'function') ? _getSupabase() : null;
     if (sb && typeof currentUser !== 'undefined' && currentUser) {
       var weekAgo = new Date(Date.now() - 14 * 86400000).toISOString();
       try {
+        // NOTE column names match what logSet writes: `exercise`, `best_weight`, `best_reps`
         var pulls = await Promise.all([
           sb.from('workout_sets')
-            .select('exercise_name,weight,reps,created_at')
+            .select('exercise,weight,reps,logged_at')
             .eq('user_id', currentUser.id)
-            .order('created_at', { ascending: false })
+            .order('logged_at', { ascending: false })
             .limit(40),
           sb.from('personal_bests')
-            .select('exercise_name,weight,reps,updated_at')
+            .select('exercise,best_weight,best_reps,updated_at')
             .eq('user_id', currentUser.id)
-            .order('weight', { ascending: false })
+            .order('best_weight', { ascending: false })
             .limit(10),
           sb.from('weekly_check_ins')
             .select('*')
@@ -3647,8 +3695,14 @@
             .limit(14)
             .then(function(r){ return r; }, function(){ return { data: [] }; }) // tolerate missing table
         ]);
-        ctx.recentSets = (pulls[0] && pulls[0].data) || [];
-        ctx.personalBests = (pulls[1] && pulls[1].data) || [];
+        // Normalize to a stable shape so formatContextForPrompt doesn't have
+        // to know the underlying column names.
+        ctx.recentSets = ((pulls[0] && pulls[0].data) || []).map(function(s) {
+          return { exercise_name: s.exercise, weight: s.weight, reps: s.reps, logged_at: s.logged_at };
+        });
+        ctx.personalBests = ((pulls[1] && pulls[1].data) || []).map(function(p) {
+          return { exercise_name: p.exercise, weight: p.best_weight, reps: p.best_reps, updated_at: p.updated_at };
+        });
         ctx.recentCheckIns = (pulls[2] && pulls[2].data) || [];
       } catch (e) {
         console.warn('[userContext] Supabase pull failed:', e.message);
@@ -3670,6 +3724,25 @@
         dayLog.forEach(function(f) { if (f && f.name) nameSet[f.name.toLowerCase()] = f.name; });
       }
       ctx.recentFoodNames = Object.keys(nameSet).map(function(k){ return nameSet[k]; }).slice(0, 30);
+    } catch(_) {}
+
+    // Pull workout feels (post-workout 😩😐💪🔥) + food feels (👍/👎/🤢)
+    // — both are local-first; Supabase mirror is best-effort and may not exist.
+    try {
+      var allFeels = JSON.parse(localStorage.getItem('wylde_feels_v1') || '[]');
+      ctx.workoutFeels = allFeels.filter(function(f){ return f.type === 'workout'; }).slice(0, 12);
+    } catch(_) {}
+    // Surface food feels for the last 7 days by walking the date-keyed food logs
+    try {
+      var foodFeelArr = [];
+      for (var dF = 0; dF < 7; dF++) {
+        var dKey = new Date(Date.now() - dF * 86400000).toISOString().slice(0, 10);
+        var dayLog = JSON.parse(localStorage.getItem('wylde_food_log_' + dKey) || '[]');
+        dayLog.forEach(function(f) {
+          if (f && f.feel) foodFeelArr.push({ name: f.name, feel: f.feel, date: dKey });
+        });
+      }
+      ctx.foodFeels = foodFeelArr.slice(0, 20);
     } catch(_) {}
 
     // If Supabase check-ins are empty, fall back to local check-in cache
@@ -3769,6 +3842,30 @@
         (d.meals || []).forEach(function(m) { if (m.title || m.name) titles.push(m.title || m.name); });
       });
       if (titles.length) lines.push('\nLast meal plan included: ' + titles.slice(0, 8).join('; ') + (titles.length > 8 ? ', ...' : ''));
+    }
+
+    // Workout feels — qualitative signal beyond just "they lifted X"
+    if (ctx.workoutFeels && ctx.workoutFeels.length) {
+      var feelLabel = { 1: 'hard', 2: 'meh', 3: 'solid', 4: 'fire' };
+      var recent = ctx.workoutFeels.slice(0, 6).map(function(f) {
+        return (f.dayTag || 'day') + '=' + feelLabel[f.score] + ' (' + (f.date || '').slice(5) + ')';
+      });
+      lines.push('\nRecent workout vibes: ' + recent.join('; '));
+      // Trend hint
+      var lastThree = ctx.workoutFeels.slice(0, 3).map(function(f){ return f.score; });
+      if (lastThree.length === 3) {
+        var avg = (lastThree[0] + lastThree[1] + lastThree[2]) / 3;
+        if (avg <= 1.7) lines.push('  ↳ trending HARD — they may be undercooked, overtrained, or stressed');
+        else if (avg >= 3.4) lines.push('  ↳ trending FIRE — momentum is high, push the next progression');
+      }
+    }
+
+    // Food feels — never assume they enjoyed a meal you suggested
+    if (ctx.foodFeels && ctx.foodFeels.length) {
+      var liked = ctx.foodFeels.filter(function(f){ return f.feel === 'good'; }).map(function(f){ return f.name; });
+      var disliked = ctx.foodFeels.filter(function(f){ return f.feel === 'bad' || f.feel === 'gross'; }).map(function(f){ return f.name; });
+      if (liked.length) lines.push('\nFoods they liked: ' + liked.slice(0, 8).join('; '));
+      if (disliked.length) lines.push('Foods they did NOT enjoy (avoid suggesting): ' + disliked.slice(0, 8).join('; '));
     }
 
     return lines.join('\n');
@@ -5521,24 +5618,53 @@
         '</div>';
       }
 
-      // Build set rows
+      // Pull PR + last-session weight for this exercise
+      var prInfo = _getPRInfo(name);
+      var lastInfo = _getLastWeightInfo(name);
+
+      // Build PR + Last Weight reference cards
+      var prValHTML  = prInfo
+        ? '<div class="ex-stat-value">' + prInfo.weight + 'lb × ' + prInfo.reps + '</div>'
+        : '<div class="ex-stat-value empty">No record yet</div>';
+      var lastValHTML = lastInfo
+        ? '<div class="ex-stat-value">' + lastInfo.weight + 'lb × ' + lastInfo.reps + '</div>'
+        : '<div class="ex-stat-value empty">First time</div>';
+      var statCards =
+        '<div class="ex-stat-cards">' +
+          '<div class="ex-stat-card pr"><div class="ex-stat-label">Personal Record</div>' + prValHTML + '</div>' +
+          '<div class="ex-stat-card"><div class="ex-stat-label">Last Weight</div>' + lastValHTML + '</div>' +
+        '</div>';
+
+      // Build set rows with steppers
       var setRows = '';
       for (var s = 0; s < totalSets; s++) {
         var sd = savedSets[s] || {};
         var isLogged = sd.logged ? true : false;
         var prevWeight = '';
-        // Carry weight from previous set if not set
+        // Carry weight from previous set, or use last session's weight as a starting point for set 1
         if (!sd.weight && s > 0 && savedSets[s-1] && savedSets[s-1].weight) {
           prevWeight = savedSets[s-1].weight;
+        } else if (!sd.weight && s === 0 && lastInfo && lastInfo.weight) {
+          prevWeight = lastInfo.weight;
         }
         var weightVal = sd.weight || prevWeight || '';
         var repsVal = sd.reps || recReps || '';
 
         setRows +=
           '<div class="set-row' + (isLogged ? ' logged' : '') + '" data-set="' + s + '">' +
-            '<span class="set-label">' + (s + 1) + '</span>' +
-            '<input class="set-input" type="number" min="0" placeholder="' + (recReps || '—') + '" value="' + esc(repsVal) + '" data-field="reps" />' +
-            '<input class="set-input" type="number" min="0" placeholder="—" value="' + esc(weightVal) + '" data-field="weight" />' +
+            '<span class="set-label-num">' + (s + 1) + '</span>' +
+            // Reps stepper
+            '<div class="set-stepper">' +
+              '<button class="stepper-btn" type="button" onclick="stepValue(this,-1)" tabindex="-1">\u2212</button>' +
+              '<input class="stepper-input" type="number" min="0" inputmode="numeric" placeholder="' + (recReps || '0') + '" value="' + esc(repsVal) + '" data-field="reps" data-step="1" />' +
+              '<button class="stepper-btn" type="button" onclick="stepValue(this,1)" tabindex="-1">+</button>' +
+            '</div>' +
+            // Weight stepper (5 lb increments)
+            '<div class="set-stepper">' +
+              '<button class="stepper-btn" type="button" onclick="stepValue(this,-1)" tabindex="-1">\u2212</button>' +
+              '<input class="stepper-input" type="number" min="0" inputmode="numeric" placeholder="0" value="' + esc(weightVal) + '" data-field="weight" data-step="5" />' +
+              '<button class="stepper-btn" type="button" onclick="stepValue(this,1)" tabindex="-1">+</button>' +
+            '</div>' +
             '<button class="set-log-btn" data-sk="' + sk + '" data-setidx="' + s + '" data-exname="' + esc(name) + '" onclick="logSetRow(this)">' + (isLogged ? '\u2713 Done' : 'Log') + '</button>' +
           '</div>';
       }
@@ -5554,7 +5680,8 @@
             '<span class="ex-sets">' + esc(sets) + '</span>' +
           '</div>' +
         '</div>' +
-        '<div class="set-header-row"><span>Reps</span><span>lbs</span></div>' +
+        statCards +
+        '<div class="set-header-row"><span class="header-spacer-l" style="flex:0 0 22px;"></span><span>Reps</span><span>lbs</span><span class="header-spacer"></span></div>' +
         '<div class="set-log-list">' + setRows + '</div>' +
         '<button class="add-set-btn" onclick="addSetRow(this)">+ Add Set</button>' +
         '<div class="rest-timer-wrap">' +
@@ -5569,6 +5696,125 @@
         '</div>' +
       '</div>';
     }).join('');
+  }
+
+  // ─── PR + Last-weight lookup helpers ───────────────────────────────
+  // Cached in-memory; populated by _refreshPRCache() on auth + after each logSet.
+  var _prCache = {};          // { normalizedName: { weight, reps } }
+  var _lastWeightCache = {};  // { normalizedName: { weight, reps, ts } }
+
+  function _normExName(name) {
+    return String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+  }
+  function _getPRInfo(name) {
+    var k = _normExName(name);
+    return _prCache[k] || null;
+  }
+  function _getLastWeightInfo(name) {
+    var k = _normExName(name);
+    if (_lastWeightCache[k]) return _lastWeightCache[k];
+    // Hydrate from localStorage if cache is cold
+    try {
+      var stored = JSON.parse(localStorage.getItem('wylde_last_weights') || '{}');
+      if (stored[k]) { _lastWeightCache[k] = stored[k]; return stored[k]; }
+    } catch(_) {}
+    return null;
+  }
+  function _setLastWeight(name, weight, reps) {
+    if (!weight || !reps) return;
+    var k = _normExName(name);
+    var info = { weight: parseFloat(weight) || 0, reps: parseInt(reps) || 0, ts: Date.now() };
+    _lastWeightCache[k] = info;
+    try {
+      var stored = JSON.parse(localStorage.getItem('wylde_last_weights') || '{}');
+      stored[k] = info;
+      localStorage.setItem('wylde_last_weights', JSON.stringify(stored));
+    } catch(_) {}
+    // Also update the PR cache if this beats it on weight, or matches weight with more reps
+    var pr = _prCache[k];
+    if (!pr || info.weight > pr.weight || (info.weight === pr.weight && info.reps > pr.reps)) {
+      _prCache[k] = { weight: info.weight, reps: info.reps };
+      // Reflect to any DOM cards already showing this exercise
+      _updateStatCardsForExercise(name);
+    }
+  }
+  // Pull all PRs from Supabase once (called on auth + on demand)
+  function _refreshPRCache() {
+    var sb = (typeof _getSupabase === 'function') ? _getSupabase() : null;
+    if (!sb || typeof currentUser === 'undefined' || !currentUser) return Promise.resolve();
+    return sb.from('personal_bests')
+      .select('exercise,best_weight,best_reps')
+      .eq('user_id', currentUser.id)
+      .then(function(res) {
+        if (res && res.data) {
+          res.data.forEach(function(row) {
+            var k = _normExName(row.exercise);
+            _prCache[k] = { weight: row.best_weight, reps: row.best_reps };
+          });
+          // Also refresh "last weight" from most-recent workout_sets
+          return sb.from('workout_sets')
+            .select('exercise,weight,reps,logged_at')
+            .eq('user_id', currentUser.id)
+            .order('logged_at', { ascending: false })
+            .limit(200);
+        }
+      })
+      .then(function(res) {
+        if (!res || !res.data) return;
+        // Take the first (most recent) entry per exercise
+        var seen = {};
+        res.data.forEach(function(row) {
+          var k = _normExName(row.exercise);
+          if (!seen[k] && row.weight) {
+            seen[k] = true;
+            _lastWeightCache[k] = { weight: row.weight, reps: row.reps, ts: new Date(row.logged_at).getTime() };
+          }
+        });
+        try { localStorage.setItem('wylde_last_weights', JSON.stringify(_lastWeightCache)); } catch(_) {}
+        // Refresh any rendered cards
+        _refreshAllStatCards();
+      })
+      .catch(function(e) { console.warn('[PRcache] refresh failed:', e && e.message); });
+  }
+  // Re-render the PR/Last cards inside any .exercise blocks already in the DOM
+  function _updateStatCardsForExercise(name) {
+    var k = _normExName(name);
+    document.querySelectorAll('.exercise').forEach(function(ex) {
+      if (_normExName(ex.dataset.exname) !== k) return;
+      var cards = ex.querySelector('.ex-stat-cards');
+      if (!cards) return;
+      var pr = _prCache[k], last = _lastWeightCache[k];
+      var prCard = cards.querySelector('.ex-stat-card.pr .ex-stat-value');
+      var lastCard = cards.querySelectorAll('.ex-stat-card .ex-stat-value')[1];
+      if (prCard) {
+        if (pr) { prCard.textContent = pr.weight + 'lb × ' + pr.reps; prCard.classList.remove('empty'); }
+      }
+      if (lastCard) {
+        if (last) { lastCard.textContent = last.weight + 'lb × ' + last.reps; lastCard.classList.remove('empty'); }
+      }
+    });
+  }
+  function _refreshAllStatCards() {
+    document.querySelectorAll('.exercise[data-exname]').forEach(function(ex) {
+      _updateStatCardsForExercise(ex.dataset.exname);
+    });
+  }
+
+  // ─── Stepper helper ────────────────────────────────────────────────
+  function stepValue(btn, dir) {
+    var input = btn.parentElement.querySelector('.stepper-input');
+    if (!input) return;
+    var step = parseFloat(input.dataset.step || '1');
+    var cur = parseFloat(input.value || '0') || 0;
+    var next = Math.max(0, cur + (dir * step));
+    // Snap to step
+    if (step >= 1) next = Math.round(next);
+    input.value = next;
+    // Fire input event so any listeners re-run
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    if (typeof HapticManager !== 'undefined' && HapticManager) {
+      // no-op on web — placeholder for native bridge
+    }
   }
 
   // Log a single set row
@@ -5600,15 +5846,24 @@
       if (nextWeight && !nextWeight.value && weight) nextWeight.value = weight;
     }
 
-    // Mark row as logged
+    // Mark row as logged + update visual state
     row.classList.add('logged');
     btn.textContent = '\u2713 Done';
+
+    // Update PR + Last Weight caches (and any visible stat cards)
+    if (typeof _setLastWeight === 'function') _setLastWeight(exName, weight, reps);
 
     // Save to Supabase
     logSet(exName, parseFloat(weight) || 0, parseInt(reps) || 0);
 
+    // Bust the userContext cache so next AI call sees this set
+    if (typeof _userContextCache !== 'undefined') _userContextCache = null;
+
     // Start rest timer
     startRestTimer(btn, exName);
+
+    // Check if this completes the entire workout day → fire feel-prompt
+    setTimeout(function() { _maybeFireWorkoutFeelPrompt(exercise); }, 250);
   }
 
   // Add an extra set row
@@ -5617,6 +5872,7 @@
     var list = exercise.querySelector('.set-log-list');
     var sk = exercise.dataset.sk;
     var recReps = exercise.dataset.recreps || '';
+    var exName = exercise.querySelector('.ex-name-btn').dataset.ex;
     var existingRows = list.querySelectorAll('.set-row');
     var newIdx = existingRows.length;
 
@@ -5632,14 +5888,183 @@
     row.className = 'set-row';
     row.dataset.set = newIdx;
     row.innerHTML =
-      '<span class="set-label">' + (newIdx + 1) + '</span>' +
-      '<input class="set-input" type="number" min="0" placeholder="' + (recReps || '—') + '" value="' + recReps + '" data-field="reps" />' +
-      '<input class="set-input" type="number" min="0" placeholder="—" value="' + lastWeight + '" data-field="weight" />' +
-      '<button class="set-log-btn" data-sk="' + sk + '" data-setidx="' + newIdx + '" data-exname="' + exercise.querySelector('.ex-name-btn').dataset.ex + '" onclick="logSetRow(this)">Log</button>';
+      '<span class="set-label-num">' + (newIdx + 1) + '</span>' +
+      '<div class="set-stepper">' +
+        '<button class="stepper-btn" type="button" onclick="stepValue(this,-1)" tabindex="-1">\u2212</button>' +
+        '<input class="stepper-input" type="number" min="0" inputmode="numeric" placeholder="' + (recReps || '0') + '" value="' + recReps + '" data-field="reps" data-step="1" />' +
+        '<button class="stepper-btn" type="button" onclick="stepValue(this,1)" tabindex="-1">+</button>' +
+      '</div>' +
+      '<div class="set-stepper">' +
+        '<button class="stepper-btn" type="button" onclick="stepValue(this,-1)" tabindex="-1">\u2212</button>' +
+        '<input class="stepper-input" type="number" min="0" inputmode="numeric" placeholder="0" value="' + lastWeight + '" data-field="weight" data-step="5" />' +
+        '<button class="stepper-btn" type="button" onclick="stepValue(this,1)" tabindex="-1">+</button>' +
+      '</div>' +
+      '<button class="set-log-btn" data-sk="' + sk + '" data-setidx="' + newIdx + '" data-exname="' + exName + '" onclick="logSetRow(this)">Log</button>';
     list.appendChild(row);
 
     // Focus the reps input
     row.querySelector('[data-field="reps"]').focus();
+  }
+
+  // ─── Feel-prompt: post-workout signal capture ──────────────────────
+  // After the user logs the last set of the last exercise in a day, fire a
+  // one-tap "how did that feel?" prompt. We persist the score so the Coach
+  // can later say "your last leg session felt 🔥, let's not back off."
+  function _maybeFireWorkoutFeelPrompt(triggeredFrom) {
+    if (!triggeredFrom) return;
+    // Find the day card this exercise belongs to
+    var dayBody = triggeredFrom.closest('.day-body');
+    if (!dayBody) return;
+    var dayTag = dayBody.dataset.daytag || '';
+    var dayName = '';
+    var dayCard = dayBody.closest('.day-card');
+    if (dayCard) {
+      var nameEl = dayCard.querySelector('.day-name');
+      if (nameEl) dayName = nameEl.textContent || '';
+    }
+
+    // Has every exercise in this day been completed?
+    var exercises = dayBody.querySelectorAll('.exercise');
+    if (!exercises.length) return;
+    for (var i = 0; i < exercises.length; i++) {
+      var ex = exercises[i];
+      // For timed exercises, check the .ex-timer-card.done flag
+      if (ex.dataset.timed === '1') {
+        if (!ex.querySelector('.ex-timer-card.done')) return;
+        continue;
+      }
+      // Otherwise: every set row must be .logged
+      var rows = ex.querySelectorAll('.set-row');
+      if (!rows.length) return;
+      for (var j = 0; j < rows.length; j++) {
+        if (!rows[j].classList.contains('logged')) return;
+      }
+    }
+
+    // Already prompted today for this day?
+    var today = new Date().toISOString().slice(0, 10);
+    var promptKey = 'wylde_feel_prompted_' + dayTag + '_' + today;
+    if (localStorage.getItem(promptKey)) return;
+    localStorage.setItem(promptKey, '1');
+
+    showWorkoutFeelPrompt(dayTag, dayName, today);
+  }
+
+  function showWorkoutFeelPrompt(dayTag, dayName, dateStr) {
+    // Don't double-render
+    if (document.getElementById('feelPromptOverlay')) return;
+
+    var overlay = document.createElement('div');
+    overlay.id = 'feelPromptOverlay';
+    overlay.className = 'feel-prompt-overlay';
+    overlay.innerHTML =
+      '<div class="feel-prompt-card">' +
+        '<h3 class="feel-prompt-title">' + (dayName ? esc(dayName) + ' done.' : 'Workout done.') + '</h3>' +
+        '<p class="feel-prompt-sub">How did that feel?</p>' +
+        '<div class="feel-prompt-btns">' +
+          '<button class="feel-btn" onclick="saveWorkoutFeel(1,\'' + esc(dayTag) + '\',\'' + dateStr + '\')"><span class="feel-btn-emoji">\uD83D\uDE29</span><span class="feel-btn-label">Hard</span></button>' +
+          '<button class="feel-btn" onclick="saveWorkoutFeel(2,\'' + esc(dayTag) + '\',\'' + dateStr + '\')"><span class="feel-btn-emoji">\uD83D\uDE10</span><span class="feel-btn-label">Meh</span></button>' +
+          '<button class="feel-btn" onclick="saveWorkoutFeel(3,\'' + esc(dayTag) + '\',\'' + dateStr + '\')"><span class="feel-btn-emoji">\uD83D\uDCAA</span><span class="feel-btn-label">Solid</span></button>' +
+          '<button class="feel-btn" onclick="saveWorkoutFeel(4,\'' + esc(dayTag) + '\',\'' + dateStr + '\')"><span class="feel-btn-emoji">\uD83D\uDD25</span><span class="feel-btn-label">Fire</span></button>' +
+        '</div>' +
+        '<button class="feel-prompt-skip" onclick="closeFeelPrompt()">Skip</button>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    // Light haptic, if available
+    if (typeof HapticManager !== 'undefined') { try { HapticManager.notification(0); } catch(_) {} }
+  }
+
+  function saveWorkoutFeel(score, dayTag, dateStr) {
+    try {
+      var feels = JSON.parse(localStorage.getItem('wylde_feels_v1') || '[]');
+      feels.unshift({
+        type: 'workout',
+        dayTag: dayTag,
+        date: dateStr,
+        score: score,                 // 1=hard, 2=meh, 3=solid, 4=fire
+        ts: new Date().toISOString()
+      });
+      feels = feels.slice(0, 100);    // cap
+      localStorage.setItem('wylde_feels_v1', JSON.stringify(feels));
+    } catch(_) {}
+
+    // Best-effort Supabase write — table may not exist yet, swallow errors
+    try {
+      var sb = (typeof _getSupabase === 'function') ? _getSupabase() : null;
+      if (sb && typeof currentUser !== 'undefined' && currentUser) {
+        sb.from('workout_feels').insert({
+          user_id: currentUser.id,
+          day_tag: dayTag,
+          score: score,
+          logged_at: new Date().toISOString()
+        }).then(function(){}, function(){});
+      }
+    } catch(_) {}
+
+    // Bust the userContext cache so the next AI call sees this feel
+    if (typeof _userContextCache !== 'undefined') _userContextCache = null;
+
+    closeFeelPrompt();
+
+    // XP reward — small, but reinforces the behavior
+    if (typeof awardXP === 'function') awardXP(5, 'Workout reflection logged');
+  }
+
+  function closeFeelPrompt() {
+    var el = document.getElementById('feelPromptOverlay');
+    if (!el) return;
+    el.style.opacity = '0';
+    el.style.transition = 'opacity 0.2s';
+    setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 200);
+  }
+
+  // ─── Food feel: per-meal one-tap signal capture ────────────────────
+  // Save thumbs-up / thumbs-down / yuck for a logged food. Updates the food
+  // entry inline so the Coach can later say "you didn't seem to enjoy the
+  // turkey wraps — want me to swap them?"
+  function saveFoodFeel(btn, feel) {
+    var item = btn.closest('[data-food-item]');
+    if (!item) return;
+    var foodName = item.dataset.foodName || '';
+    var today = new Date().toISOString().slice(0, 10);
+
+    // Mark UI selection (toggle style)
+    var siblings = btn.parentElement.querySelectorAll('.food-feel-btn');
+    siblings.forEach(function(b) { b.classList.remove('selected', 'bad', 'gross'); });
+    btn.classList.add('selected');
+    if (feel === 'bad') btn.classList.add('bad');
+    if (feel === 'gross') btn.classList.add('gross');
+
+    // Persist back to localStorage food log — match by NAME on the most-recent
+    // matching entry so the feel survives DOM/index drift after page refreshes.
+    try {
+      var key = 'wylde_food_log_' + today;
+      var arr = JSON.parse(localStorage.getItem(key) || '[]');
+      for (var i = arr.length - 1; i >= 0; i--) {
+        if (arr[i] && arr[i].name === foodName) {
+          arr[i].feel = feel;
+          localStorage.setItem(key, JSON.stringify(arr));
+          break;
+        }
+      }
+    } catch(_) {}
+
+    // Best-effort Supabase update — column may not exist, swallow errors
+    try {
+      var sb = (typeof _getSupabase === 'function') ? _getSupabase() : null;
+      if (sb && typeof currentUser !== 'undefined' && currentUser) {
+        // Just write a separate feel record so we don't depend on food_logs row IDs
+        sb.from('food_feels').insert({
+          user_id: currentUser.id,
+          food_name: item.dataset.foodName || '',
+          feel: feel,
+          logged_at: new Date().toISOString()
+        }).then(function(){}, function(){});
+      }
+    } catch(_) {}
+
+    // Bust the userContext cache
+    if (typeof _userContextCache !== 'undefined') _userContextCache = null;
   }
 
   function renderPlan(plan, container, btn) {
@@ -6933,14 +7358,26 @@
     foodLogTotals.fat += fat;
 
     var log = document.getElementById('foodLog');
+    // Use the count of existing logged items as the index for feel-buttons to
+    // reference back to localStorage. Matches insertion order in persistFoodLog.
+    var foodIdx = log.querySelectorAll('[data-food-item]').length;
     var item = document.createElement('div');
-    item.style.cssText = 'padding:12px 16px;border-bottom:1px solid rgba(0,0,0,0.05);display:flex;justify-content:space-between;align-items:center;gap:12px;';
-    item.innerHTML = '<span style="font-size:13px;color:var(--text);flex:1;font-weight:500;">' + name + '</span>' +
-      '<div style="display:flex;gap:10px;flex-shrink:0;">' +
+    item.dataset.foodItem = '1';
+    item.dataset.foodIdx = foodIdx;
+    item.dataset.foodName = name;
+    item.style.cssText = 'padding:12px 16px;border-bottom:1px solid rgba(0,0,0,0.05);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;';
+    item.innerHTML =
+      '<span style="font-size:13px;color:var(--text);flex:1;min-width:120px;font-weight:500;">' + name + '</span>' +
+      '<div style="display:flex;gap:10px;flex-shrink:0;align-items:center;">' +
         '<span style="font-size:11px;color:var(--sage);font-weight:600;">' + Math.round(cal) + '</span>' +
         '<span style="font-size:11px;color:var(--muted);">P' + Math.round(protein) + '</span>' +
         '<span style="font-size:11px;color:var(--muted);">C' + Math.round(carbs) + '</span>' +
         '<span style="font-size:11px;color:var(--muted);">F' + Math.round(fat) + '</span>' +
+        '<span class="food-feel-row" title="How was it?">' +
+          '<button class="food-feel-btn" type="button" onclick="saveFoodFeel(this,\'good\')" title="Good">\uD83D\uDC4D</button>' +
+          '<button class="food-feel-btn" type="button" onclick="saveFoodFeel(this,\'bad\')" title="Not great">\uD83D\uDC4E</button>' +
+          '<button class="food-feel-btn" type="button" onclick="saveFoodFeel(this,\'gross\')" title="Gross">\uD83E\uDD22</button>' +
+        '</span>' +
       '</div>';
     log.appendChild(item);
 
@@ -7827,6 +8264,82 @@
     document.getElementById('hist-notes').value = '';
     if (typeof loadHistoryLogs === 'function') { try { loadHistoryLogs(); } catch(_) {} }
     alert('Check-in logged. Your coach can see it now.');
+  }
+
+  // ─── Restore today's food log on page load ─────────────────────────
+  // Without this, the user's logged foods disappear visually after a refresh
+  // (even though they still live in localStorage). Re-rendering them also
+  // makes the food-feel buttons stay correctly attached after page reloads.
+  function restoreTodayFoodLog() {
+    var log = document.getElementById('foodLog');
+    if (!log) return;
+    var today = new Date().toISOString().slice(0, 10);
+    var arr = [];
+    try { arr = JSON.parse(localStorage.getItem('wylde_food_log_' + today) || '[]'); } catch(_) {}
+    if (!arr.length) return;
+
+    // Clear empty state + reset totals so appendFoodLogItem accumulates fresh
+    var empty = document.getElementById('foodLogEmpty');
+    if (empty) empty.style.display = 'none';
+    if (typeof foodLogTotals !== 'undefined') {
+      foodLogTotals.cal = 0; foodLogTotals.protein = 0;
+      foodLogTotals.carbs = 0; foodLogTotals.fat = 0;
+    }
+
+    arr.forEach(function(food) {
+      // Re-render but skip the persistFoodLog call (it would duplicate the entry)
+      // Inline a minimal version:
+      foodLogTotals.cal += +food.cal || 0;
+      foodLogTotals.protein += +food.protein || 0;
+      foodLogTotals.carbs += +food.carbs || 0;
+      foodLogTotals.fat += +food.fat || 0;
+      var foodIdx = log.querySelectorAll('[data-food-item]').length;
+      var item = document.createElement('div');
+      item.dataset.foodItem = '1';
+      item.dataset.foodIdx = foodIdx;
+      item.dataset.foodName = food.name || '';
+      item.style.cssText = 'padding:12px 16px;border-bottom:1px solid rgba(0,0,0,0.05);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;';
+      var feel = food.feel || '';
+      var goodSel = feel === 'good' ? ' selected' : '';
+      var badSel  = feel === 'bad'  ? ' selected bad' : '';
+      var grossSel= feel === 'gross'? ' selected gross' : '';
+      item.innerHTML =
+        '<span style="font-size:13px;color:var(--text);flex:1;min-width:120px;font-weight:500;">' + (food.name || '') + '</span>' +
+        '<div style="display:flex;gap:10px;flex-shrink:0;align-items:center;">' +
+          '<span style="font-size:11px;color:var(--sage);font-weight:600;">' + Math.round(food.cal || 0) + '</span>' +
+          '<span style="font-size:11px;color:var(--muted);">P' + Math.round(food.protein || 0) + '</span>' +
+          '<span style="font-size:11px;color:var(--muted);">C' + Math.round(food.carbs || 0) + '</span>' +
+          '<span style="font-size:11px;color:var(--muted);">F' + Math.round(food.fat || 0) + '</span>' +
+          '<span class="food-feel-row">' +
+            '<button class="food-feel-btn' + goodSel + '" type="button" onclick="saveFoodFeel(this,\'good\')">\uD83D\uDC4D</button>' +
+            '<button class="food-feel-btn' + badSel + '" type="button" onclick="saveFoodFeel(this,\'bad\')">\uD83D\uDC4E</button>' +
+            '<button class="food-feel-btn' + grossSel + '" type="button" onclick="saveFoodFeel(this,\'gross\')">\uD83E\uDD22</button>' +
+          '</span>' +
+        '</div>';
+      log.appendChild(item);
+    });
+
+    // Update header totals
+    try {
+      document.getElementById('totalCalDisplay').textContent  = Math.round(foodLogTotals.cal) + ' cal';
+      document.getElementById('totalProtDisplay').textContent = Math.round(foodLogTotals.protein) + 'g protein';
+      document.getElementById('totalCarbDisplay').textContent = Math.round(foodLogTotals.carbs) + 'g carbs';
+      document.getElementById('totalFatDisplay').textContent  = Math.round(foodLogTotals.fat) + 'g fat';
+      var calBar = document.getElementById('calProgressBar');
+      if (calBar && state && state.macros && state.macros.calories) {
+        var pct = Math.min(Math.round(foodLogTotals.cal / state.macros.calories * 100), 100);
+        calBar.style.width = pct + '%';
+      }
+      var dc = document.getElementById('loggedCalories');
+      if (dc) dc.textContent = Math.round(foodLogTotals.cal) + ' cal';
+    } catch(_) {}
+  }
+
+  // Run restore once DOM is ready (script runs at end of body, so DOM is available)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', restoreTodayFoodLog);
+  } else {
+    setTimeout(restoreTodayFoodLog, 0);
   }
 
 })();
