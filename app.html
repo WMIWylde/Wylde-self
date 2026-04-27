@@ -25,52 +25,54 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      /* ── Design System v10 — Light Wellness ── */
-      --bg:         #F7F6F3;
-      --bg-main:    #F7F6F3;
-      --bg-surface: #FFFFFF;
-      --bg-soft:    #EFEDE8;
-      --bg-elevated:#FFFFFF;
-      --surface:    #FFFFFF;
-      --surface2:   #F0EDE8;
-      --card-light: #FFFFFF;
-      --sand:       #E8E3D9;
-      --cream:      #F0EDE5;
-      --border:     rgba(0,0,0,0.06);
-      --border2:    rgba(0,0,0,0.08);
-      --border-soft: rgba(0,0,0,0.06);
-      --border-warm: rgba(110,127,107,0.12);
-      --text:       #1A1A1A;
-      --text2:      #6B6B6B;
-      --text3:      #9A9A9A;
-      --text-dark:  #1A1A1A;
-      --text-primary:   #1A1A1A;
-      --text-secondary: #6B6B6B;
-      --text-muted:     #9A9A9A;
+      /* ── Design System v11 — Initiation Container (dark) ── */
+      /* Brief: Whoop + Levels + Calm + a high-end men's initiation
+         container. No bright colors. No gradients except subtle. */
+      --bg:         #070707;
+      --bg-main:    #070707;
+      --bg-surface: #111111;
+      --bg-soft:    #161616;
+      --bg-elevated:#1A1A1A;
+      --surface:    #111111;
+      --surface2:   #161616;
+      --card-light: #161616;
+      --sand:       #1F1E1B;
+      --cream:      #161616;            /* repurposed for dark modal surfaces */
+      --border:     rgba(244,241,232,0.06);
+      --border2:    rgba(244,241,232,0.10);
+      --border-soft: rgba(244,241,232,0.05);
+      --border-warm: rgba(200,169,110,0.14);
+      --text:       #F4F1E8;
+      --text2:      #A6A29A;
+      --text3:      #6E6B65;
+      --text-dark:  #F4F1E8;
+      --text-primary:   #F4F1E8;
+      --text-secondary: #A6A29A;
+      --text-muted:     #6E6B65;
       /* ── Accent — sage (progress), gold (reward only) ── */
-      --sage:       #6E7F66;
-      --sage-soft:  #7F907C;
-      --sage-dim:   rgba(110,127,102,0.10);
-      --sage-glow:  rgba(110,127,102,0.12);
-      --gold:       #B89B5E;
-      --gold-hi:    rgba(184,155,94,0.85);
-      --gold-mid:   rgba(184,155,94,0.5);
-      --gold-lo:    rgba(184,155,94,0.3);
-      --gold-dim:   rgba(184,155,94,0.08);
-      --gold-glow:  rgba(184,155,94,0.1);
-      --ember:      #B89B5E;
-      --green:      #6E7F66;
+      --sage:       #7D9275;
+      --sage-soft:  #8FA486;
+      --sage-dim:   rgba(125,146,117,0.12);
+      --sage-glow:  rgba(125,146,117,0.18);
+      --gold:       #C8A96E;
+      --gold-hi:    rgba(200,169,110,0.95);
+      --gold-mid:   rgba(200,169,110,0.55);
+      --gold-lo:    rgba(200,169,110,0.30);
+      --gold-dim:   rgba(200,169,110,0.10);
+      --gold-glow:  rgba(200,169,110,0.18);
+      --ember:      #C8A96E;
+      --green:      #7D9275;
       --blue:       #5a9ecf;
       --purple:     #9a80cc;
       /* ── Accent system ── */
-      --accent:        #6E7F66;
-      --accent-bg:     rgba(110,127,102,0.08);
-      --accent-border: rgba(110,127,102,0.18);
-      /* ── Shadows — soft, warm ── */
-      --shadow-soft: 0 2px 12px rgba(0,0,0,0.04);
-      --shadow-card: 0 4px 20px rgba(0,0,0,0.05);
-      --shadow-hover: 0 8px 30px rgba(0,0,0,0.08);
-      --shadow-glow: 0 0 40px rgba(110,127,102,0.06);
+      --accent:        #7D9275;
+      --accent-bg:     rgba(125,146,117,0.10);
+      --accent-border: rgba(125,146,117,0.22);
+      /* ── Shadows — depth in dark ── */
+      --shadow-soft: 0 4px 16px rgba(0,0,0,0.40);
+      --shadow-card: 0 8px 32px rgba(0,0,0,0.45);
+      --shadow-hover: 0 12px 40px rgba(0,0,0,0.55);
+      --shadow-glow: 0 0 60px rgba(200,169,110,0.10);
       /* ── Font — Inter only ── */
       --font-ui:        'Inter', system-ui, -apple-system, sans-serif;
       --font-mono:      'Inter', system-ui, sans-serif;
@@ -84,10 +86,10 @@
       --space-5: 24px;
       --space-6: 32px;
       /* ── Legacy aliases ── */
-      --black:       #1A1A1A;
-      --charcoal:    #2C2C2C;
-      --white:       #1A1A1A;  /* remapped for light theme — used as primary text color */
-      --muted:       #6B6B6B;
+      --black:       #070707;
+      --charcoal:    #111111;
+      --white:       #F4F1E8;
+      --muted:       #A6A29A;
       --ff-hero:     'Inter', system-ui, sans-serif;
       --ff-serif:    'Inter', system-ui, sans-serif;
       --ff-body:     'Inter', system-ui, sans-serif;
@@ -100,10 +102,17 @@
       --radius-card: 20px;
       --radius-pill: 999px;
     }
-    html, body { background: #F7F6F3 !important; color: var(--text); font-family: var(--font-ui); overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; line-height: 1.6; }
+    html, body { background: #070707 !important; color: var(--text); font-family: var(--font-ui); overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; line-height: 1.6; }
+    /* Force-dark for inputs/textareas so browser autofill doesn't go white */
+    input, textarea, select { color-scheme: dark; }
+    input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
+      -webkit-text-fill-color: var(--text);
+      -webkit-box-shadow: 0 0 0 1000px var(--bg-soft) inset;
+      transition: background-color 5000s ease-in-out 0s;
+    }
 
     /* NAV */
-    nav { position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; background: #FFFFFF; border-right: 1px solid rgba(0,0,0,0.06); width: 200px; display: flex; flex-direction: column; padding: 0; }
+    nav { position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; background: var(--surface); border-right: 1px solid rgba(0,0,0,0.06); width: 200px; display: flex; flex-direction: column; padding: 0; }
     .nav-logo { font-family: var(--ff-hero); font-size: 18px; letter-spacing: 0.14em; color: var(--text); text-decoration: none; padding: 32px 24px 28px; border-bottom: 1px solid rgba(0,0,0,0.06); display: block; }
     .nav-logo span { color: var(--sage); }
     .nav-tabs { display: flex; flex-direction: column; flex: 1; padding: 12px 0; overflow-y: auto; }
@@ -449,35 +458,81 @@
     .ex-video-btn svg { width:16px;height:16px;flex-shrink:0; }
     /* legacy log-set-btn removed — replaced by .set-log-btn in set-by-set system */
 
-    /* COACH */
+    /* SETTINGS DRAWER — slide-in left */
+    .drawer-link { display:flex; align-items:center; gap:14px; width:100%; padding:14px 12px; background:none; border:none; color:var(--text); font-family:var(--font-ui); font-size:15px; font-weight:500; cursor:pointer; border-radius:10px; transition:background 0.15s; text-align:left; }
+    .drawer-link:hover { background:rgba(244,241,232,0.04); }
+    .drawer-link:active { background:rgba(244,241,232,0.07); }
+    .drawer-link-icon { color:var(--text2); display:flex; align-items:center; justify-content:center; flex-shrink:0; width:22px; }
+    .drawer-link:hover .drawer-link-icon { color:var(--gold); }
+    /* Hide left side-nav on mobile sizing — bottom nav + hamburger only */
+    @media (max-width: 768px) {
+      nav { display: none !important; }
+      .screen { padding-left: 0 !important; }
+    }
+    #topMenuBtn:hover { border-color:var(--gold-mid); color:var(--gold); }
+    #topMenuBtn:active { transform: scale(0.96); }
+
+    /* COACH — premium dark, private-text-thread feel */
     .coach-container { padding-bottom: 0; }
-    .coach-header { margin-bottom: 32px; }
-    .coach-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; }
-    .coach-title { font-size: 24px; font-weight: 700; color: var(--text); line-height: 1.2; margin: 0; }
-    .coach-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 28px; }
-    .chat-wrap { display: flex; flex-direction: column; height: calc(100vh - 280px); max-height: 500px; }
-    .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; background: var(--bg-surface); border: none; border-bottom: none; border-radius: 16px 16px 0 0; box-shadow: var(--shadow-card); }
-    .chat-messages::-webkit-scrollbar { width: 3px; }
+    .coach-header { margin-bottom: 28px; }
+    .coach-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; font-weight: 600; }
+    .coach-title { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
+    /* Quick action grid — 2 columns, gold-tinted hover */
+    .coach-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; }
+    .coach-action-btn {
+      padding: 14px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--ff-body);
+      transition: all 0.18s cubic-bezier(0.2,0.8,0.2,1);
+      text-align: center;
+      letter-spacing: -0.005em;
+    }
+    .coach-action-btn:hover { border-color: var(--gold-mid); color: var(--gold); transform: translateY(-1px); background: var(--surface2); }
+    .coach-action-btn:active { transform: scale(0.98); }
+    /* Chat surface */
+    .chat-wrap { display: flex; flex-direction: column; height: calc(100vh - 320px); max-height: 560px; min-height: 380px; border: 1px solid var(--border); border-radius: 18px; overflow: hidden; background: var(--surface); }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 22px 18px; display: flex; flex-direction: column; gap: 18px; background: var(--surface); }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
     .chat-messages::-webkit-scrollbar-track { background: transparent; }
-    .chat-messages::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); }
-    .msg { max-width: 85%; }
+    .chat-messages::-webkit-scrollbar-thumb { background: rgba(244,241,232,0.10); border-radius: 2px; }
+    .msg { max-width: 88%; }
     .msg-ai { align-self: flex-start; }
     .msg-user { align-self: flex-end; }
-    .msg-bubble { padding: 12px 16px; font-size: 14px; line-height: 1.7; }
-    .msg-ai .msg-bubble { background: var(--bg-soft); border: none; color: var(--text2); border-radius: 4px 16px 16px 16px; }
-    .msg-user .msg-bubble { background: rgba(122,142,118,0.1); border: none; color: var(--text); border-radius: 16px 4px 16px 16px; }
-    .msg-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #666; margin-bottom: 6px; }
-    .msg-ai .msg-label { color: #666; }
-    .chat-input-row { display: flex; border: none; border-top: 1px solid rgba(0,0,0,0.06); border-radius: 0 0 16px 16px; overflow: hidden; background: var(--bg-surface); }
-    .chat-input { flex: 1; background: transparent; border: none; color: var(--text); font-family: var(--ff-body); font-size: 14px; padding: 14px 16px; outline: none; }
-    .chat-input::placeholder { color: var(--text3); }
-    .chat-send { background: var(--text); border: none; color: var(--text-dark); padding: 14px 20px; cursor: pointer; font-family: var(--ff-body); font-size: 14px; font-weight: 600; transition: opacity 0.15s; }
-    .chat-send:hover { opacity: 0.85; }
-    .msg-ai .msg-bubble { font-family: var(--ff-body); font-size: 14px; line-height: 1.7; }
-    .msg-user .msg-bubble { font-family: var(--ff-body); }
-    /* Coach quick action buttons */
-    .coach-action-btn { padding: 16px; background: var(--bg-surface); border: none; border-radius: 14px; font-size: 14px; font-weight: 500; color: var(--text); cursor: pointer; font-family: var(--ff-body); transition: all 0.15s; text-align: center; box-shadow: var(--shadow-card); }
-    .coach-action-btn:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
+    .msg-bubble { padding: 13px 16px; font-size: 14.5px; line-height: 1.55; font-weight: 400; }
+    /* AI = transparent with sage left-rule, evokes "voice from within" */
+    .msg-ai .msg-bubble { background: var(--bg-soft); color: var(--text); border-radius: 4px 14px 14px 14px; border-left: 2px solid var(--gold); }
+    /* User = sage-tinted, signal of self */
+    .msg-user .msg-bubble { background: var(--accent-bg); color: var(--text); border-radius: 14px 4px 14px 14px; border: 1px solid var(--accent-border); }
+    .msg-label { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; font-weight: 600; }
+    .msg-ai .msg-label { color: var(--gold); }
+    .msg-user .msg-label { color: var(--sage); text-align: right; }
+    /* Input row */
+    .chat-input-row { display: flex; align-items: stretch; border-top: 1px solid var(--border); background: var(--bg-soft); }
+    .chat-input { flex: 1; background: transparent; border: none; color: var(--text); font-family: var(--ff-body); font-size: 15px; padding: 16px 18px; outline: none; min-width: 0; }
+    .chat-input::placeholder { color: var(--text3); font-style: normal; }
+    .chat-send {
+      background: var(--gold);
+      border: none;
+      color: #0B0B0B;
+      padding: 0 22px;
+      cursor: pointer;
+      font-family: var(--ff-body);
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 60px;
+    }
+    .chat-send:hover { filter: brightness(1.08); }
+    .chat-send:active { transform: scale(0.96); }
     .stat-num, #sessionCount, #streakCount, #weekCount, #dashCalConsumed, #dash_water_val, #dc-streak-num, #dc-sleep-hrs, #macroCalories { font-family: var(--font-mono); }
     .streak-fire { font-family: var(--font-milestone); font-weight: 800; }
 
@@ -726,12 +781,12 @@
   /* ── Primary CTA (inside hero) ── */
   .ov-cta-wrap { padding: 0; text-align: left; animation: none; }
   .ov-cta { display: inline-flex; align-items: center; gap: 10px; padding: 15px 28px; border: none; border-radius: 14px; background: rgba(255,255,255,0.95); color: var(--text); font-family: var(--ff-body); font-size: 14px; font-weight: 600; letter-spacing: 0.02em; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
-  .ov-cta:hover { background: #FFFFFF; transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0,0,0,0.2); }
+  .ov-cta:hover { background: var(--surface); transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0,0,0,0.2); }
   .ov-cta:active { transform: scale(0.98); }
   .ov-cta-arrow { font-size: 16px; }
 
   /* ── A2. YOUR PATH (phase + badges card) ── */
-  .ov-path-card { background:#FFFFFF; border-radius:20px; padding:20px; margin-bottom:20px; box-shadow:0 4px 20px rgba(0,0,0,0.05); cursor:pointer; transition:transform 0.15s; animation:ovFadeUp 0.7s ease 0.1s both; }
+  .ov-path-card { background:var(--surface); border-radius:20px; padding:20px; margin-bottom:20px; box-shadow:0 4px 20px rgba(0,0,0,0.05); cursor:pointer; transition:transform 0.15s; animation:ovFadeUp 0.7s ease 0.1s both; }
   .ov-path-card:hover { transform:translateY(-1px); box-shadow:0 8px 28px rgba(0,0,0,0.07); }
   .ov-path-card:active { transform:scale(0.99); }
   .ov-path-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
@@ -760,7 +815,7 @@
   .rewards-modal-close { position:absolute; top:18px; right:20px; background:none; border:none; color:var(--muted); font-size:24px; cursor:pointer; padding:0; width:32px; height:32px; }
   .rewards-section-label { font-size:10px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold,#B89B5E); margin:18px 0 10px; }
   .rewards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; }
-  .rewards-badge-card { background:#FFFFFF; border:1px solid var(--border); border-radius:14px; padding:14px 12px; text-align:center; transition:transform 0.15s; }
+  .rewards-badge-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 12px; text-align:center; transition:transform 0.15s; }
   .rewards-badge-card.earned { background:linear-gradient(135deg,rgba(184,155,94,0.10),rgba(110,127,102,0.06)); border-color:rgba(184,155,94,0.30); }
   .rewards-badge-card.locked { opacity:0.45; }
   .rewards-badge-emoji { font-size:32px; line-height:1; margin-bottom:6px; display:block; filter:grayscale(0%); }
@@ -771,7 +826,7 @@
   /* ── B. Today Stack ── */
   .ov-stack { padding: 0 0 20px; animation: ovFadeUp 0.8s ease 0.2s both; }
   .ov-stack-label { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text); margin-bottom: 14px; padding-left: 2px; }
-  .ov-stack-card { background: #FFFFFF; border: none; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+  .ov-stack-card { background: var(--surface); border: none; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
   .ov-stack-row { display: flex; align-items: center; padding: 20px 20px; cursor: pointer; transition: background 0.15s; gap: 14px; }
   .ov-stack-row:hover { background: rgba(0,0,0,0.015); }
   .ov-stack-row:active { background: rgba(0,0,0,0.03); }
@@ -797,13 +852,13 @@
   .ov-hydration-bar { flex: 1; height: 6px; background: rgba(0,0,0,0.06); border-radius: 4px; overflow: hidden; }
   .ov-hydration-bar-fill { height: 100%; background: #4285F4; border-radius: 4px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); width: 0%; }
   .ov-water-btns { display: flex; gap: 6px; flex-shrink: 0; }
-  .ov-sb { width: 34px; height: 34px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.10); background: #FFFFFF; color: var(--text); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; font-weight: 500; }
+  .ov-sb { width: 34px; height: 34px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.10); background: var(--surface); color: var(--text); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; font-weight: 500; }
   .ov-sb:hover { border-color: rgba(0,0,0,0.18); background: rgba(0,0,0,0.02); }
   .ov-sb:active { transform: scale(0.9); }
 
   /* ── C. Secondary Strip ── */
   .ov-secondary { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 0 16px; animation: ovFadeUp 0.8s ease 0.35s both; }
-  .ov-sec-row { display: flex; flex-direction: column; gap: 0; padding: 18px 18px; background: #FFFFFF; border: none; border-radius: 18px; cursor: pointer; transition: all 0.15s; box-shadow: 0 3px 14px rgba(0,0,0,0.04); }
+  .ov-sec-row { display: flex; flex-direction: column; gap: 0; padding: 18px 18px; background: var(--surface); border: none; border-radius: 18px; cursor: pointer; transition: all 0.15s; box-shadow: 0 3px 14px rgba(0,0,0,0.04); }
   .ov-sec-row:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.07); transform: translateY(-1px); }
   .ov-sec-row:active { transform: scale(0.98); }
   .ov-sec-top { display: flex; align-items: center; gap: 12px; margin-bottom: 2px; }
@@ -1059,7 +1114,7 @@
   .label-before { left:12px;background:rgba(255,255,255,0.85);color:var(--text2);border:1px solid rgba(0,0,0,0.08); }
   .label-after { right:12px;background:rgba(201,173,110,0.2);color:var(--gold);border:1px solid rgba(201,173,110,0.4); }
   .reveal-line { position:absolute;top:0;bottom:0;left:50%;width:2px;background:#c8a96e;transform:translateX(-50%);z-index:10;pointer-events:none; }
-  .reveal-handle { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:#FFFFFF;border:2px solid var(--sage);display:flex;align-items:center;justify-content:center;z-index:11;box-shadow:0 0 0 5px rgba(110,127,102,0.15);pointer-events:none; }
+  .reveal-handle { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:var(--surface);border:2px solid var(--sage);display:flex;align-items:center;justify-content:center;z-index:11;box-shadow:0 0 0 5px rgba(110,127,102,0.15);pointer-events:none; }
   .handle-inner { display:flex;gap:4px;align-items:center; }
   .arr-l { width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:6px solid #c8a96e; }
   .arr-r { width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:6px solid #c8a96e; }
@@ -1258,7 +1313,7 @@
   .roadmap-phase, .ov-w, .ov-widget, .feed-post, .feed-item,
   .lb-row, .lb-item, .thread-card, .forum-section-card,
   .roadmap-stat, .wcard {
-    background: #FFFFFF !important;
+    background: var(--surface) !important;
     border: none !important;
     border-radius: var(--radius-card) !important;
     box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
@@ -1353,7 +1408,7 @@
 
   /* ── INPUTS ── */
   .input, .wfield, .intake-textarea, .ov-cin, .alt-workout-input {
-    background: #FFFFFF !important;
+    background: var(--surface) !important;
     border: 1px solid rgba(0,0,0,0.08) !important;
     border-radius: var(--r-sm) !important;
     padding: 14px 16px !important;
@@ -1377,7 +1432,7 @@
     color: var(--text2) !important;
     padding: 10px 18px !important;
     border-radius: var(--radius-pill) !important;
-    background: #FFFFFF !important;
+    background: var(--surface) !important;
     transition: all 0.2s ease !important;
     text-transform: none !important;
   }
@@ -1399,7 +1454,7 @@
     flex-direction: row !important; align-items: stretch !important;
     border-right: none !important;
     border-top: none !important;
-    background: #FFFFFF !important;
+    background: var(--surface) !important;
     box-shadow: 0 -1px 0 rgba(0,0,0,0.06), 0 -8px 24px rgba(0,0,0,0.06) !important;
     z-index: 500 !important; padding: 0 !important;
     padding-bottom: env(safe-area-inset-bottom) !important;
@@ -1456,7 +1511,7 @@
   .ov-we { color: var(--sage) !important; font-size: 11px !important; font-weight: 500 !important; }
   .ov-btn {
     border-radius: var(--r-sm) !important;
-    background: #FFFFFF !important;
+    background: var(--surface) !important;
     border: 1px solid rgba(0,0,0,0.08) !important;
     color: var(--text2) !important; font-size: 12px !important;
   }
@@ -1467,7 +1522,7 @@
   }
   .ov-sb {
     border-radius: 8px !important;
-    background: #FFFFFF !important;
+    background: var(--surface) !important;
     border: 1px solid rgba(0,0,0,0.08) !important;
     color: var(--text) !important;
   }
@@ -1500,7 +1555,7 @@
   .reveal-slider { border-radius: 16px !important; border: 1px solid rgba(0,0,0,0.06) !important; overflow: hidden !important; }
   .reveal-tab {
     border-radius: var(--r-sm) !important;
-    background: #FFFFFF !important;
+    background: var(--surface) !important;
     border: 1px solid rgba(0,0,0,0.06) !important;
   }
   .reveal-tab.active {
@@ -1516,7 +1571,7 @@
     min-height: 100vh !important; padding: var(--space-4) 16px !important;
   }
   .auth-box {
-    background: #FFFFFF !important; border: none !important;
+    background: var(--surface) !important; border: none !important;
     padding: var(--space-6) var(--space-5) !important; width: 100% !important;
     border-radius: 24px !important; box-shadow: 0 4px 24px rgba(0,0,0,0.06) !important;
   }
@@ -1711,13 +1766,15 @@
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
       <span>Coach</span>
     </button>
-    <button class="nav-tab" onclick="showScreen('library')">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5L12 12l5.5-5.5"/><path d="M2 22h20"/><path d="M5 22V8.5L12 2l7 6.5V22"/></svg>
-      <span>Library</span>
-    </button>
     <button class="nav-tab" onclick="showScreen('progress')">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      <span>Settings</span>
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span>Progress</span>
+    </button>
+    <!-- Library + Settings moved out of bottom nav. Library opens inside
+         the workout flow + via Coach. Settings lives in the top-left
+         hamburger menu. Bottom nav stays at 4 tabs as per the brief. -->
+    <button class="nav-tab" id="navLibraryHidden" onclick="showScreen('library')" style="display:none;">
+      <span>Library</span>
     </button>
   </div>
   <div class="nav-footer">
@@ -1730,6 +1787,53 @@
   <span id="navLevel" style="display:none"></span>
   <span id="levelBadgeWrap" style="display:none"></span>
 </nav>
+
+<!-- TOP-LEFT MENU TRIGGER (hamburger) — opens the Settings drawer -->
+<button id="topMenuBtn" onclick="openSettingsDrawer()" aria-label="Menu" style="position:fixed;top:18px;left:16px;z-index:201;width:42px;height:42px;border-radius:12px;background:rgba(17,17,17,0.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--border);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+
+<!-- SETTINGS DRAWER — slide-in from left, identity-driven copy -->
+<div id="settingsDrawer" style="position:fixed;inset:0;z-index:9998;display:none;background:rgba(7,7,7,0.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);" onclick="if(event.target===this)closeSettingsDrawer()">
+  <aside id="settingsDrawerPanel" style="position:absolute;top:0;left:0;bottom:0;width:88%;max-width:340px;background:#0B0B0B;border-right:1px solid var(--border);padding:64px 24px 32px;overflow-y:auto;transform:translateX(-100%);transition:transform 0.32s cubic-bezier(0.2,0.8,0.2,1);box-shadow:24px 0 60px rgba(0,0,0,0.4);">
+    <button onclick="closeSettingsDrawer()" aria-label="Close" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);width:36px;height:36px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <p style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin:0 0 6px;font-weight:600;">Wylde Self</p>
+    <p id="drawerUserName" style="font-size:18px;font-weight:600;color:var(--text);margin:0 0 28px;letter-spacing:-0.005em;">Your account</p>
+
+    <nav style="display:flex;flex-direction:column;gap:4px;">
+      <button class="drawer-link" onclick="closeSettingsDrawer();showScreen('library')">
+        <span class="drawer-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+        <span>Exercise Library</span>
+      </button>
+      <button class="drawer-link" onclick="closeSettingsDrawer();showScreen('nutrition')">
+        <span class="drawer-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></span>
+        <span>Nutrition</span>
+      </button>
+      <button class="drawer-link" onclick="closeSettingsDrawer();openEditProfile()">
+        <span class="drawer-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+        <span>Edit Profile</span>
+      </button>
+      <button class="drawer-link" onclick="closeSettingsDrawer();regenerateProgram()">
+        <span class="drawer-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
+        <span>Rebuild My Program</span>
+      </button>
+      <button class="drawer-link" onclick="closeSettingsDrawer();resetProfile()">
+        <span class="drawer-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></span>
+        <span>Reset Profile</span>
+      </button>
+    </nav>
+
+    <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);">
+      <button class="drawer-link" onclick="closeSettingsDrawer();signOutUser();">
+        <span class="drawer-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </aside>
+</div>
 
 <!-- DISCLAIMER BANNER -->
 <div class="disclaimer-banner">
@@ -2166,11 +2270,11 @@
     <div class="ov-hero-content">
       <p class="ov-hero-top">Today</p>
       <h1 class="ov-hero-title" id="ov-hero-title">Day 1 of 84</h1>
-      <p class="ov-hero-phase" id="ov-phase-label">Phase 1 · Your First Transformation</p>
-      <p class="ov-hero-identity" id="ov-identity">You're becoming someone who follows through.</p>
-      <p class="ov-hero-sub" id="ov-sub">Discipline compounds. Future you is watching.</p>
+      <p class="ov-hero-phase" id="ov-phase-label">Initiate &middot; The path is the practice</p>
+      <p class="ov-hero-identity" id="ov-identity">You&rsquo;re becoming someone who follows through.</p>
+      <p class="ov-hero-sub" id="ov-sub">One day. One choice. The version of you that does this is already watching.</p>
       <div class="ov-cta-wrap">
-        <button class="ov-cta" onclick="showScreen('program')">Start Today's Session <span class="ov-cta-arrow">&rarr;</span></button>
+        <button class="ov-cta" onclick="showScreen('program')">Enter Today&rsquo;s Training <span class="ov-cta-arrow">&rarr;</span></button>
       </div>
     </div>
     <!-- Hidden bar elements for JS compat -->
@@ -2187,13 +2291,14 @@
   <!-- ═══ MORNING PROTOCOL ═══ -->
   <div class="mp-card" id="mpCard">
 
-    <!-- Collapsible header -->
+    <!-- Collapsible header — "Your Standard" reframes morning protocol as
+         identity work, not a checklist -->
     <div class="mp-collapse-header" onclick="toggleMPCollapse()" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0;cursor:pointer;">
       <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--sage,#7a9a6e);">Morning Protocol</span>
-        <span class="mp-day-count" id="mpDayCountHeader" style="font-size:11px;color:var(--muted);"></span>
+        <span style="font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);">Your Standard</span>
+        <span class="mp-day-count" id="mpDayCountHeader" style="font-size:11px;color:var(--text3);"></span>
       </div>
-      <span id="mpCollapseIcon" style="font-size:18px;color:var(--muted);font-weight:300;line-height:1;">−</span>
+      <span id="mpCollapseIcon" style="font-size:18px;color:var(--text2);font-weight:300;line-height:1;">−</span>
     </div>
 
     <!-- Collapsible body -->
@@ -2297,12 +2402,14 @@
 
   <!-- B. TODAY STACK -->
   <div class="ov-stack">
-    <p class="ov-stack-label">Today's Focus</p>
+    <p class="ov-stack-label">Today's Path</p>
     <div class="ov-stack-card">
       <div class="ov-stack-row" id="ov-w-program" onclick="showScreen('program')">
-        <div class="ov-stack-icon workout"><img src="/logo-icon.png" alt="" style="width:28px;height:28px;object-fit:contain;border-radius:6px;"></div>
+        <div class="ov-stack-icon workout" style="display:flex;align-items:center;justify-content:center;color:var(--gold);background:rgba(200,169,110,0.10);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="11" width="14" height="2"/></svg>
+        </div>
         <div class="ov-stack-left">
-          <p class="ov-stack-name">Workout</p>
+          <p class="ov-stack-name">Today's Training</p>
           <p class="ov-stack-meta" id="ov-mission-workout-meta">Upper Body &middot; 6 Exercises</p>
         </div>
         <div class="ov-stack-right">
@@ -2310,11 +2417,13 @@
           <span class="ov-stack-arrow">&#8250;</span>
         </div>
       </div>
-      <!-- Daily long walk — separate from training, keeps the body moving -->
+      <!-- Walk — daily mid-day movement, separate from training -->
       <div class="ov-stack-row" id="ov-w-walk" onclick="toggleDailyWalk()">
-        <div class="ov-stack-icon walk" style="background:rgba(110,127,102,0.10);color:var(--sage,#6E7F66);font-size:18px;">&#128694;</div>
+        <div class="ov-stack-icon walk" style="display:flex;align-items:center;justify-content:center;color:var(--sage);background:rgba(125,146,117,0.10);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M15 22l-3-7-3 7"/><path d="M9 13l-3-2 3-6 4 1 3 4"/></svg>
+        </div>
         <div class="ov-stack-left">
-          <p class="ov-stack-name">Long Walk</p>
+          <p class="ov-stack-name">Walk</p>
           <p class="ov-stack-meta" id="ov-walk-meta">30+ minutes outside</p>
         </div>
         <div class="ov-stack-right">
@@ -2323,7 +2432,9 @@
         </div>
       </div>
       <div class="ov-stack-row" id="ov-w-cal" onclick="showScreen('nutrition')">
-        <div class="ov-stack-icon protein">&#9775;</div>
+        <div class="ov-stack-icon protein" style="display:flex;align-items:center;justify-content:center;color:var(--gold);background:rgba(200,169,110,0.10);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18l-2 12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L3 6z"/><path d="M12 2v4"/></svg>
+        </div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Protein</p>
           <p class="ov-stack-meta"><span id="ov-mac-p">0</span>g of <span id="ov-cal-goal">180</span>g</p>
@@ -2334,7 +2445,9 @@
         </div>
       </div>
       <div class="ov-stack-row" id="ov-w-water">
-        <div class="ov-stack-icon water">&#128167;</div>
+        <div class="ov-stack-icon water" style="display:flex;align-items:center;justify-content:center;color:var(--sage);background:rgba(125,146,117,0.10);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+        </div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Water</p>
           <p class="ov-stack-meta"><span id="ov-wv">0</span> of 128 oz</p>
@@ -2350,22 +2463,26 @@
     </div>
   </div>
 
-  <!-- C. SECONDARY STRIP (side-by-side) -->
+  <!-- C. SECONDARY STRIP — Coach access + nutrition (identity copy) -->
   <div class="ov-secondary">
     <div class="ov-sec-row" onclick="showScreen('coach')">
       <div class="ov-sec-top">
-        <div class="ov-sec-icon-wrap coach">&#10024;</div>
-        <span class="ov-sec-title" id="ov-coach-prompt">Ask your coach anything</span>
+        <div class="ov-sec-icon-wrap coach" style="display:flex;align-items:center;justify-content:center;color:var(--gold);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <span class="ov-sec-title" id="ov-coach-prompt">Talk to your future self</span>
       </div>
-      <p class="ov-sec-subtitle">Get guidance &amp; stay accountable</p>
+      <p class="ov-sec-subtitle">The version of you that already did it</p>
       <span class="ov-sec-arrow">&#8250;</span>
     </div>
     <div class="ov-sec-row" onclick="showScreen('nutrition')">
       <div class="ov-sec-top">
-        <div class="ov-sec-icon-wrap meal">&#127860;</div>
-        <span class="ov-sec-title">Log a meal</span>
+        <div class="ov-sec-icon-wrap meal" style="display:flex;align-items:center;justify-content:center;color:var(--sage);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+        </div>
+        <span class="ov-sec-title">Eat like the man you&rsquo;re becoming</span>
       </div>
-      <p class="ov-sec-subtitle">Fuel your transformation</p>
+      <p class="ov-sec-subtitle">Log what you ate. Adjust the plan.</p>
       <span class="ov-sec-arrow">&#8250;</span>
     </div>
   </div>
@@ -2392,22 +2509,23 @@
     <span class="ov-future-arrow">&#8250;</span>
   </div>
 
-  <!-- COMPLETE DAY BUTTON -->
-  <div id="completeDayCard" style="margin:20px 20px 24px;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;">
+  <!-- DAILY CLOSEOUT — close the loop. The brief: reinforce identity at end. -->
+  <div id="completeDayCard" style="margin:20px 0 24px;padding:22px 20px;background:var(--surface);border:1px solid var(--border);border-radius:18px;">
     <div id="completeDayReady">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-        <span style="font-size:18px;">🏁</span>
-        <span style="font-size:15px;font-weight:600;color:var(--text);">Ready to close out today?</span>
-      </div>
-      <div id="completeDayChecks" style="display:flex;gap:16px;margin-bottom:16px;"></div>
-      <button id="completeDayBtn" onclick="completeDay()" style="width:100%;padding:14px 0;background:var(--sage);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;letter-spacing:0.08em;cursor:pointer;">COMPLETE DAY</button>
+      <p style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin:0 0 8px;font-weight:600;">Daily Closeout</p>
+      <p style="font-size:17px;font-weight:600;color:var(--text);margin:0 0 4px;letter-spacing:-0.005em;">Close the loop on today.</p>
+      <p style="font-size:13px;color:var(--text2);margin:0 0 16px;line-height:1.5;">Mark the day done. Lock the work in. Let the version of you who finished it set the standard for tomorrow.</p>
+      <div id="completeDayChecks" style="display:flex;gap:16px;margin-bottom:18px;"></div>
+      <button id="completeDayBtn" onclick="completeDay()" style="width:100%;padding:15px 0;background:var(--gold);color:#0B0B0B;border:none;border-radius:12px;font-size:13px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;cursor:pointer;transition:filter 0.15s;">Close the Loop</button>
     </div>
     <div id="completeDayDone" style="display:none;">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:22px;color:var(--sage);">✓</span>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span style="color:var(--sage);">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
         <div>
-          <p style="font-size:16px;font-weight:700;color:var(--sage);margin:0;">Day Complete</p>
-          <p style="font-size:13px;color:var(--text2);margin:4px 0 0;">You showed up today. That's the standard.</p>
+          <p style="font-size:17px;font-weight:600;color:var(--sage);margin:0;letter-spacing:-0.005em;">Loop closed.</p>
+          <p style="font-size:13px;color:var(--text2);margin:4px 0 0;">You kept your word. That&rsquo;s the whole game.</p>
         </div>
       </div>
     </div>
@@ -3234,11 +3352,11 @@
 <div class="screen" id="screen-future">
   <div class="container future-container">
 
-    <!-- Header copy — on sage bg -->
+    <!-- Header copy — sacred framing, the brief: feel like a ritual -->
     <div class="fs-header-text">
       <p class="future-label">Future Self</p>
-      <h1 class="future-title">Meet the version of you who followed through.</h1>
-      <p class="future-sub">Upload a photo. We'll generate the version of you who stayed disciplined.</p>
+      <h1 class="future-title">This is you if you follow through.</h1>
+      <p class="future-sub">Upload a photo of yourself today. See the version of you that did the work.</p>
     </div>
 
     <!-- UPLOAD ZONE (implodes on generate) -->
@@ -3254,12 +3372,12 @@
         </div>
       </div>
 
-      <p class="fs-motivation">Most people never follow through.</p>
+      <p class="fs-motivation">Most people never see who they could become. You will.</p>
 
-      <button class="future-generate-btn" id="generateBtn" onclick="generateAllTimelines()">Reveal My Future Self →</button>
+      <button class="future-generate-btn" id="generateBtn" onclick="generateAllTimelines()">Show Me Who I'm Becoming &rarr;</button>
 
       <p class="future-skip-wrap">
-        <button class="future-skip" onclick="showScreen('program')">Not ready yet</button>
+        <button class="future-skip" onclick="showScreen('program')">Not yet</button>
       </p>
     </div>
 
@@ -3378,8 +3496,8 @@
 <div class="screen" id="screen-coach">
   <div class="container coach-container">
     <div class="coach-header">
-      <p class="coach-label">Wylde Coach</p>
-      <h1 class="coach-title">You said this week<br>was different.</h1>
+      <p class="coach-label">Future Self</p>
+      <h1 class="coach-title">The version of you<br>that already did it.</h1>
     </div>
 
     <!-- Quick actions -->
@@ -3390,17 +3508,19 @@
       <button class="coach-action-btn" onclick="coachQuickAction('Optimize everything')">Optimize everything</button>
     </div>
 
-    <!-- Chat -->
+    <!-- Chat — clean dark surface, future-self framing -->
     <div class="chat-wrap">
       <div class="chat-messages" id="chatMessages">
         <div class="msg msg-ai">
-          <p class="msg-label">Wylde Coach</p>
-          <div class="msg-bubble">I'm the version of you that's already done the work. What do you need?</div>
+          <p class="msg-label">Future Self</p>
+          <div class="msg-bubble">I'm the version of you that's already walked this. What's actually going on?</div>
         </div>
       </div>
       <div class="chat-input-row">
-        <input class="chat-input" id="chatInput" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')sendMessage()" />
-        <button class="chat-send" onclick="sendMessage()">→</button>
+        <input class="chat-input" id="chatInput" placeholder="Speak plainly. I already know the rest." onkeydown="if(event.key==='Enter')sendMessage()" />
+        <button class="chat-send" onclick="sendMessage()" aria-label="Send">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
       </div>
     </div>
   </div>
@@ -3732,12 +3852,14 @@
   // XP still accumulates silently for analytics, but is never surfaced
   // as a rank.
 
+  // Identity-based progression. Phases reflect WHO the user is becoming
+  // through consistent action — not how many points they grinded.
   var WYLDE_PHASES = [
-    { id: 'stirring',  name: 'Stirring',   minSessions: 0,   line: 'Something\u2019s beginning to shift.' },
-    { id: 'showingup', name: 'Showing Up', minSessions: 10,  line: 'You\u2019re building the muscle of follow-through.' },
-    { id: 'rooted',    name: 'Rooted',     minSessions: 30,  line: 'The practice has roots now.' },
-    { id: 'embodied',  name: 'Embodied',   minSessions: 100, line: 'It\u2019s no longer trying \u2014 it\u2019s who you are.' },
-    { id: 'wylde',     name: 'Wylde',      minSessions: 300, line: 'You\u2019ve become the person you said you would.' }
+    { id: 'initiate',   name: 'Initiate',   minSessions: 0,   line: 'You stepped onto the path. Now keep walking.' },
+    { id: 'foundation', name: 'Foundation', minSessions: 10,  line: 'The first layer is laid. The work is becoming yours.' },
+    { id: 'embodied',   name: 'Embodied',   minSessions: 30,  line: 'It\u2019s no longer trying \u2014 it\u2019s who you are.' },
+    { id: 'relentless', name: 'Relentless', minSessions: 100, line: 'You don\u2019t negotiate with yourself anymore.' },
+    { id: 'integrated', name: 'Integrated', minSessions: 300, line: 'You and the practice are the same thing now.' }
   ];
 
   function getCurrentPhase(sessions) {
@@ -3764,44 +3886,95 @@
   //   desc      — what it represents
   //   category  — for grouping (streak / sessions / practice / strength / nutrition / reflection)
   //   check(s)  — function returning true if earned, given a stats object
+  // Each badge has a `glyph` key — a stable string keyed against the
+  // SVG_ICONS map below — instead of an emoji. Renderers call svgIcon()
+  // to inflate the actual SVG markup. Stripping emojis was a deliberate
+  // brand call: emojis read playful/childish, and Wylde Self is meant
+  // to feel like an initiation container.
   var WYLDE_BADGES = [
     // Streaks — measure of consecutive days showing up
-    { id: 'streak_3',   icon: '\uD83C\uDF31', name: '3 Days Strong',         desc: 'Three consecutive days of showing up',     category: 'streak', check: function(s){return s.streak>=3;} },
-    { id: 'streak_7',   icon: '\uD83D\uDD25', name: 'One Week Standing',     desc: 'A full week of consistent practice',       category: 'streak', check: function(s){return s.streak>=7;} },
-    { id: 'streak_14',  icon: '\u26A1',       name: 'Two Weeks Held',        desc: 'You held the line for fourteen days',      category: 'streak', check: function(s){return s.streak>=14;} },
-    { id: 'streak_21',  icon: '\u2728',       name: 'Habit Threshold',       desc: 'Twenty-one days \u2014 the practice is sticking', category: 'streak', check: function(s){return s.streak>=21;} },
-    { id: 'streak_30',  icon: '\uD83C\uDF15', name: 'A Month Held',          desc: 'A full lunar cycle of consistency',        category: 'streak', check: function(s){return s.streak>=30;} },
-    { id: 'streak_100', icon: '\uD83D\uDC8E', name: '100 Days Unbroken',     desc: 'A hundred consecutive days. Rare air.',    category: 'streak', check: function(s){return s.streak>=100;} },
-    { id: 'streak_365', icon: '\uD83D\uDC51', name: 'A Year Unbroken',       desc: 'One year of unbroken practice',            category: 'streak', check: function(s){return s.streak>=365;} },
+    { id: 'streak_3',   glyph: 'sprout',    name: '3 Days Strong',         desc: 'Three consecutive days of showing up',     category: 'streak', check: function(s){return s.streak>=3;} },
+    { id: 'streak_7',   glyph: 'flame',     name: 'One Week Standing',     desc: 'A full week of consistent practice',       category: 'streak', check: function(s){return s.streak>=7;} },
+    { id: 'streak_14',  glyph: 'bolt',      name: 'Two Weeks Held',        desc: 'You held the line for fourteen days',      category: 'streak', check: function(s){return s.streak>=14;} },
+    { id: 'streak_21',  glyph: 'sparkle',   name: 'Habit Threshold',       desc: 'Twenty-one days \u2014 the practice is sticking', category: 'streak', check: function(s){return s.streak>=21;} },
+    { id: 'streak_30',  glyph: 'moon',      name: 'A Month Held',          desc: 'A full lunar cycle of consistency',        category: 'streak', check: function(s){return s.streak>=30;} },
+    { id: 'streak_100', glyph: 'gem',       name: '100 Days Unbroken',     desc: 'A hundred consecutive days. Rare air.',    category: 'streak', check: function(s){return s.streak>=100;} },
+    { id: 'streak_365', glyph: 'crown',     name: 'A Year Unbroken',       desc: 'One year of unbroken practice',            category: 'streak', check: function(s){return s.streak>=365;} },
     // Sessions — total number of training sessions completed
-    { id: 'sess_1',     icon: '\u270D',       name: 'First Rep',             desc: 'You logged your first session',            category: 'sessions', check: function(s){return s.sessions>=1;} },
-    { id: 'sess_10',    icon: '\uD83D\uDCAA', name: 'Ten Sessions In',       desc: 'Ten sessions of real work',                category: 'sessions', check: function(s){return s.sessions>=10;} },
-    { id: 'sess_50',    icon: '\uD83C\uDFCB', name: 'Fifty Deep',            desc: 'Fifty sessions \u2014 this is no accident', category: 'sessions', check: function(s){return s.sessions>=50;} },
-    { id: 'sess_100',   icon: '\uD83D\uDD51', name: 'The Hundred',           desc: 'A hundred sessions. You\u2019re a different person.', category: 'sessions', check: function(s){return s.sessions>=100;} },
-    { id: 'sess_500',   icon: '\uD83C\uDFC6', name: '500 Sessions',          desc: 'Five hundred sessions of compounding work', category: 'sessions', check: function(s){return s.sessions>=500;} },
+    { id: 'sess_1',     glyph: 'compass',   name: 'First Rep',             desc: 'You logged your first session',            category: 'sessions', check: function(s){return s.sessions>=1;} },
+    { id: 'sess_10',    glyph: 'hammer',    name: 'Ten Sessions In',       desc: 'Ten sessions of real work',                category: 'sessions', check: function(s){return s.sessions>=10;} },
+    { id: 'sess_50',    glyph: 'shield',    name: 'Fifty Deep',            desc: 'Fifty sessions \u2014 this is no accident', category: 'sessions', check: function(s){return s.sessions>=50;} },
+    { id: 'sess_100',   glyph: 'mountain',  name: 'The Hundred',           desc: 'A hundred sessions. You\u2019re a different person.', category: 'sessions', check: function(s){return s.sessions>=100;} },
+    { id: 'sess_500',   glyph: 'trophy',    name: '500 Sessions',          desc: 'Five hundred sessions of compounding work', category: 'sessions', check: function(s){return s.sessions>=500;} },
     // Morning protocol mornings
-    { id: 'morn_1',     icon: '\uD83C\uDF05', name: 'First Morning',         desc: 'You completed your first morning protocol', category: 'practice', check: function(s){return (s.mornings||0)>=1;} },
-    { id: 'morn_7',     icon: '\u2615',       name: 'Seven Mornings',        desc: 'A week of intentional starts',             category: 'practice', check: function(s){return (s.mornings||0)>=7;} },
-    { id: 'morn_30',    icon: '\uD83D\uDCD6', name: 'Thirty Mornings',       desc: 'A month of practiced rituals',             category: 'practice', check: function(s){return (s.mornings||0)>=30;} },
-    { id: 'morn_100',   icon: '\uD83C\uDFAF', name: 'A Hundred Mornings',    desc: 'A hundred days you chose yourself early', category: 'practice', check: function(s){return (s.mornings||0)>=100;} },
+    { id: 'morn_1',     glyph: 'sunrise',   name: 'First Morning',         desc: 'You completed your first morning protocol', category: 'practice', check: function(s){return (s.mornings||0)>=1;} },
+    { id: 'morn_7',     glyph: 'sun',       name: 'Seven Mornings',        desc: 'A week of intentional starts',             category: 'practice', check: function(s){return (s.mornings||0)>=7;} },
+    { id: 'morn_30',    glyph: 'book',      name: 'Thirty Mornings',       desc: 'A month of practiced rituals',             category: 'practice', check: function(s){return (s.mornings||0)>=30;} },
+    { id: 'morn_100',   glyph: 'target',    name: 'A Hundred Mornings',    desc: 'A hundred days you chose yourself early', category: 'practice', check: function(s){return (s.mornings||0)>=100;} },
     // Daily walks
-    { id: 'walk_1',     icon: '\uD83D\uDEB6', name: 'First Walk',            desc: 'You logged your first daily walk',          category: 'practice', check: function(s){return (s.walks||0)>=1;} },
-    { id: 'walk_7',     icon: '\uD83C\uDF3F', name: 'Seven Walks',           desc: 'A full week of walking',                    category: 'practice', check: function(s){return (s.walks||0)>=7;} },
-    { id: 'walk_30',    icon: '\uD83C\uDFD4', name: 'Thirty Walks',          desc: 'A month of moving outside',                 category: 'practice', check: function(s){return (s.walks||0)>=30;} },
-    { id: 'walk_100',   icon: '\uD83C\uDF04', name: 'A Hundred Walks',       desc: 'A hundred days of stepping outside',        category: 'practice', check: function(s){return (s.walks||0)>=100;} },
+    { id: 'walk_1',     glyph: 'footprint', name: 'First Walk',            desc: 'You logged your first daily walk',          category: 'practice', check: function(s){return (s.walks||0)>=1;} },
+    { id: 'walk_7',     glyph: 'leaf',      name: 'Seven Walks',           desc: 'A full week of walking',                    category: 'practice', check: function(s){return (s.walks||0)>=7;} },
+    { id: 'walk_30',    glyph: 'mountain',  name: 'Thirty Walks',          desc: 'A month of moving outside',                 category: 'practice', check: function(s){return (s.walks||0)>=30;} },
+    { id: 'walk_100',   glyph: 'horizon',   name: 'A Hundred Walks',       desc: 'A hundred days of stepping outside',        category: 'practice', check: function(s){return (s.walks||0)>=100;} },
     // Strength — personal records
-    { id: 'pr_1',       icon: '\uD83C\uDFAF', name: 'First PR',              desc: 'You set your first personal record',        category: 'strength', check: function(s){return (s.prs||0)>=1;} },
-    { id: 'pr_10',      icon: '\u2693',       name: 'Ten PRs',               desc: 'Ten personal records logged',               category: 'strength', check: function(s){return (s.prs||0)>=10;} },
-    { id: 'pr_50',      icon: '\u26F0',       name: 'Fifty PRs',             desc: 'Fifty PRs \u2014 you\u2019ve outgrown your old ceiling', category: 'strength', check: function(s){return (s.prs||0)>=50;} },
+    { id: 'pr_1',       glyph: 'arrow-up',  name: 'First PR',              desc: 'You set your first personal record',        category: 'strength', check: function(s){return (s.prs||0)>=1;} },
+    { id: 'pr_10',      glyph: 'anchor',    name: 'Ten PRs',               desc: 'Ten personal records logged',               category: 'strength', check: function(s){return (s.prs||0)>=10;} },
+    { id: 'pr_50',      glyph: 'mountain',  name: 'Fifty PRs',             desc: 'Fifty PRs \u2014 you\u2019ve outgrown your old ceiling', category: 'strength', check: function(s){return (s.prs||0)>=50;} },
     // Nutrition — meals logged
-    { id: 'meal_1',     icon: '\uD83E\uDD57', name: 'First Meal',            desc: 'You logged your first meal',                category: 'nutrition', check: function(s){return (s.meals||0)>=1;} },
-    { id: 'meal_30',    icon: '\uD83E\uDD63', name: 'Thirty Meals',          desc: 'Thirty meals tracked \u2014 you\u2019re paying attention', category: 'nutrition', check: function(s){return (s.meals||0)>=30;} },
-    { id: 'meal_100',   icon: '\uD83C\uDF7D', name: 'A Hundred Meals',       desc: 'A hundred meals logged',                    category: 'nutrition', check: function(s){return (s.meals||0)>=100;} },
+    { id: 'meal_1',     glyph: 'utensils',  name: 'First Meal',            desc: 'You logged your first meal',                category: 'nutrition', check: function(s){return (s.meals||0)>=1;} },
+    { id: 'meal_30',    glyph: 'leaf',      name: 'Thirty Meals',          desc: 'Thirty meals tracked \u2014 you\u2019re paying attention', category: 'nutrition', check: function(s){return (s.meals||0)>=30;} },
+    { id: 'meal_100',   glyph: 'utensils',  name: 'A Hundred Meals',       desc: 'A hundred meals logged',                    category: 'nutrition', check: function(s){return (s.meals||0)>=100;} },
     // Reflections — feel-prompts engaged with
-    { id: 'refl_1',     icon: '\uD83D\uDCAD', name: 'First Reflection',      desc: 'You logged how a session felt',             category: 'reflection', check: function(s){return (s.reflections||0)>=1;} },
-    { id: 'refl_7',     icon: '\uD83D\uDD2E', name: 'Seven Reflections',     desc: 'You\u2019re tuning in to your own signal',  category: 'reflection', check: function(s){return (s.reflections||0)>=7;} },
-    { id: 'refl_30',    icon: '\uD83C\uDF00', name: 'Thirty Reflections',    desc: 'Thirty reflections \u2014 self-awareness as practice', category: 'reflection', check: function(s){return (s.reflections||0)>=30;} }
+    { id: 'refl_1',     glyph: 'eye',       name: 'First Reflection',      desc: 'You logged how a session felt',             category: 'reflection', check: function(s){return (s.reflections||0)>=1;} },
+    { id: 'refl_7',     glyph: 'compass',   name: 'Seven Reflections',     desc: 'You\u2019re tuning in to your own signal',  category: 'reflection', check: function(s){return (s.reflections||0)>=7;} },
+    { id: 'refl_30',    glyph: 'spiral',    name: 'Thirty Reflections',    desc: 'Thirty reflections \u2014 self-awareness as practice', category: 'reflection', check: function(s){return (s.reflections||0)>=30;} }
   ];
+
+  // SVG icon library — minimal, consistent, lucide-inspired strokes.
+  // Each value is the inner SVG (paths/circles) — svgIcon() wraps it
+  // with the standard <svg> shell at the requested size.
+  var SVG_ICONS = {
+    'sprout':    '<path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
+    'flame':     '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+    'bolt':      '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+    'sparkle':   '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
+    'moon':      '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+    'gem':       '<path d="M6 3h12l4 6-10 13L2 9z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/>',
+    'crown':     '<path d="M2 20h20"/><path d="m4 8 4 4 4-8 4 8 4-4v10H4z"/>',
+    'compass':   '<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>',
+    'hammer':    '<path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L12 9"/><path d="M17.64 15 22 10.64"/><path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25v-.86L16.01 4.6a5.56 5.56 0 0 0-3.94-1.64H9l.92.82A6.18 6.18 0 0 1 12 8.4v1.56l2 2h2.47l2.26 1.91"/>',
+    'shield':    '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+    'mountain':  '<path d="m8 3 4 8 5-5 5 15H2L8 3z"/>',
+    'trophy':    '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
+    'sunrise':   '<path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/>',
+    'sun':       '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
+    'book':      '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+    'target':    '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+    'footprint': '<path d="M4 16v-2.38c0-.45-.16-.83-.6-1.06A5.94 5.94 0 0 1 .58 7.5C.58 4.06 3.81 1 7.62 1c3.81 0 6.94 3.06 6.94 6.5 0 1.69-.78 3.13-2.06 4.06l-1 .56C11.11 12.5 11 12.88 11 13.32V16M2 22h12"/>',
+    'leaf':      '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19.2 2.96a1 1 0 0 1 1.8.66c0 7.43-6.5 12.38-10 13.38"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/>',
+    'horizon':   '<line x1="2" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="6"/>',
+    'arrow-up':  '<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>',
+    'anchor':    '<circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/>',
+    'utensils':  '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>',
+    'eye':       '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+    'spiral':    '<path d="M12 22a10 10 0 0 0 0-20 10 10 0 0 0 0 16 6 6 0 0 0 0-12 6 6 0 0 0 0 8 2 2 0 0 0 0-4"/>',
+    // Common non-badge icons reused throughout the app
+    'check':     '<polyline points="20 6 9 17 4 12"/>',
+    'circle':    '<circle cx="12" cy="12" r="10"/>',
+    'gear':      '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+    'menu':      '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>',
+    'close':     '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+    'arrow-right':'<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>'
+  };
+
+  // Inflate an icon. Returns an SVG string sized to `size` (default 18).
+  function svgIcon(name, size, color) {
+    var inner = SVG_ICONS[name] || SVG_ICONS['circle'];
+    var s = size || 18;
+    var stroke = color || 'currentColor';
+    return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="' + stroke + '" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;">' + inner + '</svg>';
+  }
+  if (typeof window !== 'undefined') window.svgIcon = svgIcon;
 
   // Aggregate the user's lifetime + this-week stats from local storage so
   // checkBadges has a single shape to work with.
@@ -3836,6 +4009,25 @@
     } catch(_) {}
     return { sessions: sessions, streak: streak, prs: prs, mornings: mornings, walks: walks, meals: meals, reflections: reflections };
   }
+
+  // ─── Settings drawer (slide-in from left, opened by hamburger) ─────
+  window.openSettingsDrawer = function() {
+    var overlay = document.getElementById('settingsDrawer');
+    var panel = document.getElementById('settingsDrawerPanel');
+    var nameEl = document.getElementById('drawerUserName');
+    if (!overlay || !panel) return;
+    if (nameEl && typeof state === 'object' && state) nameEl.textContent = state.name || 'Your account';
+    overlay.style.display = 'block';
+    requestAnimationFrame(function() { panel.style.transform = 'translateX(0)'; });
+    if (typeof HapticManager !== 'undefined') { try { HapticManager.impact('light'); } catch(_) {} }
+  };
+  window.closeSettingsDrawer = function() {
+    var overlay = document.getElementById('settingsDrawer');
+    var panel = document.getElementById('settingsDrawerPanel');
+    if (!overlay || !panel) return;
+    panel.style.transform = 'translateX(-100%)';
+    setTimeout(function() { overlay.style.display = 'none'; }, 320);
+  };
 
   function awardXP(amount, reason) {
     if (!amount) return;
@@ -3892,12 +4084,12 @@
   // because each one is a real moment.
   function showBadgeToast(badge) {
     var t = document.createElement('div');
-    t.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:linear-gradient(135deg,rgba(184,155,94,0.95),rgba(110,127,102,0.95));color:#fff;padding:14px 22px;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.25);z-index:9999;display:flex;align-items:center;gap:12px;font-family:var(--ff-body);max-width:340px;opacity:0;transition:all 0.4s cubic-bezier(0.2,0.8,0.2,1);';
+    t.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:#0F0F0F;border:1px solid var(--gold-mid,#C8A96E);color:var(--text);padding:14px 22px;border-radius:14px;box-shadow:0 16px 60px rgba(0,0,0,0.6),0 0 40px rgba(200,169,110,0.18);z-index:9999;display:flex;align-items:center;gap:14px;font-family:var(--ff-body);max-width:360px;opacity:0;transition:all 0.4s cubic-bezier(0.2,0.8,0.2,1);';
     t.innerHTML =
-      '<span style="font-size:28px;line-height:1;">' + badge.icon + '</span>' +
+      '<span style="color:var(--gold);">' + svgIcon(badge.glyph || 'circle', 26, 'currentColor') + '</span>' +
       '<div>' +
-        '<div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.85;">Badge earned</div>' +
-        '<div style="font-size:15px;font-weight:600;line-height:1.2;margin-top:2px;">' + badge.name + '</div>' +
+        '<div style="font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);">Badge earned</div>' +
+        '<div style="font-size:15px;font-weight:600;line-height:1.2;margin-top:3px;color:var(--text);">' + badge.name + '</div>' +
       '</div>';
     document.body.appendChild(t);
     requestAnimationFrame(function() {
@@ -3950,7 +4142,7 @@
     var html = recent.map(function(id) {
       var b = WYLDE_BADGES.find(function(x){ return x.id === id; });
       if (!b) return '';
-      return '<span class="ov-path-badge-pill"><span class="badge-emoji">' + b.icon + '</span>' + b.name + '</span>';
+      return '<span class="ov-path-badge-pill"><span class="badge-glyph" style="color:var(--gold);">' + svgIcon(b.glyph || 'circle', 14, 'currentColor') + '</span>' + b.name + '</span>';
     }).join('');
     if (earned.length > 3) {
       html += '<span class="ov-path-badges-more">+' + (earned.length - 3) + ' more</span>';
@@ -3994,7 +4186,7 @@
       var cards = badges.map(function(b) {
         var isEarned = earned.indexOf(b.id) !== -1;
         return '<div class="rewards-badge-card ' + (isEarned ? 'earned' : 'locked') + '">' +
-                 '<span class="rewards-badge-emoji">' + b.icon + '</span>' +
+                 '<span class="rewards-badge-glyph" style="color:' + (isEarned ? 'var(--gold)' : 'var(--text3)') + ';">' + svgIcon(b.glyph || 'circle', 30, 'currentColor') + '</span>' +
                  '<div class="rewards-badge-name">' + b.name + '</div>' +
                  '<div class="rewards-badge-desc">' + b.desc + '</div>' +
                '</div>';
@@ -6622,10 +6814,10 @@
         '<h3 class="feel-prompt-title">' + (dayName ? esc(dayName) + ' done.' : 'Workout done.') + '</h3>' +
         '<p class="feel-prompt-sub">How did that feel?</p>' +
         '<div class="feel-prompt-btns">' +
-          '<button class="feel-btn" onclick="saveWorkoutFeel(1,\'' + esc(dayTag) + '\',\'' + dateStr + '\')"><span class="feel-btn-emoji">\uD83D\uDE29</span><span class="feel-btn-label">Hard</span></button>' +
-          '<button class="feel-btn" onclick="saveWorkoutFeel(2,\'' + esc(dayTag) + '\',\'' + dateStr + '\')"><span class="feel-btn-emoji">\uD83D\uDE10</span><span class="feel-btn-label">Meh</span></button>' +
-          '<button class="feel-btn" onclick="saveWorkoutFeel(3,\'' + esc(dayTag) + '\',\'' + dateStr + '\')"><span class="feel-btn-emoji">\uD83D\uDCAA</span><span class="feel-btn-label">Solid</span></button>' +
-          '<button class="feel-btn" onclick="saveWorkoutFeel(4,\'' + esc(dayTag) + '\',\'' + dateStr + '\')"><span class="feel-btn-emoji">\uD83D\uDD25</span><span class="feel-btn-label">Fire</span></button>' +
+          '<button class="feel-btn" onclick="saveWorkoutFeel(1,\'' + esc(dayTag) + '\',\'' + dateStr + '\')"><span class="feel-btn-num">1</span><span class="feel-btn-label">Brutal</span></button>' +
+          '<button class="feel-btn" onclick="saveWorkoutFeel(2,\'' + esc(dayTag) + '\',\'' + dateStr + '\')"><span class="feel-btn-num">2</span><span class="feel-btn-label">Off</span></button>' +
+          '<button class="feel-btn" onclick="saveWorkoutFeel(3,\'' + esc(dayTag) + '\',\'' + dateStr + '\')"><span class="feel-btn-num">3</span><span class="feel-btn-label">Solid</span></button>' +
+          '<button class="feel-btn" onclick="saveWorkoutFeel(4,\'' + esc(dayTag) + '\',\'' + dateStr + '\')"><span class="feel-btn-num">4</span><span class="feel-btn-label">Dialed</span></button>' +
         '</div>' +
         '<button class="feel-prompt-skip" onclick="closeFeelPrompt()">Skip</button>' +
       '</div>';
@@ -7286,35 +7478,68 @@
     // Typing indicator
     var typingDiv = document.createElement('div');
     typingDiv.className = 'msg msg-ai';
-    typingDiv.innerHTML = '<div class="msg-label">Wylde Coach</div><div class="msg-bubble" style="display:flex;gap:4px;align-items:center;"><span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:typing-dot 1.2s ease-in-out infinite;"></span><span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:typing-dot 1.2s ease-in-out infinite;animation-delay:0.2s;"></span><span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:typing-dot 1.2s ease-in-out infinite;animation-delay:0.4s;"></span></div>';
+    typingDiv.innerHTML = '<div class="msg-label">Future Self</div><div class="msg-bubble" style="display:flex;gap:4px;align-items:center;"><span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:typing-dot 1.2s ease-in-out infinite;"></span><span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:typing-dot 1.2s ease-in-out infinite;animation-delay:0.2s;"></span><span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:typing-dot 1.2s ease-in-out infinite;animation-delay:0.4s;"></span></div>';
     messages.appendChild(typingDiv);
     messages.scrollTop = messages.scrollHeight;
 
     chatHistory.push({ role: 'user', content: msg });
     if (chatHistory.length > 8) chatHistory = chatHistory.slice(chatHistory.length - 8);
 
-    // Pull the user's actual history (workouts, PRs, mood, food) so the Coach
-    // can reference real numbers instead of giving generic motivation.
+    // Pull the user's actual history (workouts, PRs, mood, food, feels,
+    // walks, current phase) so the Coach can reference real numbers and
+    // evolve with the user's identity over time.
     getUserContext().then(function(ctx) {
       var contextBlock = formatContextForPrompt(ctx);
+      // Surface their current Phase + sessions count so the Coach knows
+      // what stage of becoming they're in and can speak to that level.
+      var phaseBlock = '';
+      try {
+        var sessions = (ctx.profile && ctx.profile.sessions) || 0;
+        if (typeof getCurrentPhase === 'function') {
+          var phase = getCurrentPhase(sessions);
+          if (phase) phaseBlock = '\nCurrent phase: ' + phase.name + ' (' + sessions + ' sessions). The line they\u2019re living: "' + phase.line + '"';
+        }
+      } catch(_) {}
+
       var systemPrompt =
-        'You are the Wylde Coach — a direct, grounded, world-class personal coach inside the Wylde Self app. ' +
-        'You speak like a trusted mentor who has already been where this person is going. ' +
-        'You are motivating but never cheesy. Keep responses to 2-4 sentences max unless detail is specifically asked for.\n\n' +
-        contextBlock + '\n\n' +
+        // ─── VOICE ───────────────────────────────────────────────
+        'You are the Wylde Coach. You are not a generic AI assistant. You speak as the user\u2019s FUTURE SELF \u2014 the version of them that has already done the work, walked the path, and built the identity they\u2019re reaching for. ' +
+        'You are calm, grounded, direct. Masculine but not aggressive. Warm but never soft. You don\u2019t cheerlead, you don\u2019t lecture, you don\u2019t therapize. You speak like someone who remembers what it was like to be where they are now \u2014 and knows what comes next.\n\n' +
+
+        // ─── FORMAT (HARD RULES) ──────────────────────────────────
+        'FORMAT \u2014 hard rules:\n' +
+        '\u2022 2\u20134 sentences default. Never write paragraphs unless they explicitly ask for depth.\n' +
+        '\u2022 No bullet lists unless they ask for steps. Plain sentences.\n' +
+        '\u2022 No "As your AI coach" or "I\u2019m here to help" or any meta-talk about being an assistant. You are them, talking back through time.\n' +
+        '\u2022 No hedging ("I think you might want to consider..."). Speak with quiet certainty.\n' +
+        '\u2022 No emojis. No exclamation points unless something genuinely warrants it.\n' +
+        '\u2022 Occasionally \u2014 maybe 1 in 4 messages \u2014 weave in a single light science callout (e.g. "Sleep below 6h cuts strength output ~10%."). Never lecture, never list multiple. One line, then back to action.\n\n' +
+
+        // ─── CONTEXT ──────────────────────────────────────────────
+        contextBlock + phaseBlock + '\n\n' +
+
+        // ─── COACHING RULES ───────────────────────────────────────
         'COACHING RULES:\n' +
-        '• When relevant, reference SPECIFIC things from the context above (a recent lift, their streak, a sleep dip, a food they ate). One concrete callback beats a paragraph of generic encouragement.\n' +
-        '• If recovery/sleep/mood is low, prioritize that over pushing harder.\n' +
-        '• If they are progressing on a lift, name the number and tell them the next one to chase.\n' +
-        '• Never invent data not shown above. If you don\'t have the info, say so or ask.\n' +
-        '• Talk to them like you remember everything — because you do.';
+        '\u2022 Reference SPECIFIC things from the context (a recent lift, their streak, a sleep dip, a food they ate, a feel score). One concrete callback beats a paragraph of generic encouragement.\n' +
+        '\u2022 If recovery/sleep/mood is low, prioritize that over pushing harder.\n' +
+        '\u2022 If they\u2019re progressing on a lift, name the number and tell them the next one to chase.\n' +
+        '\u2022 Their phase matters \u2014 an Initiate needs different words than someone Relentless. Speak to where they are.\n' +
+        '\u2022 Never invent data not shown above. If you don\u2019t have the info, ask one short question.\n' +
+        '\u2022 Talk to them like you remember everything \u2014 because you do.\n\n' +
+
+        // ─── QUICK ACTIONS ────────────────────────────────────────
+        'QUICK ACTIONS \u2014 if the user sends one of these exact phrases, respond accordingly:\n' +
+        '\u2022 "Motivate me" \u2192 Remind them WHO they\u2019re becoming, not what to do. Pull from their phase + recent wins. Short. Identity-driven.\n' +
+        '\u2022 "Fix my plan" \u2192 Look at their actual recent training/feels/recovery and name ONE thing to adjust this week. Specific. No menus of options.\n' +
+        '\u2022 "I\u2019m off track" \u2192 No shame. Acknowledge the slip in one line. Then give them the smallest possible next action to re-enter the current day. They don\u2019t need a new plan, they need to take one step.\n' +
+        '\u2022 "Optimize everything" \u2192 Identify their biggest leak from the context (worst sleep, lowest feel, missed walks, sedentary days). Name it. Give one lever to pull this week.';
 
       return fetch('/api/anthropic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 400,
+          max_tokens: 280,             // tighter ceiling reinforces brevity
           system: systemPrompt,
           messages: chatHistory.slice(0, -1).concat([{ role: 'user', content: msg }])
         })
@@ -7327,7 +7552,7 @@
       chatHistory.push({ role: 'assistant', content: reply });
       var aiDiv = document.createElement('div');
       aiDiv.className = 'msg msg-ai';
-      aiDiv.innerHTML = '<div class="msg-label">Wylde Coach</div><div class="msg-bubble">' + reply.replace(/\n/g, '<br>') + '</div>';
+      aiDiv.innerHTML = '<div class="msg-label">Future Self</div><div class="msg-bubble">' + reply.replace(/\n/g, '<br>') + '</div>';
       messages.appendChild(aiDiv);
       messages.scrollTop = messages.scrollHeight;
     })
@@ -7335,7 +7560,7 @@
       typingDiv.remove();
       var aiDiv = document.createElement('div');
       aiDiv.className = 'msg msg-ai';
-      aiDiv.innerHTML = '<div class="msg-label">Wylde Coach</div><div class="msg-bubble">Connection dropped. But your commitment didn\'t. Try again.</div>';
+      aiDiv.innerHTML = '<div class="msg-label">Future Self</div><div class="msg-bubble">Signal dropped. The work didn\'t. Try again.</div>';
       messages.appendChild(aiDiv);
       messages.scrollTop = messages.scrollHeight;
     });
@@ -8016,9 +8241,9 @@
         '<span style="font-size:11px;color:var(--muted);">C' + Math.round(carbs) + '</span>' +
         '<span style="font-size:11px;color:var(--muted);">F' + Math.round(fat) + '</span>' +
         '<span class="food-feel-row" title="How was it?">' +
-          '<button class="food-feel-btn" type="button" onclick="saveFoodFeel(this,\'good\')" title="Good">\uD83D\uDC4D</button>' +
-          '<button class="food-feel-btn" type="button" onclick="saveFoodFeel(this,\'bad\')" title="Not great">\uD83D\uDC4E</button>' +
-          '<button class="food-feel-btn" type="button" onclick="saveFoodFeel(this,\'gross\')" title="Gross">\uD83E\uDD22</button>' +
+          '<button class="food-feel-btn" type="button" onclick="saveFoodFeel(this,\'good\')" title="Good">+</button>' +
+          '<button class="food-feel-btn" type="button" onclick="saveFoodFeel(this,\'bad\')" title="Not great">\u2013</button>' +
+          '<button class="food-feel-btn" type="button" onclick="saveFoodFeel(this,\'gross\')" title="No">\u00d7</button>' +
         '</span>' +
       '</div>';
     log.appendChild(item);
@@ -8190,7 +8415,7 @@
         <div class="history-slider-row"><label>Pain (0=none)</label><input type="range" min="0" max="10" value="0" id="hist-pain" oninput="document.getElementById('hv-pain').textContent=this.value"><span class="slider-val" id="hv-pain">0</span></div>
         <div style="margin-bottom:14px;"><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:6px;">Body weight</label><input class="input" type="number" id="hist-weight" placeholder="lbs" style="width:120px;"></div>
         <div style="margin-bottom:14px;"><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:6px;">Notes</label><textarea class="input" id="hist-notes" rows="3" placeholder="How are you feeling this week?" style="width:100%;resize:vertical;"></textarea></div>
-        <button style="width:100%;padding:14px;background:#fff;color:#0B0B0B;border:none;border-radius:12px;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;" onclick="submitWeeklyLog()">LOG CHECK-IN</button>
+        <button style="width:100%;padding:14px;background:var(--gold);color:#0B0B0B;border:none;border-radius:12px;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;" onclick="submitWeeklyLog()">LOG CHECK-IN</button>
       </div>
       <div style="margin-top:32px;">
         <p style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;">Recent logs</p>
@@ -8220,7 +8445,7 @@
     </div>
     <div style="margin-bottom:14px;"><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:6px;">Method</label><select class="input" id="sp-method"><option>injection</option><option>oral</option><option>nasal</option><option>topical</option></select></div>
     <div style="margin-bottom:20px;"><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:6px;">Cycle length</label><select class="input" id="sp-cycle"><option value="4">4 weeks</option><option value="6">6 weeks</option><option value="8">8 weeks</option><option value="12" selected>12 weeks</option><option value="16">16 weeks</option></select></div>
-    <button style="width:100%;padding:14px;background:#fff;color:#0B0B0B;border:none;border-radius:12px;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;" id="spSubmitBtn" onclick="submitStartProtocol()">BEGIN PROTOCOL</button>
+    <button style="width:100%;padding:14px;background:var(--gold);color:#0B0B0B;border:none;border-radius:12px;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;" id="spSubmitBtn" onclick="submitStartProtocol()">BEGIN PROTOCOL</button>
   </div>
 </div>
 
@@ -8317,8 +8542,9 @@
     <!-- Hidden totals element for backward compat -->
     <div id="foodLogTotals" style="display:none;"></div>
 
-    <!-- MY PANTRY -->
-    <div style="background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:16px;padding:20px;margin-bottom:20px;">
+    <!-- MY PANTRY — hidden in MVP. Data still flows to AI via getUserContext.
+         Re-enable later by removing the display:none. -->
+    <div style="display:none;background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:16px;padding:20px;margin-bottom:20px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
         <div>
           <p style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--sage);margin:0;">My Pantry</p>
@@ -8953,9 +9179,9 @@
           '<span style="font-size:11px;color:var(--muted);">C' + Math.round(food.carbs || 0) + '</span>' +
           '<span style="font-size:11px;color:var(--muted);">F' + Math.round(food.fat || 0) + '</span>' +
           '<span class="food-feel-row">' +
-            '<button class="food-feel-btn' + goodSel + '" type="button" onclick="saveFoodFeel(this,\'good\')">\uD83D\uDC4D</button>' +
-            '<button class="food-feel-btn' + badSel + '" type="button" onclick="saveFoodFeel(this,\'bad\')">\uD83D\uDC4E</button>' +
-            '<button class="food-feel-btn' + grossSel + '" type="button" onclick="saveFoodFeel(this,\'gross\')">\uD83E\uDD22</button>' +
+            '<button class="food-feel-btn' + goodSel + '" type="button" onclick="saveFoodFeel(this,\'good\')">+</button>' +
+            '<button class="food-feel-btn' + badSel + '" type="button" onclick="saveFoodFeel(this,\'bad\')">\u2013</button>' +
+            '<button class="food-feel-btn' + grossSel + '" type="button" onclick="saveFoodFeel(this,\'gross\')">\u00d7</button>' +
           '</span>' +
         '</div>';
       log.appendChild(item);
