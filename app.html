@@ -3579,78 +3579,89 @@
 </div>
 
 <!-- ═══ OPTIMIZE ═══ -->
+<!-- ═══ PROGRESS ═══ — proof of who they're becoming.
+     Settings/Account moved to the hamburger drawer per Wylde brand brief
+     (premium > clutter). This screen is now strictly: phase, badges, logs.
+-->
 <div class="screen" id="screen-progress">
-  <div class="container">
-    <div class="optimize-header">
-      <p class="optimize-label">Settings</p>
-      <h1 class="optimize-title">Your account.</h1>
+  <div class="container" style="padding-bottom:120px;">
+
+    <!-- Header -->
+    <div style="margin-bottom:24px;">
+      <p style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin:0 0 6px;font-weight:600;">Progress</p>
+      <h1 style="font-size:28px;font-weight:700;color:var(--text);margin:0;letter-spacing:-0.01em;">Your story so far.</h1>
     </div>
 
-    <!-- Profile snapshot — quick view of who they've become -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0 28px;">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center;">
-        <div id="sessionCount" style="font-size:22px;font-weight:700;color:var(--text);">0</div>
-        <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-top:4px;">Sessions</div>
+    <!-- PHASE CARD — current identity stage with progress to next -->
+    <div id="prgPhaseCard" style="background:linear-gradient(135deg,rgba(200,169,110,0.10),rgba(125,146,117,0.06));border:1px solid var(--gold-mid);border-radius:18px;padding:22px;margin-bottom:24px;">
+      <p style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin:0 0 6px;font-weight:600;">Current Phase</p>
+      <h2 id="prgPhaseName" style="font-size:26px;font-weight:700;color:var(--text);margin:0;letter-spacing:-0.01em;line-height:1.1;">Initiate</h2>
+      <p id="prgPhaseLine" style="font-size:13px;color:var(--text2);margin:6px 0 18px;font-style:italic;line-height:1.4;">You stepped onto the path. Now keep walking.</p>
+      <div style="background:rgba(244,241,232,0.08);height:6px;border-radius:3px;overflow:hidden;margin-bottom:8px;">
+        <div id="prgPhaseFill" style="height:100%;background:linear-gradient(90deg,var(--sage),var(--gold));border-radius:3px;width:0%;transition:width 0.6s cubic-bezier(0.2,0.8,0.2,1);"></div>
       </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center;">
-        <div id="streakCount" style="font-size:22px;font-weight:700;color:var(--sage,#6E7F66);">0</div>
-        <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-top:4px;">Day Streak</div>
+      <p id="prgPhaseProgress" style="font-size:11px;color:var(--text3);margin:0;letter-spacing:0.02em;">0 of 10 sessions to Foundation</p>
+    </div>
+
+    <!-- STAT TILES — sessions, streak, mornings, walks -->
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:28px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span style="color:var(--gold);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="11" width="14" height="2"/></svg></span>
+          <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);font-weight:500;">Sessions</span>
+        </div>
+        <div id="sessionCount" style="font-size:28px;font-weight:700;color:var(--text);line-height:1;">0</div>
       </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center;">
-        <div id="weekCount" style="font-size:22px;font-weight:700;color:var(--text);">0</div>
-        <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-top:4px;">Weeks In</div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span style="color:var(--sage);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
+          <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);font-weight:500;">Day Streak</span>
+        </div>
+        <div id="streakCount" style="font-size:28px;font-weight:700;color:var(--sage);line-height:1;">0</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span style="color:var(--gold);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg></span>
+          <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);font-weight:500;">Mornings</span>
+        </div>
+        <div id="prgMorningsCount" style="font-size:28px;font-weight:700;color:var(--text);line-height:1;">0</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span style="color:var(--sage);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M15 22l-3-7-3 7"/><path d="M9 13l-3-2 3-6 4 1 3 4"/></svg></span>
+          <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);font-weight:500;">Walks</span>
+        </div>
+        <div id="prgWalksCount" style="font-size:28px;font-weight:700;color:var(--text);line-height:1;">0</div>
       </div>
     </div>
 
-    <!-- Session log lives here as a quiet history view -->
-    <p style="font-family:var(--ff-body);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:10px;">Recent Sessions</p>
-    <div class="session-log" id="sessionLog" style="margin-bottom:32px;">
-      <div class="log-item log-empty">
-        <p class="log-empty-text">Your sessions will appear here.</p>
+    <!-- BADGES — full collection grouped by category -->
+    <div style="margin-bottom:28px;">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;">
+        <p style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin:0;font-weight:600;">Badges</p>
+        <p id="prgBadgesEarnedLine" style="font-size:11px;color:var(--text3);margin:0;letter-spacing:0.02em;">0 of 29 earned</p>
+      </div>
+      <div id="prgBadgesContainer">
+        <!-- Populated by renderProgressBadges() -->
       </div>
     </div>
-    <p class="streak-fire" id="streakMsg" style="display:none;"></p>
 
-    <!-- Settings & Account -->
-    <div style="margin-top:8px;padding-top:24px;border-top:1px solid rgba(0,0,0,0.06);">
-      <p style="font-family:var(--ff-body);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:16px;">Account</p>
-
-      <button onclick="openEditProfile()" style="display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:12px;cursor:pointer;margin-bottom:10px;text-align:left;">
-        <span style="font-size:20px;">&#9998;</span>
-        <span style="flex:1;">
-          <span style="display:block;font-size:15px;font-weight:600;color:var(--text);">Edit Profile</span>
-          <span style="display:block;font-size:13px;color:var(--muted);margin-top:2px;">Update goals, equipment, fitness level</span>
-        </span>
-        <span style="color:var(--muted);font-size:14px;">&rsaquo;</span>
-      </button>
-
-      <button onclick="regenerateProgram()" style="display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:12px;cursor:pointer;margin-bottom:10px;text-align:left;">
-        <span style="font-size:20px;">&#8635;</span>
-        <span style="flex:1;">
-          <span style="display:block;font-size:15px;font-weight:600;color:var(--text);">Regenerate Program</span>
-          <span style="display:block;font-size:13px;color:var(--muted);margin-top:2px;">Get a fresh AI-built workout plan</span>
-        </span>
-        <span style="color:var(--muted);font-size:14px;">&rsaquo;</span>
-      </button>
-
-      <button onclick="resetProfile()" style="display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:12px;cursor:pointer;margin-bottom:10px;text-align:left;">
-        <span style="font-size:20px;">&#128260;</span>
-        <span style="flex:1;">
-          <span style="display:block;font-size:15px;font-weight:600;color:var(--text);">Reset Profile</span>
-          <span style="display:block;font-size:13px;color:var(--muted);margin-top:2px;">Start fresh — redo onboarding from scratch</span>
-        </span>
-        <span style="color:var(--muted);font-size:14px;">&rsaquo;</span>
-      </button>
-
-      <button onclick="signOutUser()" style="display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:12px;cursor:pointer;margin-bottom:10px;text-align:left;">
-        <span style="font-size:20px;">&#9211;</span>
-        <span style="flex:1;">
-          <span style="display:block;font-size:15px;font-weight:600;color:var(--text);">Sign Out</span>
-          <span style="display:block;font-size:13px;color:var(--muted);margin-top:2px;">Log out of your account</span>
-        </span>
-        <span style="color:var(--muted);font-size:14px;">&rsaquo;</span>
-      </button>
+    <!-- RECENT LOG — sessions + reflections -->
+    <div style="margin-bottom:24px;">
+      <p style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin:0 0 14px;font-weight:600;">Recent Sessions</p>
+      <div class="session-log" id="sessionLog">
+        <div class="log-item log-empty" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;">
+          <p class="log-empty-text" style="font-size:13px;color:var(--text3);margin:0;font-style:italic;">No sessions logged yet. Today is one.</p>
+        </div>
+      </div>
+      <p class="streak-fire" id="streakMsg" style="display:none;"></p>
     </div>
+
+    <!-- WEEK COUNT — small footer stat -->
+    <p style="font-size:11px;color:var(--text3);text-align:center;margin:24px 0 0;letter-spacing:0.04em;">
+      <span id="weekCount">0</span> weeks into the work.
+    </p>
+
   </div>
 </div>
 
@@ -4335,6 +4346,85 @@
     }
     badgeWrap.innerHTML = html;
   }
+
+  // ─── Progress tab renderer ─────────────────────────────────────────
+  // Populates the Progress screen with phase card, stat tiles, badges
+  // grid, and counters. Called from showScreen('progress').
+  function renderProgressScreen() {
+    if (!document.getElementById('prgPhaseCard')) return;
+    var stats = _gatherWyldeStats();
+    var current = getCurrentPhase(stats.sessions);
+    var next = getNextPhase(stats.sessions);
+    var earned = (state && state.badges) || [];
+
+    // Phase card
+    var pn = document.getElementById('prgPhaseName');
+    var pl = document.getElementById('prgPhaseLine');
+    var pf = document.getElementById('prgPhaseFill');
+    var pp = document.getElementById('prgPhaseProgress');
+    if (pn) pn.textContent = current.name;
+    if (pl) pl.textContent = current.line;
+    if (next) {
+      var span = next.minSessions - current.minSessions;
+      var into = stats.sessions - current.minSessions;
+      var pct = Math.min(100, Math.max(0, Math.round((into / span) * 100)));
+      if (pf) pf.style.width = pct + '%';
+      if (pp) pp.textContent = stats.sessions + ' of ' + next.minSessions + ' sessions to ' + next.name;
+    } else {
+      if (pf) pf.style.width = '100%';
+      if (pp) pp.textContent = 'You\u2019ve reached ' + current.name + '. Keep showing up.';
+    }
+
+    // Stat tiles
+    var sc = document.getElementById('sessionCount');     if (sc) sc.textContent = stats.sessions;
+    var st = document.getElementById('streakCount');      if (st) st.textContent = stats.streak;
+    var mc = document.getElementById('prgMorningsCount'); if (mc) mc.textContent = stats.mornings || 0;
+    var wc = document.getElementById('prgWalksCount');    if (wc) wc.textContent = stats.walks || 0;
+    var weeks = Math.floor((stats.sessions || 0) / 4);
+    var wk = document.getElementById('weekCount');        if (wk) wk.textContent = weeks;
+
+    // Badges grid — grouped by category, earned in gold + locked muted
+    var byCat = {};
+    WYLDE_BADGES.forEach(function(b) {
+      if (!byCat[b.category]) byCat[b.category] = [];
+      byCat[b.category].push(b);
+    });
+    var catLabels = {
+      streak:     'Streaks',
+      sessions:   'Sessions',
+      practice:   'Practice',
+      strength:   'Strength',
+      nutrition:  'Nutrition',
+      reflection: 'Reflection'
+    };
+    var catOrder = ['streak', 'sessions', 'practice', 'strength', 'nutrition', 'reflection'];
+    var html = '';
+    catOrder.forEach(function(cat) {
+      var badges = byCat[cat] || [];
+      if (!badges.length) return;
+      html += '<p style="font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text2);margin:18px 0 8px;font-weight:600;">' + catLabels[cat] + '</p>';
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:8px;">';
+      badges.forEach(function(b) {
+        var isEarned = earned.indexOf(b.id) !== -1;
+        var style = isEarned
+          ? 'background:linear-gradient(135deg,rgba(200,169,110,0.10),rgba(125,146,117,0.06));border:1px solid rgba(200,169,110,0.28);'
+          : 'background:var(--surface);border:1px solid var(--border);opacity:0.45;';
+        var glyphColor = isEarned ? 'var(--gold)' : 'var(--text3)';
+        html += '<div style="' + style + 'border-radius:12px;padding:12px 10px;text-align:center;">' +
+                  '<span style="display:block;color:' + glyphColor + ';margin-bottom:6px;">' + svgIcon(b.glyph || 'circle', 26, 'currentColor') + '</span>' +
+                  '<div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2;margin-bottom:3px;">' + b.name + '</div>' +
+                  '<div style="font-size:10px;color:var(--text2);line-height:1.3;">' + b.desc + '</div>' +
+                '</div>';
+      });
+      html += '</div>';
+    });
+    var bc = document.getElementById('prgBadgesContainer');
+    if (bc) bc.innerHTML = html;
+
+    var earnedLine = document.getElementById('prgBadgesEarnedLine');
+    if (earnedLine) earnedLine.textContent = earned.length + ' of ' + WYLDE_BADGES.length + ' earned';
+  }
+  if (typeof window !== 'undefined') window.renderProgressScreen = renderProgressScreen;
 
   // ─── Full badge collection modal ───────────────────────────────────
   function openRewardsModal() {
@@ -5271,6 +5361,7 @@
     if (id === 'nutrition' && state.weight) { calculateMacros(); loadSavedMealPlan(); }
     if (id === 'nutrition') { renderPantry(); }
     if (id === 'overview') { updateOverview(); mpInit(); if (typeof renderRewardsUI === 'function') renderRewardsUI(); if (typeof renderDailyWalkUI === 'function') renderDailyWalkUI(); if (typeof syncOverviewMacros === 'function') syncOverviewMacros(); }
+    if (id === 'progress' && typeof renderProgressScreen === 'function') renderProgressScreen();
     if (id === 'future') { updateFsSilhouette(); }
     if (id === 'program') { autoLoadProgram(); }
     if (id === 'library') {
@@ -5307,6 +5398,7 @@
       var navTabs = document.querySelectorAll('.nav-tab');
       if (tabIdx >= 0 && navTabs[tabIdx]) navTabs[tabIdx].classList.add('active');
       if (target === 'overview') { updateOverview(); mpInit(); if (typeof renderRewardsUI === 'function') renderRewardsUI(); }
+      if (target === 'progress' && typeof renderProgressScreen === 'function') renderProgressScreen();
       if (target === 'future' && typeof updateFsSilhouette === 'function') updateFsSilhouette();
       if (target === 'library') {
         if (typeof _libRenderChips === 'function') _libRenderChips();
