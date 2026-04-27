@@ -14,8 +14,8 @@ struct ContentView: View {
                         appState.selectedTab = .future
                     case "coach":
                         appState.selectedTab = .coach
-                    case "optimize", "progress":
-                        appState.selectedTab = .optimize
+                    case "settings", "optimize", "progress":
+                        appState.selectedTab = .settings
                     default:
                         break
                     }

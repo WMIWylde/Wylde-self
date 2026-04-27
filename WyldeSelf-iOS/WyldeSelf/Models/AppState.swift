@@ -41,7 +41,7 @@ class AppState: ObservableObject {
         case exercises = "Library"
         case future = "Future"
         case coach = "Coach"
-        case optimize = "Optimize"
+        case settings = "Settings"
 
         var icon: String {
             switch self {
@@ -49,7 +49,7 @@ class AppState: ObservableObject {
             case .exercises: return "figure.strengthtraining.traditional"
             case .future: return "person.fill"
             case .coach: return "bubble.left.fill"
-            case .optimize: return "waveform.path.ecg"
+            case .settings: return "gearshape.fill"
             }
         }
     }

@@ -730,6 +730,44 @@
   .ov-cta:active { transform: scale(0.98); }
   .ov-cta-arrow { font-size: 16px; }
 
+  /* ── A2. YOUR PATH (phase + badges card) ── */
+  .ov-path-card { background:#FFFFFF; border-radius:20px; padding:20px; margin-bottom:20px; box-shadow:0 4px 20px rgba(0,0,0,0.05); cursor:pointer; transition:transform 0.15s; animation:ovFadeUp 0.7s ease 0.1s both; }
+  .ov-path-card:hover { transform:translateY(-1px); box-shadow:0 8px 28px rgba(0,0,0,0.07); }
+  .ov-path-card:active { transform:scale(0.99); }
+  .ov-path-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
+  .ov-path-meta { display:flex; flex-direction:column; gap:2px; }
+  .ov-path-label { font-size:10px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold,#B89B5E); }
+  .ov-path-phase { font-family:var(--ff-display,var(--ff-body)); font-size:22px; font-weight:700; color:var(--text); letter-spacing:-0.01em; line-height:1.1; }
+  .ov-path-arrow { color:var(--muted); font-size:22px; line-height:1; opacity:0.6; }
+  .ov-path-line { font-size:13px; color:var(--text2); margin:0 0 14px; line-height:1.4; font-style:italic; }
+  .ov-path-progress-wrap { margin-bottom:14px; }
+  .ov-path-progress-bar { width:100%; height:5px; background:rgba(0,0,0,0.05); border-radius:3px; overflow:hidden; margin-bottom:5px; }
+  .ov-path-progress-fill { height:100%; background:linear-gradient(90deg,var(--sage,#6E7F66),var(--gold,#B89B5E)); border-radius:3px; transition:width 0.5s cubic-bezier(0.2,0.8,0.2,1); }
+  .ov-path-progress-meta { font-size:11px; color:var(--muted); margin:0; letter-spacing:0.02em; }
+  .ov-path-badges { display:flex; gap:8px; padding-top:14px; border-top:1px solid rgba(0,0,0,0.05); min-height:42px; align-items:center; }
+  .ov-path-badge-pill { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; background:rgba(184,155,94,0.10); border:1px solid rgba(184,155,94,0.22); border-radius:20px; font-size:11px; font-weight:600; color:var(--text); }
+  .ov-path-badge-pill .badge-emoji { font-size:14px; line-height:1; }
+  .ov-path-badge-empty { font-size:12px; color:var(--muted); font-style:italic; }
+  .ov-path-badges-more { font-size:11px; color:var(--muted); margin-left:auto; }
+
+  /* ── REWARDS MODAL (full badge collection) ── */
+  .rewards-modal-overlay { position:fixed; inset:0; background:rgba(20,20,20,0.55); z-index:9999; display:flex; align-items:flex-end; justify-content:center; animation:feelFadeIn 0.3s ease-out; }
+  .rewards-modal-card { background:var(--cream,#F0EDE5); width:100%; max-width:560px; max-height:90vh; border-radius:24px 24px 0 0; padding:24px 22px 32px; overflow-y:auto; animation:rewardsSlideUp 0.4s cubic-bezier(0.2,0.8,0.2,1); box-shadow:0 -10px 40px rgba(0,0,0,0.25); }
+  @keyframes rewardsSlideUp { from { transform:translateY(40px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+  .rewards-modal-grab { width:40px; height:4px; background:rgba(0,0,0,0.15); border-radius:2px; margin:0 auto 18px; }
+  .rewards-modal-title { font-family:var(--ff-display,var(--ff-body)); font-size:22px; font-weight:700; color:var(--text); margin:0 0 4px; letter-spacing:-0.01em; }
+  .rewards-modal-sub { font-size:13px; color:var(--text2); margin:0 0 22px; }
+  .rewards-modal-close { position:absolute; top:18px; right:20px; background:none; border:none; color:var(--muted); font-size:24px; cursor:pointer; padding:0; width:32px; height:32px; }
+  .rewards-section-label { font-size:10px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold,#B89B5E); margin:18px 0 10px; }
+  .rewards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; }
+  .rewards-badge-card { background:#FFFFFF; border:1px solid var(--border); border-radius:14px; padding:14px 12px; text-align:center; transition:transform 0.15s; }
+  .rewards-badge-card.earned { background:linear-gradient(135deg,rgba(184,155,94,0.10),rgba(110,127,102,0.06)); border-color:rgba(184,155,94,0.30); }
+  .rewards-badge-card.locked { opacity:0.45; }
+  .rewards-badge-emoji { font-size:32px; line-height:1; margin-bottom:6px; display:block; filter:grayscale(0%); }
+  .rewards-badge-card.locked .rewards-badge-emoji { filter:grayscale(100%); }
+  .rewards-badge-name { font-size:12px; font-weight:600; color:var(--text); line-height:1.2; margin-bottom:3px; }
+  .rewards-badge-desc { font-size:10px; color:var(--text2); line-height:1.3; }
+
   /* ── B. Today Stack ── */
   .ov-stack { padding: 0 0 20px; animation: ovFadeUp 0.8s ease 0.2s both; }
   .ov-stack-label { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text); margin-bottom: 14px; padding-left: 2px; }
@@ -1673,9 +1711,13 @@
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
       <span>Coach</span>
     </button>
+    <button class="nav-tab" onclick="showScreen('library')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5L12 12l5.5-5.5"/><path d="M2 22h20"/><path d="M5 22V8.5L12 2l7 6.5V22"/></svg>
+      <span>Library</span>
+    </button>
     <button class="nav-tab" onclick="showScreen('progress')">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      <span>Optimize</span>
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Settings</span>
     </button>
   </div>
   <div class="nav-footer">
@@ -2232,6 +2274,25 @@
     </div>
 
     </div><!-- /mpBody -->
+  </div>
+
+  <!-- A2. YOUR PATH — phase + recent badges -->
+  <div class="ov-path-card" id="ovPathCard" onclick="openRewardsModal()">
+    <div class="ov-path-header">
+      <div class="ov-path-meta">
+        <span class="ov-path-label">Your Path</span>
+        <span class="ov-path-phase" id="ovPathPhase">Stirring</span>
+      </div>
+      <span class="ov-path-arrow">&rsaquo;</span>
+    </div>
+    <p class="ov-path-line" id="ovPathLine">Something&rsquo;s beginning to shift.</p>
+    <div class="ov-path-progress-wrap">
+      <div class="ov-path-progress-bar"><div class="ov-path-progress-fill" id="ovPathProgressFill"></div></div>
+      <p class="ov-path-progress-meta" id="ovPathProgressMeta">0 of 10 sessions to Showing Up</p>
+    </div>
+    <div class="ov-path-badges" id="ovPathBadges">
+      <!-- Populated by JS — last 3 earned badges, or "no badges yet" -->
+    </div>
   </div>
 
   <!-- B. TODAY STACK -->
@@ -2860,7 +2921,18 @@
       var yComplete = yData && data.actions.every(function(a) { return yData[a.id]; });
       data.streak = yComplete ? (data.streak || 0) + 1 : 1;
 
-      // Award XP
+      // Bump the lifetime "mornings completed" counter that powers practice badges
+      try {
+        var prevMornings = parseInt(localStorage.getItem('wylde_mornings_count') || '0', 10) || 0;
+        // Only increment if we haven't already credited today
+        var creditedKey = 'wylde_morning_credited_' + today;
+        if (localStorage.getItem(creditedKey) !== '1') {
+          localStorage.setItem('wylde_mornings_count', String(prevMornings + 1));
+          localStorage.setItem(creditedKey, '1');
+        }
+      } catch(_) {}
+
+      // Award XP — checkBadges will fire any newly-earned practice badges
       if (typeof awardXP === 'function') awardXP(25, 'Morning Protocol completed');
     }
 
@@ -3338,38 +3410,38 @@
 <div class="screen" id="screen-progress">
   <div class="container">
     <div class="optimize-header">
-      <p class="optimize-label">Optimize</p>
-      <h1 class="optimize-title">Closing the gap.</h1>
+      <p class="optimize-label">Settings</p>
+      <h1 class="optimize-title">Your account.</h1>
     </div>
 
-    <div class="optimize-stats">
-      <div class="optimize-stat">
-        <div class="optimize-stat-num" id="sessionCount">0</div>
-        <div class="optimize-stat-label">Sessions</div>
+    <!-- Profile snapshot — quick view of who they've become -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0 28px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center;">
+        <div id="sessionCount" style="font-size:22px;font-weight:700;color:var(--text);">0</div>
+        <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-top:4px;">Sessions</div>
       </div>
-      <div class="optimize-stat">
-        <div class="optimize-stat-num" id="streakCount">0</div>
-        <div class="optimize-stat-label">Day Streak</div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center;">
+        <div id="streakCount" style="font-size:22px;font-weight:700;color:var(--sage,#6E7F66);">0</div>
+        <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-top:4px;">Day Streak</div>
       </div>
-      <div class="optimize-stat">
-        <div class="optimize-stat-num" id="weekCount">0</div>
-        <div class="optimize-stat-label">Weeks In</div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center;">
+        <div id="weekCount" style="font-size:22px;font-weight:700;color:var(--text);">0</div>
+        <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-top:4px;">Weeks In</div>
       </div>
     </div>
 
-    <button class="ov-btn ov-btn-g complete-btn" onclick="completeSession()">Complete Today's Session</button>
-
-    <p class="optimize-log-label">Session Log</p>
-    <div class="session-log" id="sessionLog">
+    <!-- Session log lives here as a quiet history view -->
+    <p style="font-family:var(--ff-body);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:10px;">Recent Sessions</p>
+    <div class="session-log" id="sessionLog" style="margin-bottom:32px;">
       <div class="log-item log-empty">
         <p class="log-empty-text">Your sessions will appear here.</p>
       </div>
     </div>
-    <p class="streak-fire" id="streakMsg"></p>
+    <p class="streak-fire" id="streakMsg" style="display:none;"></p>
 
     <!-- Settings & Account -->
-    <div style="margin-top:40px;padding-top:24px;border-top:1px solid rgba(0,0,0,0.06);">
-      <p style="font-family:var(--ff-body);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:16px;">Settings &amp; Account</p>
+    <div style="margin-top:8px;padding-top:24px;border-top:1px solid rgba(0,0,0,0.06);">
+      <p style="font-family:var(--ff-body);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:16px;">Account</p>
 
       <button onclick="openEditProfile()" style="display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:var(--surface);border:1px solid rgba(0,0,0,0.06);border-radius:12px;cursor:pointer;margin-bottom:10px;text-align:left;">
         <span style="font-size:20px;">&#9998;</span>
@@ -3407,6 +3479,43 @@
         <span style="color:var(--muted);font-size:14px;">&rsaquo;</span>
       </button>
     </div>
+  </div>
+</div>
+
+<!-- ═══ EXERCISE LIBRARY ═══ -->
+<div class="screen" id="screen-library">
+  <div class="container" style="padding-bottom:100px;">
+    <div style="margin-bottom:20px;">
+      <p style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin:0 0 4px;">Exercises</p>
+      <h1 style="font-size:26px;font-weight:700;color:var(--text);margin:0;letter-spacing:-0.01em;">Library</h1>
+      <p id="libCountLine" style="font-size:13px;color:var(--muted);margin:4px 0 0;">Loading\u2026</p>
+    </div>
+
+    <!-- Search bar -->
+    <div style="display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:14px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;color:var(--muted);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="libSearchInput" type="text" placeholder="Search exercises\u2026" oninput="renderLibrary()" style="flex:1;border:none;background:transparent;outline:none;font-family:var(--ff-body);font-size:14px;color:var(--text);min-width:0;" />
+      <button id="libClearBtn" onclick="document.getElementById('libSearchInput').value='';renderLibrary();" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0;display:none;">\u00d7</button>
+    </div>
+
+    <!-- Body-part chips -->
+    <div id="libMuscleChips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Results grid -->
+    <div id="libResults" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;">
+      <p style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:13px;padding:40px 0;">Loading exercises\u2026</p>
+    </div>
+  </div>
+</div>
+
+<!-- Exercise detail modal -->
+<div id="libDetailModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(20,20,20,0.55);align-items:flex-end;justify-content:center;" onclick="if(event.target===this)closeLibDetail()">
+  <div id="libDetailCard" style="background:var(--cream,#F0EDE5);width:100%;max-width:560px;max-height:92vh;border-radius:24px 24px 0 0;padding:24px 22px 32px;overflow-y:auto;box-shadow:0 -10px 40px rgba(0,0,0,0.25);position:relative;">
+    <div style="width:40px;height:4px;background:rgba(0,0,0,0.15);border-radius:2px;margin:0 auto 18px;"></div>
+    <button onclick="closeLibDetail()" style="position:absolute;top:18px;right:20px;background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;width:32px;height:32px;">\u00d7</button>
+    <div id="libDetailContent"><!-- populated by JS --></div>
   </div>
 </div>
 
@@ -3607,12 +3716,127 @@
     }, { onConflict: 'id' }).catch(function(){});
   }
 
-  // ═══ INTERNAL POINTS ENGINE ═══
-  // Levels (Ember/Spark/Flame/etc.) were stripped — they pulled the brand
-  // toward video-game gamification when the actual point of Wylde Self is
-  // transforming your relationship with yourself. We keep XP as a silent
-  // counter for badges + future analytics, but never surface it as a
-  // ranking. No promotion overlay, no badge popups for "level up".
+  // ═══ REWARD SYSTEM — phases + badges ═══
+  // The brand position is "transform your relationship with yourself."
+  // We replaced the Ember/Spark/Flame XP ladder with two on-brand
+  // reward layers:
+  //
+  //   PHASES — five identity stages driven by total sessions, not XP
+  //   grind. Each phase has a name + a one-line affirmation describing
+  //   who you've become at that count.
+  //
+  //   BADGES — ~30 small dopamine drivers across categories: streaks,
+  //   sessions, mornings, walks, PRs, meals, reflections. Each one
+  //   quantifies a real thing the user did.
+  //
+  // XP still accumulates silently for analytics, but is never surfaced
+  // as a rank.
+
+  var WYLDE_PHASES = [
+    { id: 'stirring',  name: 'Stirring',   minSessions: 0,   line: 'Something\u2019s beginning to shift.' },
+    { id: 'showingup', name: 'Showing Up', minSessions: 10,  line: 'You\u2019re building the muscle of follow-through.' },
+    { id: 'rooted',    name: 'Rooted',     minSessions: 30,  line: 'The practice has roots now.' },
+    { id: 'embodied',  name: 'Embodied',   minSessions: 100, line: 'It\u2019s no longer trying \u2014 it\u2019s who you are.' },
+    { id: 'wylde',     name: 'Wylde',      minSessions: 300, line: 'You\u2019ve become the person you said you would.' }
+  ];
+
+  function getCurrentPhase(sessions) {
+    var s = sessions || 0;
+    var current = WYLDE_PHASES[0];
+    for (var i = 0; i < WYLDE_PHASES.length; i++) {
+      if (s >= WYLDE_PHASES[i].minSessions) current = WYLDE_PHASES[i];
+    }
+    return current;
+  }
+
+  function getNextPhase(sessions) {
+    var s = sessions || 0;
+    for (var i = 0; i < WYLDE_PHASES.length; i++) {
+      if (WYLDE_PHASES[i].minSessions > s) return WYLDE_PHASES[i];
+    }
+    return null; // already at top
+  }
+
+  // Comprehensive badge catalog. Each badge has:
+  //   id        — stable key
+  //   icon      — single emoji or short symbol
+  //   name      — short label
+  //   desc      — what it represents
+  //   category  — for grouping (streak / sessions / practice / strength / nutrition / reflection)
+  //   check(s)  — function returning true if earned, given a stats object
+  var WYLDE_BADGES = [
+    // Streaks — measure of consecutive days showing up
+    { id: 'streak_3',   icon: '\uD83C\uDF31', name: '3 Days Strong',         desc: 'Three consecutive days of showing up',     category: 'streak', check: function(s){return s.streak>=3;} },
+    { id: 'streak_7',   icon: '\uD83D\uDD25', name: 'One Week Standing',     desc: 'A full week of consistent practice',       category: 'streak', check: function(s){return s.streak>=7;} },
+    { id: 'streak_14',  icon: '\u26A1',       name: 'Two Weeks Held',        desc: 'You held the line for fourteen days',      category: 'streak', check: function(s){return s.streak>=14;} },
+    { id: 'streak_21',  icon: '\u2728',       name: 'Habit Threshold',       desc: 'Twenty-one days \u2014 the practice is sticking', category: 'streak', check: function(s){return s.streak>=21;} },
+    { id: 'streak_30',  icon: '\uD83C\uDF15', name: 'A Month Held',          desc: 'A full lunar cycle of consistency',        category: 'streak', check: function(s){return s.streak>=30;} },
+    { id: 'streak_100', icon: '\uD83D\uDC8E', name: '100 Days Unbroken',     desc: 'A hundred consecutive days. Rare air.',    category: 'streak', check: function(s){return s.streak>=100;} },
+    { id: 'streak_365', icon: '\uD83D\uDC51', name: 'A Year Unbroken',       desc: 'One year of unbroken practice',            category: 'streak', check: function(s){return s.streak>=365;} },
+    // Sessions — total number of training sessions completed
+    { id: 'sess_1',     icon: '\u270D',       name: 'First Rep',             desc: 'You logged your first session',            category: 'sessions', check: function(s){return s.sessions>=1;} },
+    { id: 'sess_10',    icon: '\uD83D\uDCAA', name: 'Ten Sessions In',       desc: 'Ten sessions of real work',                category: 'sessions', check: function(s){return s.sessions>=10;} },
+    { id: 'sess_50',    icon: '\uD83C\uDFCB', name: 'Fifty Deep',            desc: 'Fifty sessions \u2014 this is no accident', category: 'sessions', check: function(s){return s.sessions>=50;} },
+    { id: 'sess_100',   icon: '\uD83D\uDD51', name: 'The Hundred',           desc: 'A hundred sessions. You\u2019re a different person.', category: 'sessions', check: function(s){return s.sessions>=100;} },
+    { id: 'sess_500',   icon: '\uD83C\uDFC6', name: '500 Sessions',          desc: 'Five hundred sessions of compounding work', category: 'sessions', check: function(s){return s.sessions>=500;} },
+    // Morning protocol mornings
+    { id: 'morn_1',     icon: '\uD83C\uDF05', name: 'First Morning',         desc: 'You completed your first morning protocol', category: 'practice', check: function(s){return (s.mornings||0)>=1;} },
+    { id: 'morn_7',     icon: '\u2615',       name: 'Seven Mornings',        desc: 'A week of intentional starts',             category: 'practice', check: function(s){return (s.mornings||0)>=7;} },
+    { id: 'morn_30',    icon: '\uD83D\uDCD6', name: 'Thirty Mornings',       desc: 'A month of practiced rituals',             category: 'practice', check: function(s){return (s.mornings||0)>=30;} },
+    { id: 'morn_100',   icon: '\uD83C\uDFAF', name: 'A Hundred Mornings',    desc: 'A hundred days you chose yourself early', category: 'practice', check: function(s){return (s.mornings||0)>=100;} },
+    // Daily walks
+    { id: 'walk_1',     icon: '\uD83D\uDEB6', name: 'First Walk',            desc: 'You logged your first daily walk',          category: 'practice', check: function(s){return (s.walks||0)>=1;} },
+    { id: 'walk_7',     icon: '\uD83C\uDF3F', name: 'Seven Walks',           desc: 'A full week of walking',                    category: 'practice', check: function(s){return (s.walks||0)>=7;} },
+    { id: 'walk_30',    icon: '\uD83C\uDFD4', name: 'Thirty Walks',          desc: 'A month of moving outside',                 category: 'practice', check: function(s){return (s.walks||0)>=30;} },
+    { id: 'walk_100',   icon: '\uD83C\uDF04', name: 'A Hundred Walks',       desc: 'A hundred days of stepping outside',        category: 'practice', check: function(s){return (s.walks||0)>=100;} },
+    // Strength — personal records
+    { id: 'pr_1',       icon: '\uD83C\uDFAF', name: 'First PR',              desc: 'You set your first personal record',        category: 'strength', check: function(s){return (s.prs||0)>=1;} },
+    { id: 'pr_10',      icon: '\u2693',       name: 'Ten PRs',               desc: 'Ten personal records logged',               category: 'strength', check: function(s){return (s.prs||0)>=10;} },
+    { id: 'pr_50',      icon: '\u26F0',       name: 'Fifty PRs',             desc: 'Fifty PRs \u2014 you\u2019ve outgrown your old ceiling', category: 'strength', check: function(s){return (s.prs||0)>=50;} },
+    // Nutrition — meals logged
+    { id: 'meal_1',     icon: '\uD83E\uDD57', name: 'First Meal',            desc: 'You logged your first meal',                category: 'nutrition', check: function(s){return (s.meals||0)>=1;} },
+    { id: 'meal_30',    icon: '\uD83E\uDD63', name: 'Thirty Meals',          desc: 'Thirty meals tracked \u2014 you\u2019re paying attention', category: 'nutrition', check: function(s){return (s.meals||0)>=30;} },
+    { id: 'meal_100',   icon: '\uD83C\uDF7D', name: 'A Hundred Meals',       desc: 'A hundred meals logged',                    category: 'nutrition', check: function(s){return (s.meals||0)>=100;} },
+    // Reflections — feel-prompts engaged with
+    { id: 'refl_1',     icon: '\uD83D\uDCAD', name: 'First Reflection',      desc: 'You logged how a session felt',             category: 'reflection', check: function(s){return (s.reflections||0)>=1;} },
+    { id: 'refl_7',     icon: '\uD83D\uDD2E', name: 'Seven Reflections',     desc: 'You\u2019re tuning in to your own signal',  category: 'reflection', check: function(s){return (s.reflections||0)>=7;} },
+    { id: 'refl_30',    icon: '\uD83C\uDF00', name: 'Thirty Reflections',    desc: 'Thirty reflections \u2014 self-awareness as practice', category: 'reflection', check: function(s){return (s.reflections||0)>=30;} }
+  ];
+
+  // Aggregate the user's lifetime + this-week stats from local storage so
+  // checkBadges has a single shape to work with.
+  function _gatherWyldeStats() {
+    var sessions = (state && state.sessions) || 0;
+    var streak   = (state && state.streak) || 0;
+    var prs = 0;
+    try { prs = (JSON.parse(localStorage.getItem('wylde_pr_count') || '0')); } catch(_) {}
+    var mornings = 0;
+    try { mornings = parseInt(localStorage.getItem('wylde_mornings_count') || '0', 10) || 0; } catch(_) {}
+    // Walks counted from date-keyed flags
+    var walks = 0;
+    try {
+      Object.keys(localStorage).forEach(function(k) {
+        if (k.indexOf('wylde_walk_') === 0 && localStorage.getItem(k) === '1') walks++;
+      });
+    } catch(_) {}
+    // Meals counted from date-keyed food log array lengths
+    var meals = 0;
+    try {
+      Object.keys(localStorage).forEach(function(k) {
+        if (k.indexOf('wylde_food_log_') === 0) {
+          try { meals += (JSON.parse(localStorage.getItem(k) || '[]').length || 0); } catch(_) {}
+        }
+      });
+    } catch(_) {}
+    // Reflections — feel-prompts saved
+    var reflections = 0;
+    try {
+      var feels = JSON.parse(localStorage.getItem('wylde_feels_v1') || '[]');
+      reflections = feels.length || 0;
+    } catch(_) {}
+    return { sessions: sessions, streak: streak, prs: prs, mornings: mornings, walks: walks, meals: meals, reflections: reflections };
+  }
+
   function awardXP(amount, reason) {
     if (!amount) return;
     state.xp = (state.xp || 0) + amount;
@@ -3639,30 +3863,363 @@
   function _updateLevelDisplay() { /* levels removed */ }
 
   function checkBadges() {
-    // Quiet milestones — no level-up alerts. Just track + persist for
-    // identity-driven achievements (e.g. 100 sessions, 30-day streak).
-    var streak = state.streak || 0, sessions = state.sessions || 0;
-    var existing = state.badges || [];
-    var checks = [
-      { id: 'first_session', label: 'First session', condition: sessions >= 1 },
-      { id: 'streak_7',      label: '7 days unbroken', condition: streak >= 7 },
-      { id: 'streak_30',     label: '30 days unbroken', condition: streak >= 30 },
-      { id: 'sessions_10',   label: '10 sessions in', condition: sessions >= 10 },
-      { id: 'sessions_50',   label: '50 sessions deep', condition: sessions >= 50 },
-      { id: 'sessions_100',  label: '100 sessions — this is who you are', condition: sessions >= 100 }
-    ];
+    var stats = _gatherWyldeStats();
+    var existing = (state && state.badges) || [];
     var sb = _getSupabase();
-    checks.forEach(function(c) {
-      if (c.condition && existing.indexOf(c.id) === -1) {
-        existing.push(c.id);
-        showXPToast(c.label);
+    var newlyEarned = [];
+    WYLDE_BADGES.forEach(function(b) {
+      if (b.check(stats) && existing.indexOf(b.id) === -1) {
+        existing.push(b.id);
+        newlyEarned.push(b);
         if (sb && currentUser) {
-          sb.from('badges').insert({ user_id: currentUser.id, badge_id: c.id, earned_at: new Date().toISOString() }).catch(function(){});
+          sb.from('badges').insert({ user_id: currentUser.id, badge_id: b.id, earned_at: new Date().toISOString() }).catch(function(){});
         }
       }
     });
     state.badges = existing;
+    // Show celebration toast for each new badge (cap at 3 to avoid spam if
+    // many fire at once — e.g. importing historical data)
+    newlyEarned.slice(0, 3).forEach(function(b, i) {
+      setTimeout(function() {
+        showBadgeToast(b);
+      }, i * 700);
+    });
+    // Refresh the badge UI if it's currently visible
+    if (typeof renderRewardsUI === 'function') renderRewardsUI();
   }
+
+  // Floating toast for newly-earned badges — bigger than the XP toast
+  // because each one is a real moment.
+  function showBadgeToast(badge) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:linear-gradient(135deg,rgba(184,155,94,0.95),rgba(110,127,102,0.95));color:#fff;padding:14px 22px;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.25);z-index:9999;display:flex;align-items:center;gap:12px;font-family:var(--ff-body);max-width:340px;opacity:0;transition:all 0.4s cubic-bezier(0.2,0.8,0.2,1);';
+    t.innerHTML =
+      '<span style="font-size:28px;line-height:1;">' + badge.icon + '</span>' +
+      '<div>' +
+        '<div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.85;">Badge earned</div>' +
+        '<div style="font-size:15px;font-weight:600;line-height:1.2;margin-top:2px;">' + badge.name + '</div>' +
+      '</div>';
+    document.body.appendChild(t);
+    requestAnimationFrame(function() {
+      t.style.opacity = '1';
+      t.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    if (typeof HapticManager !== 'undefined') { try { HapticManager.notification('success'); } catch(_) {} }
+    setTimeout(function() {
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(-50%) translateY(-10px)';
+      setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, 400);
+    }, 3500);
+  }
+
+  // ─── Render the Path card on Today (phase + recent badges) ─────────
+  function renderRewardsUI() {
+    var stats = _gatherWyldeStats();
+    var current = getCurrentPhase(stats.sessions);
+    var next = getNextPhase(stats.sessions);
+
+    var phaseEl = document.getElementById('ovPathPhase');
+    var lineEl  = document.getElementById('ovPathLine');
+    if (phaseEl) phaseEl.textContent = current.name;
+    if (lineEl)  lineEl.textContent  = current.line;
+
+    var fill = document.getElementById('ovPathProgressFill');
+    var meta = document.getElementById('ovPathProgressMeta');
+    if (next) {
+      var span = next.minSessions - current.minSessions;
+      var into = stats.sessions - current.minSessions;
+      var pct = Math.min(100, Math.max(0, Math.round((into / span) * 100)));
+      if (fill) fill.style.width = pct + '%';
+      if (meta) meta.textContent = stats.sessions + ' of ' + next.minSessions + ' sessions to ' + next.name;
+    } else {
+      // Already at the top — celebrate
+      if (fill) fill.style.width = '100%';
+      if (meta) meta.textContent = 'You\u2019ve reached Wylde. Keep showing up.';
+    }
+
+    // Recent badges (last 3 earned)
+    var badgeWrap = document.getElementById('ovPathBadges');
+    if (!badgeWrap) return;
+    var earned = (state && state.badges) || [];
+    if (!earned.length) {
+      badgeWrap.innerHTML = '<span class="ov-path-badge-empty">No badges yet \u2014 your first is one rep away.</span>';
+      return;
+    }
+    // Render the 3 most-recently-earned badges
+    var recent = earned.slice(-3).reverse();
+    var html = recent.map(function(id) {
+      var b = WYLDE_BADGES.find(function(x){ return x.id === id; });
+      if (!b) return '';
+      return '<span class="ov-path-badge-pill"><span class="badge-emoji">' + b.icon + '</span>' + b.name + '</span>';
+    }).join('');
+    if (earned.length > 3) {
+      html += '<span class="ov-path-badges-more">+' + (earned.length - 3) + ' more</span>';
+    }
+    badgeWrap.innerHTML = html;
+  }
+
+  // ─── Full badge collection modal ───────────────────────────────────
+  function openRewardsModal() {
+    if (document.getElementById('rewardsModal')) return;
+    var stats = _gatherWyldeStats();
+    var earned = (state && state.badges) || [];
+    var current = getCurrentPhase(stats.sessions);
+    var next = getNextPhase(stats.sessions);
+
+    var byCat = {};
+    WYLDE_BADGES.forEach(function(b) {
+      if (!byCat[b.category]) byCat[b.category] = [];
+      byCat[b.category].push(b);
+    });
+    var catLabels = {
+      streak:     'Streaks',
+      sessions:   'Sessions',
+      practice:   'Practice',
+      strength:   'Strength',
+      nutrition:  'Nutrition',
+      reflection: 'Reflection'
+    };
+    var catOrder = ['streak', 'sessions', 'practice', 'strength', 'nutrition', 'reflection'];
+
+    var phaseHeader =
+      '<div style="background:linear-gradient(135deg,rgba(184,155,94,0.10),rgba(110,127,102,0.06));border-radius:14px;padding:16px;margin-bottom:18px;">' +
+        '<p style="font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold,#B89B5E);margin:0 0 4px;">Current Phase</p>' +
+        '<p style="font-family:var(--ff-display,var(--ff-body));font-size:24px;font-weight:700;color:var(--text);margin:0;letter-spacing:-0.01em;">' + current.name + '</p>' +
+        '<p style="font-size:13px;color:var(--text2);margin:6px 0 0;font-style:italic;">' + current.line + '</p>' +
+      '</div>';
+
+    var sectionsHTML = catOrder.map(function(cat) {
+      var badges = byCat[cat] || [];
+      if (!badges.length) return '';
+      var cards = badges.map(function(b) {
+        var isEarned = earned.indexOf(b.id) !== -1;
+        return '<div class="rewards-badge-card ' + (isEarned ? 'earned' : 'locked') + '">' +
+                 '<span class="rewards-badge-emoji">' + b.icon + '</span>' +
+                 '<div class="rewards-badge-name">' + b.name + '</div>' +
+                 '<div class="rewards-badge-desc">' + b.desc + '</div>' +
+               '</div>';
+      }).join('');
+      return '<p class="rewards-section-label">' + catLabels[cat] + '</p>' +
+             '<div class="rewards-grid">' + cards + '</div>';
+    }).join('');
+
+    var earnedCount = earned.length;
+    var totalCount = WYLDE_BADGES.length;
+
+    var overlay = document.createElement('div');
+    overlay.id = 'rewardsModal';
+    overlay.className = 'rewards-modal-overlay';
+    overlay.onclick = function(e) { if (e.target === overlay) closeRewardsModal(); };
+    overlay.innerHTML =
+      '<div class="rewards-modal-card" style="position:relative;">' +
+        '<div class="rewards-modal-grab"></div>' +
+        '<button class="rewards-modal-close" onclick="closeRewardsModal()" aria-label="Close">\u00d7</button>' +
+        '<h2 class="rewards-modal-title">Your Path</h2>' +
+        '<p class="rewards-modal-sub">' + earnedCount + ' of ' + totalCount + ' badges earned</p>' +
+        phaseHeader +
+        sectionsHTML +
+      '</div>';
+    document.body.appendChild(overlay);
+    if (typeof HapticManager !== 'undefined') { try { HapticManager.impact('light'); } catch(_) {} }
+  }
+
+  function closeRewardsModal() {
+    var el = document.getElementById('rewardsModal');
+    if (!el) return;
+    el.style.opacity = '0';
+    el.style.transition = 'opacity 0.2s';
+    setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 200);
+  }
+
+  // Re-render path card on load + retro-credit any badges the user already earned
+  if (typeof window !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        try { checkBadges(); } catch(_) {}
+        try { renderRewardsUI(); } catch(_) {}
+      });
+    } else {
+      setTimeout(function() {
+        try { checkBadges(); } catch(_) {}
+        try { renderRewardsUI(); } catch(_) {}
+      }, 0);
+    }
+  }
+
+  // ═══ EXERCISE LIBRARY (web) ═══
+  // Fetches the bundled exercise DB once, then filters in-memory by
+  // search query + selected primary-muscle chip. Mirrors the iOS
+  // ExercisesView so the experience is identical across surfaces.
+  var _libDB = null;
+  var _libLoading = false;
+  var _libSelectedMuscle = null;
+
+  var _libMusclePresets = [
+    { id: null,            label: 'All' },
+    { id: 'chest',         label: 'Chest' },
+    { id: 'shoulders',     label: 'Shoulders' },
+    { id: 'biceps',        label: 'Biceps' },
+    { id: 'triceps',       label: 'Triceps' },
+    { id: 'forearms',      label: 'Forearms' },
+    { id: 'lats',          label: 'Back' },
+    { id: 'middle back',   label: 'Mid Back' },
+    { id: 'lower back',    label: 'Low Back' },
+    { id: 'traps',         label: 'Traps' },
+    { id: 'abdominals',    label: 'Abs' },
+    { id: 'quadriceps',    label: 'Quads' },
+    { id: 'hamstrings',    label: 'Hamstrings' },
+    { id: 'glutes',        label: 'Glutes' },
+    { id: 'calves',        label: 'Calves' }
+  ];
+
+  function _libRenderChips() {
+    var wrap = document.getElementById('libMuscleChips');
+    if (!wrap) return;
+    wrap.innerHTML = _libMusclePresets.map(function(m) {
+      var sel = (_libSelectedMuscle === m.id);
+      var bg  = sel ? 'var(--sage,#6E7F66)' : 'var(--surface)';
+      var fg  = sel ? '#fff' : 'var(--text)';
+      var bd  = sel ? 'var(--sage,#6E7F66)' : 'var(--border)';
+      return '<button onclick="_libSelectMuscle(' + (m.id ? "'" + m.id + "'" : 'null') + ')" style="padding:7px 12px;border-radius:18px;background:' + bg + ';border:1px solid ' + bd + ';color:' + fg + ';font-size:12px;font-weight:500;cursor:pointer;font-family:var(--ff-body);transition:all 0.15s;white-space:nowrap;">' + m.label + '</button>';
+    }).join('');
+  }
+  window._libSelectMuscle = function(m) {
+    _libSelectedMuscle = m;
+    _libRenderChips();
+    renderLibrary();
+  };
+
+  function _libLoad() {
+    if (_libDB || _libLoading) return Promise.resolve(_libDB || []);
+    _libLoading = true;
+    return fetch('/api/exercises?limit=2000')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        _libDB = (data && data.exercises) || [];
+        _libLoading = false;
+        var line = document.getElementById('libCountLine');
+        if (line) line.textContent = _libDB.length + ' exercises \u00b7 tap to view';
+        return _libDB;
+      })
+      .catch(function(e) {
+        console.warn('[Library] fetch failed:', e && e.message);
+        _libLoading = false;
+        var line = document.getElementById('libCountLine');
+        if (line) line.textContent = 'Couldn\u2019t load exercises. Tap to retry.';
+        return [];
+      });
+  }
+
+  function renderLibrary() {
+    var grid = document.getElementById('libResults');
+    var clearBtn = document.getElementById('libClearBtn');
+    if (!grid) return;
+    var input = document.getElementById('libSearchInput');
+    var q = (input && input.value || '').trim().toLowerCase();
+    if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
+
+    if (!_libDB) {
+      grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:13px;padding:40px 0;">Loading exercises\u2026</p>';
+      _libLoad().then(renderLibrary);
+      return;
+    }
+
+    var list = _libDB.filter(function(ex) {
+      if (q && (ex.name || '').toLowerCase().indexOf(q) === -1) return false;
+      if (_libSelectedMuscle) {
+        var muscles = (ex.primaryMuscles || []).concat(ex.secondaryMuscles || []);
+        var hit = muscles.some(function(m){ return (m || '').toLowerCase() === _libSelectedMuscle; });
+        if (!hit) return false;
+      }
+      return true;
+    });
+
+    if (!list.length) {
+      grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:13px;padding:40px 0;">No exercises match that filter.</p>';
+      return;
+    }
+
+    // Cap render at 100 for perf (search to find more)
+    var capped = list.slice(0, 100);
+    grid.innerHTML = capped.map(function(ex) {
+      var img = (ex.images && ex.images[0]) ? ex.images[0] : '';
+      var imgFull = img ? (img.indexOf('http') === 0 ? img : 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/' + img) : '';
+      var primary = ((ex.primaryMuscles || [])[0] || '').replace(/^./, function(c){ return c.toUpperCase(); });
+      return '<div onclick="openLibDetail(\'' + (ex.id || '').replace(/'/g, '\\\'') + '\')" style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform 0.15s;">' +
+        (imgFull
+          ? '<div style="aspect-ratio:1.2;background:#0a0a0a url(\'' + imgFull + '\') center/cover no-repeat;"></div>'
+          : '<div style="aspect-ratio:1.2;background:linear-gradient(135deg,rgba(110,127,102,0.10),rgba(184,155,94,0.06));display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:24px;">\uD83C\uDFCB</div>') +
+        '<div style="padding:10px 12px;">' +
+          '<p style="margin:0;font-size:12px;font-weight:600;color:var(--text);line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">' + (ex.name || '') + '</p>' +
+          (primary ? '<p style="margin:4px 0 0;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;">' + primary + '</p>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('') + (list.length > 100 ? '<p style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:11px;padding:14px 0;">Showing 100 of ' + list.length + ' \u2014 refine search to see more</p>' : '');
+  }
+
+  function openLibDetail(exId) {
+    if (!_libDB) return;
+    var ex = _libDB.find(function(e){ return e.id === exId; });
+    if (!ex) return;
+    var modal = document.getElementById('libDetailModal');
+    var content = document.getElementById('libDetailContent');
+    if (!modal || !content) return;
+
+    var imgs = (ex.images || []).map(function(p) {
+      return p.indexOf('http') === 0 ? p : 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/' + p;
+    });
+    var primaryMuscles = (ex.primaryMuscles || []).join(', ');
+    var secondaryMuscles = (ex.secondaryMuscles || []).join(', ');
+    var equipment = ex.equipment || 'Body only';
+    var level = ex.level || '';
+    var force = ex.force || '';
+    var instructions = (ex.instructions || []).map(function(s, i) {
+      return '<li style="margin-bottom:10px;">' + s + '</li>';
+    }).join('');
+
+    var ytQuery = encodeURIComponent(ex.name + ' exercise proper form tutorial');
+    var ytBtn =
+      '<button onclick="window.open(\'https://www.youtube.com/results?search_query=' + ytQuery + '\',\'_blank\',\'noopener,noreferrer\')" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border-radius:12px;background:linear-gradient(135deg,#ff0033,#cc0000);color:#fff;border:none;font-weight:600;font-size:13px;cursor:pointer;margin-top:14px;font-family:var(--ff-body);">' +
+      '<svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px;"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>' +
+      'Watch tutorial</button>';
+
+    content.innerHTML =
+      (imgs.length
+        ? '<div style="background:#0a0a0a;border-radius:12px;overflow:hidden;margin-bottom:14px;aspect-ratio:1.6;background-image:url(\'' + imgs[0] + '\');background-size:cover;background-position:center;"></div>'
+        : '') +
+      '<h2 style="margin:0;font-size:22px;font-weight:700;color:var(--text);letter-spacing:-0.01em;line-height:1.15;">' + (ex.name || '') + '</h2>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">' +
+        (level ?     '<span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;background:rgba(110,127,102,0.10);color:var(--sage,#6E7F66);padding:4px 10px;border-radius:20px;font-weight:600;">' + level + '</span>' : '') +
+        (equipment ? '<span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;background:rgba(184,155,94,0.10);color:var(--gold,#B89B5E);padding:4px 10px;border-radius:20px;font-weight:600;">' + equipment + '</span>' : '') +
+        (force ?     '<span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;background:rgba(0,0,0,0.05);color:var(--text2);padding:4px 10px;border-radius:20px;font-weight:600;">' + force + '</span>' : '') +
+      '</div>' +
+      (primaryMuscles ?
+        '<div style="margin-top:18px;">' +
+          '<p style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin:0 0 4px;font-weight:600;">Primary muscles</p>' +
+          '<p style="margin:0;font-size:14px;color:var(--text);text-transform:capitalize;">' + primaryMuscles + '</p>' +
+        '</div>' : '') +
+      (secondaryMuscles ?
+        '<div style="margin-top:12px;">' +
+          '<p style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin:0 0 4px;font-weight:600;">Secondary</p>' +
+          '<p style="margin:0;font-size:14px;color:var(--text2);text-transform:capitalize;">' + secondaryMuscles + '</p>' +
+        '</div>' : '') +
+      ytBtn +
+      (instructions ?
+        '<div style="margin-top:22px;">' +
+          '<p style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;font-weight:600;">How to do it</p>' +
+          '<ol style="margin:0;padding-left:20px;font-size:14px;color:var(--text);line-height:1.5;">' + instructions + '</ol>' +
+        '</div>' : '');
+
+    modal.style.display = 'flex';
+  }
+
+  function closeLibDetail() {
+    var modal = document.getElementById('libDetailModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  // (Library init is wired directly inside the main showScreen function below
+  //  via `if (id === 'library')` — no wrapping needed.)
 
   // ═══ WORKOUT LOGGING ═══
   function logWorkoutSession(sessionName, durationMin) {
@@ -4335,13 +4892,17 @@
     document.getElementById('screen-' + id).classList.add('active');
     if (id === 'nutrition' && state.weight) { calculateMacros(); loadSavedMealPlan(); }
     if (id === 'nutrition') { renderPantry(); }
-    if (id === 'overview') { updateOverview(); mpInit(); }
+    if (id === 'overview') { updateOverview(); mpInit(); if (typeof renderRewardsUI === 'function') renderRewardsUI(); if (typeof renderDailyWalkUI === 'function') renderDailyWalkUI(); }
     if (id === 'future') { updateFsSilhouette(); }
     if (id === 'program') { autoLoadProgram(); }
-    // Map screens to bottom tab indices (4-tab nav: Today=0, Future=1, Coach=2, Optimize=3)
-    var tabs = { overview:0, future:1, coach:2, progress:3 };
+    if (id === 'library') {
+      if (typeof _libRenderChips === 'function') _libRenderChips();
+      if (typeof _libLoad === 'function') _libLoad().then(function(){ if (typeof renderLibrary === 'function') renderLibrary(); });
+    }
+    // Map screens to bottom tab indices (5-tab nav: Today=0, Future=1, Coach=2, Library=3, Settings=4)
+    var tabs = { overview:0, future:1, coach:2, library:3, progress:4 };
     // Sub-screens map to their parent tab
-    var parentTab = { onboard:0, program:0, nutrition:0, health:3 };
+    var parentTab = { onboard:0, program:0, nutrition:0, health:4 };
     var tabIdx = (id in tabs) ? tabs[id] : (id in parentTab ? parentTab[id] : -1);
     var navTabs = document.querySelectorAll('.nav-tab');
     if (tabIdx >= 0 && navTabs[tabIdx]) navTabs[tabIdx].classList.add('active');
@@ -4362,13 +4923,17 @@
       document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
       var el = document.getElementById('screen-' + target);
       if (el) el.classList.add('active');
-      var tabs = { overview:0, future:1, coach:2, progress:3 };
-      var parentTab = { onboard:0, program:0, nutrition:0, health:3 };
+      var tabs = { overview:0, future:1, coach:2, library:3, progress:4 };
+      var parentTab = { onboard:0, program:0, nutrition:0, health:4 };
       var tabIdx = (target in tabs) ? tabs[target] : (target in parentTab ? parentTab[target] : -1);
       var navTabs = document.querySelectorAll('.nav-tab');
       if (tabIdx >= 0 && navTabs[tabIdx]) navTabs[tabIdx].classList.add('active');
-      if (target === 'overview') { updateOverview(); mpInit(); }
+      if (target === 'overview') { updateOverview(); mpInit(); if (typeof renderRewardsUI === 'function') renderRewardsUI(); }
       if (target === 'future' && typeof updateFsSilhouette === 'function') updateFsSilhouette();
+      if (target === 'library') {
+        if (typeof _libRenderChips === 'function') _libRenderChips();
+        if (typeof _libLoad === 'function') _libLoad().then(function(){ if (typeof renderLibrary === 'function') renderLibrary(); });
+      }
       currentScreen = target;
       window.scrollTo(0,0);
     } else {
@@ -5823,6 +6388,14 @@
       _prCache[k] = { weight: info.weight, reps: info.reps };
       // Reflect to any DOM cards already showing this exercise
       _updateStatCardsForExercise(name);
+      // Bump the lifetime PR counter that powers strength badges
+      try {
+        var prCount = parseInt(localStorage.getItem('wylde_pr_count') || '0', 10) || 0;
+        localStorage.setItem('wylde_pr_count', String(prCount + 1));
+      } catch(_) {}
+      // Quiet toast — different from the badge toast (a PR is its own moment)
+      if (typeof showXPToast === 'function') showXPToast('\uD83C\uDFAF New PR \u2014 ' + name + ' ' + info.weight + 'lb \u00d7 ' + info.reps);
+      if (typeof checkBadges === 'function') checkBadges();
     }
   }
   // Pull all PRs from Supabase once (called on auth + on demand)

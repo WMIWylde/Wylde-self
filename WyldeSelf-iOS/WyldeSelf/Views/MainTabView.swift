@@ -14,7 +14,7 @@ struct MainTabView: View {
                 tabContent(.exercises) { ExercisesView() }
                 tabContent(.future) { WebViewScreen(path: "#future") }
                 tabContent(.coach) { WebViewScreen(path: "#coach") }
-                tabContent(.optimize) { WebViewScreen(path: "#optimize") }
+                tabContent(.settings) { WebViewScreen(path: "#progress") }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
