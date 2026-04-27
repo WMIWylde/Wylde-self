@@ -1684,8 +1684,8 @@
     </div>
     <button id="navSignOutBtn" onclick="signOut()" style="display:none;margin-top:8px;background:none;border:1px solid rgba(0,0,0,0.08);color:var(--text3);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:7px 12px;cursor:pointer;border-radius:8px;width:100%;font-family:var(--ff-body);">Sign Out</button>
   </div>
-  <!-- Hidden: used by showScreen for legacy screens -->
-  <span id="navLevel" style="display:none">Ember</span>
+  <!-- Hidden: legacy slots, level system was removed (kept as no-op placeholders) -->
+  <span id="navLevel" style="display:none"></span>
   <span id="levelBadgeWrap" style="display:none"></span>
 </nav>
 
@@ -2249,6 +2249,18 @@
           <span class="ov-stack-arrow">&#8250;</span>
         </div>
       </div>
+      <!-- Daily long walk — separate from training, keeps the body moving -->
+      <div class="ov-stack-row" id="ov-w-walk" onclick="toggleDailyWalk()">
+        <div class="ov-stack-icon walk" style="background:rgba(110,127,102,0.10);color:var(--sage,#6E7F66);font-size:18px;">&#128694;</div>
+        <div class="ov-stack-left">
+          <p class="ov-stack-name">Long Walk</p>
+          <p class="ov-stack-meta" id="ov-walk-meta">30+ minutes outside</p>
+        </div>
+        <div class="ov-stack-right">
+          <span class="ov-stack-status" id="ov-walk-status"><span class="ov-stack-status-dot"></span> Not yet</span>
+          <span class="ov-stack-arrow">&#8250;</span>
+        </div>
+      </div>
       <div class="ov-stack-row" id="ov-w-cal" onclick="showScreen('nutrition')">
         <div class="ov-stack-icon protein">&#9775;</div>
         <div class="ov-stack-left">
@@ -2601,14 +2613,71 @@
   }
 
   // ═══ MORNING PROTOCOL LOGIC ═══
+  // Three core practices, fixed. The point isn't variety — it's a stable
+  // ritual that builds your relationship with yourself. Workout lives in
+  // your daily routine, not the morning protocol.
   var _mpActions = [
-    { id: 'stillness',  name: 'Sit in stillness',        dur: 5, desc: 'Breathe. Ground yourself.' },
-    { id: 'standard',   name: 'Set your standard',       dur: 3, desc: 'Declare what you won\'t compromise on.' },
-    { id: 'visualize',  name: 'See who you\'re becoming', dur: 3, desc: 'Spend a moment with your future self.' },
-    { id: 'move',       name: 'Move your body',          dur: 7, desc: 'Walk, stretch, or train.' },
-    { id: 'learn',      name: 'Feed your mind',          dur: 5, desc: 'Read, listen, or watch.' },
-    { id: 'write',      name: 'Write with intention',    dur: 5, desc: 'Journal or plan what matters.' }
+    { id: 'meditation', name: 'Meditation', dur: 10, desc: 'Sit. Breathe. Notice.' },
+    { id: 'journaling', name: 'Journaling', dur: 10, desc: 'What\'s on your mind. What you\'re grateful for. What you\'re building.' },
+    { id: 'reading',    name: 'Reading',    dur: 15, desc: 'Feed your mind something deliberate.' }
   ];
+
+  // ═══ DAILY WALK ═══
+  // A long walk every day, separate from training. Mid-day reset, anti-
+  // sedentary, and keeps the body in motion on rest days. Surfaces in the
+  // userContext so the Coach knows whether you've been moving.
+  function _walkKey() {
+    return 'wylde_walk_' + new Date().toISOString().slice(0, 10);
+  }
+  function isDailyWalkDone() {
+    try { return localStorage.getItem(_walkKey()) === '1'; } catch(_) { return false; }
+  }
+  function toggleDailyWalk() {
+    var done = isDailyWalkDone();
+    try {
+      if (done) localStorage.removeItem(_walkKey());
+      else localStorage.setItem(_walkKey(), '1');
+    } catch(_) {}
+    renderDailyWalkUI();
+    if (!done) {
+      if (typeof HapticManager !== 'undefined') { try { HapticManager.notification('success'); } catch(_) {} }
+      if (typeof showXPToast === 'function') showXPToast('Walk logged');
+      if (typeof awardXP === 'function') awardXP(5, 'Walk');
+      // Best-effort Supabase mirror
+      try {
+        var sb = (typeof _getSupabase === 'function') ? _getSupabase() : null;
+        if (sb && typeof currentUser !== 'undefined' && currentUser) {
+          sb.from('daily_walks').insert({
+            user_id: currentUser.id,
+            walked_on: new Date().toISOString().slice(0, 10),
+            logged_at: new Date().toISOString()
+          }).then(function(){}, function(){});
+        }
+      } catch(_) {}
+    }
+    if (typeof _userContextCache !== 'undefined') _userContextCache = null;
+  }
+  function renderDailyWalkUI() {
+    var status = document.getElementById('ov-walk-status');
+    var row = document.getElementById('ov-w-walk');
+    if (!status) return;
+    var done = isDailyWalkDone();
+    if (done) {
+      status.innerHTML = '<span style="color:var(--sage,#6E7F66);">\u2713 Done</span>';
+      if (row) row.style.opacity = '0.7';
+    } else {
+      status.innerHTML = '<span class="ov-stack-status-dot"></span> Not yet';
+      if (row) row.style.opacity = '1';
+    }
+  }
+  // Hydrate the walk UI when overview opens
+  if (typeof window !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', renderDailyWalkUI);
+    } else {
+      setTimeout(renderDailyWalkUI, 0);
+    }
+  }
 
   // Identity-based completion messages
   var _mpDoneMessages = [
@@ -2853,26 +2922,44 @@
     localStorage.setItem('wylde_mp_collapsed', isCollapsed ? '0' : '1');
   };
 
-  // Initialize Morning Protocol on the Today screen
+  // Initialize Morning Protocol on the Today screen.
+  // Three practices are fixed (meditation, journaling, reading), so there's
+  // no longer a "setup" step — we auto-create the data on first run with
+  // all three included, then drop straight into daily execution mode. This
+  // matches the iOS app and reflects the brand position: the protocol IS
+  // the practice; you don't choose, you commit.
   window.mpInit = function mpInit() {
     var data = mpLoad();
     var card = document.getElementById('mpCard');
     if (!card) return;
 
     if (!data || !data.actions || data.actions.length === 0) {
-      // No protocol set up — hide daily, show inline setup prompt
-      document.getElementById('mpDaily').style.display = 'none';
-      document.getElementById('mpSetup').style.display = 'block';
-      var hdr = document.getElementById('mpDayCountHeader');
-      if (hdr) hdr.textContent = '';
+      // First run — auto-create with the three fixed practices
+      data = {
+        actions: _mpActions.slice(),                  // all three
+        startDate: new Date().toISOString().slice(0, 10),
+        completedDays: {}
+      };
+      mpSave(data);
     } else {
-      // Show daily mode (collapsible)
-      document.getElementById('mpSetup').style.display = 'none';
-      mpRenderDaily(data);
-      var dayNum = mpDayNumber(data);
-      var hdr = document.getElementById('mpDayCountHeader');
-      if (hdr) hdr.textContent = 'Day ' + dayNum;
+      // Migration: any existing user with old multi-action protocol gets
+      // collapsed down to the three canonical practices.
+      var canonicalIds = _mpActions.map(function(a){ return a.id; }).sort().join(',');
+      var theirIds = (data.actions || []).map(function(a){ return a.id; }).sort().join(',');
+      if (canonicalIds !== theirIds) {
+        data.actions = _mpActions.slice();
+        mpSave(data);
+      }
     }
+
+    // Setup screen is no longer used — hide it permanently
+    var setup = document.getElementById('mpSetup');
+    if (setup) setup.style.display = 'none';
+    document.getElementById('mpDaily').style.display = 'block';
+    mpRenderDaily(data);
+    var dayNum = mpDayNumber(data);
+    var hdr = document.getElementById('mpDayCountHeader');
+    if (hdr) hdr.textContent = 'Day ' + dayNum;
 
     // Restore collapse state
     var collapsed = localStorage.getItem('wylde_mp_collapsed') === '1';
@@ -3520,29 +3607,16 @@
     }, { onConflict: 'id' }).catch(function(){});
   }
 
-  // ═══ XP ENGINE ═══
-  var _xpThresholds = [0, 1000, 3500, 8000];
-  var _levelNames = ['Ember', 'Root', 'Rise', 'Wylde'];
-
-  function _xpLevel(xp) {
-    var level = 0;
-    for (var i = 0; i < _xpThresholds.length; i++) { if (xp >= _xpThresholds[i]) level = i; }
-    return level;
-  }
-
-  function _updateLevelDisplay() {
-    var nb = document.getElementById('navLevel');
-    if (nb) nb.textContent = _levelNames[_xpLevel(state.xp || 0)];
-  }
-
+  // ═══ INTERNAL POINTS ENGINE ═══
+  // Levels (Ember/Spark/Flame/etc.) were stripped — they pulled the brand
+  // toward video-game gamification when the actual point of Wylde Self is
+  // transforming your relationship with yourself. We keep XP as a silent
+  // counter for badges + future analytics, but never surface it as a
+  // ranking. No promotion overlay, no badge popups for "level up".
   function awardXP(amount, reason) {
     if (!amount) return;
-    var oldLevel = _xpLevel(state.xp || 0);
     state.xp = (state.xp || 0) + amount;
-    var newLevel = _xpLevel(state.xp);
-    _updateLevelDisplay();
-    showXPToast('+' + amount + ' XP' + (reason ? '  ' + reason : ''));
-    if (newLevel > oldLevel) showLevelUpAnimation(_levelNames[newLevel]);
+    showXPToast(reason || 'Logged');
     checkBadges();
     try { localStorage.setItem('wylde_profile', JSON.stringify(state)); } catch(e) {}
     var sb = _getSupabase();
@@ -3560,27 +3634,28 @@
     toast._timer = setTimeout(function() { toast.className = 'xp-toast-hide'; }, 2500);
   }
 
-  function showLevelUpAnimation(levelName) {
-    // For XP-based level-ups, reuse the premium overlay
-    var title = document.getElementById('lu-title');
-    if (title) title.textContent = levelName || 'LEVEL UP';
-    showLevelUpVideo();
-  }
+  // Stub so any leftover callers (legacy UI) don't error out
+  function showLevelUpAnimation() { /* levels removed */ }
+  function _updateLevelDisplay() { /* levels removed */ }
 
   function checkBadges() {
-    var xp = state.xp || 0, streak = state.streak || 0, sessions = state.sessions || 0;
+    // Quiet milestones — no level-up alerts. Just track + persist for
+    // identity-driven achievements (e.g. 100 sessions, 30-day streak).
+    var streak = state.streak || 0, sessions = state.sessions || 0;
     var existing = state.badges || [];
     var checks = [
-      { id: 'first_session', label: 'First Session 🏅', condition: sessions >= 1 },
-      { id: 'streak_7',      label: '7-Day Streak 🔥',  condition: streak >= 7 },
-      { id: 'sessions_10',   label: '10 Sessions 💪',   condition: sessions >= 10 },
-      { id: 'xp_1000',       label: 'Root Level ⚡',    condition: xp >= 1000 }
+      { id: 'first_session', label: 'First session', condition: sessions >= 1 },
+      { id: 'streak_7',      label: '7 days unbroken', condition: streak >= 7 },
+      { id: 'streak_30',     label: '30 days unbroken', condition: streak >= 30 },
+      { id: 'sessions_10',   label: '10 sessions in', condition: sessions >= 10 },
+      { id: 'sessions_50',   label: '50 sessions deep', condition: sessions >= 50 },
+      { id: 'sessions_100',  label: '100 sessions — this is who you are', condition: sessions >= 100 }
     ];
     var sb = _getSupabase();
     checks.forEach(function(c) {
       if (c.condition && existing.indexOf(c.id) === -1) {
         existing.push(c.id);
-        showXPToast('Badge: ' + c.label);
+        showXPToast(c.label);
         if (sb && currentUser) {
           sb.from('badges').insert({ user_id: currentUser.id, badge_id: c.id, earned_at: new Date().toISOString() }).catch(function(){});
         }
@@ -3652,7 +3727,6 @@
         age: s.age || null,
         weight: s.weight ? (s.weight + (s.weightUnit || 'lbs')) : '',
         goal: s.goal || '',
-        level: s.level || 'Ember',
         days: s.days || '',
         streak: s.streak || 0,
         sessions: s.sessions || 0,
@@ -3668,7 +3742,8 @@
       lastMealPlan: null,      // last AI-generated meal plan
       pantry: null,
       workoutFeels: [],        // recent post-workout 1-4 ratings
-      foodFeels: []            // recent thumbs / yuck on logged foods
+      foodFeels: [],           // recent thumbs / yuck on logged foods
+      recentWalks: 0           // number of completed daily walks in last 7 days
     };
 
     var sb = (typeof _getSupabase === 'function') ? _getSupabase() : null;
@@ -3726,6 +3801,16 @@
       ctx.recentFoodNames = Object.keys(nameSet).map(function(k){ return nameSet[k]; }).slice(0, 30);
     } catch(_) {}
 
+    // Count daily walks logged in the last 7 days
+    try {
+      var walks = 0;
+      for (var dW = 0; dW < 7; dW++) {
+        var wKey = 'wylde_walk_' + new Date(Date.now() - dW * 86400000).toISOString().slice(0, 10);
+        if (localStorage.getItem(wKey) === '1') walks++;
+      }
+      ctx.recentWalks = walks;
+    } catch(_) {}
+
     // Pull workout feels (post-workout 😩😐💪🔥) + food feels (👍/👎/🤢)
     // — both are local-first; Supabase mirror is best-effort and may not exist.
     try {
@@ -3773,7 +3858,7 @@
     if (p.goal) prof += ' — goal: ' + p.goal;
     if (p.goals.length > 1) prof += ' (also: ' + p.goals.filter(function(g){return g!==p.goal}).join(', ') + ')';
     if (p.days) prof += ', training ' + p.days + 'd/wk';
-    prof += ', level: ' + p.level + ', streak: ' + p.streak + ' days, ' + p.sessions + ' sessions completed';
+    prof += ', streak: ' + p.streak + ' days, ' + p.sessions + ' sessions completed';
     lines.push(prof);
     if (p.diet.length) lines.push('Diet: ' + p.diet.join(', '));
     if (p.health.length) lines.push('Health concerns: ' + p.health.join(', '));
@@ -3842,6 +3927,13 @@
         (d.meals || []).forEach(function(m) { if (m.title || m.name) titles.push(m.title || m.name); });
       });
       if (titles.length) lines.push('\nLast meal plan included: ' + titles.slice(0, 8).join('; ') + (titles.length > 8 ? ', ...' : ''));
+    }
+
+    // Daily walks — surfaces sedentary patterns
+    if (typeof ctx.recentWalks === 'number') {
+      lines.push('\nLong walks last 7 days: ' + ctx.recentWalks + '/7');
+      if (ctx.recentWalks <= 1) lines.push('  ↳ they\'ve barely walked this week — bring it up gently');
+      if (ctx.recentWalks >= 6) lines.push('  ↳ walking consistently — call it out as a foundation win');
     }
 
     // Workout feels — qualitative signal beyond just "they lifted X"
@@ -4140,15 +4232,10 @@
       if (empty) empty.style.display = 'none';
       if (list) list.innerHTML = r.data.map(function(item) {
         var name  = (item.users && item.users.name)  || 'Member';
-        var level = (item.users && item.users.level) || 'Ember';
-        var variant = levelToVariant(level);
         return '<div class="feed-item">' +
           '<div class="feed-item-header">' +
             '<span class="feed-item-author">' + name + '</span>' +
-            '<div style="display:flex;align-items:center;gap:8px;">' +
-              '<span class="wtag wtag-' + variant + '">' + level + '</span>' +
-              '<span class="feed-item-time">' + timeAgo(item.created_at) + '</span>' +
-            '</div>' +
+            '<span class="feed-item-time">' + timeAgo(item.created_at) + '</span>' +
           '</div>' +
           '<div class="feed-item-body">' + (item.body || '') + '</div>' +
         '</div>';
@@ -6681,33 +6768,15 @@
     });
   }
 
-  // ═══ LEVEL COLOR SYSTEM ═══
+  // ═══ ACCENT COLORS ═══
+  // Level-tier coloring was removed when the Ember/Spark/Wylde ladder
+  // was stripped. The accent is now a single brand-aligned sage color
+  // for everyone — what they're building isn't a rank, it's a relationship.
   function initLevelColors() {
-    try {
-      var p = JSON.parse(localStorage.getItem('wylde_profile') || '{}');
-      var level = (p.level || 'Ember').toLowerCase();
-      var r = document.documentElement;
-      if (level.includes('ember')) {
-        r.style.setProperty('--accent','#ff6030');
-        r.style.setProperty('--accent-bg','rgba(220,90,30,0.15)');
-        r.style.setProperty('--accent-border','rgba(220,90,30,0.45)');
-      } else if (level.includes('root') || level.includes('begin')) {
-        r.style.setProperty('--accent','#50c870');
-        r.style.setProperty('--accent-bg','rgba(60,170,90,0.15)');
-        r.style.setProperty('--accent-border','rgba(60,170,90,0.45)');
-      } else if (level.includes('rise') || level.includes('inter')) {
-        r.style.setProperty('--accent','#f0c040');
-        r.style.setProperty('--accent-bg','rgba(201,173,110,0.15)');
-        r.style.setProperty('--accent-border','rgba(201,173,110,0.45)');
-      } else if (level.includes('wylde') || level.includes('advan') || level.includes('elite')) {
-        r.style.setProperty('--accent','#b89ee0');
-        r.style.setProperty('--accent-bg','rgba(184,158,224,0.15)');
-        r.style.setProperty('--accent-border','rgba(184,158,224,0.45)');
-      }
-      // Update level badge
-      var nb = document.getElementById('navLevel');
-      if (nb && p.level) nb.textContent = p.level;
-    } catch(e) {}
+    var r = document.documentElement;
+    r.style.setProperty('--accent', '#6E7F66');
+    r.style.setProperty('--accent-bg', 'rgba(110,127,102,0.12)');
+    r.style.setProperty('--accent-border', 'rgba(110,127,102,0.40)');
   }
   initLevelColors();
 

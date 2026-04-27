@@ -12,8 +12,19 @@ struct WyldeSelfApp: App {
                 .preferredColorScheme(.light)
                 .onAppear {
                     configureAppearance()
+                    scheduleDailyReminders()
                 }
         }
+    }
+
+    /// Set up the daily walk reminder once per launch. iOS de-dupes by
+    /// identifier (`daily_13_0`), so re-registering is idempotent.
+    private func scheduleDailyReminders() {
+        NotificationManager.shared.scheduleDailyReminder(
+            hour: 13, minute: 0,
+            title: "Time for your walk",
+            body: "30+ minutes outside. Phone in your pocket. Your body needs the reset."
+        )
     }
 
     private func configureAppearance() {

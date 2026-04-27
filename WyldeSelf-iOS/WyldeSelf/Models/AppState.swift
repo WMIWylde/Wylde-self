@@ -10,17 +10,24 @@ class AppState: ObservableObject {
     @Published var userName: String = ""                            { didSet { defaults.set(userName, forKey: "wylde_name") } }
     @Published var currentDay: Int = 1                              { didSet { defaults.set(currentDay, forKey: "wylde_day") } }
     @Published var streak: Int = 0                                  { didSet { defaults.set(streak, forKey: "wylde_streak") } }
+    // XP is now a silent internal counter — used for analytics + future
+    // identity-driven badges, never surfaced as a level/rank.
     @Published var xp: Int = 0                                      { didSet { defaults.set(xp, forKey: "wylde_xp") } }
-    @Published var level: String = "Ember"                          { didSet { defaults.set(level, forKey: "wylde_level") } }
 
     // Profile
     @Published var gender: String = "Male"                          { didSet { defaults.set(gender, forKey: "wylde_gender") } }
     @Published var goals: [String] = []                             { didSet { defaults.set(goals, forKey: "wylde_goals") } }
     @Published var gymName: String = ""                             { didSet { defaults.set(gymName, forKey: "wylde_gym") } }
 
-    // Morning Protocol — encoded as JSON
-    @Published var morningProtocolActions: [MorningAction] = []     { didSet { saveCodable(morningProtocolActions, key: "wylde_morning_actions") } }
+    // Morning Protocol — three fixed practices, persisted as completion flags
+    // per day. No more "user picks 3-5" — the protocol IS the practice.
+    @Published var morningProtocolActions: [MorningAction] = AppState.defaultMorningActions {
+        didSet { saveCodable(morningProtocolActions, key: "wylde_morning_actions") }
+    }
     @Published var morningProtocolCompleted: Bool = false           { didSet { defaults.set(morningProtocolCompleted, forKey: "wylde_morning_done") } }
+
+    // Daily long walk — separate from training, mid-day movement
+    @Published var dailyWalkCompleted: Bool = false                 { didSet { defaults.set(dailyWalkCompleted, forKey: dayKey("wylde_walk_done")) } }
 
     // Today — daily state, scoped by day-of-year so it auto-resets at midnight
     @Published var workoutCompleted: Bool = false                   { didSet { defaults.set(workoutCompleted, forKey: dayKey("wylde_workout_done")) } }
@@ -46,6 +53,15 @@ class AppState: ObservableObject {
             }
         }
     }
+
+    // MARK: - Default Morning Practices
+    // Three fixed practices — meditation, journaling, reading. Workout is
+    // not part of morning protocol because it lives in the daily routine.
+    static let defaultMorningActions: [MorningAction] = [
+        MorningAction(id: "meditation", name: "Meditation", desc: "Sit. Breathe. Notice.", dur: 10),
+        MorningAction(id: "journaling", name: "Journaling", desc: "What's on your mind. What you're grateful for. What you're building.", dur: 10),
+        MorningAction(id: "reading",    name: "Reading",    desc: "Feed your mind something deliberate.", dur: 15)
+    ]
 
     // MARK: - Persistence
 
@@ -84,14 +100,27 @@ class AppState: ObservableObject {
         if currentDay == 0 { currentDay = 1 }
         streak = defaults.integer(forKey: "wylde_streak")
         xp = defaults.integer(forKey: "wylde_xp")
-        level = defaults.string(forKey: "wylde_level") ?? "Ember"
         gender = defaults.string(forKey: "wylde_gender") ?? "Male"
         goals = defaults.stringArray(forKey: "wylde_goals") ?? []
         gymName = defaults.string(forKey: "wylde_gym") ?? ""
 
-        // Morning protocol
-        morningProtocolActions = loadCodable([MorningAction].self, key: "wylde_morning_actions") ?? []
+        // Morning protocol — load any persisted state, but reconcile against
+        // the canonical 3 practices so old multi-action protocols collapse
+        // down to the new shape automatically on next launch.
+        let saved = loadCodable([MorningAction].self, key: "wylde_morning_actions") ?? []
+        let canonicalIds = Set(AppState.defaultMorningActions.map { $0.id })
+        let savedIds = Set(saved.map { $0.id })
+        if savedIds == canonicalIds {
+            // Same set — keep their completion state
+            morningProtocolActions = saved
+        } else {
+            // Stale set — wipe to canonical defaults
+            morningProtocolActions = AppState.defaultMorningActions
+        }
         morningProtocolCompleted = defaults.bool(forKey: "wylde_morning_done")
+
+        // Daily walk — date-scoped
+        dailyWalkCompleted = defaults.bool(forKey: dayKey("wylde_walk_done"))
 
         // Daily state — scoped to today, so naturally empty on a fresh day
         workoutCompleted = defaults.bool(forKey: dayKey("wylde_workout_done"))
@@ -116,7 +145,7 @@ class AppState: ObservableObject {
     func resetAllData() {
         let keys = [
             "wylde_authed", "wylde_name", "wylde_day", "wylde_streak", "wylde_xp",
-            "wylde_level", "wylde_gender", "wylde_goals", "wylde_gym",
+            "wylde_gender", "wylde_goals", "wylde_gym",
             "wylde_morning_actions", "wylde_morning_done",
             "wylde_protein_goal", "wylde_calories_goal"
         ]
@@ -125,32 +154,22 @@ class AppState: ObservableObject {
         for key in defaults.dictionaryRepresentation().keys {
             if key.hasPrefix("wylde_workout_done_") ||
                key.hasPrefix("wylde_protein_logged_") ||
-               key.hasPrefix("wylde_calories_logged_") {
+               key.hasPrefix("wylde_calories_logged_") ||
+               key.hasPrefix("wylde_walk_done_") {
                 defaults.removeObject(forKey: key)
             }
         }
         loadFromDefaults()
     }
 
+    /// Silent XP accumulator — used for analytics + future identity-driven
+    /// badges, never displayed as a rank. The Ember/Spark/Flame ladder was
+    /// stripped because it pulled the brand toward video-game gamification
+    /// when the actual point of Wylde Self is transforming your relationship
+    /// with yourself.
     func awardXP(_ amount: Int, reason: String) {
         xp += amount  // didSet writes to defaults automatically
         HapticManager.shared.impact(.light)
-
-        // Level thresholds
-        let levels: [(String, Int)] = [
-            ("Ember", 0), ("Spark", 200), ("Flame", 500),
-            ("Blaze", 1000), ("Inferno", 2000), ("Forge", 4000),
-            ("Titan", 8000), ("Legend", 15000)
-        ]
-        for (name, threshold) in levels.reversed() {
-            if xp >= threshold {
-                if level != name {
-                    level = name  // didSet persists
-                    HapticManager.shared.notification(.success)
-                }
-                break
-            }
-        }
     }
 }
 

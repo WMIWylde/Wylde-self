@@ -12,16 +12,21 @@ struct TodayView: View {
                 // Header
                 headerSection
 
-                // Hero card — day + streak
+                // Hero card — day + streak (no level/XP — those were stripped
+                // because the brand is about transforming your relationship
+                // with yourself, not climbing a ladder)
                 heroCard
 
-                // Morning Protocol
+                // Morning Protocol — three fixed practices
                 if !appState.morningProtocolCompleted {
                     morningProtocolCard
                 }
 
                 // Workout CTA
                 workoutCard
+
+                // Daily Long Walk — separate from training
+                walkCard
 
                 // Nutrition snapshot
                 nutritionCard
@@ -48,14 +53,21 @@ struct TodayView: View {
                 Text(greeting)
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(Theme.muted)
-                Text(appState.userName.isEmpty ? "Warrior" : appState.userName)
+                Text(appState.userName.isEmpty ? "Welcome" : appState.userName)
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(Theme.text)
             }
             Spacer()
-            // Level badge
-            Text(appState.level)
-                .font(.system(size: 12, weight: .semibold))
+            // Streak badge — replaces the old level badge. A streak is a
+            // measure of how consistently you've shown up for yourself,
+            // which is on-brand. A "level" implies you're being graded.
+            if appState.streak > 0 {
+                HStack(spacing: 4) {
+                    Image(systemName: "flame.fill")
+                        .font(.system(size: 11))
+                    Text("\(appState.streak)")
+                        .font(.system(size: 13, weight: .semibold))
+                }
                 .foregroundColor(Theme.sage)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
@@ -63,58 +75,22 @@ struct TodayView: View {
                     Capsule()
                         .fill(Theme.sage.opacity(0.12))
                 )
+            }
         }
     }
 
     // MARK: - Hero Card
 
     private var heroCard: some View {
-        VStack(spacing: 12) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("DAY \(appState.currentDay)")
-                        .font(.system(size: 32, weight: .bold))
-                        .foregroundColor(Theme.text)
-                    Text("of your transformation")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(Theme.muted)
-                }
-                Spacer()
-                // Streak
-                VStack(spacing: 2) {
-                    Text("\(appState.streak)")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(Theme.sage)
-                    Text("streak")
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(Theme.muted)
-                }
-            }
-
-            // XP bar
-            VStack(alignment: .leading, spacing: 6) {
-                HStack {
-                    Text("\(appState.xp) XP")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(Theme.text)
-                    Spacer()
-                    Text(nextLevelText)
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(Theme.muted)
-                }
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color.black.opacity(0.06))
-                            .frame(height: 6)
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Theme.sage)
-                            .frame(width: geo.size.width * xpProgress, height: 6)
-                    }
-                }
-                .frame(height: 6)
-            }
+        VStack(alignment: .leading, spacing: 8) {
+            Text("DAY \(appState.currentDay)")
+                .font(.system(size: 32, weight: .bold))
+                .foregroundColor(Theme.text)
+            Text("of becoming who you said you'd be")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(Theme.muted)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Theme.cardPadding)
         .background(Theme.surface)
         .cornerRadius(Theme.cardRadius)
@@ -124,7 +100,7 @@ struct TodayView: View {
     // MARK: - Morning Protocol
 
     private var morningProtocolCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Image(systemName: "sunrise.fill")
                     .foregroundColor(Theme.gold)
@@ -132,31 +108,37 @@ struct TodayView: View {
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(Theme.text)
                 Spacer()
+                Text("\(completedActionsCount)/\(appState.morningProtocolActions.count)")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(Theme.muted)
             }
 
-            if appState.morningProtocolActions.isEmpty {
-                Text("Set up your morning ritual in settings")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(Theme.muted)
-            } else {
-                ForEach(Array(appState.morningProtocolActions.enumerated()), id: \.element.id) { index, action in
-                    HStack(spacing: 12) {
-                        Image(systemName: action.completed ? "checkmark.circle.fill" : "circle")
-                            .foregroundColor(action.completed ? Theme.sage : Theme.muted)
-                            .font(.system(size: 20))
-                            .onTapGesture {
-                                toggleMorningAction(index)
-                            }
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(action.name)
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(Theme.text)
-                            Text("\(action.dur) min")
-                                .font(.system(size: 12))
-                                .foregroundColor(Theme.muted)
+            ForEach(Array(appState.morningProtocolActions.enumerated()), id: \.element.id) { index, action in
+                HStack(spacing: 14) {
+                    Image(systemName: action.completed ? "checkmark.circle.fill" : "circle")
+                        .foregroundColor(action.completed ? Theme.sage : Theme.muted)
+                        .font(.system(size: 22))
+                        .onTapGesture {
+                            toggleMorningAction(index)
                         }
-                        Spacer()
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(action.name)
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(action.completed ? Theme.muted : Theme.text)
+                            .strikethrough(action.completed, color: Theme.muted)
+                        Text(action.desc)
+                            .font(.system(size: 12))
+                            .foregroundColor(Theme.muted)
+                            .lineLimit(2)
                     }
+                    Spacer()
+                    Text("\(action.dur)m")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(Theme.muted)
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    toggleMorningAction(index)
                 }
             }
         }
@@ -164,6 +146,10 @@ struct TodayView: View {
         .background(Theme.surface)
         .cornerRadius(Theme.cardRadius)
         .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
+    }
+
+    private var completedActionsCount: Int {
+        appState.morningProtocolActions.filter { $0.completed }.count
     }
 
     // MARK: - Workout
@@ -207,6 +193,42 @@ struct TodayView: View {
         .background(Theme.surface)
         .cornerRadius(Theme.cardRadius)
         .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
+    }
+
+    // MARK: - Daily Walk
+
+    private var walkCard: some View {
+        Button(action: toggleWalk) {
+            HStack(spacing: 14) {
+                Image(systemName: "figure.walk")
+                    .font(.system(size: 22))
+                    .foregroundColor(appState.dailyWalkCompleted ? Theme.sage : Theme.gold)
+                    .frame(width: 36, height: 36)
+                    .background(
+                        Circle()
+                            .fill((appState.dailyWalkCompleted ? Theme.sage : Theme.gold).opacity(0.12))
+                    )
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Long Walk")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(appState.dailyWalkCompleted ? Theme.muted : Theme.text)
+                        .strikethrough(appState.dailyWalkCompleted, color: Theme.muted)
+                    Text(appState.dailyWalkCompleted ? "Done — that counts." : "30+ minutes outside, sometime today")
+                        .font(.system(size: 12))
+                        .foregroundColor(Theme.muted)
+                }
+                Spacer()
+                Image(systemName: appState.dailyWalkCompleted ? "checkmark.circle.fill" : "circle")
+                    .foregroundColor(appState.dailyWalkCompleted ? Theme.sage : Theme.muted)
+                    .font(.system(size: 22))
+            }
+            .padding(Theme.cardPadding)
+            .background(Theme.surface)
+            .cornerRadius(Theme.cardRadius)
+            .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Nutrition
@@ -314,32 +336,6 @@ struct TodayView: View {
         return "Good evening"
     }
 
-    private var xpProgress: CGFloat {
-        let levels: [(String, Int)] = [
-            ("Ember", 0), ("Spark", 200), ("Flame", 500),
-            ("Blaze", 1000), ("Inferno", 2000), ("Forge", 4000),
-            ("Titan", 8000), ("Legend", 15000)
-        ]
-        guard let currentIndex = levels.firstIndex(where: { $0.0 == appState.level }) else { return 0 }
-        let currentThreshold = levels[currentIndex].1
-        let nextThreshold = currentIndex + 1 < levels.count ? levels[currentIndex + 1].1 : 20000
-        let range = nextThreshold - currentThreshold
-        let progress = appState.xp - currentThreshold
-        return CGFloat(progress) / CGFloat(range)
-    }
-
-    private var nextLevelText: String {
-        let levels: [(String, Int)] = [
-            ("Ember", 0), ("Spark", 200), ("Flame", 500),
-            ("Blaze", 1000), ("Inferno", 2000), ("Forge", 4000),
-            ("Titan", 8000), ("Legend", 15000)
-        ]
-        guard let currentIndex = levels.firstIndex(where: { $0.0 == appState.level }),
-              currentIndex + 1 < levels.count else { return "Max level" }
-        let needed = levels[currentIndex + 1].1 - appState.xp
-        return "\(needed) to \(levels[currentIndex + 1].0)"
-    }
-
     private func toggleMorningAction(_ index: Int) {
         HapticManager.shared.impact(.light)
         appState.morningProtocolActions[index].completed.toggle()
@@ -349,6 +345,15 @@ struct TodayView: View {
             HapticManager.shared.notification(.success)
             appState.morningProtocolCompleted = true
             appState.awardXP(25, reason: "Morning Protocol complete")
+        }
+    }
+
+    private func toggleWalk() {
+        HapticManager.shared.impact(.light)
+        appState.dailyWalkCompleted.toggle()
+        if appState.dailyWalkCompleted {
+            HapticManager.shared.notification(.success)
+            appState.awardXP(10, reason: "Long walk")
         }
     }
 
