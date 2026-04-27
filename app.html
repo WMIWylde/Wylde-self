@@ -241,8 +241,29 @@
       border-radius: 20px; padding: 48px 24px; text-align: center;
       cursor: pointer; transition: all 0.3s;
       position: relative; overflow: hidden;
+      /* Subtle 4s breathing pulse on the gold-tinted glow ring \u2014 makes
+         the surface feel alive without resorting to SaaS loading shimmers
+         or progress bars. Almost imperceptible, intentional. */
+      animation: fsBreathe 4.2s ease-in-out infinite;
+      box-shadow: 0 0 0 1px rgba(200,169,110,0.0), 0 0 0 0 rgba(200,169,110,0.0);
     }
-    .future-upload:hover { background: rgba(255,255,255,0.16); }
+    .future-upload:hover {
+      background: rgba(255,255,255,0.16);
+      animation-play-state: paused;
+      box-shadow: 0 0 0 1px rgba(200,169,110,0.30), 0 0 32px 0 rgba(200,169,110,0.15);
+    }
+    @keyframes fsBreathe {
+      0%, 100% {
+        box-shadow: 0 0 0 1px rgba(200,169,110,0.04), 0 0 0 0 rgba(200,169,110,0.00);
+      }
+      50% {
+        box-shadow: 0 0 0 1px rgba(200,169,110,0.18), 0 0 36px 0 rgba(200,169,110,0.12);
+      }
+    }
+    /* Respect reduced-motion preference \u2014 some users find pulsing animations distracting */
+    @media (prefers-reduced-motion: reduce) {
+      .future-upload { animation: none; }
+    }
 
     /* Silhouette figure behind upload — uses image if available, CSS fallback */
     .future-upload::before {
@@ -699,7 +720,7 @@
 
     /* MOBILE — bottom tab bar */
     @media (max-width: 700px) {
-      nav { position: fixed; top: auto; bottom: 0; left: 0; right: 0; width: 100%; height: auto; border-right: none; border-top: 1px solid rgba(0,0,0,0.06); flex-direction: column; padding: 0; z-index: 200; background: rgba(255,255,255,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+      nav { position: fixed; top: auto; bottom: 0; left: 0; right: 0; width: 100%; height: auto; border-right: none; border-top: 1px solid var(--border); flex-direction: column; padding: 0; z-index: 200; background: rgba(11,11,11,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
       .nav-logo { display: none; }
       .nav-tabs { flex-direction: row; padding: 0; justify-content: space-around; }
       .nav-tab { padding: 12px 0; height: auto; font-size: 10px; border-left: none; border-bottom: none; white-space: nowrap; flex: 1; text-align: center; justify-content: center; }
@@ -780,7 +801,7 @@
 
   /* ── Primary CTA (inside hero) ── */
   .ov-cta-wrap { padding: 0; text-align: left; animation: none; }
-  .ov-cta { display: inline-flex; align-items: center; gap: 10px; padding: 15px 28px; border: none; border-radius: 14px; background: rgba(255,255,255,0.95); color: var(--text); font-family: var(--ff-body); font-size: 14px; font-weight: 600; letter-spacing: 0.02em; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+  .ov-cta { display: inline-flex; align-items: center; gap: 10px; padding: 15px 28px; border: none; border-radius: 14px; background: var(--gold); color: #0B0B0B; font-family: var(--ff-body); font-size: 14px; font-weight: 600; letter-spacing: 0.02em; cursor: pointer; transition: all 0.2s; box-shadow: 0 8px 28px rgba(200,169,110,0.18); }
   .ov-cta:hover { background: var(--surface); transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0,0,0,0.2); }
   .ov-cta:active { transform: scale(0.98); }
   .ov-cta-arrow { font-size: 16px; }
@@ -905,8 +926,8 @@
   /* ═══ MORNING PROTOCOL ═══ */
   .mp-card {
     margin: 0 0 16px; padding: 0;
-    background: var(--card-bg, #FFFFFF);
-    border: 1px solid var(--border, rgba(0,0,0,0.06));
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 16px; overflow: hidden;
   }
   .mp-header {
@@ -1170,7 +1191,7 @@
   #level-up-overlay .lu-subtitle.active { opacity:1;transform:translateY(0); }
   #level-up-overlay .lu-body { font-size:14px;font-weight:400;color:rgba(255,255,255,0.55);opacity:0;transition:opacity 0.5s ease;margin-bottom:40px; }
   #level-up-overlay .lu-body.active { opacity:1; }
-  #level-up-overlay .lu-cta { background:#fff;color:#000;border:none;padding:14px 48px;border-radius:999px;font-size:16px;font-weight:600;letter-spacing:1px;cursor:pointer;box-shadow:0 4px 20px rgba(200,169,110,0.3);opacity:0;transform:translateY(16px);transition:opacity 0.5s ease,transform 0.5s ease;pointer-events:none; }
+  #level-up-overlay .lu-cta { background:var(--gold);color:#0B0B0B;border:none;padding:14px 48px;border-radius:999px;font-size:14px;font-weight:600;letter-spacing:0.10em;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 32px rgba(200,169,110,0.30);opacity:0;transform:translateY(16px);transition:opacity 0.5s ease,transform 0.5s ease;pointer-events:none; }
   #level-up-overlay .lu-cta.active { opacity:1;transform:translateY(0);pointer-events:auto; }
   #level-up-overlay .lu-skip { position:absolute;top:60px;right:20px;background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);border:none;color:rgba(255,255,255,0.6);font-size:12px;font-weight:500;letter-spacing:0.15em;padding:8px 20px;border-radius:20px;cursor:pointer;opacity:0;transition:opacity 0.4s ease;pointer-events:none; }
   #level-up-overlay .lu-skip.active { opacity:1;pointer-events:auto; }
@@ -1585,9 +1606,9 @@
   /* ── XP TOAST ── */
   #xp-toast {
     border-radius: 14px !important;
-    background: rgba(255,255,255,0.95) !important;
-    border: none !important;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.1) !important;
+    background: rgba(15,15,15,0.95) !important;
+    border: 1px solid var(--gold-mid) !important;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 30px rgba(200,169,110,0.15) !important;
     backdrop-filter: blur(12px) !important;
     color: var(--text) !important;
   }
@@ -1603,11 +1624,12 @@
 
   /* ── FORM MODALS ── */
   .form-modal-inner, .protocol-modal-inner {
-    background: rgba(255,255,255,0.98) !important;
-    border: none !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
     border-radius: var(--radius-card) !important;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.12) !important;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5) !important;
     backdrop-filter: blur(16px) !important;
+    color: var(--text);
   }
 
   /* ── MOBILE ── */
@@ -2000,7 +2022,7 @@
     box-shadow:0 0 8px rgba(122,154,110,0.3);
   }
   #mpOverlayBtn:not(:disabled) {
-    background:#fff;color:#0B0B0B;cursor:pointer;
+    background:var(--gold);color:#0B0B0B;cursor:pointer;
   }
 </style>
 
@@ -2599,6 +2621,18 @@
   ];
 
   function ovGetIdentityLine(day) {
+    // First call of the session uses a day-keyed deterministic line so the
+    // hero is stable mid-session. Subsequent renders rotate via getIdentityPhrase.
+    // The phrase is woven into a sentence template so it reads natural.
+    if (typeof getIdentityPhrase === 'function') {
+      var phrase = getIdentityPhrase('hero');
+      // Two sentence shapes — alternate to avoid template feel
+      var templates = [
+        "You\u2019re becoming " + phrase + ".",
+        "Today is one more day as " + phrase + "."
+      ];
+      return templates[day % templates.length];
+    }
     return IDENTITY_LINES[(day - 1) % IDENTITY_LINES.length];
   }
 
@@ -3002,16 +3036,26 @@
       doneWrap.style.display = 'block';
       var msg = _mpDoneMessages[dayNum % _mpDoneMessages.length];
       document.getElementById('mpDoneMsg').textContent = msg.msg;
-      document.getElementById('mpDoneSub').textContent = msg.sub;
-      document.getElementById('mpDailyTitle').textContent = 'Protocol complete.';
+      // Personalize the sub-line with a rotated identity phrase. Falls back
+      // to the static `msg.sub` if the engine isn't loaded yet.
+      var subText = msg.sub;
+      if (typeof getIdentityPhrase === 'function') {
+        subText = 'Another morning as ' + getIdentityPhrase('hero') + '.';
+      }
+      document.getElementById('mpDoneSub').textContent = subText;
+      document.getElementById('mpDailyTitle').textContent = 'Standard met.';
       document.getElementById('mpDailySub').textContent = 'Day ' + dayNum + ' is claimed.';
     } else {
       doneWrap.style.display = 'none';
       var remaining = totalCount - completedCount;
-      document.getElementById('mpDailyTitle').textContent = remaining === totalCount ? 'Your ritual.' : remaining + ' remaining.';
+      document.getElementById('mpDailyTitle').textContent = remaining === totalCount ? 'Your standard.' : remaining + ' remaining.';
+      // Identity-personalized starter line — only rotates on first call so
+      // it doesn't change on every checkbox toggle (subtle, not distracting).
+      var starterLine = 'Complete each action to start the day as ' +
+        (typeof getIdentityPhrase === 'function' ? getIdentityPhrase('hero') : 'the person you\u2019re becoming') + '.';
       document.getElementById('mpDailySub').textContent = completedCount === 0
-        ? 'Complete each action to start the day as the person you\'re becoming.'
-        : 'Keep going. You\'re already ahead of yesterday.';
+        ? starterLine
+        : 'Keep going. You\u2019re already ahead of yesterday.';
     }
   }
 
@@ -3242,9 +3286,17 @@
       showLevelUpVideo();
     }
 
-    // Update UI
+    // Update UI — and personalize the closing line with a rotated
+    // identity phrase so it doesn't feel templated.
     document.getElementById('completeDayReady').style.display = 'none';
-    document.getElementById('completeDayDone').style.display = 'block';
+    var doneCard = document.getElementById('completeDayDone');
+    if (doneCard) {
+      doneCard.style.display = 'block';
+      var subEl = doneCard.querySelector('p:last-child');
+      if (subEl && typeof getIdentityPhrase === 'function') {
+        subEl.textContent = 'You showed up as ' + getIdentityPhrase('closing') + '. That\u2019s the whole game.';
+      }
+    }
 
     // Refresh overview data
     if (typeof ovSyncData === 'function') setTimeout(ovSyncData, 200);
@@ -3851,6 +3903,140 @@
   //
   // XP still accumulates silently for analytics, but is never surfaced
   // as a rank.
+
+  // ═══ IDENTITY LANGUAGE SYSTEM ═══
+  // Personalization without templating. The app needs to feel WRITTEN for
+  // each user — but never forced or repetitive. Every "becoming" line on
+  // the Today hero, nutrition prompts, closing messages, and Coach
+  // injections rotates through a small pool of phrases that match the
+  // user's gender + the surface they're on.
+  //
+  // Rules:
+  //   • Apply ONLY in: hero, nutrition, coach, closing, neutral
+  //   • Do NOT apply in: buttons, nav, form inputs, system labels
+  //   • Mix gendered + neutral so it doesn't feel templated
+  //   • Rotate so the same phrase doesn't appear back-to-back
+  //   • Tone: grounded, direct, not cheesy, not spiritual
+  var IDENTITY_PHRASES = {
+    hero: {
+      male: [
+        "the man you\u2019re becoming",
+        "the man who follows through",
+        "the man you said you\u2019d be"
+      ],
+      female: [
+        "the woman you\u2019re becoming",
+        "the woman who follows through",
+        "the woman you said you\u2019d be"
+      ],
+      unspecified: [
+        "the version of you you\u2019re becoming",
+        "the person who follows through",
+        "the version of you who showed up"
+      ]
+    },
+    nutrition: {
+      male: [
+        "the man you\u2019re becoming",
+        "a man who eats with intention"
+      ],
+      female: [
+        "the woman you\u2019re becoming",
+        "a woman who eats with intention"
+      ],
+      unspecified: [
+        "the version of you you\u2019re becoming",
+        "someone who eats with intention"
+      ]
+    },
+    coach: {
+      male: [
+        "the man you\u2019re built to be",
+        "the man who already walked this"
+      ],
+      female: [
+        "the woman you\u2019re built to be",
+        "the woman who already walked this"
+      ],
+      unspecified: [
+        "the version of you who already walked this",
+        "the person you\u2019re becoming"
+      ]
+    },
+    closing: {
+      male: [
+        "the man who keeps his word",
+        "the man you said you\u2019d be",
+        "the man who closes the day"
+      ],
+      female: [
+        "the woman who keeps her word",
+        "the woman you said you\u2019d be",
+        "the woman who closes the day"
+      ],
+      unspecified: [
+        "someone who keeps their word",
+        "the version of you who finishes",
+        "the version of you who closes the day"
+      ]
+    },
+    // Neutral pool — used to break gendered repetition + when context
+    // is generic. Always available regardless of gender.
+    neutral: [
+      "someone who follows through",
+      "the version of you who keeps showing up",
+      "someone who doesn\u2019t negotiate with themselves"
+    ]
+  };
+
+  // Track last-used index per context so back-to-back calls don't repeat
+  var _identityPhraseIdx = {};
+
+  /**
+   * getIdentityPhrase(context)
+   * @param  {string} context - one of 'hero','nutrition','coach','closing','neutral'
+   * @return {string}         - a rotated identity phrase appropriate for the user
+   *
+   * Reads state.gender to pick the right pool. Mixes in 1-2 neutral phrases
+   * for variety so a male user doesn't only ever hear "the man" — they
+   * occasionally hear "someone who keeps their word" too.
+   */
+  function getIdentityPhrase(context) {
+    var ctx = context || 'neutral';
+    var s = (typeof state === 'object' && state) ? state : {};
+    var rawG = String(s.gender || '').toLowerCase();
+    var key = 'unspecified';
+    if (rawG === 'male' || rawG === 'm' || rawG === 'man') key = 'male';
+    else if (rawG === 'female' || rawG === 'f' || rawG === 'woman') key = 'female';
+
+    // Build the pool: gendered phrases for the surface + 1-2 neutrals to
+    // avoid repetition. For 'neutral' context, just use the neutral pool.
+    var pool;
+    if (ctx === 'neutral') {
+      pool = IDENTITY_PHRASES.neutral.slice();
+    } else if (IDENTITY_PHRASES[ctx]) {
+      var gendered = (IDENTITY_PHRASES[ctx][key] || IDENTITY_PHRASES[ctx].unspecified || []).slice();
+      // Add 2 neutrals so rotation includes action-based identity, not just gender
+      pool = gendered.concat(IDENTITY_PHRASES.neutral.slice(0, 2));
+    } else {
+      pool = IDENTITY_PHRASES.neutral.slice();
+    }
+
+    if (!pool.length) return 'someone who follows through';
+
+    // Rotate forward from the last index — guarantees no immediate repeat.
+    // First call is randomized so different sessions don't always start same.
+    var lastIdx = _identityPhraseIdx[ctx];
+    var idx;
+    if (typeof lastIdx === 'number' && pool.length > 1) {
+      idx = (lastIdx + 1) % pool.length;
+    } else {
+      idx = Math.floor(Math.random() * pool.length);
+    }
+    _identityPhraseIdx[ctx] = idx;
+    return pool[idx];
+  }
+  if (typeof window !== 'undefined') window.getIdentityPhrase = getIdentityPhrase;
 
   // Identity-based progression. Phases reflect WHO the user is becoming
   // through consistent action — not how many points they grinded.
@@ -5084,7 +5270,7 @@
     document.getElementById('screen-' + id).classList.add('active');
     if (id === 'nutrition' && state.weight) { calculateMacros(); loadSavedMealPlan(); }
     if (id === 'nutrition') { renderPantry(); }
-    if (id === 'overview') { updateOverview(); mpInit(); if (typeof renderRewardsUI === 'function') renderRewardsUI(); if (typeof renderDailyWalkUI === 'function') renderDailyWalkUI(); }
+    if (id === 'overview') { updateOverview(); mpInit(); if (typeof renderRewardsUI === 'function') renderRewardsUI(); if (typeof renderDailyWalkUI === 'function') renderDailyWalkUI(); if (typeof syncOverviewMacros === 'function') syncOverviewMacros(); }
     if (id === 'future') { updateFsSilhouette(); }
     if (id === 'program') { autoLoadProgram(); }
     if (id === 'library') {
@@ -7501,6 +7687,17 @@
         }
       } catch(_) {}
 
+      // Cue the Coach toward the user's gendered/neutral identity language
+      // so it doesn't always default to "the version of you" or always say
+      // "the man you're becoming." The rotation engine picks fresh each call.
+      var identityBlock = '';
+      try {
+        if (typeof getIdentityPhrase === 'function') {
+          var idPhrase = getIdentityPhrase('coach');
+          identityBlock = '\nIdentity language cue: when referencing who they\u2019re becoming, you may use phrasing like "' + idPhrase + '" \u2014 don\u2019t force it into every response, but use it when natural.';
+        }
+      } catch(_) {}
+
       var systemPrompt =
         // ─── VOICE ───────────────────────────────────────────────
         'You are the Wylde Coach. You are not a generic AI assistant. You speak as the user\u2019s FUTURE SELF \u2014 the version of them that has already done the work, walked the path, and built the identity they\u2019re reaching for. ' +
@@ -7516,7 +7713,7 @@
         '\u2022 Occasionally \u2014 maybe 1 in 4 messages \u2014 weave in a single light science callout (e.g. "Sleep below 6h cuts strength output ~10%."). Never lecture, never list multiple. One line, then back to action.\n\n' +
 
         // ─── CONTEXT ──────────────────────────────────────────────
-        contextBlock + phaseBlock + '\n\n' +
+        contextBlock + phaseBlock + identityBlock + '\n\n' +
 
         // ─── COACHING RULES ───────────────────────────────────────
         'COACHING RULES:\n' +
@@ -8265,8 +8462,44 @@
     var dc = document.getElementById('loggedCalories');
     if (dc) dc.textContent = Math.round(foodLogTotals.cal) + ' cal';
 
+    // Push the new totals to the Today/overview macro card so the user
+    // sees the protein bar climb in real time. Without this the two
+    // surfaces drift apart and feel like double-logging.
+    if (typeof syncOverviewMacros === 'function') syncOverviewMacros();
+
     awardXP(10, 'Food logged');
   }
+
+  // ─── Live sync: foodLogTotals → Today macro bars ───────────────────
+  // Reads the live foodLogTotals (the source of truth for what's been
+  // logged today) and pushes to the protein/calorie elements on the
+  // overview screen. Safe to call repeatedly — does nothing if elements
+  // aren't in the DOM yet.
+  function syncOverviewMacros() {
+    if (typeof foodLogTotals !== 'object' || !foodLogTotals) return;
+    var protein = Math.round(foodLogTotals.protein || 0);
+    var cal = Math.round(foodLogTotals.cal || 0);
+
+    // Protein goal: prefer state.macros.protein if calculated from
+    // onboarding, fall back to a reasonable default
+    var proteinGoal = (state && state.macros && state.macros.protein) ? state.macros.protein : 180;
+    var calGoal = (state && state.macros && state.macros.calories) ? state.macros.calories : 2000;
+
+    var pPct = Math.min(100, Math.round(protein / Math.max(1, proteinGoal) * 100));
+    var cPct = Math.min(100, Math.round(cal / Math.max(1, calGoal) * 100));
+
+    // Protein row on Today
+    var elP = document.getElementById('ov-mac-p');         if (elP) elP.textContent = protein;
+    var elPG = document.getElementById('ov-cal-goal');     if (elPG) elPG.textContent = proteinGoal;
+    var elPP = document.getElementById('ov-cal-pct');      if (elPP) elPP.textContent = pPct + '%';
+    var bar = document.getElementById('ov-protein-bar-fill');
+    if (bar) bar.style.width = pPct + '%';
+
+    // Calories — if there's a calorie display on overview, update it
+    var elCN = document.getElementById('ov-cal-num');      if (elCN) elCN.textContent = cal;
+    var elCG = document.getElementById('ov-n-cal-goal');   if (elCG) elCG.textContent = calGoal;
+  }
+  if (typeof window !== 'undefined') window.syncOverviewMacros = syncOverviewMacros;
 
   // MODAL HELPERS
   function closeModal(id) {
@@ -9201,6 +9434,10 @@
       var dc = document.getElementById('loggedCalories');
       if (dc) dc.textContent = Math.round(foodLogTotals.cal) + ' cal';
     } catch(_) {}
+
+    // Page-load food restore should also push to Today macro bars so the
+    // protein progress is correct on first paint, not zeroed.
+    if (typeof syncOverviewMacros === 'function') syncOverviewMacros();
   }
 
   // Run restore once DOM is ready (script runs at end of body, so DOM is available)
@@ -9252,7 +9489,7 @@
 <style>
   .wt-overlay { position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity 0.35s ease; }
   .wt-overlay.show { opacity:1; }
-  .wt-card { background:#fff;border-radius:20px;max-width:340px;width:100%;padding:36px 28px 28px;text-align:center;transform:translateY(16px);transition:transform 0.35s ease;position:relative; }
+  .wt-card { background:var(--surface);border-radius:20px;max-width:340px;width:100%;padding:36px 28px 28px;text-align:center;transform:translateY(16px);transition:transform 0.35s ease;position:relative;color:var(--text);border:1px solid var(--border); }
   .wt-overlay.show .wt-card { transform:translateY(0); }
   .wt-icon { width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:26px; }
   .wt-title { font-family:var(--ff-serif,Georgia,serif);font-size:20px;font-weight:700;color:#1A1A1A;margin-bottom:8px;letter-spacing:-0.02em; }
@@ -9544,7 +9781,7 @@
     var overlay = document.createElement('div');
     overlay.id = 'pushPromptOverlay';
     overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.6);display:flex;align-items:flex-end;justify-content:center;padding:0 16px 32px;animation:fadeIn 0.3s ease;';
-    overlay.innerHTML = '<div style="background:var(--card,#fff);border-radius:20px;padding:28px 24px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2);">' +
+    overlay.innerHTML = '<div style="background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:20px;padding:28px 24px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.4);">' +
       '<div style="font-size:32px;margin-bottom:12px;">🔔</div>' +
       '<h3 style="font-size:18px;font-weight:700;color:var(--text,#1A1A1A);margin:0 0 8px;">Stay Accountable</h3>' +
       '<p style="font-size:14px;color:var(--text2,#888);margin:0 0 24px;line-height:1.5;">Get reminders for your Morning Protocol, streak protection, workout days, and weekly recaps. No spam — just accountability.</p>' +
