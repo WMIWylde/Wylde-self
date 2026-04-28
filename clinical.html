@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en" style="background:#070707;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#070707" />
+  <title>Wylde Self · Clinical Infrastructure</title>
+  <meta name="description" content="Professional infrastructure for physician-led protocols. Closing the adherence gap between clinic and home." />
+  <link rel="icon" href="/logo-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    :root{
+      /* — Initiation Container (dark) — pulled from app.html — */
+      --bg:           #070707;
+      --bg-elev-1:    #0E0E0E;
+      --bg-elev-2:    #131313;
+      --bg-elev-3:    #181818;
+      --hairline:     rgba(244,241,232,0.06);
+      --hairline-2:   rgba(244,241,232,0.10);
+      --warm-line:    rgba(200,169,110,0.14);
+
+      --text:         #F4F1E8;
+      --text-2:       #A6A29A;
+      --text-3:       #6E6B65;
+
+      --gold:         #C8A96E;
+      --gold-hi:      rgba(200,169,110,0.95);
+      --gold-mid:     rgba(200,169,110,0.55);
+      --gold-lo:      rgba(200,169,110,0.30);
+      --gold-dim:     rgba(200,169,110,0.10);
+      --gold-glow:    rgba(200,169,110,0.18);
+
+      --sage:         #7D9275;
+      --sage-dim:     rgba(125,146,117,0.12);
+
+      --shadow-card:  0 8px 32px rgba(0,0,0,0.45);
+      --shadow-hover: 0 12px 40px rgba(0,0,0,0.55);
+      --shadow-glow:  0 0 60px rgba(200,169,110,0.10);
+
+      --r-sm: 12px;
+      --r-md: 16px;
+      --r-lg: 20px;
+      --r-xl: 24px;
+      --pill: 999px;
+
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --mono: 'JetBrains Mono','SFMono-Regular',Menlo,monospace;
+
+      --max: 1240px;
+      --pad: clamp(20px, 4vw, 48px);
+    }
+
+    html,body{
+      background:var(--bg);
+      color:var(--text);
+      font-family:var(--font);
+      font-weight:400;
+      line-height:1.55;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      font-optical-sizing:auto;
+      letter-spacing:-0.005em;
+      overflow-x:hidden;
+      scroll-behavior:smooth;
+    }
+    body{min-height:100vh;position:relative}
+
+    a{color:inherit;text-decoration:none}
+    button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+    img,svg{display:block;max-width:100%}
+
+    ::selection{background:var(--gold-dim);color:var(--text)}
+
+    /* ─────────────── Living Sanctuary: breathing background ─────────────── */
+    .living-bg{
+      position:fixed;inset:0;pointer-events:none;z-index:0;
+      overflow:hidden;
+    }
+    .living-bg::before,
+    .living-bg::after{
+      content:'';position:absolute;border-radius:50%;
+      filter:blur(120px);opacity:0.5;
+      animation: breathe 6s ease-in-out infinite;
+    }
+    .living-bg::before{
+      width:680px;height:680px;
+      top:-220px;left:-180px;
+      background:radial-gradient(circle, rgba(200,169,110,0.13), rgba(200,169,110,0) 60%);
+    }
+    .living-bg::after{
+      width:520px;height:520px;
+      bottom:-160px;right:-120px;
+      background:radial-gradient(circle, rgba(125,146,117,0.10), rgba(125,146,117,0) 60%);
+      animation-delay:-3s;
+    }
+    @keyframes breathe{
+      0%,100%{transform:scale(1);opacity:0.45}
+      50%{transform:scale(1.08);opacity:0.7}
+    }
+
+    /* warm grain overlay */
+    body::after{
+      content:'';position:fixed;inset:0;pointer-events:none;z-index:9000;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity:0.025;mix-blend-mode:overlay;
+    }
+
+    /* ─────────────── Nav ─────────────── */
+    nav{
+      position:fixed;top:0;left:0;right:0;z-index:200;
+      padding:14px var(--pad);
+      display:flex;justify-content:space-between;align-items:center;
+      background:rgba(7,7,7,0.55);
+      backdrop-filter:blur(14px) saturate(140%);
+      -webkit-backdrop-filter:blur(14px) saturate(140%);
+      border-bottom:1px solid var(--hairline);
+      transition:padding .3s ease;
+    }
+    nav.scrolled{padding:10px var(--pad);background:rgba(7,7,7,0.78)}
+    .nav-logo{
+      display:flex;align-items:center;gap:10px;
+      font-weight:700;letter-spacing:0.04em;font-size:13px;
+    }
+    .nav-logo .mark{
+      width:28px;height:28px;border-radius:8px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg, rgba(200,169,110,0.18), rgba(200,169,110,0.04));
+      border:1px solid var(--warm-line);
+      color:var(--gold);font-weight:700;font-size:13px;
+    }
+    .nav-logo .word{color:var(--text);letter-spacing:0.18em}
+    .nav-logo .word span{color:var(--gold)}
+    .nav-links{display:flex;align-items:center;gap:8px}
+    .nav-link{
+      padding:8px 14px;border-radius:var(--pill);
+      color:var(--text-2);font-size:13px;font-weight:500;
+      letter-spacing:0.02em;transition:color .2s ease,background .2s ease;
+    }
+    .nav-link:hover{color:var(--text);background:var(--bg-elev-1)}
+    .nav-link.active{color:var(--gold)}
+    .nav-cta{
+      padding:9px 16px;border-radius:var(--pill);
+      font-size:13px;font-weight:600;letter-spacing:0.02em;
+      color:var(--bg);background:var(--gold);
+      border:1px solid var(--gold);
+      transition:transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .nav-cta:hover{transform:translateY(-1px);box-shadow:var(--shadow-glow)}
+    @media (max-width:760px){
+      .nav-links .nav-link{display:none}
+      .nav-links .nav-link.show-mobile{display:inline-flex}
+    }
+
+    /* ─────────────── Layout primitives ─────────────── */
+    .wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad);position:relative;z-index:1}
+    section{position:relative;z-index:1}
+
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      font-family:var(--mono);font-size:11px;letter-spacing:0.22em;
+      text-transform:uppercase;color:var(--gold);
+      padding:6px 12px;border-radius:var(--pill);
+      background:var(--gold-dim);border:1px solid var(--warm-line);
+    }
+    .eyebrow .dot{
+      width:6px;height:6px;border-radius:50%;background:var(--gold);
+      box-shadow:0 0 0 0 var(--gold-glow);
+      animation:beacon 6s ease-in-out infinite;
+    }
+    @keyframes beacon{
+      0%,100%{box-shadow:0 0 0 0 rgba(200,169,110,0)}
+      50%{box-shadow:0 0 0 8px rgba(200,169,110,0)}
+    }
+
+    h1,h2,h3{letter-spacing:-0.025em;line-height:1.05;font-weight:600}
+    h2{font-size:clamp(30px,4.4vw,46px);font-weight:600;letter-spacing:-0.03em;line-height:1.08}
+    h3{font-size:18px;font-weight:600}
+
+    .sub{color:var(--text-2);font-size:clamp(15px,1.4vw,17px);max-width:62ch;line-height:1.6}
+
+    /* ─────────────── Hero ─────────────── */
+    .hero{
+      padding: 160px 0 96px;
+      position:relative;
+    }
+    .hero .eyebrow{margin-bottom:28px}
+    .hero h1{
+      font-size:clamp(44px, 8vw, 92px);
+      font-weight:600;letter-spacing:-0.04em;line-height:0.98;
+      margin-bottom:24px;
+      max-width:14ch;
+    }
+    .hero h1 .accent{color:var(--gold);font-style:italic;font-weight:500}
+    .hero .lede{
+      color:var(--text-2);font-size:clamp(17px,1.7vw,21px);
+      max-width:54ch;line-height:1.55;margin-bottom:40px;
+    }
+    .hero-meta{
+      display:flex;flex-wrap:wrap;gap:14px 28px;
+      padding-top:28px;border-top:1px solid var(--hairline);
+      max-width:760px;
+    }
+    .hero-meta .stat{
+      font-family:var(--mono);font-size:12px;letter-spacing:0.04em;color:var(--text-3);
+    }
+    .hero-meta .stat b{
+      color:var(--text);font-weight:500;font-size:13px;display:block;margin-bottom:2px;
+      letter-spacing:0.02em;font-family:var(--font);
+    }
+
+    /* ─────────────── Section frame ─────────────── */
+    .section{padding: 96px 0; border-top:1px solid var(--hairline);}
+    .section-head{
+      display:flex;flex-direction:column;gap:14px;
+      margin-bottom:56px;max-width:780px;
+    }
+
+    /* ─────────────── Why / Adherence Gap (3-col) ─────────────── */
+    .why-grid{
+      display:grid;grid-template-columns:repeat(3, 1fr);gap:1px;
+      background:var(--hairline);
+      border:1px solid var(--hairline);
+      border-radius:var(--r-lg);overflow:hidden;
+    }
+    .why-cell{
+      background:var(--bg-elev-1);
+      padding:36px 32px;
+      display:flex;flex-direction:column;gap:14px;
+      min-height:280px;
+      transition:background .3s ease;
+    }
+    .why-cell:hover{background:var(--bg-elev-2)}
+    .why-cell .num{
+      font-family:var(--mono);font-size:11px;letter-spacing:0.22em;
+      color:var(--gold);text-transform:uppercase;
+    }
+    .why-cell h3{font-size:22px;letter-spacing:-0.02em;line-height:1.15}
+    .why-cell p{color:var(--text-2);font-size:14.5px;line-height:1.6}
+    .why-cell .meta{
+      margin-top:auto;padding-top:18px;border-top:1px dashed var(--hairline);
+      display:flex;justify-content:space-between;align-items:center;
+      font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-3);
+    }
+    @media (max-width:880px){
+      .why-grid{grid-template-columns:1fr}
+      .why-cell{min-height:0}
+    }
+
+    /* ─────────────── B2B Vertical Grid (utilitarian, data-dense) ─────────────── */
+    .vert-grid{
+      display:grid;grid-template-columns:repeat(3, 1fr);gap:18px;
+    }
+    .vert-card{
+      background:var(--bg-elev-1);
+      border:1px solid var(--hairline);
+      border-radius:var(--r-lg);
+      padding:0;
+      display:flex;flex-direction:column;
+      overflow:hidden;
+      transition:border-color .25s ease, transform .25s ease, box-shadow .25s ease;
+    }
+    .vert-card:hover{
+      border-color:var(--warm-line);
+      transform:translateY(-2px);
+      box-shadow:var(--shadow-card);
+    }
+    .vert-card .hdr{
+      padding:22px 24px 18px;
+      display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+      border-bottom:1px solid var(--hairline);
+    }
+    .vert-card .label{
+      font-family:var(--mono);font-size:10.5px;letter-spacing:0.22em;
+      color:var(--text-3);text-transform:uppercase;
+    }
+    .vert-card .title{
+      font-size:21px;font-weight:600;letter-spacing:-0.02em;
+      margin-top:6px;line-height:1.15;
+    }
+    .vert-card .icon{
+      width:34px;height:34px;border-radius:10px;
+      display:grid;place-items:center;
+      background:var(--gold-dim);border:1px solid var(--warm-line);
+      color:var(--gold);flex-shrink:0;
+    }
+    .vert-card .body{
+      padding:20px 24px;color:var(--text-2);font-size:14px;line-height:1.6;
+    }
+    .vert-card .specs{
+      list-style:none;margin:0;padding:18px 24px;
+      display:flex;flex-direction:column;gap:10px;
+      border-top:1px dashed var(--hairline);
+      font-family:var(--mono);font-size:12px;letter-spacing:0.02em;color:var(--text-2);
+    }
+    .vert-card .specs li{
+      display:grid;grid-template-columns:80px 1fr;gap:14px;align-items:baseline;
+    }
+    .vert-card .specs .k{color:var(--text-3);text-transform:uppercase;font-size:10.5px;letter-spacing:0.18em}
+    .vert-card .specs .v{color:var(--text)}
+    .vert-card .foot{
+      padding:16px 24px;border-top:1px solid var(--hairline);
+      display:flex;justify-content:space-between;align-items:center;
+      font-family:var(--mono);font-size:11px;letter-spacing:0.16em;
+      color:var(--text-3);text-transform:uppercase;
+    }
+    .vert-card .foot .pulse{
+      display:inline-flex;align-items:center;gap:8px;color:var(--sage);
+    }
+    .vert-card .foot .pulse::before{
+      content:'';width:6px;height:6px;border-radius:50%;background:var(--sage);
+      animation:pulse-dot 2.4s ease-in-out infinite;
+    }
+    @keyframes pulse-dot{
+      0%,100%{transform:scale(1);opacity:1}
+      50%{transform:scale(1.5);opacity:0.55}
+    }
+    @media (max-width:980px){.vert-grid{grid-template-columns:1fr}}
+
+    /* ─────────────── Schematic ─────────────── */
+    .schematic-wrap{
+      background:var(--bg-elev-1);
+      border:1px solid var(--hairline);
+      border-radius:var(--r-xl);
+      padding: clamp(28px, 4vw, 52px);
+      position:relative;overflow:hidden;
+    }
+    .schematic-wrap::before{
+      content:'';position:absolute;inset:0;pointer-events:none;
+      background:radial-gradient(60% 80% at 50% 0%, rgba(200,169,110,0.08), transparent 70%);
+    }
+    .schematic-legend{
+      display:flex;gap:18px;flex-wrap:wrap;
+      font-family:var(--mono);font-size:11px;letter-spacing:0.16em;
+      color:var(--text-3);text-transform:uppercase;
+      padding-top:22px;margin-top:22px;border-top:1px dashed var(--hairline);
+    }
+    .schematic-legend .key{display:inline-flex;align-items:center;gap:8px}
+    .schematic-legend .swatch{
+      width:10px;height:10px;border-radius:2px;background:var(--gold);
+    }
+    .schematic-legend .swatch.sage{background:var(--sage)}
+    .schematic-legend .swatch.line{
+      width:18px;height:2px;border-radius:2px;
+    }
+
+    /* ─────────────── CTA ─────────────── */
+    .cta-block{
+      text-align:center;
+      padding: 120px 0 100px;
+      border-top:1px solid var(--hairline);
+      position:relative;
+    }
+    .cta-block .eyebrow{margin-bottom:24px}
+    .cta-block h2{
+      font-size:clamp(36px,5.5vw,64px);
+      max-width:18ch;margin:0 auto 22px;
+    }
+    .cta-block p{color:var(--text-2);max-width:50ch;margin:0 auto 36px}
+    .cta-btn{
+      display:inline-flex;align-items:center;gap:14px;
+      padding:18px 28px;
+      border-radius:var(--pill);
+      background:var(--gold);color:var(--bg);
+      font-weight:600;font-size:15px;letter-spacing:0.02em;
+      border:1px solid var(--gold);
+      transition:transform .25s ease, box-shadow .35s ease;
+      box-shadow:0 0 0 0 rgba(200,169,110,0);
+      animation: cta-pulse 6s ease-in-out infinite;
+    }
+    .cta-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 18px 60px rgba(200,169,110,0.22);
+    }
+    .cta-btn .arrow{
+      width:18px;height:18px;
+    }
+    @keyframes cta-pulse{
+      0%,100%{box-shadow:0 0 0 0 rgba(200,169,110,0.0)}
+      50%{box-shadow:0 0 60px rgba(200,169,110,0.18)}
+    }
+    .cta-secondary{
+      display:inline-block;margin-top:18px;
+      font-family:var(--mono);font-size:12px;letter-spacing:0.18em;
+      color:var(--text-3);text-transform:uppercase;
+    }
+    .cta-secondary:hover{color:var(--gold)}
+
+    /* ─────────────── Compliance bar ─────────────── */
+    .compliance{
+      display:flex;flex-wrap:wrap;gap:14px 32px;
+      padding:28px var(--pad);
+      border-top:1px solid var(--hairline);
+      border-bottom:1px solid var(--hairline);
+      max-width:var(--max);margin:0 auto;
+      font-family:var(--mono);font-size:11px;letter-spacing:0.18em;
+      color:var(--text-3);text-transform:uppercase;
+      justify-content:space-between;align-items:center;
+    }
+    .compliance .item{display:inline-flex;align-items:center;gap:10px}
+    .compliance .item::before{
+      content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);
+      box-shadow:0 0 0 3px var(--gold-dim);
+    }
+
+    /* ─────────────── Footer ─────────────── */
+    footer{
+      padding: 60px var(--pad) 40px;
+      max-width:var(--max);margin:0 auto;
+      display:flex;flex-direction:column;gap:32px;
+      border-top:1px solid var(--hairline);
+      position:relative;z-index:1;
+    }
+    .footer-top{
+      display:grid;grid-template-columns: 1.4fr 1fr 1fr 1fr; gap:32px;
+    }
+    .footer-brand{display:flex;flex-direction:column;gap:14px;max-width:36ch}
+    .footer-brand .name{font-weight:700;letter-spacing:0.18em;font-size:13px}
+    .footer-brand .name span{color:var(--gold)}
+    .footer-brand p{color:var(--text-3);font-size:13px;line-height:1.6}
+    .footer-col h4{
+      font-family:var(--mono);font-size:11px;letter-spacing:0.22em;
+      color:var(--text-3);text-transform:uppercase;font-weight:500;
+      margin-bottom:14px;
+    }
+    .footer-col a{
+      display:block;color:var(--text-2);font-size:13.5px;
+      padding:6px 0;transition:color .2s ease;
+    }
+    .footer-col a:hover{color:var(--gold)}
+    .footer-bottom{
+      display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+      padding-top:24px;border-top:1px solid var(--hairline);
+      font-family:var(--mono);font-size:11px;letter-spacing:0.16em;
+      color:var(--text-3);text-transform:uppercase;
+    }
+    @media (max-width:780px){
+      .footer-top{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width:520px){
+      .footer-top{grid-template-columns:1fr}
+    }
+
+    /* ─────────────── Reveal ─────────────── */
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .9s ease, transform .9s ease}
+    .reveal.in{opacity:1;transform:none}
+    .d1{transition-delay:.06s} .d2{transition-delay:.14s} .d3{transition-delay:.22s}
+    .d4{transition-delay:.3s}  .d5{transition-delay:.38s}
+
+    /* ─────────────── Hero schema badge ─────────────── */
+    .badge-row{
+      display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px;
+    }
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 12px;border-radius:var(--pill);
+      background:var(--bg-elev-1);border:1px solid var(--hairline);
+      font-family:var(--mono);font-size:11px;letter-spacing:0.16em;
+      color:var(--text-2);text-transform:uppercase;
+    }
+    .badge .swatch{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+
+    /* ─────────────── Adherence-gap visual stripe ─────────────── */
+    .adherence-stripe{
+      margin-top:48px;
+      display:grid;grid-template-columns: 1fr auto 1fr; gap:28px;
+      align-items:center;
+      padding:24px;border:1px solid var(--hairline);
+      border-radius:var(--r-lg);background:var(--bg-elev-1);
+    }
+    .adherence-stripe .pole{
+      display:flex;flex-direction:column;gap:6px;
+    }
+    .adherence-stripe .pole .label{
+      font-family:var(--mono);font-size:11px;letter-spacing:0.18em;
+      color:var(--text-3);text-transform:uppercase;
+    }
+    .adherence-stripe .pole .value{
+      font-size:18px;font-weight:600;letter-spacing:-0.01em;
+    }
+    .adherence-stripe .gap{
+      width:160px;height:1px;background:linear-gradient(90deg, var(--gold), transparent 50%, var(--sage));
+      position:relative;
+    }
+    .adherence-stripe .gap::before{
+      content:'ADHERENCE GAP';
+      position:absolute;top:-22px;left:50%;transform:translateX(-50%);
+      font-family:var(--mono);font-size:10px;letter-spacing:0.22em;
+      color:var(--gold);
+    }
+    .adherence-stripe .gap::after{
+      content:'';position:absolute;left:50%;top:50%;
+      width:8px;height:8px;border-radius:50%;background:var(--gold);
+      transform:translate(-50%,-50%);
+      animation:beacon 6s ease-in-out infinite;
+      box-shadow:0 0 14px var(--gold-glow);
+    }
+    @media (max-width:680px){
+      .adherence-stripe{grid-template-columns:1fr;text-align:left}
+      .adherence-stripe .gap{width:100%;height:1px}
+      .adherence-stripe .gap::before{position:static;display:block;transform:none;text-align:center;margin-bottom:8px}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="living-bg" aria-hidden="true"></div>
+
+  <!-- ─────────────────── NAV ─────────────────── -->
+  <nav id="nav">
+    <a href="/" class="nav-logo" aria-label="Wylde Self home">
+      <span class="mark">W<span style="color:var(--text)">S</span></span>
+      <span class="word">WYLDE <span>SELF</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Consumer</a>
+      <a href="/clinical.html" class="nav-link active">Clinical</a>
+      <a href="/command-center.html" class="nav-link">Command Center</a>
+      <a href="/app.html" class="nav-link">Product</a>
+      <a href="#partner" class="nav-cta show-mobile">Partner</a>
+    </div>
+  </nav>
+
+  <!-- ─────────────────── HERO ─────────────────── -->
+  <header class="hero">
+    <div class="wrap">
+      <div class="badge-row reveal d1">
+        <span class="badge"><span class="swatch"></span>For Physicians</span>
+        <span class="badge"><span class="swatch" style="background:var(--sage)"></span>For Compounding Pharmacies</span>
+        <span class="badge"><span class="swatch"></span>For Longevity Clinics</span>
+      </div>
+
+      <span class="eyebrow reveal d1"><span class="dot"></span>Clinical Infrastructure · v1</span>
+
+      <h1 class="reveal d2">
+        The <span class="accent">Clinical</span><br/>Standard.
+      </h1>
+
+      <p class="lede reveal d3">
+        Professional infrastructure for physician-led protocols. The connective tissue between the
+        prescribing room, the compounding lab, and the patient at home — built to the discipline of
+        the clinic, not the noise of consumer wellness.
+      </p>
+
+      <div class="hero-meta reveal d4">
+        <div class="stat"><b>HIPAA-aligned</b>Encrypted protocol &amp; biometric envelope</div>
+        <div class="stat"><b>Daily Closeout</b>Adherence telemetry, not vanity steps</div>
+        <div class="stat"><b>API-first</b>Direct script &amp; fulfillment integration</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─────────────────── COMPLIANCE BAR ─────────────────── -->
+  <div class="compliance reveal d1">
+    <span class="item">HIPAA-aligned data handling</span>
+    <span class="item">SOC 2-track infrastructure</span>
+    <span class="item">Physician-supervised protocols only</span>
+    <span class="item">No DTC marketing of scheduled compounds</span>
+  </div>
+
+  <!-- ─────────────────── WHY: ADHERENCE GAP ─────────────────── -->
+  <section class="section" id="why">
+    <div class="wrap">
+      <div class="section-head reveal d1">
+        <span class="eyebrow"><span class="dot"></span>The Adherence Gap</span>
+        <h2>Your protocol ends at the clinic door.<br/>Ours doesn't.</h2>
+        <p class="sub">
+          The clinical handoff is where outcomes go to die. Wylde Self closes the gap between the
+          prescription and the patient's actual day — turning a 15-minute visit into a 30-day
+          accountable system.
+        </p>
+      </div>
+
+      <div class="why-grid">
+        <div class="why-cell reveal d1">
+          <span class="num">01 / Visibility</span>
+          <h3>Real-time Visibility</h3>
+          <p>
+            Live adherence, biometric drift, and protocol response surfaced in a clinical
+            dashboard. See the patient between visits — not just at them.
+          </p>
+          <div class="meta">
+            <span>Daily Closeout · 23:59 local</span>
+            <span>↗ live</span>
+          </div>
+        </div>
+
+        <div class="why-cell reveal d2">
+          <span class="num">02 / Fulfillment</span>
+          <h3>Automated Fulfillment</h3>
+          <p>
+            Scripts route directly to your compounding partner. Refill cadence, dose adjustments,
+            and titration windows are tracked, not chased.
+          </p>
+          <div class="meta">
+            <span>Avg. dispense lag &lt; 36h</span>
+            <span>↗ live</span>
+          </div>
+        </div>
+
+        <div class="why-cell reveal d3">
+          <span class="num">03 / Userbase</span>
+          <h3>Vetted High-Intent Userbase</h3>
+          <p>
+            Members enter through identity work, not impulse purchase. They arrive primed for
+            protocol, with the income, discipline, and intent your clinic was built for.
+          </p>
+          <div class="meta">
+            <span>Median LTV index 4.7×</span>
+            <span>↗ live</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="adherence-stripe reveal d4">
+        <div class="pole">
+          <span class="label">Clinic Visit</span>
+          <span class="value">15 minutes / 90 days</span>
+        </div>
+        <div class="gap"></div>
+        <div class="pole" style="text-align:right">
+          <span class="label">The Other 89.9 Days</span>
+          <span class="value">Where outcomes are won or lost</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────── B2B VERTICAL GRID ─────────────────── -->
+  <section class="section" id="verticals">
+    <div class="wrap">
+      <div class="section-head reveal d1">
+        <span class="eyebrow"><span class="dot"></span>Partner Verticals</span>
+        <h2>Three integrations.<br/>One clinical operating system.</h2>
+        <p class="sub">
+          A purpose-built surface for each partner type. No marketing fluff — actual interfaces and
+          API contracts that operate inside your existing workflow.
+        </p>
+      </div>
+
+      <div class="vert-grid">
+
+        <!-- COMPOUNDING PHARMACIES -->
+        <article class="vert-card reveal d1">
+          <div class="hdr">
+            <div>
+              <span class="label">Vertical 01</span>
+              <h3 class="title">Compounding Pharmacies</h3>
+            </div>
+            <span class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v6.4a2 2 0 0 1-.6 1.4L4 15.2A4 4 0 0 0 7 22h10a4 4 0 0 0 3-6.8l-5.4-5.4a2 2 0 0 1-.6-1.4V2"/><path d="M8 2h8"/><path d="M7.5 13h9"/></svg>
+            </span>
+          </div>
+          <div class="body">
+            API-driven fulfillment and automated script tracking. Receive verified prescriptions,
+            return dispense events, surface refill windows — without a fax machine in sight.
+          </div>
+          <ul class="specs">
+            <li><span class="k">API</span><span class="v">REST · webhook · HL7-FHIR R4</span></li>
+            <li><span class="k">Latency</span><span class="v">Script → queue · &lt; 90s</span></li>
+            <li><span class="k">Tracking</span><span class="v">Per-vial dispense + return cadence</span></li>
+            <li><span class="k">Volume</span><span class="v">Tier scaling from 200 → 50k scripts/mo</span></li>
+          </ul>
+          <div class="foot">
+            <span>Pharmacy Console</span>
+            <span class="pulse">Operational</span>
+          </div>
+        </article>
+
+        <!-- MEDICAL CLINICS -->
+        <article class="vert-card reveal d2">
+          <div class="hdr">
+            <div>
+              <span class="label">Vertical 02</span>
+              <h3 class="title">Medical Clinics</h3>
+            </div>
+            <span class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v6H3z"/><path d="M7 9v12"/><path d="M17 9v12"/><path d="M3 21h18"/><path d="M10 14h4"/><path d="M12 12v4"/></svg>
+            </span>
+          </div>
+          <div class="body">
+            A Physician Dashboard for monitoring "Daily Closeout" adherence. Patient-by-patient
+            adherence telemetry, biometric drift alerts, and protocol response — without leaving
+            your EHR workflow.
+          </div>
+          <ul class="specs">
+            <li><span class="k">Surface</span><span class="v">Physician Dashboard · web + tablet</span></li>
+            <li><span class="k">Signals</span><span class="v">Closeout · sleep · HRV · weight · mood</span></li>
+            <li><span class="k">Alerts</span><span class="v">Drift, missed cycles, off-protocol flags</span></li>
+            <li><span class="k">EHR</span><span class="v">Read-only export · Athena · DrChrono</span></li>
+          </ul>
+          <div class="foot">
+            <a href="/command-center.html" style="color:var(--gold);text-transform:uppercase;letter-spacing:0.16em;font-family:var(--mono);font-size:11px;display:inline-flex;align-items:center;gap:6px">
+              View Live Demo →
+            </a>
+            <span class="pulse">Operational</span>
+          </div>
+        </article>
+
+        <!-- LONGEVITY BRANDS -->
+        <article class="vert-card reveal d3">
+          <div class="hdr">
+            <div>
+              <span class="label">Vertical 03</span>
+              <h3 class="title">Longevity Brands</h3>
+            </div>
+            <span class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg>
+            </span>
+          </div>
+          <div class="body">
+            Strategic alignment in the nutrition and exercise libraries. Curated placement inside
+            the patient's daily protocol — where they actually meet your product, not in a
+            sponsored feed.
+          </div>
+          <ul class="specs">
+            <li><span class="k">Surface</span><span class="v">Library · Coach · Daily Brief</span></li>
+            <li><span class="k">Format</span><span class="v">Protocol module · supplement card · drill</span></li>
+            <li><span class="k">Match</span><span class="v">Goal-targeted, not impression-targeted</span></li>
+            <li><span class="k">Reporting</span><span class="v">Adherence-weighted lift, not CTR</span></li>
+          </ul>
+          <div class="foot">
+            <span>Brand Console</span>
+            <span class="pulse">Operational</span>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────── SCHEMATIC ─────────────────── -->
+  <section class="section" id="schematic">
+    <div class="wrap">
+      <div class="section-head reveal d1">
+        <span class="eyebrow"><span class="dot"></span>Data Loop</span>
+        <h2>The protocol travels.<br/>The signal returns.</h2>
+        <p class="sub">
+          A closed loop between the patient's day, the physician's view, and the pharmacy's
+          fulfillment. Each node sees only what it needs — and writes back what's earned.
+        </p>
+      </div>
+
+      <div class="schematic-wrap reveal d2">
+        <svg viewBox="0 0 1100 420" width="100%" role="img" aria-labelledby="schemaTitle schemaDesc" preserveAspectRatio="xMidYMid meet">
+          <title id="schemaTitle">Wylde Self clinical data loop</title>
+          <desc id="schemaDesc">Three node loop: User App, Physician Dashboard, Pharmacy Fulfillment, exchanging protocol, telemetry, scripts and dispense events.</desc>
+
+          <defs>
+            <linearGradient id="goldFlow" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"  stop-color="#C8A96E" stop-opacity="0"/>
+              <stop offset="50%" stop-color="#C8A96E" stop-opacity="0.95"/>
+              <stop offset="100%" stop-color="#C8A96E" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="sageFlow" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"  stop-color="#7D9275" stop-opacity="0"/>
+              <stop offset="50%" stop-color="#7D9275" stop-opacity="0.85"/>
+              <stop offset="100%" stop-color="#7D9275" stop-opacity="0"/>
+            </linearGradient>
+            <radialGradient id="nodeFill" cx="50%" cy="40%" r="60%">
+              <stop offset="0%"  stop-color="#1A1A1A"/>
+              <stop offset="100%" stop-color="#0E0E0E"/>
+            </radialGradient>
+            <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="6" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- frame grid -->
+          <g stroke="rgba(244,241,232,0.04)" stroke-width="1">
+            <line x1="0" y1="100" x2="1100" y2="100"/>
+            <line x1="0" y1="320" x2="1100" y2="320"/>
+            <line x1="180" y1="0" x2="180" y2="420"/>
+            <line x1="920" y1="0" x2="920" y2="420"/>
+          </g>
+
+          <!-- corner ticks -->
+          <g fill="rgba(200,169,110,0.4)" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="2">
+            <text x="20"   y="22">NODE A · USER</text>
+            <text x="450"  y="22" text-anchor="middle">NODE B · PHYSICIAN</text>
+            <text x="1080" y="22" text-anchor="end">NODE C · PHARMACY</text>
+          </g>
+
+          <!-- LINKS -->
+          <!-- A <-> B -->
+          <path d="M260,210 C 360,160 440,160 540,210" fill="none" stroke="url(#goldFlow)" stroke-width="2"/>
+          <path d="M540,230 C 440,280 360,280 260,230" fill="none" stroke="url(#sageFlow)" stroke-width="2"/>
+          <!-- B <-> C -->
+          <path d="M660,210 C 760,160 840,160 940,210" fill="none" stroke="url(#goldFlow)" stroke-width="2"/>
+          <path d="M940,230 C 840,280 760,280 660,230" fill="none" stroke="url(#sageFlow)" stroke-width="2"/>
+
+          <!-- labels on links -->
+          <g font-family="JetBrains Mono, monospace" font-size="10.5" letter-spacing="2" fill="rgba(200,169,110,0.85)">
+            <text x="400" y="170" text-anchor="middle">PROTOCOL ↦</text>
+            <text x="800" y="170" text-anchor="middle">SCRIPT ↦</text>
+          </g>
+          <g font-family="JetBrains Mono, monospace" font-size="10.5" letter-spacing="2" fill="rgba(125,146,117,0.85)">
+            <text x="400" y="300" text-anchor="middle">↤ TELEMETRY</text>
+            <text x="800" y="300" text-anchor="middle">↤ DISPENSE EVENTS</text>
+          </g>
+
+          <!-- NODE A: USER -->
+          <g transform="translate(80,140)">
+            <rect width="180" height="140" rx="18" fill="url(#nodeFill)" stroke="rgba(200,169,110,0.28)"/>
+            <rect x="14" y="14" width="152" height="6" rx="3" fill="rgba(244,241,232,0.08)"/>
+            <text x="14" y="46" font-family="JetBrains Mono, monospace" font-size="10" fill="#6E6B65" letter-spacing="2">DEVICE · IOS / WEB</text>
+            <text x="14" y="74" font-family="Inter, sans-serif" font-weight="600" font-size="18" fill="#F4F1E8">User App</text>
+            <text x="14" y="96" font-family="Inter, sans-serif" font-size="12" fill="#A6A29A">Daily Closeout · biometrics</text>
+            <text x="14" y="116" font-family="Inter, sans-serif" font-size="12" fill="#A6A29A">Identity · adherence</text>
+            <circle cx="160" cy="20" r="4" fill="#7D9275"/>
+          </g>
+
+          <!-- NODE B: PHYSICIAN -->
+          <g transform="translate(540,90)" filter="url(#softGlow)">
+            <rect width="180" height="240" rx="18" fill="url(#nodeFill)" stroke="rgba(200,169,110,0.45)"/>
+            <rect x="14" y="14" width="152" height="6" rx="3" fill="rgba(200,169,110,0.5)"/>
+            <text x="14" y="46" font-family="JetBrains Mono, monospace" font-size="10" fill="#C8A96E" letter-spacing="2">CORE · CLINICAL OS</text>
+            <text x="14" y="76" font-family="Inter, sans-serif" font-weight="600" font-size="20" fill="#F4F1E8">Physician</text>
+            <text x="14" y="98" font-family="Inter, sans-serif" font-weight="600" font-size="20" fill="#F4F1E8">Dashboard</text>
+            <line x1="14" y1="118" x2="166" y2="118" stroke="rgba(244,241,232,0.10)"/>
+            <text x="14" y="140" font-family="Inter, sans-serif" font-size="12" fill="#A6A29A">Adherence telemetry</text>
+            <text x="14" y="160" font-family="Inter, sans-serif" font-size="12" fill="#A6A29A">Protocol authoring</text>
+            <text x="14" y="180" font-family="Inter, sans-serif" font-size="12" fill="#A6A29A">Drift &amp; risk alerts</text>
+            <text x="14" y="200" font-family="Inter, sans-serif" font-size="12" fill="#A6A29A">Script issuance</text>
+            <circle cx="160" cy="20" r="4" fill="#C8A96E"/>
+          </g>
+
+          <!-- NODE C: PHARMACY -->
+          <g transform="translate(940,140)">
+            <rect width="80" height="140" rx="18" fill="url(#nodeFill)" stroke="rgba(125,146,117,0.32)"/>
+          </g>
+          <g transform="translate(840,140)">
+            <rect width="180" height="140" rx="18" fill="url(#nodeFill)" stroke="rgba(125,146,117,0.32)"/>
+            <rect x="14" y="14" width="152" height="6" rx="3" fill="rgba(125,146,117,0.4)"/>
+            <text x="14" y="46" font-family="JetBrains Mono, monospace" font-size="10" fill="#6E6B65" letter-spacing="2">FULFILLMENT · API</text>
+            <text x="14" y="74" font-family="Inter, sans-serif" font-weight="600" font-size="18" fill="#F4F1E8">Pharmacy</text>
+            <text x="14" y="96" font-family="Inter, sans-serif" font-size="12" fill="#A6A29A">Compound · dispense</text>
+            <text x="14" y="116" font-family="Inter, sans-serif" font-size="12" fill="#A6A29A">Refill cadence</text>
+            <circle cx="160" cy="20" r="4" fill="#7D9275"/>
+          </g>
+
+          <!-- pulse particles -->
+          <circle r="3.5" fill="#C8A96E">
+            <animateMotion dur="6s" repeatCount="indefinite" path="M260,210 C 360,160 440,160 540,210"/>
+          </circle>
+          <circle r="3.5" fill="#C8A96E">
+            <animateMotion dur="6s" begin="2s" repeatCount="indefinite" path="M660,210 C 760,160 840,160 940,210"/>
+          </circle>
+          <circle r="3" fill="#7D9275">
+            <animateMotion dur="6s" begin="1s" repeatCount="indefinite" path="M540,230 C 440,280 360,280 260,230"/>
+          </circle>
+          <circle r="3" fill="#7D9275">
+            <animateMotion dur="6s" begin="3s" repeatCount="indefinite" path="M940,230 C 840,280 760,280 660,230"/>
+          </circle>
+        </svg>
+
+        <div class="schematic-legend">
+          <span class="key"><span class="swatch line"></span>Outbound · Protocol &amp; Script</span>
+          <span class="key"><span class="swatch sage line"></span>Inbound · Telemetry &amp; Dispense</span>
+          <span class="key"><span class="swatch"></span>Encrypted · physician-supervised</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────── CTA ─────────────────── -->
+  <section class="cta-block" id="partner">
+    <div class="wrap">
+      <span class="eyebrow reveal d1"><span class="dot"></span>Become a Partner</span>
+      <h2 class="reveal d2">Partner with the Standard.</h2>
+      <p class="reveal d3">
+        Limited-onboarding cohort for the next quarter — physician practices, compounding pharmacies,
+        and longevity brands aligned with a clinical, not consumer, posture.
+      </p>
+      <a href="mailto:wilkemitzin@gmail.com?subject=Wylde%20Self%20%C2%B7%20Clinical%20Partner%20Inquiry" class="cta-btn reveal d4" aria-label="Partner with the Standard">
+        Partner with the Standard
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="#schematic" class="cta-secondary reveal d5">↳ Re-read the data loop</a>
+    </div>
+  </section>
+
+  <!-- ─────────────────── FOOTER ─────────────────── -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="name">WYLDE <span>SELF</span></span>
+        <p>A clinical-grade identity &amp; protocol system. Built for men, physicians, and the partners who serve them.</p>
+      </div>
+      <div class="footer-col">
+        <h4>For Partners</h4>
+        <a href="#why">The Adherence Gap</a>
+        <a href="#verticals">Verticals</a>
+        <a href="#schematic">Data Loop</a>
+        <a href="/command-center.html">Command Center Demo</a>
+        <a href="#partner">Become a Partner</a>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="/">Consumer Site</a>
+        <a href="/app.html#today">Today View</a>
+        <a href="/app.html#progress">Identity Import</a>
+        <a href="/app.html#future">Future Self</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="mailto:wilkemitzin@gmail.com">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="yr">2026</span> Wylde Self · Clinical Infrastructure</span>
+      <span>Sacred · Disciplined · High-End</span>
+    </div>
+  </footer>
+
+  <script>
+    // year
+    document.getElementById('yr').textContent = new Date().getFullYear();
+
+    // nav scroll
+    const nav = document.getElementById('nav');
+    const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 12);
+    window.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+
+    // reveal on scroll
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, {rootMargin:'0px 0px -10% 0px', threshold:0.08});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  </script>
+</body>
+</html>
