@@ -129,6 +129,18 @@
     nav.scrolled .logo-text { color: var(--text-primary); }
     nav.scrolled .logo-text span { color: var(--accent-sage); }
     .nav-right { display: flex; align-items: center; gap: 24px; }
+    .nav-link-secondary {
+      font-size: 13px; font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+      padding: 8px 14px;
+      border-radius: 999px;
+      margin-right: 8px;
+      text-decoration: none;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+    .nav-link-secondary:hover { color: var(--text-primary); background: var(--bg-soft); }
+    @media (max-width: 640px) { .nav-link-secondary { display: none; } }
     .nav-link {
       font-size: 13px; font-weight: 500;
       color: rgba(255,255,255,0.6);
@@ -2188,6 +2200,7 @@
       <span class="logo-text">WYLDE <span>SELF</span></span>
     </a>
     <div class="nav-right">
+      <a href="/clinical.html" class="nav-link-secondary">For Clinicians</a>
       <a href="/gate.html" onclick="return checkDemo(event)" class="nav-cta">See My Future</a>
     </div>
   </nav>
@@ -2581,6 +2594,79 @@
 
   <div class="section-divider"></div>
 
+  <!-- CLINICAL BRIDGE -->
+  <section id="clinical-bridge" style="padding: 80px 0; max-width: 1100px; margin: 0 auto; padding-left: 24px; padding-right: 24px;">
+    <div style="
+      background: var(--card-light);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      padding: clamp(28px, 4vw, 44px);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 32px;
+      align-items: center;
+      box-shadow: var(--shadow-card);
+    ">
+      <div>
+        <div style="
+          font-family: 'Inter', sans-serif;
+          font-size: 11px;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: var(--accent-gold);
+          font-weight: 600;
+          margin-bottom: 12px;
+        ">For Physicians &amp; Pharmacies</div>
+        <h3 style="
+          font-size: clamp(22px, 3vw, 30px);
+          font-weight: 700;
+          letter-spacing: -0.025em;
+          line-height: 1.15;
+          color: var(--text-primary);
+          margin-bottom: 10px;
+        ">The Clinical Standard.</h3>
+        <p style="
+          color: var(--text-secondary);
+          font-size: 15px;
+          line-height: 1.6;
+          max-width: 56ch;
+          margin: 0;
+        ">Professional infrastructure for physician-led protocols. Closing the adherence gap between the clinic and the home — with API-driven fulfillment, a Physician Dashboard, and a vetted, high-intent userbase.</p>
+      </div>
+      <a href="/clinical.html" style="
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 22px;
+        border-radius: 999px;
+        background: var(--text-primary);
+        color: #FFFFFF;
+        font-weight: 600;
+        font-size: 14px;
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      " onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)'"
+         onmouseout="this.style.transform='';this.style.boxShadow=''">
+        Enter Clinical Infrastructure
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <style>
+  @media (max-width: 720px) {
+    #clinical-bridge > div {
+      grid-template-columns: 1fr !important;
+      text-align: left;
+    }
+    #clinical-bridge a {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  </style>
+
   <!-- CLOSING CTA -->
   <section id="cta">
     <div class="cta-glow"></div>
@@ -2613,6 +2699,8 @@
       <span class="footer-name">WYLDE <span>SELF</span></span>
     </div>
     <div class="footer-links">
+      <a href="/clinical.html">For Clinicians</a>
+      <a href="/command-center.html">Command Center</a>
       <a href="/privacy.html">Privacy</a>
       <a href="/terms.html">Terms</a>
       <a href="mailto:wilkemitzin@gmail.com">Contact</a>
