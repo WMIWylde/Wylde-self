@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @EnvironmentObject var appState: AppState
+    @State private var showSettingsDrawer = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -23,6 +24,20 @@ struct MainTabView: View {
         }
         .background(Theme.background)
         .ignoresSafeArea(.keyboard)
+        // ─── Hamburger overlay — global on every tab ──────────────
+        // Sits above all tab content via the parent ZStack. Tapping
+        // opens the native SettingsDrawer. Suppressed in WebView tabs
+        // by hideNavScript so we don't get duplicate hamburgers.
+        .overlay(alignment: .topLeading) {
+            HamburgerButton {
+                showSettingsDrawer = true
+            }
+            .padding(.leading, 16)
+            .padding(.top, 12)
+        }
+        .sheet(isPresented: $showSettingsDrawer) {
+            SettingsDrawer().environmentObject(appState)
+        }
     }
 
     /// Wraps a tab view so it stays in the hierarchy even when not selected.
@@ -94,6 +109,33 @@ struct TabButton: View {
                     .foregroundColor(isActive ? Theme.sage : Color(hex: "999999"))
             }
             .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Hamburger button — top-left, fixed, available on every screen
+
+struct HamburgerButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: {
+            HapticManager.shared.impact(.light)
+            action()
+        }) {
+            Image(systemName: "line.3.horizontal")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(Color(hex: "F4F1E8"))
+                .frame(width: 42, height: 42)
+                .background(
+                    Circle()
+                        .fill(Color(hex: "111111").opacity(0.85))
+                        .overlay(
+                            Circle()
+                                .stroke(Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1)
+                        )
+                )
         }
         .buttonStyle(.plain)
     }

@@ -63,11 +63,18 @@ struct WyldeWebView: UIViewRepresentable {
         )
         contentController.addUserScript(bridgeScript)
 
-        // Hide the web app's bottom nav since we have native tabs
+        // Hide the web app's chrome that's redundant with native iOS:
+        //   • side/bottom nav (native bottom tab bar handles this)
+        //   • #topMenuBtn hamburger (native MainTabView hamburger handles this)
+        //   • #settingsDrawer (native SettingsDrawer handles this)
+        // Without these hides we'd get duplicate hamburgers stacked.
         let hideNavScript = WKUserScript(
             source: """
             var style = document.createElement('style');
-            style.textContent = 'nav { display: none !important; } .screen { padding-bottom: 20px !important; }';
+            style.textContent = 'nav { display: none !important; }' +
+              '#topMenuBtn { display: none !important; }' +
+              '#settingsDrawer { display: none !important; }' +
+              '.screen { padding-bottom: 20px !important; padding-left: 0 !important; }';
             document.head.appendChild(style);
             """,
             injectionTime: .atDocumentEnd,
@@ -90,6 +97,24 @@ struct WyldeWebView: UIViewRepresentable {
         }
 
         context.coordinator.webView = webView
+
+        // Bridge: native SettingsDrawer posts .invokeWebFunction to ask the
+        // web layer to run a JS function (e.g. openEditProfile, signOutUser).
+        // We catch it here, evaluate the JS in the active WebView.
+        NotificationCenter.default.addObserver(
+            forName: .invokeWebFunction,
+            object: nil,
+            queue: .main
+        ) { [weak coordinator = context.coordinator] note in
+            guard let webView = coordinator?.webView,
+                  let fn = note.userInfo?["function"] as? String else { return }
+            // Allow only known function names to keep this safe
+            let allowed = ["openEditProfile", "regenerateProgram", "resetProfile", "signOutUser", "signOut"]
+            guard allowed.contains(fn) else { return }
+            let js = "if (typeof \(fn) === 'function') { \(fn)(); }"
+            webView.evaluateJavaScript(js, completionHandler: nil)
+        }
+
         return webView
     }
 
