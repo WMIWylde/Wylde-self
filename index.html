@@ -1582,6 +1582,98 @@
       background: var(--accent-gold);
     }
 
+    /* ─── TODAY SCREEN (dark app inside light device) ─── */
+    .ds-today-screen {
+      background: #121212 !important;
+      padding: 8px 14px 10px !important;
+    }
+    .ds-today-screen .ds-status { color: rgba(255,255,255,0.35); }
+    .ds-today-screen .ds-dots span { background: rgba(255,255,255,0.15); }
+    .ds-today-screen .ds-dots span:first-child { background: rgba(255,255,255,0.35); }
+    .ds-today-streak {
+      display: inline-flex; align-items: center; gap: 5px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 3px 9px;
+      font-size: 8px; color: rgba(255,255,255,0.4);
+      background: #1C1C1C; margin-bottom: 10px;
+    }
+    .ds-today-streak-dot { width: 4px; height: 4px; border-radius: 50%; background: #6E7F6B; }
+    .ds-today-title {
+      font-size: 18px; font-weight: 700; color: #fff;
+      letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 3px;
+    }
+    .ds-today-sub { font-size: 9px; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
+    .ds-today-bar { height: 4px; background: #242424; border-radius: 2px; overflow: hidden; margin-bottom: 10px; }
+    .ds-today-bar-fill { height: 100%; width: 8%; background: #6E7F6B; border-radius: 2px; }
+    .ds-today-label {
+      font-size: 8px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 6px;
+    }
+    .ds-today-card {
+      background: #F5F2EC; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.22); margin-bottom: 8px;
+    }
+    .ds-today-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 11px; }
+    .ds-today-item-primary { padding: 12px 11px; }
+    .ds-today-divider { height: 1px; background: rgba(0,0,0,0.06); margin: 0 11px; }
+    .ds-today-name { font-size: 11px; font-weight: 600; color: #1A1A1A; }
+    .ds-today-meta { font-size: 9px; color: rgba(26,26,26,0.4); margin-top: 1px; }
+    .ds-today-btn {
+      padding: 5px 10px; border-radius: 8px; border: none;
+      background: #1A1A1A; color: #fff;
+      font-size: 9px; font-weight: 600; font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+    }
+    .ds-today-pbar-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .ds-today-pbar { width: 36px; height: 4px; background: rgba(0,0,0,0.08); border-radius: 2px; overflow: hidden; }
+    .ds-today-pbar-fill { height: 100%; width: 67%; background: #6E7F6B; border-radius: 2px; }
+    .ds-today-ppct { font-size: 8px; font-weight: 600; color: #6E7F6B; }
+    .ds-today-hbar-wrap { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+    .ds-today-hbar { width: 28px; height: 4px; background: rgba(0,0,0,0.08); border-radius: 2px; overflow: hidden; }
+    .ds-today-hbar-fill { height: 100%; width: 50%; background: #7F907C; border-radius: 2px; }
+    .ds-today-wbtns { display: flex; gap: 2px; }
+    .ds-today-wbtn {
+      width: 18px; height: 18px; border-radius: 6px;
+      border: 1px solid rgba(0,0,0,0.08); background: rgba(0,0,0,0.03);
+      color: #1A1A1A; font-size: 10px; font-weight: 500;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ds-today-quick { display: flex; gap: 4px; margin-bottom: 8px; }
+    .ds-today-qpill {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 3px;
+      padding: 7px 4px; background: #1C1C1C; border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px; font-size: 8px; font-weight: 500; color: rgba(255,255,255,0.4);
+    }
+    .ds-today-qi { font-size: 10px; line-height: 1; }
+    .ds-today-future {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 10px; margin-bottom: 8px;
+      background: #1C1C1C; border: 1px solid rgba(255,255,255,0.06); border-radius: 10px;
+    }
+    .ds-today-future-thumb { width: 30px; height: 30px; border-radius: 8px; background: #242424; flex-shrink: 0; }
+    .ds-today-future-hl { font-size: 10px; font-weight: 600; color: #fff; }
+    .ds-today-future-sub { font-size: 8px; color: rgba(255,255,255,0.25); margin-top: 1px; }
+    .ds-today-future-arr { font-size: 12px; color: rgba(255,255,255,0.2); margin-left: auto; flex-shrink: 0; }
+    .ds-today-section {
+      background: #1C1C1C; border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px; overflow: hidden; margin-bottom: 6px;
+    }
+    .ds-today-section-hdr {
+      display: flex; align-items: center; justify-content: space-between; padding: 9px 10px;
+    }
+    .ds-today-section-title { font-size: 10px; font-weight: 600; color: #fff; }
+    .ds-today-section-tog { font-size: 12px; color: rgba(255,255,255,0.25); }
+    .ds-today-nav {
+      display: flex; justify-content: center;
+      gap: 24px; padding: 10px 0 2px; margin-top: auto;
+    }
+    .ds-today-nav-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.1); }
+    .ds-today-nav-dot.active { background: #6E7F6B; box-shadow: 0 0 6px rgba(110,127,107,0.3); }
+    /* Dark device overrides for Today screen */
+    .ds-today-screen ~ .device-home { background: rgba(255,255,255,0.1) !important; }
+    .device-grid-item:first-child .device { background: #161616; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+    .device-grid-item:first-child .device-notch { background: #111; }
+
     /* Card inner layout */
     .card-inner {
       padding: 18px;
@@ -2232,10 +2324,101 @@
 
     <div class="device-grid">
 
-      <!-- TODAY — real photo -->
+      <!-- TODAY — inline app mockup -->
       <div class="device-grid-item reveal d1">
-        <div class="device-photo">
-          <img src="/app-inhand.png" alt="Wylde Self app in hand" width="280" height="560" loading="lazy" />
+        <div class="device">
+          <div class="device-notch"></div>
+          <div class="device-screen ds-today-screen">
+            <div class="ds-status">
+              <span>9:41</span>
+              <div class="ds-dots"><span></span><span></span><span></span><span></span></div>
+            </div>
+
+            <!-- Header -->
+            <div class="ds-today-streak"><span class="ds-today-streak-dot"></span> 7 day streak</div>
+            <div class="ds-today-title">Day 7 — Prove it.</div>
+            <div class="ds-today-sub">Week 1 of 12</div>
+            <div class="ds-today-bar"><div class="ds-today-bar-fill"></div></div>
+
+            <!-- Mission Card -->
+            <div class="ds-today-label">Today's Mission</div>
+            <div class="ds-today-card">
+              <div class="ds-today-item ds-today-item-primary">
+                <div>
+                  <div class="ds-today-name">Workout</div>
+                  <div class="ds-today-meta">Upper Body &middot; 6 exercises</div>
+                </div>
+                <button class="ds-today-btn">Start Session &rarr;</button>
+              </div>
+              <div class="ds-today-divider"></div>
+              <div class="ds-today-item">
+                <div>
+                  <div class="ds-today-name">Protein</div>
+                  <div class="ds-today-meta">120g of 180g</div>
+                </div>
+                <div class="ds-today-pbar-wrap">
+                  <div class="ds-today-pbar"><div class="ds-today-pbar-fill"></div></div>
+                  <span class="ds-today-ppct">67%</span>
+                </div>
+              </div>
+              <div class="ds-today-divider"></div>
+              <div class="ds-today-item">
+                <div>
+                  <div class="ds-today-name">Water</div>
+                  <div class="ds-today-meta">64 / 128 oz</div>
+                </div>
+                <div class="ds-today-hbar-wrap">
+                  <div class="ds-today-hbar"><div class="ds-today-hbar-fill"></div></div>
+                  <div class="ds-today-wbtns">
+                    <div class="ds-today-wbtn">&minus;</div>
+                    <div class="ds-today-wbtn">+</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="ds-today-quick">
+              <div class="ds-today-qpill"><span class="ds-today-qi">📷</span> Fuel up</div>
+              <div class="ds-today-qpill"><span class="ds-today-qi">💧</span> Hydrate</div>
+              <div class="ds-today-qpill"><span class="ds-today-qi">💬</span> Coach</div>
+            </div>
+
+            <!-- Future Self -->
+            <div class="ds-today-future">
+              <div class="ds-today-future-thumb"></div>
+              <div>
+                <div class="ds-today-future-hl">This is you in 12 weeks</div>
+                <div class="ds-today-future-sub">See your future self &rarr;</div>
+              </div>
+              <span class="ds-today-future-arr">&rsaquo;</span>
+            </div>
+
+            <!-- Workout collapsed -->
+            <div class="ds-today-section">
+              <div class="ds-today-section-hdr">
+                <span class="ds-today-section-title">Today's Workout</span>
+                <span class="ds-today-section-tog">+</span>
+              </div>
+            </div>
+
+            <!-- Protocol collapsed -->
+            <div class="ds-today-section">
+              <div class="ds-today-section-hdr">
+                <span class="ds-today-section-title">Protocol</span>
+                <span class="ds-today-section-tog">+</span>
+              </div>
+            </div>
+
+            <!-- Nav -->
+            <div class="ds-today-nav">
+              <div class="ds-today-nav-dot active"></div>
+              <div class="ds-today-nav-dot"></div>
+              <div class="ds-today-nav-dot"></div>
+              <div class="ds-today-nav-dot"></div>
+            </div>
+          </div>
+          <div class="device-home" style="background:rgba(255,255,255,0.1);"></div>
         </div>
         <div class="device-grid-caption">
           <strong>Today</strong>
@@ -2700,7 +2883,7 @@
     </div>
     <div class="footer-links">
       <a href="/clinical.html">For Clinicians</a>
-      <a href="/command-center.html">Command Center</a>
+      <a href="/command-center.html">Dashboard</a>
       <a href="/privacy.html">Privacy</a>
       <a href="/terms.html">Terms</a>
       <a href="mailto:wilkemitzin@gmail.com">Contact</a>
