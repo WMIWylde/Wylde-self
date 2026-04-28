@@ -19,6 +19,20 @@ class AppState: ObservableObject {
     @Published var goals: [String] = []                             { didSet { defaults.set(goals, forKey: "wylde_goals") } }
     @Published var gymName: String = ""                             { didSet { defaults.set(gymName, forKey: "wylde_gym") } }
 
+    // Pro entitlement — cached locally for instant UI, refreshed from
+    // RevenueCat on launch + when the SDK posts an entitlement change.
+    @Published var proStatus: String = "free"                       { didSet { defaults.set(proStatus, forKey: "wylde_pro_status") } }
+    @Published var foundingMemberNumber: Int = 0                    { didSet { defaults.set(foundingMemberNumber, forKey: "wylde_founder_number") } }
+    @Published var proProvider: String = ""                         { didSet { defaults.set(proProvider, forKey: "wylde_pro_provider") } }
+    /// Convenience — true if any active Pro tier (lifetime/annual/monthly).
+    var isPro: Bool {
+        return proStatus == "lifetime" || proStatus == "annual" || proStatus == "monthly"
+    }
+    /// Convenience — true if user has a founding_member_number (1\u20131000).
+    var isFoundingMember: Bool {
+        return foundingMemberNumber > 0 && foundingMemberNumber <= 1000
+    }
+
     // Morning Protocol — three fixed practices, persisted as completion flags
     // per day. No more "user picks 3-5" — the protocol IS the practice.
     @Published var morningProtocolActions: [MorningAction] = AppState.defaultMorningActions {
@@ -73,6 +87,25 @@ class AppState: ObservableObject {
     init() {
         loadFromDefaults()
         isLoading = false
+        // Listen for purchase state changes from PurchaseManager so we
+        // can update the cached Pro fields + push to Supabase.
+        NotificationCenter.default.addObserver(
+            forName: .wyldeProEntitlementChanged,
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
+            guard let self = self else { return }
+            if let status = note.userInfo?["status"] as? String {
+                self.proStatus = status
+                self.proProvider = "apple"
+                // Webhook will assign the founding number server-side; we
+                // optimistically bump locally too so the UI is instant.
+                if self.foundingMemberNumber == 0 {
+                    // Optimistic — server will reconcile to the real number
+                    self.foundingMemberNumber = 1
+                }
+            }
+        }
     }
 
     /// Date-scoped key so daily counters reset automatically at midnight
@@ -103,6 +136,13 @@ class AppState: ObservableObject {
         gender = defaults.string(forKey: "wylde_gender") ?? "Male"
         goals = defaults.stringArray(forKey: "wylde_goals") ?? []
         gymName = defaults.string(forKey: "wylde_gym") ?? ""
+
+        // Pro entitlement — cached locally for instant UI on launch.
+        // Source of truth is RevenueCat / Supabase; this is just the
+        // last-known value so the UI doesn't flicker free→pro on cold start.
+        proStatus = defaults.string(forKey: "wylde_pro_status") ?? "free"
+        foundingMemberNumber = defaults.integer(forKey: "wylde_founder_number")
+        proProvider = defaults.string(forKey: "wylde_pro_provider") ?? ""
 
         // Morning protocol — load any persisted state, but reconcile against
         // the canonical 3 practices so old multi-action protocols collapse

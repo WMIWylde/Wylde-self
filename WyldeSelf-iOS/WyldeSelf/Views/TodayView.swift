@@ -5,6 +5,7 @@ struct TodayView: View {
     @State private var showGreeting = true
     @State private var healthSteps: Int = 0
     @State private var healthCalories: Int = 0
+    @State private var showPaywall = false
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -34,6 +35,12 @@ struct TodayView: View {
                 // Health data
                 healthCard
 
+                // Founding Member offer — only shown to non-Pro users.
+                // Soft CTA, never blocks. Identity-driven framing.
+                if !appState.isPro {
+                    foundingMemberCard
+                }
+
                 Spacer(minLength: 100)
             }
             .padding(.horizontal, Theme.screenPadding)
@@ -43,6 +50,56 @@ struct TodayView: View {
         .onAppear {
             loadHealthData()
         }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView().environmentObject(appState)
+        }
+    }
+
+    // MARK: - Founding Member CTA card
+
+    private var foundingMemberCard: some View {
+        Button(action: {
+            HapticManager.shared.impact(.light)
+            showPaywall = true
+        }) {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 6) {
+                    Circle().fill(Theme.gold).frame(width: 5, height: 5)
+                    Text("FOUNDING MEMBER")
+                        .font(.system(size: 9, weight: .bold))
+                        .tracking(2.2)
+                        .foregroundColor(Theme.gold)
+                }
+                Text("Sponsor the work. Lock in lifetime.")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(Theme.text)
+                    .multilineTextAlignment(.leading)
+                Text("First 1,000 members only. Founder pricing forever.")
+                    .font(.system(size: 12))
+                    .foregroundColor(Theme.muted)
+                HStack {
+                    Text("See the offer")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(Theme.gold)
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundColor(Theme.gold)
+                }
+                .padding(.top, 4)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(Theme.cardPadding)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.cardRadius)
+                    .fill(Theme.surface)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.cardRadius)
+                            .stroke(Theme.gold.opacity(0.3), lineWidth: 1)
+                    )
+            )
+            .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Header

@@ -13,6 +13,10 @@ struct WyldeSelfApp: App {
                 .onAppear {
                     configureAppearance()
                     scheduleDailyReminders()
+                    // Initialize the in-app purchase SDK. Stub mode until
+                    // RevenueCat package + API key are added (see PAYWALL_SETUP.md).
+                    PurchaseManager.shared.configure(supabaseUserID: nil)
+                    Task { await PurchaseManager.shared.fetchProducts() }
                 }
         }
     }
