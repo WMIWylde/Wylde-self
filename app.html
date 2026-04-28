@@ -848,6 +848,92 @@
   .ov-stack { padding: 0 0 20px; animation: ovFadeUp 0.8s ease 0.2s both; }
   .ov-stack-label { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text); margin-bottom: 14px; padding-left: 2px; }
   .ov-stack-card { background: var(--surface); border: none; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+
+  /* ── NUTRITION CARD (3 circular macro rings, live-synced) ── */
+  .ov-nutrition-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 18px 18px 22px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.2s;
+    animation: ovFadeUp 0.7s ease 0.25s both;
+  }
+  .ov-nutrition-card:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0,0,0,0.4); }
+  .ov-nutrition-card:active { transform: scale(0.99); }
+  .ov-nut-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px; padding: 0 4px;
+  }
+  .ov-nut-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--text); margin: 0;
+  }
+  .ov-nut-arrow { color: var(--text2); font-size: 22px; line-height: 1; opacity: 0.5; }
+  .ov-nut-rings {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .ov-nut-ring-wrap {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .ov-nut-ring {
+    position: relative;
+    width: 76px; height: 76px;
+  }
+  .ov-nut-svg {
+    width: 100%; height: 100%;
+    transform: rotate(-90deg);
+  }
+  .ov-nut-track {
+    fill: none;
+    stroke: rgba(244,241,232,0.08);
+    stroke-width: 4;
+  }
+  .ov-nut-fill {
+    fill: none;
+    stroke-width: 4;
+    stroke-linecap: round;
+    /* stroke-dashoffset animation for smooth fill */
+    transition: stroke-dashoffset 0.85s cubic-bezier(0.2, 0.8, 0.2, 1),
+                stroke 0.3s ease;
+  }
+  /* When the ring crosses 100% (overshot the goal) — switch to a soft warning amber */
+  .ov-nut-fill.overshoot { stroke: #C26B5A !important; }
+  .ov-nut-icon {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px;
+    background: rgba(15,15,15,0.6);
+    border-radius: 50%;
+  }
+  .ov-nut-meta {
+    text-align: center; line-height: 1.3;
+  }
+  .ov-nut-name {
+    display: block;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text2);
+    margin-bottom: 2px;
+  }
+  .ov-nut-value {
+    display: block;
+    font-size: 14px; font-weight: 700; color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .ov-nut-goal {
+    font-weight: 500; color: var(--text2); font-size: 12px;
+  }
+  /* Subtle pulse on the ring when it updates so the user feels the change */
+  @keyframes ovNutPulse {
+    0%, 100% { filter: drop-shadow(0 0 0 transparent); }
+    50%      { filter: drop-shadow(0 0 6px var(--gold-glow)); }
+  }
+  .ov-nut-fill.just-updated { animation: ovNutPulse 0.9s ease-out; }
   .ov-stack-row { display: flex; align-items: center; padding: 20px 20px; cursor: pointer; transition: background 0.15s; gap: 14px; }
   .ov-stack-row:hover { background: rgba(0,0,0,0.015); }
   .ov-stack-row:active { background: rgba(0,0,0,0.03); }
@@ -2319,11 +2405,11 @@
   <!-- ═══ MORNING PROTOCOL ═══ -->
   <div class="mp-card" id="mpCard">
 
-    <!-- Collapsible header — "Your Standard" reframes morning protocol as
-         identity work, not a checklist -->
+    <!-- Collapsible header — "Morning Routine" reads more universal than
+         "Your Standard" (which felt like brand-speak per user feedback) -->
     <div class="mp-collapse-header" onclick="toggleMPCollapse()" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0;cursor:pointer;">
       <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);">Your Standard</span>
+        <span style="font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);">Morning Routine</span>
         <span class="mp-day-count" id="mpDayCountHeader" style="font-size:11px;color:var(--text3);"></span>
       </div>
       <span id="mpCollapseIcon" style="font-size:18px;color:var(--text2);font-weight:300;line-height:1;">−</span>
@@ -2459,19 +2545,7 @@
           <span class="ov-stack-arrow">&#8250;</span>
         </div>
       </div>
-      <div class="ov-stack-row" id="ov-w-cal" onclick="showScreen('nutrition')">
-        <div class="ov-stack-icon protein" style="display:flex;align-items:center;justify-content:center;color:var(--gold);background:rgba(200,169,110,0.10);">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18l-2 12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L3 6z"/><path d="M12 2v4"/></svg>
-        </div>
-        <div class="ov-stack-left">
-          <p class="ov-stack-name">Protein</p>
-          <p class="ov-stack-meta"><span id="ov-mac-p">0</span>g of <span id="ov-cal-goal">180</span>g</p>
-        </div>
-        <div class="ov-protein-bar-wrap">
-          <div class="ov-protein-bar"><div class="ov-protein-bar-fill" id="ov-protein-bar-fill"></div></div>
-          <span class="ov-protein-pct" id="ov-cal-pct">0%</span>
-        </div>
-      </div>
+      <!-- Water row stays in the stack -->
       <div class="ov-stack-row" id="ov-w-water">
         <div class="ov-stack-icon water" style="display:flex;align-items:center;justify-content:center;color:var(--sage);background:rgba(125,146,117,0.10);">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
@@ -2486,6 +2560,71 @@
             <button class="ov-sb" onclick="event.stopPropagation();ovChW(-8)">&#8722;</button>
             <button class="ov-sb" onclick="event.stopPropagation();ovChW(8)">+</button>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ NUTRITION CARD — 3 circular macro rings, live-synced ═══
+       Replaces the buried protein row. Calories, Protein, Carbs each
+       get their own animated ring. Updates the instant a food is logged
+       via syncOverviewMacros() — the audit was right that lag here
+       breaks the "high-standard" feel. -->
+  <div class="ov-nutrition-card" onclick="showScreen('nutrition')">
+    <div class="ov-nut-header">
+      <p class="ov-nut-label">Nutrition</p>
+      <span class="ov-nut-arrow">&rsaquo;</span>
+    </div>
+    <div class="ov-nut-rings">
+      <!-- CALORIES -->
+      <div class="ov-nut-ring-wrap">
+        <div class="ov-nut-ring" data-pct="0">
+          <svg viewBox="0 0 60 60" class="ov-nut-svg">
+            <circle class="ov-nut-track" cx="30" cy="30" r="26"/>
+            <circle class="ov-nut-fill" id="ov-ring-calories" cx="30" cy="30" r="26"
+                    stroke="var(--gold)" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
+          </svg>
+          <div class="ov-nut-icon" style="color:var(--gold);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+          </div>
+        </div>
+        <div class="ov-nut-meta">
+          <span class="ov-nut-name">Calories</span>
+          <span class="ov-nut-value"><span id="ov-cal-cur">0</span><span class="ov-nut-goal">/<span id="ov-cal-goal-num">2400</span></span></span>
+        </div>
+      </div>
+      <!-- PROTEIN -->
+      <div class="ov-nut-ring-wrap">
+        <div class="ov-nut-ring" data-pct="0">
+          <svg viewBox="0 0 60 60" class="ov-nut-svg">
+            <circle class="ov-nut-track" cx="30" cy="30" r="26"/>
+            <circle class="ov-nut-fill" id="ov-ring-protein" cx="30" cy="30" r="26"
+                    stroke="var(--sage)" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
+          </svg>
+          <div class="ov-nut-icon" style="color:var(--sage);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14c0-2.5 2-4.5 4.5-4.5h3c2.5 0 4.5 2 4.5 4.5v0c0 2.5-2 4.5-4.5 4.5h-3C8 18.5 6 16.5 6 14v0z"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="6" r="2"/></svg>
+          </div>
+        </div>
+        <div class="ov-nut-meta">
+          <span class="ov-nut-name">Protein</span>
+          <span class="ov-nut-value"><span id="ov-pro-cur">0</span>g<span class="ov-nut-goal">/<span id="ov-pro-goal-num">180</span>g</span></span>
+        </div>
+      </div>
+      <!-- CARBS -->
+      <div class="ov-nut-ring-wrap">
+        <div class="ov-nut-ring" data-pct="0">
+          <svg viewBox="0 0 60 60" class="ov-nut-svg">
+            <circle class="ov-nut-track" cx="30" cy="30" r="26"/>
+            <circle class="ov-nut-fill" id="ov-ring-carbs" cx="30" cy="30" r="26"
+                    stroke="#B89B5E" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
+          </svg>
+          <div class="ov-nut-icon" style="color:#B89B5E;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 12.5c-1.5 0-3-.5-4-1.5-2 1-3 3-2 5 1 1 2 2 3 2 .5 1 1.5 2 3 2 1 0 2-.5 3-1.5 1 .5 2 1 3 1 1 0 2-1 2-2 0-1.5-.5-2.5-1.5-3.5C18 12 18 11 17 10c0-1.5-1-2.5-2.5-2.5C13 7 12 7.5 11 8.5 10 7 8.5 6 7 6.5"/></svg>
+          </div>
+        </div>
+        <div class="ov-nut-meta">
+          <span class="ov-nut-name">Carbs</span>
+          <span class="ov-nut-value"><span id="ov-carb-cur">0</span>g<span class="ov-nut-goal">/<span id="ov-carb-goal-num">250</span>g</span></span>
         </div>
       </div>
     </div>
@@ -3049,12 +3188,12 @@
         subText = 'Another morning as ' + getIdentityPhrase('hero') + '.';
       }
       document.getElementById('mpDoneSub').textContent = subText;
-      document.getElementById('mpDailyTitle').textContent = 'Standard met.';
+      document.getElementById('mpDailyTitle').textContent = 'Routine complete.';
       document.getElementById('mpDailySub').textContent = 'Day ' + dayNum + ' is claimed.';
     } else {
       doneWrap.style.display = 'none';
       var remaining = totalCount - completedCount;
-      document.getElementById('mpDailyTitle').textContent = remaining === totalCount ? 'Your standard.' : remaining + ' remaining.';
+      document.getElementById('mpDailyTitle').textContent = remaining === totalCount ? 'Your morning.' : remaining + ' remaining.';
       // Identity-personalized starter line — only rotates on first call so
       // it doesn't change on every checkbox toggle (subtle, not distracting).
       var starterLine = 'Complete each action to start the day as ' +
@@ -8996,36 +9135,77 @@
     awardXP(10, 'Food logged');
   }
 
-  // ─── Live sync: foodLogTotals → Today macro bars ───────────────────
-  // Reads the live foodLogTotals (the source of truth for what's been
-  // logged today) and pushes to the protein/calorie elements on the
-  // overview screen. Safe to call repeatedly — does nothing if elements
-  // aren't in the DOM yet.
+  // ─── Live sync: foodLogTotals → Today nutrition rings ──────────────
+  // The audit was correct: lag here breaks the "high-standard" feel.
+  // This drives 3 SVG circular rings (calories, protein, carbs) with
+  // smooth stroke-dashoffset animation + a subtle pulse on update so
+  // the user FEELS each food log land. Driven from the single source
+  // of truth (foodLogTotals) — never reads from the DOM, never drifts.
+  //
+  // Called from: appendFoodLogItem, restoreTodayFoodLog, showScreen('overview'),
+  // and any future surface that mutates the day's macros.
   function syncOverviewMacros() {
     if (typeof foodLogTotals !== 'object' || !foodLogTotals) return;
+
     var protein = Math.round(foodLogTotals.protein || 0);
-    var cal = Math.round(foodLogTotals.cal || 0);
+    var cal     = Math.round(foodLogTotals.cal || 0);
+    var carbs   = Math.round(foodLogTotals.carbs || 0);
 
-    // Protein goal: prefer state.macros.protein if calculated from
-    // onboarding, fall back to a reasonable default
+    // Goals: prefer state.macros (calculated from onboarding), fall back
+    // to sensible defaults. Cached to avoid recomputing every render.
     var proteinGoal = (state && state.macros && state.macros.protein) ? state.macros.protein : 180;
-    var calGoal = (state && state.macros && state.macros.calories) ? state.macros.calories : 2000;
+    var calGoal     = (state && state.macros && state.macros.calories) ? state.macros.calories : 2400;
+    var carbGoal    = (state && state.macros && state.macros.carbs) ? state.macros.carbs : 250;
 
-    var pPct = Math.min(100, Math.round(protein / Math.max(1, proteinGoal) * 100));
-    var cPct = Math.min(100, Math.round(cal / Math.max(1, calGoal) * 100));
+    // Update the 3 ring numbers + offsets atomically
+    _setNutRing('ov-ring-calories', 'ov-cal-cur', 'ov-cal-goal-num', cal, calGoal);
+    _setNutRing('ov-ring-protein',  'ov-pro-cur', 'ov-pro-goal-num', protein, proteinGoal, 'g');
+    _setNutRing('ov-ring-carbs',    'ov-carb-cur','ov-carb-goal-num', carbs, carbGoal, 'g');
 
-    // Protein row on Today
-    var elP = document.getElementById('ov-mac-p');         if (elP) elP.textContent = protein;
-    var elPG = document.getElementById('ov-cal-goal');     if (elPG) elPG.textContent = proteinGoal;
-    var elPP = document.getElementById('ov-cal-pct');      if (elPP) elPP.textContent = pPct + '%';
-    var bar = document.getElementById('ov-protein-bar-fill');
-    if (bar) bar.style.width = pPct + '%';
-
-    // Calories — if there's a calorie display on overview, update it
-    var elCN = document.getElementById('ov-cal-num');      if (elCN) elCN.textContent = cal;
-    var elCG = document.getElementById('ov-n-cal-goal');   if (elCG) elCG.textContent = calGoal;
+    // Legacy IDs still updated for any old surfaces that haven't migrated
+    var elP  = document.getElementById('ov-mac-p');         if (elP)  elP.textContent = protein;
+    var elPG = document.getElementById('ov-cal-goal');      if (elPG) elPG.textContent = proteinGoal;
+    var elCN = document.getElementById('ov-cal-num');       if (elCN) elCN.textContent = cal;
   }
-  if (typeof window !== 'undefined') window.syncOverviewMacros = syncOverviewMacros;
+
+  /**
+   * Set one nutrition ring's stroke-dashoffset + numeric label.
+   * Adds a brief pulse class so the user sees the ring tick up.
+   * Switches stroke to overshoot color if user exceeded goal.
+   */
+  function _setNutRing(ringId, curId, goalId, cur, goal, unit) {
+    var ring = document.getElementById(ringId);
+    var curEl = document.getElementById(curId);
+    var goalEl = document.getElementById(goalId);
+    if (curEl) curEl.textContent = cur;
+    if (goalEl) goalEl.textContent = goal;
+    if (!ring) return;
+
+    var pct = goal > 0 ? (cur / goal * 100) : 0;
+    // pathLength is normalized to 100, so dashoffset = 100 - pct
+    var offset = Math.max(0, Math.min(100, 100 - pct));
+    var prevOffset = parseFloat(ring.getAttribute('stroke-dashoffset') || '100');
+
+    // Skip animation entirely if nothing changed (cheap)
+    if (Math.abs(prevOffset - offset) < 0.5) return;
+
+    ring.setAttribute('stroke-dashoffset', String(offset));
+
+    // Overshoot styling — switches to amber if user blew past goal
+    if (pct > 100) ring.classList.add('overshoot');
+    else ring.classList.remove('overshoot');
+
+    // Tiny pulse so the change registers visually
+    ring.classList.remove('just-updated');
+    // Force reflow so the animation can re-trigger
+    void ring.offsetWidth;
+    ring.classList.add('just-updated');
+  }
+
+  if (typeof window !== 'undefined') {
+    window.syncOverviewMacros = syncOverviewMacros;
+    window._setNutRing = _setNutRing;
+  }
 
   // MODAL HELPERS
   function closeModal(id) {

@@ -18,18 +18,28 @@ import WebKit
 
 struct SettingsDrawer: View {
     @EnvironmentObject var appState: AppState
-    @Environment(\.dismiss) private var dismiss
+    /// Optional close callback — used when the drawer is presented as a
+    /// custom side overlay (no sheet `.dismiss` available). Falls back to
+    /// SwiftUI's environment dismiss when called from a sheet.
+    var onClose: (() -> Void)? = nil
+    @Environment(\.dismiss) private var dismissEnv
 
     @State private var showPaywall = false
     @State private var showResetConfirm = false
     @State private var showIdentityImport = false
 
-    var body: some View {
-        ZStack {
-            // Strict dark background
-            Color(hex: "0B0B0B").ignoresSafeArea()
+    /// Centralized dismiss — calls custom onClose if provided, otherwise
+    /// falls back to SwiftUI sheet dismiss.
+    private func dismiss() {
+        if let onClose = onClose { onClose() } else { dismissEnv() }
+    }
 
-            ScrollView(showsIndicators: false) {
+    var body: some View {
+        // Used to be wrapped in a ZStack with a full-screen Color background
+        // when this view was presented as a .sheet. Now it's embedded inside
+        // a left-edge slide overlay (see MainTabView), so the parent provides
+        // the panel background + frame. We just render the scrollable content.
+        ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
 
                     // ── Header ─────────────────────────────────────
@@ -129,7 +139,9 @@ struct SettingsDrawer: View {
                     Spacer(minLength: 32)
                 }
             }
-        }
+        // Sheets bubble up over the entire app — not constrained inside
+        // the drawer's narrow column. (Drawer is now a left-side overlay,
+        // not a full-screen sheet.)
         .sheet(isPresented: $showPaywall) {
             PaywallView().environmentObject(appState)
         }

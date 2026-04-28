@@ -35,9 +35,33 @@ struct MainTabView: View {
             .padding(.leading, 16)
             .padding(.top, 12)
         }
-        .sheet(isPresented: $showSettingsDrawer) {
-            SettingsDrawer().environmentObject(appState)
+        // Left-side slide drawer (NOT a bottom sheet). Lives inside the
+        // ZStack so it can overlay every tab without being modal-stacked
+        // beneath the system nav. Backdrop tap dismisses.
+        .overlay(alignment: .leading) {
+            if showSettingsDrawer {
+                ZStack(alignment: .leading) {
+                    // Backdrop — tap to close
+                    Color.black.opacity(0.55)
+                        .ignoresSafeArea()
+                        .onTapGesture { withAnimation(.easeInOut(duration: 0.25)) { showSettingsDrawer = false } }
+                        .transition(.opacity)
+                    // The drawer panel itself — slides from leading edge
+                    SettingsDrawer(onClose: {
+                        withAnimation(.easeInOut(duration: 0.25)) { showSettingsDrawer = false }
+                    })
+                    .environmentObject(appState)
+                    .frame(maxWidth: 340)
+                    .frame(maxHeight: .infinity)
+                    .background(Color(hex: "0B0B0B"))
+                    .ignoresSafeArea(edges: [.top, .bottom])
+                    .shadow(color: .black.opacity(0.5), radius: 24, x: 8, y: 0)
+                    .transition(.move(edge: .leading))
+                }
+                .zIndex(100)
+            }
         }
+        .animation(.easeInOut(duration: 0.28), value: showSettingsDrawer)
     }
 
     /// Wraps a tab view so it stays in the hierarchy even when not selected.
