@@ -42,7 +42,13 @@ struct SettingsDrawer: View {
         VStack(alignment: .leading, spacing: 0) {
 
             // ── Header ──────────────────────────────────────────
-            HStack(alignment: .top, spacing: 8) {
+            HStack(alignment: .top, spacing: 12) {
+                // Bundled brand logo from Assets.xcassets/LogoMark.imageset
+                Image("LogoMark")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 36, height: 36)
+                    .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
                 VStack(alignment: .leading, spacing: 4) {
                     Text("WYLDE SELF")
                         .font(.system(size: 10, weight: .bold))
