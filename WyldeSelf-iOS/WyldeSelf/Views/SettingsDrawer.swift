@@ -22,6 +22,7 @@ struct SettingsDrawer: View {
 
     @State private var showPaywall = false
     @State private var showResetConfirm = false
+    @State private var showIdentityImport = false
 
     var body: some View {
         ZStack {
@@ -78,6 +79,16 @@ struct SettingsDrawer: View {
                             label: "Nutrition",
                             action: { openWebScreen("nutrition") }
                         )
+                        // Identity Import — Founding Members feature; locked
+                        // state lives inside the screen itself
+                        DrawerLink(
+                            icon: "brain.head.profile",
+                            label: "Identity Import",
+                            action: {
+                                HapticManager.shared.impact(.light)
+                                showIdentityImport = true
+                            }
+                        )
                         DrawerLink(
                             icon: "person.fill",
                             label: "Edit Profile",
@@ -121,6 +132,9 @@ struct SettingsDrawer: View {
         }
         .sheet(isPresented: $showPaywall) {
             PaywallView().environmentObject(appState)
+        }
+        .sheet(isPresented: $showIdentityImport) {
+            IdentityImportView().environmentObject(appState)
         }
         .alert("Reset profile?", isPresented: $showResetConfirm) {
             Button("Cancel", role: .cancel) { }

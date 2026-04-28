@@ -1834,6 +1834,12 @@
         <span class="drawer-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></span>
         <span>Nutrition</span>
       </button>
+      <!-- Identity Import — Founding Members feature, always shown but
+           gated inside the screen itself (locked state for free users) -->
+      <button class="drawer-link" onclick="closeSettingsDrawer();showScreen('identity')">
+        <span class="drawer-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></span>
+        <span>Identity Import</span>
+      </button>
       <button class="drawer-link" onclick="closeSettingsDrawer();openEditProfile()">
         <span class="drawer-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
         <span>Edit Profile</span>
@@ -3668,6 +3674,139 @@
   </div>
 </div>
 
+<!-- ═══ IDENTITY IMPORT (Founding Members Only) ═══ -->
+<!--
+  Premium feature. Three states managed by JS in showScreen('identity'):
+    1. !isPro → locked preview with paywall CTA
+    2. No profile yet → input form (URLs + raw text + Coming Soon social cards)
+    3. Profile exists → result view (structured display + edit/confirm)
+-->
+<div class="screen" id="screen-identity">
+  <div class="container" style="padding-bottom:120px;max-width:560px;">
+
+    <!-- Header (always visible) -->
+    <div style="margin:8px 0 32px;">
+      <p style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin:0 0 6px;font-weight:600;">Identity Intelligence</p>
+      <h1 style="font-size:30px;font-weight:700;color:var(--text);margin:0 0 10px;letter-spacing:-0.015em;line-height:1.1;">Import Your Identity</h1>
+      <p style="font-size:14px;color:var(--text2);margin:0;line-height:1.55;">Connect the platforms where your current identity already lives. Wylde will analyze how you think, communicate, and show up &mdash; and adapt your coaching accordingly.</p>
+    </div>
+
+    <!-- LOCKED STATE (shown if !isPro) -->
+    <div id="identityLockedState" style="display:none;">
+      <!-- Mock preview of identity profile, blurred -->
+      <div style="position:relative;">
+        <div style="filter:blur(6px);opacity:0.55;pointer-events:none;user-select:none;">
+          <div style="background:linear-gradient(135deg,rgba(200,169,110,0.10),rgba(125,146,117,0.06));border:1px solid var(--gold-mid);border-radius:18px;padding:22px;margin-bottom:14px;">
+            <p style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin:0 0 6px;font-weight:600;">Identity Archetype</p>
+            <h2 style="font-size:24px;font-weight:700;color:var(--text);margin:0 0 6px;line-height:1.1;">The disciplined builder</h2>
+            <p style="font-size:13px;color:var(--text2);margin:0;font-style:italic;">High confidence. Direct. Action-driven.</p>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:10px;">
+            <p style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text2);margin:0 0 8px;font-weight:600;">What drives you</p>
+            <p style="font-size:14px;color:var(--text);margin:0;line-height:1.5;">Proving the version of you they didn&rsquo;t see coming. Building something that lasts. The quiet satisfaction of follow-through.</p>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;">
+            <p style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text2);margin:0 0 8px;font-weight:600;">How Wylde will coach you</p>
+            <p style="font-size:14px;color:var(--text);margin:0;line-height:1.5;">Direct. Tactical. Numbers and reps over feelings. Light science when it sharpens the move.</p>
+          </div>
+        </div>
+        <!-- Overlay CTA — sits over the blurred preview -->
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
+          <div style="background:#0F0F0F;border:1px solid var(--gold-mid);border-radius:18px;padding:28px 22px;max-width:380px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.5),0 0 60px rgba(200,169,110,0.10);">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(200,169,110,0.10);padding:5px 12px;border-radius:20px;margin-bottom:14px;">
+              <span style="width:5px;height:5px;border-radius:50%;background:var(--gold);"></span>
+              <span style="font-size:9px;font-weight:700;letter-spacing:0.2em;color:var(--gold);">FOUNDING MEMBERS</span>
+            </div>
+            <h3 style="font-size:18px;font-weight:600;color:var(--text);margin:0 0 8px;letter-spacing:-0.005em;line-height:1.25;">Unlock how Wylde sees you &mdash; and become who you&rsquo;re meant to be.</h3>
+            <p style="font-size:13px;color:var(--text2);margin:0 0 20px;line-height:1.5;">Identity Import analyzes your real voice and tunes every coaching surface to match.</p>
+            <button onclick="openSettingsDrawerThenPaywall()" style="width:100%;padding:14px;background:var(--gold);color:#0B0B0B;border:none;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;">Become a Founding Member</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INPUT STATE (shown if isPro && no profile yet) -->
+    <div id="identityInputState" style="display:none;">
+
+      <!-- Privacy notice -->
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:24px;">
+        <p style="font-size:12px;color:var(--text2);margin:0;line-height:1.55;">Wylde only uses this data to personalize your coaching. We never post on your behalf. You can edit or delete this anytime.</p>
+      </div>
+
+      <!-- Coming Soon social platforms -->
+      <p style="font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text2);margin:0 0 10px;font-weight:600;">Connect a platform</p>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:24px;">
+        <button onclick="alert('Coming soon \u2014 we\u2019re building Instagram support next.')" style="display:flex;align-items:center;gap:10px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;cursor:pointer;text-align:left;font-family:var(--ff-body);position:relative;">
+          <span style="color:var(--text);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></span>
+          <span style="flex:1;">
+            <span style="display:block;font-size:13px;font-weight:600;color:var(--text);">Instagram</span>
+            <span style="display:block;font-size:10px;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;">Coming Soon</span>
+          </span>
+        </button>
+        <button onclick="alert('Coming soon \u2014 LinkedIn integration is on the roadmap.')" style="display:flex;align-items:center;gap:10px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;cursor:pointer;text-align:left;font-family:var(--ff-body);">
+          <span style="color:var(--text);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></span>
+          <span style="flex:1;">
+            <span style="display:block;font-size:13px;font-weight:600;color:var(--text);">LinkedIn</span>
+            <span style="display:block;font-size:10px;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;">Coming Soon</span>
+          </span>
+        </button>
+        <button onclick="alert('Coming soon.')" style="display:flex;align-items:center;gap:10px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;cursor:pointer;text-align:left;font-family:var(--ff-body);">
+          <span style="color:var(--text);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></span>
+          <span style="flex:1;">
+            <span style="display:block;font-size:13px;font-weight:600;color:var(--text);">Facebook</span>
+            <span style="display:block;font-size:10px;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;">Coming Soon</span>
+          </span>
+        </button>
+        <button onclick="alert('Coming soon.')" style="display:flex;align-items:center;gap:10px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;cursor:pointer;text-align:left;font-family:var(--ff-body);">
+          <span style="color:var(--text);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg></span>
+          <span style="flex:1;">
+            <span style="display:block;font-size:13px;font-weight:600;color:var(--text);">Google</span>
+            <span style="display:block;font-size:10px;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;">Coming Soon</span>
+          </span>
+        </button>
+      </div>
+
+      <!-- Public profile URLs -->
+      <p style="font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin:0 0 10px;font-weight:600;">Add public profile links</p>
+      <p style="font-size:12px;color:var(--text2);margin:0 0 12px;line-height:1.5;">Up to 5. Personal site, X/Twitter, public Substack, public LinkedIn, anywhere your voice lives.</p>
+      <div id="identityUrlList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"></div>
+      <button onclick="addIdentityUrlField()" style="background:none;border:1px dashed var(--border);color:var(--text2);font-size:12px;padding:8px 14px;border-radius:8px;cursor:pointer;font-family:var(--ff-body);margin-bottom:24px;">+ Add another link</button>
+
+      <!-- Raw text paste -->
+      <p style="font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin:0 0 10px;font-weight:600;">Or paste content directly</p>
+      <p style="font-size:12px;color:var(--text2);margin:0 0 10px;line-height:1.5;">Bio, recent posts, captions, an &ldquo;About&rdquo; section. Anything in your real voice.</p>
+      <textarea id="identityRawText" placeholder="Paste your content here..." rows="8" style="width:100%;background:var(--bg-soft);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--ff-body);font-size:14px;padding:14px;outline:none;resize:vertical;line-height:1.55;margin-bottom:24px;"></textarea>
+
+      <!-- Submit + skip -->
+      <button id="identitySubmitBtn" onclick="submitIdentityImport()" style="width:100%;padding:16px;background:var(--gold);color:#0B0B0B;border:none;border-radius:12px;font-size:13px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;cursor:pointer;margin-bottom:10px;">Build My Identity Profile</button>
+      <button onclick="showScreen('overview')" style="width:100%;padding:14px;background:none;border:1px solid var(--border);color:var(--text2);border-radius:12px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--ff-body);">Skip for now</button>
+    </div>
+
+    <!-- LOADING STATE — subtle generation animation -->
+    <div id="identityLoadingState" style="display:none;text-align:center;padding:60px 20px;">
+      <div style="display:inline-block;width:48px;height:48px;border-radius:50%;border:2px solid rgba(200,169,110,0.15);border-top-color:var(--gold);animation:idSpin 1.4s linear infinite;margin-bottom:24px;"></div>
+      <p style="font-size:15px;font-weight:600;color:var(--text);margin:0 0 6px;">Reading you...</p>
+      <p style="font-size:13px;color:var(--text2);margin:0;line-height:1.5;max-width:300px;margin-left:auto;margin-right:auto;">Wylde is studying how you communicate, what drives you, and what gets in your way.</p>
+    </div>
+
+    <!-- RESULT STATE -->
+    <div id="identityResultState" style="display:none;">
+      <div id="identityResultContent">
+        <!-- Populated by renderIdentityResult() -->
+      </div>
+      <div style="display:flex;gap:8px;margin-top:24px;">
+        <button onclick="resetIdentityImport()" style="flex:1;padding:14px;background:none;border:1px solid var(--border);color:var(--text2);border-radius:12px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--ff-body);">Edit responses</button>
+        <button onclick="confirmIdentityProfile()" style="flex:2;padding:14px;background:var(--gold);color:#0B0B0B;border:none;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;cursor:pointer;">Confirm Profile</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  @keyframes idSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+</style>
+
 <!-- ═══ EXERCISE LIBRARY ═══ -->
 <div class="screen" id="screen-library">
   <div class="container" style="padding-bottom:100px;">
@@ -4459,6 +4598,194 @@
   if (typeof window !== 'undefined') window.renderProgressScreen = renderProgressScreen;
 
   // ─── Full badge collection modal ───────────────────────────────────
+  // ═══ IDENTITY IMPORT (web) ═══
+  // Founding Members feature. State machine for screen-identity:
+  //   locked  → blurred preview + paywall CTA (default if !isPro)
+  //   input   → URL/text form
+  //   loading → spinner
+  //   result  → structured profile display
+  //
+  // The cached profile lives on state.identity_profile; on screen open
+  // we hit Supabase to get the fresh value before deciding what to render.
+  function _isWyldePro() {
+    // True if user has any active paid status. Fallback: check profile flag
+    // we cache locally so the gate isn't blank on cold start.
+    var s = (typeof state === 'object' && state) ? state : {};
+    if (s.wylde_pro_status && s.wylde_pro_status !== 'free') return true;
+    if (s.founding_member === true) return true;
+    return false;
+  }
+  function openSettingsDrawerThenPaywall() {
+    if (typeof openSettingsDrawer === 'function') openSettingsDrawer();
+    // The drawer has a Founding Member CTA; user clicks that to open the actual paywall flow.
+  }
+
+  function showIdentityState(name) {
+    var states = ['identityLockedState', 'identityInputState', 'identityLoadingState', 'identityResultState'];
+    states.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = (id === 'identity' + name + 'State') ? 'block' : 'none';
+    });
+  }
+
+  function initIdentityScreen() {
+    if (!_isWyldePro()) {
+      showIdentityState('Locked');
+      return;
+    }
+    // Pro user — fetch their existing profile. If none, show input form.
+    var sb = (typeof _getSupabase === 'function') ? _getSupabase() : null;
+    if (!sb || typeof currentUser === 'undefined' || !currentUser) {
+      showIdentityState('Input');
+      ensureIdentityUrlFields();
+      return;
+    }
+    sb.from('user_identity_profile')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .maybeSingle()
+      .then(function(res) {
+        if (res && res.data) {
+          state.identity_profile = res.data;
+          renderIdentityResult(res.data);
+          showIdentityState('Result');
+        } else {
+          showIdentityState('Input');
+          ensureIdentityUrlFields();
+        }
+      }, function() {
+        // Table may not exist yet (migration not run) — fall back to input state
+        showIdentityState('Input');
+        ensureIdentityUrlFields();
+      });
+  }
+
+  function ensureIdentityUrlFields() {
+    var list = document.getElementById('identityUrlList');
+    if (!list) return;
+    if (list.children.length === 0) addIdentityUrlField();
+  }
+
+  window.addIdentityUrlField = function() {
+    var list = document.getElementById('identityUrlList');
+    if (!list) return;
+    if (list.children.length >= 5) return; // cap at 5
+    var idx = list.children.length;
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;align-items:center;gap:8px;';
+    wrap.innerHTML =
+      '<input type="url" placeholder="https://..." class="identity-url-input" style="flex:1;background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--ff-body);font-size:13px;padding:11px 14px;outline:none;" />' +
+      (idx > 0 ? '<button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:0 6px;line-height:1;">\u00d7</button>' : '');
+    list.appendChild(wrap);
+  };
+
+  window.submitIdentityImport = async function() {
+    if (!_isWyldePro()) {
+      alert('This feature is for Founding Members. Become one to unlock.');
+      return;
+    }
+    var btn = document.getElementById('identitySubmitBtn');
+    var urlInputs = document.querySelectorAll('.identity-url-input');
+    var urls = [];
+    urlInputs.forEach(function(i) {
+      var v = (i.value || '').trim();
+      if (v) urls.push(v);
+    });
+    var rawText = (document.getElementById('identityRawText') || {}).value || '';
+    rawText = rawText.trim();
+
+    if (!urls.length && !rawText) {
+      alert('Add at least one link or paste some content.');
+      return;
+    }
+
+    showIdentityState('Loading');
+
+    try {
+      var r = await fetch('/api/identity-analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: currentUser ? currentUser.id : null,
+          urls: urls,
+          raw_text: rawText
+        })
+      });
+      var data = await r.json();
+      if (!r.ok || !data || !data.profile) {
+        throw new Error((data && data.error) || ('HTTP ' + r.status));
+      }
+      state.identity_profile = data.profile;
+      renderIdentityResult(data.profile);
+      showIdentityState('Result');
+      // Bust the userContext cache so Coach picks up the new profile next call
+      if (typeof _userContextCache !== 'undefined') _userContextCache = null;
+    } catch (e) {
+      console.error('[identity-import]', e);
+      alert('Couldn\u2019t analyze that content. ' + (e.message || ''));
+      showIdentityState('Input');
+    }
+  };
+
+  function renderIdentityResult(p) {
+    var content = document.getElementById('identityResultContent');
+    if (!content || !p) return;
+    var arr = function(v) { return Array.isArray(v) ? v.filter(Boolean) : []; };
+    var join = function(v) { return arr(v).join(' \u00b7 '); };
+
+    content.innerHTML =
+      // Archetype hero
+      '<div style="background:linear-gradient(135deg,rgba(200,169,110,0.10),rgba(125,146,117,0.06));border:1px solid var(--gold-mid);border-radius:18px;padding:22px;margin-bottom:14px;">' +
+        '<p style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin:0 0 6px;font-weight:600;">Identity Archetype</p>' +
+        '<h2 style="font-size:24px;font-weight:700;color:var(--text);margin:0 0 6px;line-height:1.15;letter-spacing:-0.005em;">' + esc(p.identity_archetype || '') + '</h2>' +
+        '<p style="font-size:13px;color:var(--text2);margin:0;font-style:italic;">' + esc((p.confidence_level || 'medium').toUpperCase()) + ' confidence \u00b7 ' + esc(p.communication_tone || '') + '</p>' +
+      '</div>' +
+      // Becoming
+      (p.aspirational_identity ? identitySection('Who you are becoming', esc(p.aspirational_identity)) : '') +
+      // Drives
+      (arr(p.motivation_triggers).length ? identityListSection('What drives you', p.motivation_triggers) : '') +
+      // Holds back
+      (arr(p.limiting_patterns).length ? identityListSection('What holds you back', p.limiting_patterns) : '') +
+      // Coaching
+      identitySection('How Wylde will coach you',
+        styleLabel(p.coaching_style) + '. ' +
+        (arr(p.language_to_use).length ? 'Speaks to you with words like: <em>' + esc(arr(p.language_to_use).slice(0,4).join(', ')) + '</em>. ' : '') +
+        (arr(p.language_to_avoid).length ? 'Avoids: <em>' + esc(arr(p.language_to_avoid).slice(0,3).join(', ')) + '</em>.' : '')
+      );
+  }
+  function identitySection(label, html) {
+    return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:10px;">' +
+             '<p style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text2);margin:0 0 8px;font-weight:600;">' + label + '</p>' +
+             '<p style="font-size:14px;color:var(--text);margin:0;line-height:1.55;">' + html + '</p>' +
+           '</div>';
+  }
+  function identityListSection(label, items) {
+    var lis = items.map(function(x) {
+      return '<li style="margin-bottom:6px;">' + esc(x) + '</li>';
+    }).join('');
+    return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:10px;">' +
+             '<p style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text2);margin:0 0 10px;font-weight:600;">' + label + '</p>' +
+             '<ul style="margin:0;padding-left:18px;font-size:14px;color:var(--text);line-height:1.55;">' + lis + '</ul>' +
+           '</div>';
+  }
+  function styleLabel(s) {
+    var label = {
+      direct: 'Direct, tactical', intense: 'Intense, no-nonsense',
+      supportive: 'Supportive, grounded', spiritual: 'Reflective, identity-driven',
+      tactical: 'Tactical, numbers-first', mixed: 'Mixed, adaptive'
+    };
+    return label[s] || 'Adaptive';
+  }
+  window.resetIdentityImport = function() {
+    state.identity_profile = null;
+    showIdentityState('Input');
+    ensureIdentityUrlFields();
+  };
+  window.confirmIdentityProfile = function() {
+    if (typeof showXPToast === 'function') showXPToast('Identity locked in. Coach will adapt.');
+    showScreen('overview');
+  };
+
   function openRewardsModal() {
     if (document.getElementById('rewardsModal')) return;
     var stats = _gatherWyldeStats();
@@ -4800,7 +5127,8 @@
       pantry: null,
       workoutFeels: [],        // recent post-workout 1-4 ratings
       foodFeels: [],           // recent thumbs / yuck on logged foods
-      recentWalks: 0           // number of completed daily walks in last 7 days
+      recentWalks: 0,          // number of completed daily walks in last 7 days
+      identityProfile: null    // Identity Import \u2014 user's analyzed style/voice/drives
     };
 
     var sb = (typeof _getSupabase === 'function') ? _getSupabase() : null;
@@ -4838,6 +5166,22 @@
         ctx.recentCheckIns = (pulls[2] && pulls[2].data) || [];
       } catch (e) {
         console.warn('[userContext] Supabase pull failed:', e.message);
+      }
+
+      // Pull the user's Identity Profile (if they've imported it). This
+      // lets the Coach + meal planner mirror their voice + drives.
+      // Tolerates table not existing yet (migration not run).
+      try {
+        var idRes = await sb.from('user_identity_profile')
+          .select('*')
+          .eq('user_id', currentUser.id)
+          .maybeSingle()
+          .then(function(r){ return r; }, function(){ return { data: null }; });
+        if (idRes && idRes.data) {
+          ctx.identityProfile = idRes.data;
+        }
+      } catch (e) {
+        // Silent — identity profile is optional context
       }
     }
 
@@ -4984,6 +5328,32 @@
         (d.meals || []).forEach(function(m) { if (m.title || m.name) titles.push(m.title || m.name); });
       });
       if (titles.length) lines.push('\nLast meal plan included: ' + titles.slice(0, 8).join('; ') + (titles.length > 8 ? ', ...' : ''));
+    }
+
+    // Identity Profile — Founding Members feature. The single highest-leverage
+    // context block: tells the Coach how this user actually communicates,
+    // what drives them, what to avoid. Tone-shifts every response.
+    if (ctx.identityProfile) {
+      var ip = ctx.identityProfile;
+      lines.push('\n\u2500\u2500 HOW THIS USER COMMUNICATES \u2500\u2500');
+      if (ip.identity_archetype) lines.push('Identity archetype: ' + ip.identity_archetype + ' (' + (ip.confidence_level || 'medium') + ' confidence)');
+      if (ip.communication_tone) lines.push('Tone: ' + ip.communication_tone);
+      if (ip.aspirational_identity) lines.push('Becoming: ' + ip.aspirational_identity);
+      if (ip.coaching_style) lines.push('Preferred coaching style: ' + ip.coaching_style);
+      if (Array.isArray(ip.motivation_triggers) && ip.motivation_triggers.length) {
+        lines.push('Drives: ' + ip.motivation_triggers.slice(0, 4).join('; '));
+      }
+      if (Array.isArray(ip.limiting_patterns) && ip.limiting_patterns.length) {
+        lines.push('Watch for: ' + ip.limiting_patterns.slice(0, 3).join('; '));
+      }
+      if (Array.isArray(ip.language_to_use) && ip.language_to_use.length) {
+        lines.push('Use words like: ' + ip.language_to_use.slice(0, 5).join(', '));
+      }
+      if (Array.isArray(ip.language_to_avoid) && ip.language_to_avoid.length) {
+        lines.push('AVOID words like: ' + ip.language_to_avoid.slice(0, 4).join(', '));
+      }
+      if (ip.discipline_level) lines.push('Discipline level: ' + ip.discipline_level);
+      lines.push('  \u21b3 mirror this voice. Match cadence, words, tone.');
     }
 
     // Daily walks — surfaces sedentary patterns
@@ -5417,6 +5787,7 @@
       }
     }
     if (id === 'progress' && typeof renderProgressScreen === 'function') renderProgressScreen();
+    if (id === 'identity' && typeof initIdentityScreen === 'function') initIdentityScreen();
     if (id === 'future') { updateFsSilhouette(); }
     if (id === 'program') { autoLoadProgram(); }
     if (id === 'library') {

@@ -33,6 +33,14 @@ class AppState: ObservableObject {
         return foundingMemberNumber > 0 && foundingMemberNumber <= 1000
     }
 
+    // Identity Import — cached profile (fetched from Supabase via the
+    // /api/identity-analyze endpoint). Persisted as encoded JSON so the
+    // result screen renders instantly on cold launch.
+    @Published var identityProfile: IdentityProfile? {
+        didSet { saveCodable(identityProfile, key: "wylde_identity_profile") }
+    }
+    var hasIdentityProfile: Bool { identityProfile != nil }
+
     // Morning Protocol — three fixed practices, persisted as completion flags
     // per day. No more "user picks 3-5" — the protocol IS the practice.
     @Published var morningProtocolActions: [MorningAction] = AppState.defaultMorningActions {
@@ -143,6 +151,9 @@ class AppState: ObservableObject {
         proStatus = defaults.string(forKey: "wylde_pro_status") ?? "free"
         foundingMemberNumber = defaults.integer(forKey: "wylde_founder_number")
         proProvider = defaults.string(forKey: "wylde_pro_provider") ?? ""
+
+        // Identity profile — cached locally for instant render on cold launch
+        identityProfile = loadCodable(IdentityProfile.self, key: "wylde_identity_profile")
 
         // Morning protocol — load any persisted state, but reconcile against
         // the canonical 3 practices so old multi-action protocols collapse
