@@ -3548,7 +3548,9 @@
 <div class="screen" id="screen-coach">
   <div class="container coach-container">
     <div class="coach-header">
-      <p class="coach-label">Future Self</p>
+      <!-- coachLabel is set on showScreen('coach') to "Future {firstName}"
+           when the user has a name, otherwise "Future Self" — see _futureSelfLabel() -->
+      <p class="coach-label" id="coachLabel">Future Self</p>
       <h1 class="coach-title">The version of you<br>that already did it.</h1>
     </div>
 
@@ -3563,7 +3565,8 @@
     <!-- Chat — clean dark surface, future-self framing -->
     <div class="chat-wrap">
       <div class="chat-messages" id="chatMessages">
-        <div class="msg msg-ai">
+        <div class="msg msg-ai" id="coachGreetingMsg">
+          <!-- Both the label + bubble get personalized on showScreen('coach') -->
           <p class="msg-label">Future Self</p>
           <div class="msg-bubble">I'm the version of you that's already walked this. What's actually going on?</div>
         </div>
@@ -4058,6 +4061,35 @@
     { id: 'relentless', name: 'Relentless', minSessions: 100, line: 'You don\u2019t negotiate with yourself anymore.' },
     { id: 'integrated', name: 'Integrated', minSessions: 300, line: 'You and the practice are the same thing now.' }
   ];
+
+  /**
+   * Returns the personalized Coach label — "Future Wilke" if the user
+   * has set their name, falls back to "Future Self" otherwise. Uses
+   * just the first name (split on whitespace) so two-word names don't
+   * make the label crowded ("Future Wilke Itzin" → "Future Wilke").
+   *
+   * Used in: Coach header, greeting bubble, typing indicator, every
+   * AI reply label, error fallback, and the Today CTA.
+   */
+  function _futureSelfLabel() {
+    var s = (typeof state === 'object' && state) ? state : {};
+    var name = (s.name || '').trim();
+    if (!name) return 'Future Self';
+    var first = name.split(/\s+/)[0];
+    return 'Future ' + first;
+  }
+  /** Lower-case version for inline copy ("Talk to your future Wilke"). */
+  function _futureSelfLabelInline() {
+    var s = (typeof state === 'object' && state) ? state : {};
+    var name = (s.name || '').trim();
+    if (!name) return 'future self';
+    var first = name.split(/\s+/)[0];
+    return 'future ' + first;
+  }
+  if (typeof window !== 'undefined') {
+    window._futureSelfLabel = _futureSelfLabel;
+    window._futureSelfLabelInline = _futureSelfLabelInline;
+  }
 
   function getCurrentPhase(sessions) {
     var s = sessions || 0;
@@ -5360,7 +5392,30 @@
     document.getElementById('screen-' + id).classList.add('active');
     if (id === 'nutrition' && state.weight) { calculateMacros(); loadSavedMealPlan(); }
     if (id === 'nutrition') { renderPantry(); }
-    if (id === 'overview') { updateOverview(); mpInit(); if (typeof renderRewardsUI === 'function') renderRewardsUI(); if (typeof renderDailyWalkUI === 'function') renderDailyWalkUI(); if (typeof syncOverviewMacros === 'function') syncOverviewMacros(); }
+    if (id === 'overview') {
+      updateOverview();
+      mpInit();
+      if (typeof renderRewardsUI === 'function') renderRewardsUI();
+      if (typeof renderDailyWalkUI === 'function') renderDailyWalkUI();
+      if (typeof syncOverviewMacros === 'function') syncOverviewMacros();
+      // Personalize the Coach access CTA — "Talk to your future Wilke"
+      var coachPrompt = document.getElementById('ov-coach-prompt');
+      if (coachPrompt && typeof _futureSelfLabelInline === 'function') {
+        coachPrompt.textContent = 'Talk to your ' + _futureSelfLabelInline();
+      }
+    }
+    if (id === 'coach') {
+      // Personalize Coach header + greeting bubble label
+      var coachLabel = document.getElementById('coachLabel');
+      if (coachLabel && typeof _futureSelfLabel === 'function') {
+        coachLabel.textContent = _futureSelfLabel();
+      }
+      var greeting = document.getElementById('coachGreetingMsg');
+      if (greeting && typeof _futureSelfLabel === 'function') {
+        var greetingLabel = greeting.querySelector('.msg-label');
+        if (greetingLabel) greetingLabel.textContent = _futureSelfLabel();
+      }
+    }
     if (id === 'progress' && typeof renderProgressScreen === 'function') renderProgressScreen();
     if (id === 'future') { updateFsSilhouette(); }
     if (id === 'program') { autoLoadProgram(); }
@@ -7756,7 +7811,7 @@
     // Typing indicator
     var typingDiv = document.createElement('div');
     typingDiv.className = 'msg msg-ai';
-    typingDiv.innerHTML = '<div class="msg-label">Future Self</div><div class="msg-bubble" style="display:flex;gap:4px;align-items:center;"><span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:typing-dot 1.2s ease-in-out infinite;"></span><span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:typing-dot 1.2s ease-in-out infinite;animation-delay:0.2s;"></span><span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:typing-dot 1.2s ease-in-out infinite;animation-delay:0.4s;"></span></div>';
+    typingDiv.innerHTML = '<div class="msg-label">' + _futureSelfLabel() + '</div><div class="msg-bubble" style="display:flex;gap:4px;align-items:center;"><span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:typing-dot 1.2s ease-in-out infinite;"></span><span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:typing-dot 1.2s ease-in-out infinite;animation-delay:0.2s;"></span><span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;animation:typing-dot 1.2s ease-in-out infinite;animation-delay:0.4s;"></span></div>';
     messages.appendChild(typingDiv);
     messages.scrollTop = messages.scrollHeight;
 
@@ -7790,9 +7845,17 @@
         }
       } catch(_) {}
 
+      // First-name extraction so the system prompt reinforces that the
+      // model is literally THIS PERSON's future self, not a generic Coach.
+      var _firstName = ((state && state.name) || '').trim().split(/\s+/)[0] || '';
+      var _selfRefBlock = _firstName
+        ? 'The user is named ' + _firstName + '. You are literally a future version of ' + _firstName + ', speaking back through time. The chat label they see for you is "Future ' + _firstName + '." Speak from that frame.'
+        : 'You speak as the user\u2019s future self, talking back through time.';
+
       var systemPrompt =
         // ─── VOICE ───────────────────────────────────────────────
         'You are the Wylde Coach. You are not a generic AI assistant. You speak as the user\u2019s FUTURE SELF \u2014 the version of them that has already done the work, walked the path, and built the identity they\u2019re reaching for. ' +
+        _selfRefBlock + ' ' +
         'You are calm, grounded, direct. Masculine but not aggressive. Warm but never soft. You don\u2019t cheerlead, you don\u2019t lecture, you don\u2019t therapize. You speak like someone who remembers what it was like to be where they are now \u2014 and knows what comes next.\n\n' +
 
         // ─── FORMAT (HARD RULES) ──────────────────────────────────
@@ -7841,7 +7904,7 @@
       chatHistory.push({ role: 'assistant', content: reply });
       var aiDiv = document.createElement('div');
       aiDiv.className = 'msg msg-ai';
-      aiDiv.innerHTML = '<div class="msg-label">Future Self</div><div class="msg-bubble">' + reply.replace(/\n/g, '<br>') + '</div>';
+      aiDiv.innerHTML = '<div class="msg-label">' + _futureSelfLabel() + '</div><div class="msg-bubble">' + reply.replace(/\n/g, '<br>') + '</div>';
       messages.appendChild(aiDiv);
       messages.scrollTop = messages.scrollHeight;
     })
@@ -7849,7 +7912,7 @@
       typingDiv.remove();
       var aiDiv = document.createElement('div');
       aiDiv.className = 'msg msg-ai';
-      aiDiv.innerHTML = '<div class="msg-label">Future Self</div><div class="msg-bubble">Signal dropped. The work didn\'t. Try again.</div>';
+      aiDiv.innerHTML = '<div class="msg-label">' + _futureSelfLabel() + '</div><div class="msg-bubble">Signal dropped. The work didn\'t. Try again.</div>';
       messages.appendChild(aiDiv);
       messages.scrollTop = messages.scrollHeight;
     });
