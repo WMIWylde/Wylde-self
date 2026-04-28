@@ -7,38 +7,68 @@ struct TodayView: View {
     @State private var healthCalories: Int = 0
     @State private var showPaywall = false
 
+    @State private var didAppear = false
+
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
                 // Header
                 headerSection
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 8)
+                    .animation(.easeOut(duration: 0.5), value: didAppear)
 
                 // Hero card — day + streak (no level/XP — those were stripped
                 // because the brand is about transforming your relationship
                 // with yourself, not climbing a ladder)
                 heroCard
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 12)
+                    .animation(.easeOut(duration: 0.6).delay(0.05), value: didAppear)
 
                 // Morning Protocol — three fixed practices
                 if !appState.morningProtocolCompleted {
                     morningProtocolCard
+                        .transition(.asymmetric(
+                            insertion: .opacity.combined(with: .move(edge: .top)),
+                            removal:   .opacity.combined(with: .scale(scale: 0.95))
+                        ))
+                        .opacity(didAppear ? 1 : 0)
+                        .offset(y: didAppear ? 0 : 12)
+                        .animation(.easeOut(duration: 0.6).delay(0.10), value: didAppear)
                 }
 
                 // Workout CTA
                 workoutCard
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 12)
+                    .animation(.easeOut(duration: 0.6).delay(0.15), value: didAppear)
 
                 // Daily Long Walk — separate from training
                 walkCard
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 12)
+                    .animation(.easeOut(duration: 0.6).delay(0.20), value: didAppear)
 
                 // Nutrition snapshot
                 nutritionCard
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 12)
+                    .animation(.easeOut(duration: 0.6).delay(0.25), value: didAppear)
 
                 // Health data
                 healthCard
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 12)
+                    .animation(.easeOut(duration: 0.6).delay(0.30), value: didAppear)
 
                 // Founding Member offer — only shown to non-Pro users.
                 // Soft CTA, never blocks. Identity-driven framing.
                 if !appState.isPro {
                     foundingMemberCard
+                        .opacity(didAppear ? 1 : 0)
+                        .offset(y: didAppear ? 0 : 12)
+                        .animation(.easeOut(duration: 0.6).delay(0.35), value: didAppear)
                 }
 
                 Spacer(minLength: 100)
@@ -49,6 +79,10 @@ struct TodayView: View {
         .background(Theme.background)
         .onAppear {
             loadHealthData()
+            // First-time-on-screen staggered fade up. Once shown, stays visible.
+            if !didAppear {
+                didAppear = true
+            }
         }
         .sheet(isPresented: $showPaywall) {
             PaywallView().environmentObject(appState)
@@ -395,19 +429,27 @@ struct TodayView: View {
 
     private func toggleMorningAction(_ index: Int) {
         HapticManager.shared.impact(.light)
-        appState.morningProtocolActions[index].completed.toggle()
+        // Spring animation so the checkmark fills with a satisfying bounce
+        // instead of an instant flip — small thing, big tactile difference
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) {
+            appState.morningProtocolActions[index].completed.toggle()
+        }
 
         // Check if all completed
         if appState.morningProtocolActions.allSatisfy({ $0.completed }) {
             HapticManager.shared.notification(.success)
-            appState.morningProtocolCompleted = true
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                appState.morningProtocolCompleted = true
+            }
             appState.awardXP(25, reason: "Morning Protocol complete")
         }
     }
 
     private func toggleWalk() {
         HapticManager.shared.impact(.light)
-        appState.dailyWalkCompleted.toggle()
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) {
+            appState.dailyWalkCompleted.toggle()
+        }
         if appState.dailyWalkCompleted {
             HapticManager.shared.notification(.success)
             appState.awardXP(10, reason: "Long walk")

@@ -2212,27 +2212,36 @@
       </div>
 
       <!-- Gym details (shown when Yes/Sometimes selected) -->
+      <!-- Replaced 12-pill equipment picker with a 3-option type picker.
+           AI program builder infers what equipment is available from the
+           gym type + name. Reduces onboarding tap-count from ~8 to 2. -->
       <div id="gymDetailsSection" style="display:none;">
         <div class="form-group ob-field">
-          <label>Which gym? <span class="ob-optional">(optional)</span></label>
-          <input class="input" id="gymNameInput" type="text" placeholder="e.g. LA Fitness, Planet Fitness, home gym..." style="font-size:15px;" />
+          <label>Which gym? <span class="ob-optional">(we'll find it)</span></label>
+          <div style="position:relative;">
+            <input class="input" id="gymNameInput" type="text"
+                   placeholder="Start typing — Equinox, LA Fitness, Anytime..."
+                   autocomplete="off"
+                   oninput="searchGymLocations(this.value)"
+                   onfocus="searchGymLocations(this.value)"
+                   onblur="setTimeout(closeGymDropdown, 250)"
+                   style="font-size:15px;" />
+            <div id="gymSearchDropdown"
+                 style="display:none;position:absolute;top:100%;left:0;right:0;margin-top:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px;max-height:280px;overflow-y:auto;z-index:50;box-shadow:0 12px 40px rgba(0,0,0,0.5);">
+              <!-- Populated by searchGymLocations() -->
+            </div>
+          </div>
+          <p id="gymSelectedConfirm" style="display:none;font-size:12px;color:var(--sage);margin:6px 0 0;font-style:italic;">
+            <span id="gymSelectedAddr"></span>
+          </p>
         </div>
 
         <div class="form-group ob-field">
-          <label>What equipment is available?</label>
-          <div class="pill-group" id="gymEquipGroup">
-            <button class="pill" onclick="togglePill(this)">Dumbbells</button>
-            <button class="pill" onclick="togglePill(this)">Barbells & Rack</button>
-            <button class="pill" onclick="togglePill(this)">Cable Machine</button>
-            <button class="pill" onclick="togglePill(this)">Smith Machine</button>
-            <button class="pill" onclick="togglePill(this)">Leg Press</button>
-            <button class="pill" onclick="togglePill(this)">Pull-up Bar</button>
-            <button class="pill" onclick="togglePill(this)">Bench (flat/incline)</button>
-            <button class="pill" onclick="togglePill(this)">Resistance Bands</button>
-            <button class="pill" onclick="togglePill(this)">Kettlebells</button>
-            <button class="pill" onclick="togglePill(this)">Cardio Machines</button>
-            <button class="pill" onclick="togglePill(this)">TRX / Suspension</button>
-            <button class="pill" onclick="togglePill(this)">Battle Ropes</button>
+          <label>What kind of setup do you have there?</label>
+          <div class="pill-group" id="gymTypeGroup">
+            <button class="pill" onclick="selectPill(this,'gymTypeGroup')">Commercial gym (full equipment)</button>
+            <button class="pill" onclick="selectPill(this,'gymTypeGroup')">Garage / home gym (some equipment)</button>
+            <button class="pill" onclick="selectPill(this,'gymTypeGroup')">Bodyweight / minimal</button>
           </div>
         </div>
       </div>
@@ -5820,6 +5829,9 @@
     name: '', gender: '', age: '', height: '', weight: '', weightUnit: 'lbs',
     goals: [], level: '', days: '',
     equipment: '', gymAccess: '', gymName: '', gymEquipment: [], classPreferences: [],
+    // Gym location (set via gym search dropdown). Foundation for the future
+    // 'members at your gym' community feature — same gymPlaceId = same gym.
+    gymType: '', gymLat: null, gymLng: null, gymAddress: '', gymPlaceId: '',
     health: [], healthNotes: '', diet: [], dietNotes: '',
     sessions: 0, streak: 0,
     log: [],
@@ -6002,6 +6014,116 @@
     section.style.display = (val === 'Yes' || val === 'Sometimes') ? 'block' : 'none';
   }
 
+  // ─── GYM LOCATION SEARCH ─────────────────────────────────────────
+  // Type-to-search the user's gym. We use OpenStreetMap Nominatim — free,
+  // no API key, no rate-limit issues for the volume we'll see at launch.
+  // Saves the gym's lat/lng + place_id so the future community feature
+  // can match users at the same physical location.
+  //
+  // For production scale (10k+ DAU) you'd swap this for Google Places
+  // or Mapbox Geocoding for higher-quality gym data. Nominatim is fine
+  // for the first 10k users.
+
+  var _gymSearchTimer = null;
+  var _gymSearchSeq = 0;
+
+  window.searchGymLocations = function(query) {
+    query = (query || '').trim();
+    var dropdown = document.getElementById('gymSearchDropdown');
+    if (!dropdown) return;
+
+    // Reset selection state if user typed something different
+    if (state.gymAddress && query !== state.gymName) {
+      state.gymLat = null; state.gymLng = null;
+      state.gymAddress = ''; state.gymPlaceId = '';
+      var sc = document.getElementById('gymSelectedConfirm');
+      if (sc) sc.style.display = 'none';
+    }
+
+    // Close dropdown for short queries
+    if (query.length < 2) {
+      dropdown.style.display = 'none';
+      return;
+    }
+
+    state.gymName = query;
+
+    // Debounce — Nominatim rate limit is 1 req/sec
+    clearTimeout(_gymSearchTimer);
+    _gymSearchTimer = setTimeout(function() {
+      var seq = ++_gymSearchSeq;
+      // Bias toward gyms specifically — append 'gym' if the user didn't
+      var q = /gym|fitness|crossfit|equinox|planet|f45|barry|orangetheory/i.test(query)
+        ? query
+        : query + ' gym';
+      var url = 'https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&q=' + encodeURIComponent(q);
+      fetch(url, {
+        headers: {
+          // Nominatim asks for an identifying UA header
+          'Accept-Language': 'en'
+        }
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(results) {
+          // Bail if the user typed something newer
+          if (seq !== _gymSearchSeq) return;
+          renderGymSearchResults(results || []);
+        })
+        .catch(function() {
+          dropdown.innerHTML = '<div style="padding:14px 16px;color:var(--text2);font-size:13px;">Couldn’t reach the search service. Just type the name and continue.</div>';
+          dropdown.style.display = 'block';
+        });
+    }, 350);
+  };
+
+  function renderGymSearchResults(results) {
+    var dropdown = document.getElementById('gymSearchDropdown');
+    if (!dropdown) return;
+    if (!results || results.length === 0) {
+      dropdown.innerHTML = '<div style="padding:14px 16px;color:var(--text2);font-size:13px;">No matches — type the name and continue.</div>';
+      dropdown.style.display = 'block';
+      return;
+    }
+    dropdown.innerHTML = results.map(function(r) {
+      var name = (r.display_name || '').split(',')[0];
+      var rest = (r.display_name || '').split(',').slice(1, 3).join(',').trim();
+      var dataLat = r.lat || '';
+      var dataLon = r.lon || '';
+      var dataId  = r.place_id || '';
+      var safeName = String(name).replace(/'/g, "\\'");
+      var safeAddr = String(rest).replace(/'/g, "\\'");
+      return '<button type="button" onclick="selectGymLocation(\'' + safeName + '\',' + dataLat + ',' + dataLon + ',\'' + safeAddr + '\',\'' + dataId + '\')" ' +
+        'style="display:block;width:100%;text-align:left;padding:12px 16px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);cursor:pointer;font-family:var(--ff-body);">' +
+        '<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px;">' + esc(name) + '</div>' +
+        '<div style="font-size:12px;color:var(--text2);">' + esc(rest) + '</div>' +
+      '</button>';
+    }).join('');
+    dropdown.style.display = 'block';
+  }
+
+  window.selectGymLocation = function(name, lat, lng, address, placeId) {
+    state.gymName = name;
+    state.gymLat = parseFloat(lat) || null;
+    state.gymLng = parseFloat(lng) || null;
+    state.gymAddress = address;
+    state.gymPlaceId = placeId;
+
+    var input = document.getElementById('gymNameInput');
+    if (input) input.value = name;
+
+    var sc = document.getElementById('gymSelectedConfirm');
+    var sa = document.getElementById('gymSelectedAddr');
+    if (sc) sc.style.display = 'block';
+    if (sa) sa.textContent = '✓ ' + address;
+
+    closeGymDropdown();
+  };
+
+  window.closeGymDropdown = function() {
+    var dropdown = document.getElementById('gymSearchDropdown');
+    if (dropdown) dropdown.style.display = 'none';
+  };
+
   // AUTH FORM TOGGLE
   function showAuthForm() {
     document.getElementById('authWelcome').style.display = 'none';
@@ -6098,7 +6220,18 @@
     state.equipment        = equipment ? equipment.textContent  : '';
     state.gymAccess        = gym       ? gym.textContent        : '';
     state.gymName          = document.getElementById('gymNameInput').value.trim();
-    state.gymEquipment     = Array.from(document.querySelectorAll('#gymEquipGroup .selected')).map(function(p){ return p.textContent; });
+    // Gym type drives equipment inference for the AI program builder.
+    // Replaces the old gymEquipment[] picker (too much tapping).
+    var gymTypeEl = document.querySelector('#gymTypeGroup .selected');
+    state.gymType = gymTypeEl ? gymTypeEl.textContent.trim() : '';
+    // Back-compat: derive a coarse gymEquipment[] list from the type so
+    // the existing meal/workout prompt logic keeps working unchanged.
+    var typeToEquip = {
+      'Commercial gym (full equipment)':       ['Dumbbells', 'Barbells & Rack', 'Cable Machine', 'Smith Machine', 'Leg Press', 'Pull-up Bar', 'Bench (flat/incline)', 'Cardio Machines', 'Kettlebells'],
+      'Garage / home gym (some equipment)':    ['Dumbbells', 'Pull-up Bar', 'Bench (flat/incline)', 'Resistance Bands', 'Kettlebells'],
+      'Bodyweight / minimal':                  ['Resistance Bands']
+    };
+    state.gymEquipment = typeToEquip[state.gymType] || [];
     state.classPreferences = classes.filter(function(c){ return c !== 'Not interested'; });
     var diet   = Array.from(document.querySelectorAll('#dietGroup .selected')).map(function(p){ return p.textContent; });
     var dNotes = document.getElementById('dietNotes').value.trim();
@@ -6423,12 +6556,20 @@
       var gymInput = document.getElementById('gymNameInput');
       if (gymInput) gymInput.value = state.gymName;
     }
-    // Pre-fill gym equipment (multi-select)
-    if (state.gymEquipment && state.gymEquipment.length > 0) {
-      document.querySelectorAll('#gymEquipGroup .pill').forEach(function(p){
+    // Pre-fill gym type (single-select). Replaces the old gym equipment
+    // multi-select picker for a much cleaner onboarding flow.
+    if (state.gymType) {
+      document.querySelectorAll('#gymTypeGroup .pill').forEach(function(p){
         p.classList.remove('selected');
-        if (state.gymEquipment.indexOf(p.textContent) !== -1) p.classList.add('selected');
+        if (p.textContent.trim() === state.gymType) p.classList.add('selected');
       });
+    }
+    // Restore the gym confirmation line if a location was previously selected
+    if (state.gymLat && state.gymAddress) {
+      var sc = document.getElementById('gymSelectedConfirm');
+      var sa = document.getElementById('gymSelectedAddr');
+      if (sc) sc.style.display = 'block';
+      if (sa) sa.textContent = '✓ ' + state.gymAddress;
     }
     // Show gym details section if gym access is Yes/Sometimes
     toggleGymDetails();
