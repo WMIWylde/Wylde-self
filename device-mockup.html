@@ -35,7 +35,6 @@
     position: relative;
   }
 
-  /* Bezel highlight — top edge catch light */
   .device::before {
     content: '';
     position: absolute;
@@ -59,220 +58,193 @@
 
   /* Screen area */
   .device-screen {
-    background: #1B1A17;
+    background: #121212;
     border-radius: 30px;
     overflow: hidden;
     position: relative;
     margin-top: -14px;
-    padding: 28px 20px 24px;
+    padding: 28px 18px 20px;
   }
 
-  /* Subtle screen edge */
   .device-screen::before {
     content: '';
     position: absolute; inset: 0;
     border-radius: 30px;
-    border: 1px solid rgba(255,248,235,0.04);
+    border: 1px solid rgba(255,255,255,0.04);
     pointer-events: none;
   }
 
-  /* ─── SCREEN CONTENT ─── */
-
-  /* Status bar */
+  /* ─── STATUS BAR ─── */
   .status-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 2px 16px;
+    padding: 0 2px 14px;
     font-size: 11px;
     font-weight: 600;
-    color: rgba(245,242,237,0.5);
+    color: rgba(255,255,255,0.4);
   }
-  .status-dots {
-    display: flex; gap: 3px;
-  }
-  .status-dots span {
-    width: 4px; height: 4px;
-    border-radius: 50%;
-    background: rgba(245,242,237,0.35);
-  }
-  .status-dots span:first-child { background: rgba(245,242,237,0.6); }
+  .status-dots { display: flex; gap: 3px; }
+  .status-dots span { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.25); }
+  .status-dots span:first-child { background: rgba(255,255,255,0.5); }
 
-  /* Header */
-  .screen-header {
-    margin-bottom: 20px;
-  }
-  .screen-day {
-    font-size: 22px;
-    font-weight: 800;
-    color: #F5F2ED;
-    letter-spacing: -0.03em;
-    line-height: 1.15;
-    margin-bottom: 3px;
-  }
-  .screen-week {
-    font-size: 11px;
-    font-weight: 500;
-    color: #6B675E;
-    letter-spacing: 0.02em;
+  /* ─── 1. HEADER ─── */
+  .header { margin-bottom: 16px; }
+  .streak-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px; padding: 4px 11px;
+    font-size: 9px; color: rgba(255,255,255,0.45);
+    background: #1C1C1C;
     margin-bottom: 14px;
   }
-
-  /* Progress bar */
-  .progress-track {
-    height: 5px;
-    background: #232220;
-    border-radius: 3px;
-    overflow: hidden;
-    position: relative;
+  .streak-dot { width: 5px; height: 5px; border-radius: 50%; background: #6E7F6B; }
+  .header-title {
+    font-size: 22px; font-weight: 700; color: #fff;
+    letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 4px;
   }
+  .header-sub {
+    font-size: 11px; color: rgba(255,255,255,0.4);
+    letter-spacing: 0.02em; margin-bottom: 10px;
+  }
+  .progress-track { height: 5px; background: #242424; border-radius: 3px; overflow: hidden; }
   .progress-fill {
-    height: 100%;
-    width: 60%;
-    background: linear-gradient(90deg, #7A8E76, #8FA08B);
-    border-radius: 3px;
-    position: relative;
-  }
-  .progress-fill::after {
-    content: '';
-    position: absolute;
-    right: 0; top: 0; bottom: 0;
-    width: 12px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15));
-    border-radius: 0 3px 3px 0;
+    height: 100%; width: 8%; background: #6E7F6B; border-radius: 3px;
   }
 
-  /* Section divider */
-  .screen-divider {
-    height: 1px;
-    background: rgba(255,248,235,0.05);
-    margin: 18px 0;
-  }
-
-  /* Section label */
-  .section-label {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #6B675E;
-    margin-bottom: 10px;
-  }
-
-  /* Mission rows */
-  .mission-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 11px 14px;
-    background: #232220;
-    border-radius: 11px;
-    margin-bottom: 6px;
-    border: 1px solid rgba(255,248,235,0.03);
-    transition: border-color 0.3s ease;
-  }
-  .mission-row:hover {
-    border-color: rgba(255,248,235,0.07);
-  }
+  /* ─── 2. MISSION CARD (cream) ─── */
   .mission-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #F5F2ED;
-    letter-spacing: -0.01em;
+    font-size: 9px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: rgba(255,255,255,0.4);
+    margin: 16px 0 8px;
   }
-  .mission-meta {
-    font-size: 11px;
-    font-weight: 500;
-    color: #7A8E76;
+  .mission-card {
+    background: #F5F2EC;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
   }
-  .mission-meta.gold {
-    color: #C9AD6E;
+  .mission-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 14px;
   }
-  .mission-meta.muted {
-    color: #6B675E;
-  }
-
-  /* Workout list */
-  .workout-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 0;
-    border-bottom: 1px solid rgba(255,248,235,0.03);
-  }
-  .workout-item:last-child { border-bottom: none; }
-  .workout-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: #7A8E76;
-    flex-shrink: 0;
-    opacity: 0.7;
-  }
-  .workout-name {
-    font-size: 13px;
-    font-weight: 500;
-    color: #F5F2ED;
-    flex: 1;
-  }
-  .workout-sets {
-    font-size: 11px;
-    font-weight: 500;
-    color: #6B675E;
-    white-space: nowrap;
+  .mission-item-primary { padding: 15px 14px; }
+  .mission-divider { height: 1px; background: rgba(0,0,0,0.06); margin: 0 14px; }
+  .mission-name { font-size: 13px; font-weight: 600; color: #1A1A1A; }
+  .mission-meta { font-size: 11px; color: rgba(26,26,26,0.45); margin-top: 2px; }
+  .mission-btn {
+    padding: 7px 14px; border-radius: 10px; border: none;
+    background: #1A1A1A; color: #fff;
+    font-size: 11px; font-weight: 600; font-family: 'Inter', sans-serif;
+    letter-spacing: 0.01em;
   }
 
-  /* Protocol rows */
-  .protocol-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
-    background: #232220;
-    border-radius: 11px;
-    margin-bottom: 6px;
-    border: 1px solid rgba(255,248,235,0.03);
-  }
-  .protocol-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: #F5F2ED;
-  }
-  .protocol-status {
-    font-size: 11px;
-    font-weight: 600;
-  }
-  .protocol-status.done {
-    color: #C9AD6E;
-  }
-  .protocol-status.rest {
-    color: #6B675E;
+  /* Protein bar */
+  .protein-bar-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .protein-bar { width: 44px; height: 5px; background: rgba(0,0,0,0.08); border-radius: 3px; overflow: hidden; }
+  .protein-bar-fill { height: 100%; width: 67%; background: #6E7F6B; border-radius: 3px; }
+  .protein-pct { font-size: 10px; font-weight: 600; color: #6E7F6B; }
+
+  /* Hydration */
+  .hydration-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .hydration-bar { width: 36px; height: 5px; background: rgba(0,0,0,0.08); border-radius: 3px; overflow: hidden; }
+  .hydration-bar-fill { height: 100%; width: 50%; background: #7F907C; border-radius: 3px; }
+  .water-btns { display: flex; gap: 3px; }
+  .water-btn {
+    width: 22px; height: 22px; border-radius: 7px;
+    border: 1px solid rgba(0,0,0,0.1); background: rgba(0,0,0,0.03);
+    color: #1A1A1A; font-size: 12px; font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
   }
 
-  /* Bottom bar hint */
+  /* ─── 3. QUICK ACTIONS ─── */
+  .quick-row { display: flex; gap: 6px; margin-top: 10px; }
+  .quick-pill {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
+    padding: 9px 6px;
+    background: #1C1C1C; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.45);
+  }
+  .quick-icon { font-size: 12px; line-height: 1; }
+
+  /* ─── 4. FUTURE SELF ─── */
+  .future-card {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px; margin-top: 10px;
+    background: #1C1C1C; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+  }
+  .future-thumb {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: #242424; flex-shrink: 0;
+  }
+  .future-text { flex: 1; min-width: 0; }
+  .future-headline { font-size: 12px; font-weight: 600; color: #fff; }
+  .future-sub { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 1px; }
+  .future-arrow { font-size: 14px; color: rgba(255,255,255,0.25); }
+
+  /* ─── 5. WORKOUT CARD ─── */
+  .section-card {
+    background: #1C1C1C; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; overflow: hidden; margin-top: 10px;
+  }
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px;
+  }
+  .section-title { font-size: 12px; font-weight: 600; color: #fff; }
+  .section-toggle { font-size: 14px; color: rgba(255,255,255,0.3); }
+  .section-body { padding: 0 14px 14px; }
+  .exercise-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .exercise-row:last-child { border: none; }
+  .exercise-name { font-size: 12px; font-weight: 500; color: #fff; }
+  .exercise-sets { font-size: 11px; color: rgba(255,255,255,0.4); font-variant-numeric: tabular-nums; }
+  .section-btn {
+    width: 100%; margin-top: 10px; padding: 10px;
+    background: #fff; border: none; border-radius: 10px;
+    font-size: 12px; font-weight: 600; color: #1A1A1A;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ─── 6. PROTOCOL ─── */
+  .proto-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .proto-item:last-of-type { border: none; }
+  .proto-name { font-size: 12px; font-weight: 500; color: #fff; }
+  .proto-status { font-size: 10px; font-weight: 600; }
+  .proto-done { color: #C6A96B; }
+  .proto-rest { color: rgba(255,255,255,0.3); }
+  .proto-cycle {
+    font-size: 10px; color: rgba(255,255,255,0.3);
+    margin-top: 6px; padding-top: 6px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .proto-btn {
+    width: 100%; margin-top: 10px; padding: 10px;
+    background: transparent; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    font-size: 12px; font-weight: 500; color: #fff;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ─── BOTTOM NAV ─── */
   .bottom-bar {
-    display: flex;
-    justify-content: center;
-    gap: 32px;
-    padding: 16px 0 4px;
-    margin-top: 8px;
+    display: flex; justify-content: center; gap: 28px;
+    padding: 14px 0 4px; margin-top: 6px;
   }
-  .bottom-tab {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: rgba(245,242,237,0.15);
-  }
-  .bottom-tab.active {
-    background: #7A8E76;
-    box-shadow: 0 0 8px rgba(122,142,118,0.3);
-  }
+  .bottom-tab { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.12); }
+  .bottom-tab.active { background: #6E7F6B; box-shadow: 0 0 8px rgba(110,127,107,0.3); }
 
-  /* Home indicator */
   .device-home {
-    width: 120px;
-    height: 4px;
-    background: rgba(245,242,237,0.15);
-    border-radius: 2px;
-    margin: 10px auto 0;
+    width: 120px; height: 4px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 2px; margin: 10px auto 0;
   }
 </style>
 </head>
@@ -285,71 +257,100 @@
     <!-- Status bar -->
     <div class="status-bar">
       <span>9:41</span>
-      <div class="status-dots">
-        <span></span><span></span><span></span><span></span>
+      <div class="status-dots"><span></span><span></span><span></span><span></span></div>
+    </div>
+
+    <!-- 1. Header -->
+    <div class="header">
+      <div class="streak-pill"><span class="streak-dot"></span> 7 day streak</div>
+      <div class="header-title">Day 7 — Prove it.</div>
+      <div class="header-sub">Week 1 of 12</div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+
+    <!-- 2. Mission Card (cream) -->
+    <div class="mission-label">Today's Mission</div>
+    <div class="mission-card">
+      <div class="mission-item mission-item-primary">
+        <div>
+          <div class="mission-name">Workout</div>
+          <div class="mission-meta">Upper Body · 6 exercises</div>
+        </div>
+        <button class="mission-btn">Start Session &rarr;</button>
+      </div>
+      <div class="mission-divider"></div>
+      <div class="mission-item">
+        <div>
+          <div class="mission-name">Protein</div>
+          <div class="mission-meta">120g of 180g</div>
+        </div>
+        <div class="protein-bar-wrap">
+          <div class="protein-bar"><div class="protein-bar-fill"></div></div>
+          <span class="protein-pct">67%</span>
+        </div>
+      </div>
+      <div class="mission-divider"></div>
+      <div class="mission-item">
+        <div>
+          <div class="mission-name">Water</div>
+          <div class="mission-meta">64 / 128 oz</div>
+        </div>
+        <div class="hydration-wrap">
+          <div class="hydration-bar"><div class="hydration-bar-fill"></div></div>
+          <div class="water-btns">
+            <div class="water-btn">&minus;</div>
+            <div class="water-btn">+</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Header -->
-    <div class="screen-header">
-      <div class="screen-day">Day 1 — Prove it.</div>
-      <div class="screen-week">Week 1 of 12</div>
-      <div class="progress-track">
-        <div class="progress-fill"></div>
+    <!-- 3. Quick Actions -->
+    <div class="quick-row">
+      <div class="quick-pill"><span class="quick-icon">&#x1F4F7;</span> Fuel up</div>
+      <div class="quick-pill"><span class="quick-icon">&#x1F4A7;</span> Hydrate</div>
+      <div class="quick-pill"><span class="quick-icon">&#x1F4AC;</span> Coach</div>
+    </div>
+
+    <!-- 4. Future Self -->
+    <div class="future-card">
+      <div class="future-thumb"></div>
+      <div class="future-text">
+        <div class="future-headline">This is you in 12 weeks</div>
+        <div class="future-sub">See your future self &rarr;</div>
+      </div>
+      <span class="future-arrow">&rsaquo;</span>
+    </div>
+
+    <!-- 5. Workout -->
+    <div class="section-card">
+      <div class="section-header">
+        <span class="section-title">Today's Workout</span>
+        <span class="section-toggle">&minus;</span>
+      </div>
+      <div class="section-body">
+        <div class="exercise-row"><span class="exercise-name">Bench Press</span><span class="exercise-sets">4 &times; 8</span></div>
+        <div class="exercise-row"><span class="exercise-name">Incline DB Press</span><span class="exercise-sets">3 &times; 10</span></div>
+        <div class="exercise-row"><span class="exercise-name">Cable Fly</span><span class="exercise-sets">3 &times; 12</span></div>
+        <button class="section-btn">Start Session &rarr;</button>
       </div>
     </div>
 
-    <div class="screen-divider"></div>
-
-    <!-- Today's Mission -->
-    <div class="section-label">Today's Mission</div>
-    <div class="mission-row">
-      <span class="mission-label">Workout</span>
-      <span class="mission-meta">Start Session</span>
-    </div>
-    <div class="mission-row">
-      <span class="mission-label">Nutrition</span>
-      <span class="mission-meta gold">120 / 180g</span>
-    </div>
-    <div class="mission-row">
-      <span class="mission-label">Hydration</span>
-      <span class="mission-meta muted">64 / 128 oz</span>
+    <!-- 6. Protocol -->
+    <div class="section-card">
+      <div class="section-header">
+        <span class="section-title">Protocol</span>
+        <span class="section-toggle">&minus;</span>
+      </div>
+      <div class="section-body">
+        <div class="proto-item"><span class="proto-name">BPC-157</span><span class="proto-status proto-done">&check; Done</span></div>
+        <div class="proto-item"><span class="proto-name">TB-500</span><span class="proto-status proto-rest">Rest day</span></div>
+        <div class="proto-cycle">Cycle ends in 5 days</div>
+        <button class="proto-btn">Open Protocol</button>
+      </div>
     </div>
 
-    <div class="screen-divider"></div>
-
-    <!-- Today's Workout -->
-    <div class="section-label">Today's Workout</div>
-    <div class="workout-item">
-      <div class="workout-dot"></div>
-      <span class="workout-name">Bench Press</span>
-      <span class="workout-sets">4 × 8</span>
-    </div>
-    <div class="workout-item">
-      <div class="workout-dot"></div>
-      <span class="workout-name">Incline DB Press</span>
-      <span class="workout-sets">3 × 10</span>
-    </div>
-    <div class="workout-item">
-      <div class="workout-dot"></div>
-      <span class="workout-name">Cable Fly</span>
-      <span class="workout-sets">3 × 12</span>
-    </div>
-
-    <div class="screen-divider"></div>
-
-    <!-- Protocol -->
-    <div class="section-label">Protocol</div>
-    <div class="protocol-row">
-      <span class="protocol-name">BPC-157</span>
-      <span class="protocol-status done">✓ Done</span>
-    </div>
-    <div class="protocol-row">
-      <span class="protocol-name">TB-500</span>
-      <span class="protocol-status rest">Rest Day</span>
-    </div>
-
-    <!-- Bottom nav dots -->
+    <!-- Bottom nav -->
     <div class="bottom-bar">
       <div class="bottom-tab active"></div>
       <div class="bottom-tab"></div>
@@ -358,7 +359,6 @@
     </div>
   </div>
 
-  <!-- Home indicator -->
   <div class="device-home"></div>
 </div>
 
