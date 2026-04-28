@@ -1,82 +1,54 @@
 <!DOCTYPE html>
-<html lang="en" style="background:#070707;">
+<html lang="en" style="background:#F7F5F0;">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#070707" />
-  <title>Wylde Self · Clinician Command Center</title>
-  <meta name="description" content="Sacred Utility — a cockpit for human optimization. The Wylde Self physician dashboard for monitoring patient adherence to peptide and health protocols." />
+  <meta name="theme-color" content="#F7F5F0" />
+  <title>Wylde Self · Patient Adherence Dashboard</title>
+  <meta name="description" content="A calm, considered clinical assistant for physicians. Track adherence, biometrics, and pharmacy fulfillment in one quiet view." />
   <link rel="icon" href="/logo-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
-  <!-- Tailwind CSS via Play CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            bg:        '#070707',
-            elev1:     '#0E0E0E',
-            elev2:     '#131313',
-            elev3:     '#181818',
-            hairline:  'rgba(244,241,232,0.06)',
-            hairline2: 'rgba(244,241,232,0.10)',
-            warmline:  'rgba(200,169,110,0.18)',
-            ink:       '#F4F1E8',
-            ink2:      '#A6A29A',
-            ink3:      '#6E6B65',
-            gold:      '#C8A96E',
-            goldhi:    'rgba(200,169,110,0.95)',
-            golddim:   'rgba(200,169,110,0.10)',
-            goldglow:  'rgba(200,169,110,0.18)',
-            sage:      '#7D9275',
-            sagedim:   'rgba(125,146,117,0.12)',
-            danger:    '#C9745A',
-            dangerdim: 'rgba(201,116,90,0.12)',
+            paper:       '#F7F5F0',
+            white:       '#FFFFFF',
+            cream:       '#FAF8F3',
+            warmgray:    '#F0EDE6',
+            line:        'rgba(45,42,38,0.08)',
+            line2:       'rgba(45,42,38,0.14)',
+            ink:         '#2A2823',
+            ink2:        '#6B675F',
+            ink3:        '#9A958B',
+            numeric:     '#1A1815',
+            sage:        '#6E8A7C',
+            sageDeep:    '#5C7A6C',
+            sageDim:     'rgba(110,138,124,0.10)',
+            clay:        '#A8916C',
+            claydim:     'rgba(168,145,108,0.10)',
+            success:     '#5C9678',
+            successbg:   'rgba(92,150,120,0.10)',
+            warn:        '#C7965E',
+            warnbg:      'rgba(199,150,94,0.10)',
+            crit:        '#B86570',
+            critbg:      'rgba(184,101,112,0.10)',
+            sky:         '#6B89A8',
+            skybg:       'rgba(107,137,168,0.08)',
           },
           fontFamily: {
-            sans: ['Inter','system-ui','-apple-system','sans-serif'],
-            mono: ['JetBrains Mono','SFMono-Regular','Menlo','monospace'],
-          },
-          letterSpacing: {
-            'mono': '0.18em',
-            'mono-tight': '0.08em',
+            sans:  ['Inter','system-ui','-apple-system','sans-serif'],
+            serif: ['Fraunces','Georgia','serif'],
           },
           boxShadow: {
-            glow:  '0 0 60px rgba(200,169,110,0.10)',
-            glow2: '0 0 80px rgba(200,169,110,0.20)',
-            card:  '0 8px 32px rgba(0,0,0,0.45)',
-            hover: '0 12px 40px rgba(0,0,0,0.55)',
-          },
-          borderRadius: {
-            'pill': '999px',
-          },
-          animation: {
-            breathe: 'breathe 6s ease-in-out infinite',
-            'pulse-dot': 'pulse-dot 2.4s ease-in-out infinite',
-            'beacon': 'beacon 6s ease-in-out infinite',
-            'cta-pulse': 'cta-pulse 6s ease-in-out infinite',
-          },
-          keyframes: {
-            breathe: {
-              '0%,100%': { transform: 'scale(1)', opacity: '0.4' },
-              '50%':     { transform: 'scale(1.08)', opacity: '0.7' },
-            },
-            'pulse-dot': {
-              '0%,100%': { transform: 'scale(1)', opacity: '1' },
-              '50%':     { transform: 'scale(1.5)', opacity: '0.55' },
-            },
-            beacon: {
-              '0%,100%': { boxShadow: '0 0 0 0 rgba(200,169,110,0)' },
-              '50%':     { boxShadow: '0 0 0 8px rgba(200,169,110,0)' },
-            },
-            'cta-pulse': {
-              '0%,100%': { boxShadow: '0 0 0 0 rgba(200,169,110,0)' },
-              '50%':     { boxShadow: '0 0 60px rgba(200,169,110,0.18)' },
-            },
+            soft: '0 1px 2px rgba(45,42,38,0.04), 0 4px 16px rgba(45,42,38,0.04)',
+            card: '0 2px 4px rgba(45,42,38,0.04), 0 8px 24px rgba(45,42,38,0.05)',
+            hover:'0 4px 8px rgba(45,42,38,0.06), 0 16px 40px rgba(45,42,38,0.07)',
           },
         },
       },
@@ -86,629 +58,687 @@
   <style>
     *,*::before,*::after{box-sizing:border-box}
     html,body{
-      background:#070707;color:#F4F1E8;
-      font-family:'Inter',system-ui,sans-serif;
+      background:#F7F5F0;color:#2A2823;
+      font-family:'Inter',system-ui,sans-serif;font-weight:400;
       -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
       letter-spacing:-0.005em;font-optical-sizing:auto;
       overflow-x:hidden;
     }
     body{min-height:100vh;position:relative}
     a{text-decoration:none;color:inherit}
-    ::selection{background:rgba(200,169,110,0.20);color:#F4F1E8}
-    .font-mono{font-family:'JetBrains Mono','SFMono-Regular',Menlo,monospace}
+    .font-serif{font-family:'Fraunces','Georgia',serif;font-optical-sizing:auto;}
+    ::selection{background:rgba(110,138,124,0.18);color:#2A2823}
 
-    /* Living sanctuary — breathing background glows */
-    .living-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-    .living-bg::before,
-    .living-bg::after{
-      content:'';position:absolute;border-radius:50%;filter:blur(120px);opacity:.45;
+    /* very soft ambient — warm gradient at top */
+    .ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+    .ambient::before{
+      content:'';position:absolute;width:900px;height:600px;
+      top:-280px;left:50%;transform:translateX(-50%);
+      filter:blur(120px);opacity:.3;
+      background:radial-gradient(ellipse, rgba(110,138,124,0.10), rgba(168,145,108,0.04) 50%, transparent 70%);
       animation:breathe 6s ease-in-out infinite;
     }
-    .living-bg::before{
-      width:720px;height:720px;top:-260px;left:-200px;
-      background:radial-gradient(circle, rgba(200,169,110,0.13), rgba(200,169,110,0) 60%);
-    }
-    .living-bg::after{
-      width:560px;height:560px;bottom:-180px;right:-160px;
-      background:radial-gradient(circle, rgba(125,146,117,0.10), rgba(125,146,117,0) 60%);
-      animation-delay:-3s;
-    }
-    @keyframes breathe{
-      0%,100%{transform:scale(1);opacity:.4}
-      50%{transform:scale(1.08);opacity:.7}
-    }
-    @keyframes pulse-dot{
-      0%,100%{transform:scale(1);opacity:1}
-      50%{transform:scale(1.5);opacity:.55}
-    }
-    body::after{
-      content:'';position:fixed;inset:0;pointer-events:none;z-index:9000;
-      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      opacity:.025;mix-blend-mode:overlay;
-    }
+    @keyframes breathe{ 0%,100%{opacity:.22} 50%{opacity:.36} }
 
-    /* surface — subtle breathing on cards */
+    /* Surface — white card with subtle elevation */
     .surface{
-      background:#0E0E0E;
-      border:1px solid rgba(244,241,232,0.06);
+      background:#FFFFFF;
       border-radius:20px;
-      position:relative;overflow:hidden;
-    }
-    .surface::before{
-      content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
-      background:radial-gradient(60% 80% at 50% 0%, rgba(200,169,110,0.04), transparent 70%);
-      opacity:.7;
-      animation:surface-breathe 6s ease-in-out infinite;
-    }
-    @keyframes surface-breathe{
-      0%,100%{opacity:.45}
-      50%{opacity:.85}
-    }
-    .surface > * { position:relative; z-index:1; }
-
-    /* Eyebrow */
-    .eyebrow{
-      display:inline-flex;align-items:center;gap:8px;
-      font-family:'JetBrains Mono','SFMono-Regular',Menlo,monospace;
-      font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#C8A96E;
-      padding:6px 12px;border-radius:999px;
-      background:rgba(200,169,110,0.10);border:1px solid rgba(200,169,110,0.18);
-    }
-    .eyebrow .dot{
-      width:6px;height:6px;border-radius:50%;background:#C8A96E;
-      animation:beacon 6s ease-in-out infinite;
-    }
-    @keyframes beacon{
-      0%,100%{box-shadow:0 0 0 0 rgba(200,169,110,0)}
-      50%{box-shadow:0 0 0 6px rgba(200,169,110,0)}
+      box-shadow:0 1px 2px rgba(45,42,38,0.04), 0 4px 16px rgba(45,42,38,0.04);
     }
 
-    /* Heatmap cells */
+    /* Pill — capsule, title case */
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;
+      font-size:12px;font-weight:500;
+      padding:5px 11px;border-radius:999px;line-height:1.2;
+      letter-spacing:-0.005em;
+    }
+    .pill.success { color:#3F7158; background:rgba(92,150,120,0.12);  border:1px solid rgba(92,150,120,0.22); }
+    .pill.warn    { color:#8B6A3F; background:rgba(199,150,94,0.12);  border:1px solid rgba(199,150,94,0.24); }
+    .pill.crit    { color:#8E4951; background:rgba(184,101,112,0.10); border:1px solid rgba(184,101,112,0.26); }
+    .pill.sky     { color:#4D6985; background:rgba(107,137,168,0.10); border:1px solid rgba(107,137,168,0.22); }
+    .pill.sage    { color:#5C7A6C; background:rgba(110,138,124,0.10); border:1px solid rgba(110,138,124,0.22); }
+    .pill.clay    { color:#7D6849; background:rgba(168,145,108,0.10); border:1px solid rgba(168,145,108,0.22); }
+    .pill.neutral { color:#6B675F; background:#FAF8F3;                border:1px solid rgba(45,42,38,0.08); }
+    .pill .dot{
+      width:6px;height:6px;border-radius:50%;background:currentColor;
+      animation:pulse-dot 3s ease-in-out infinite;
+    }
+    @keyframes pulse-dot{ 0%,100%{opacity:1} 50%{opacity:.55} }
+
+    /* Banner — soft, calm */
+    .alert-banner{
+      display:flex;align-items:center;gap:18px;
+      padding:18px 22px;border-radius:18px;
+      background:rgba(184,101,112,0.06);
+      border:1px solid rgba(184,101,112,0.20);
+    }
+    .alert-banner .ico{
+      width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+      background:rgba(184,101,112,0.12);color:#8E4951;flex-shrink:0;
+    }
+
+    /* Alert row */
+    .alert-row{
+      display:grid;grid-template-columns:auto 1fr auto auto;gap:16px;align-items:center;
+      padding:18px 20px;border-radius:14px;
+      background:#FAF8F3;border:1px solid rgba(45,42,38,0.06);
+      transition:background .15s ease, border-color .15s ease;
+    }
+    .alert-row:hover{ background:#FFFFFF;border-color:rgba(45,42,38,0.14);box-shadow:0 1px 2px rgba(45,42,38,0.04); }
+    .alert-row.crit{ border-left:3px solid #B86570; }
+    .alert-row.warn{ border-left:3px solid #C7965E; }
+    .alert-row.sky { border-left:3px solid #6B89A8; }
+    .alert-row .pavatar{
+      width:36px;height:36px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;
+      background:linear-gradient(135deg, #FAF8F3, #F0EDE6);
+      border:1px solid rgba(45,42,38,0.08);
+      color:#6B675F;font-weight:500;font-size:11.5px;letter-spacing:0.02em;
+    }
+
+    /* KPI Card */
+    .kpi{
+      background:#FFFFFF;border:1px solid rgba(45,42,38,0.06);
+      border-radius:20px;padding:24px 26px;
+      display:flex;flex-direction:column;gap:8px;min-height:130px;
+      box-shadow:0 1px 2px rgba(45,42,38,0.03);
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+    .kpi:hover{ transform:translateY(-1px); box-shadow:0 4px 16px rgba(45,42,38,0.06); }
+    .kpi.alert { border-color:rgba(184,101,112,0.30); }
+    .kpi.warn  { border-color:rgba(199,150,94,0.28); }
+    .kpi .label{
+      font-size:12px;font-weight:500;color:#6B675F;letter-spacing:-0.005em;
+    }
+    .kpi .num{
+      font-family:'Fraunces',serif;font-size:48px;font-weight:400;
+      letter-spacing:-0.02em;line-height:1;color:#1A1815;
+      font-feature-settings:'tnum';
+    }
+    .kpi .sub{ font-size:12.5px;color:#6B675F;letter-spacing:-0.005em; }
+
+    /* Patient table */
+    .ptable{ width:100%;border-collapse:collapse; }
+    .ptable thead th{
+      text-align:left;
+      font-size:11px;letter-spacing:-0.002em;color:#9A958B;font-weight:500;
+      padding:14px 18px;border-bottom:1px solid rgba(45,42,38,0.08);
+      cursor:pointer;user-select:none;
+    }
+    .ptable thead th:hover{ color:#6B675F; }
+    .ptable tbody tr{ cursor:pointer;transition:background .15s ease; }
+    .ptable tbody tr:hover{ background:#FAF8F3; }
+    .ptable tbody tr.active{ background:rgba(110,138,124,0.06); box-shadow:inset 3px 0 0 0 #6E8A7C; }
+    .ptable tbody td{
+      padding:18px;border-bottom:1px solid rgba(45,42,38,0.05);
+      font-size:13.5px;vertical-align:middle;
+    }
+    .ptable tbody tr:last-child td{ border-bottom:0; }
+    .ptable .pname{ display:flex;align-items:center;gap:12px; }
+    .ptable .pavatar{
+      width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+      background:linear-gradient(135deg, #FAF8F3, #F0EDE6);
+      border:1px solid rgba(45,42,38,0.06);
+      color:#6B675F;font-weight:500;font-size:11px;letter-spacing:0.02em;
+    }
+    .ptable .pinfo{ font-size:12px;color:#9A958B;margin-top:2px;letter-spacing:-0.005em; }
+    .ptable .score{
+      font-family:'Fraunces',serif;font-size:18px;font-weight:400;
+      font-feature-settings:'tnum';letter-spacing:-0.01em;
+    }
+    .ptable .score.success{ color:#3F7158; }
+    .ptable .score.warn{ color:#8B6A3F; }
+    .ptable .score.crit{ color:#8E4951; }
+    .ptable .trend{ display:inline-flex;align-items:center;gap:4px;font-size:12.5px; }
+    .ptable .trend.up{ color:#3F7158; }
+    .ptable .trend.down{ color:#8E4951; }
+    .ptable .trend.flat{ color:#9A958B; }
+
+    /* Buttons */
+    .btn{
+      display:inline-flex;align-items:center;gap:7px;
+      padding:9px 16px;border-radius:999px;font-size:13px;font-weight:500;
+      letter-spacing:-0.005em;line-height:1.1;
+      border:1px solid transparent;cursor:pointer;
+      transition:transform .15s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{ transform:translateY(-1px); }
+    .btn.primary{
+      background:#2A2823;color:#FAF8F3;border-color:#2A2823;
+    }
+    .btn.primary:hover{ background:#3D3A33;border-color:#3D3A33; box-shadow:0 4px 16px rgba(45,42,38,0.18); }
+    .btn.attention{
+      background:rgba(184,101,112,0.10);color:#8E4951;border-color:rgba(184,101,112,0.30);
+    }
+    .btn.attention:hover{ background:rgba(184,101,112,0.18);border-color:rgba(184,101,112,0.42); }
+    .btn.ghost{
+      background:transparent;color:#2A2823;border-color:rgba(45,42,38,0.14);
+    }
+    .btn.ghost:hover{ background:#FAF8F3;border-color:rgba(45,42,38,0.22); }
+
+    /* Heatmap cell */
     .cell{
       width:100%;aspect-ratio:1/1;border-radius:4px;
-      background:#161616;border:1px solid rgba(244,241,232,0.04);
-      transition:transform .15s ease, box-shadow .15s ease;
-      position:relative;
+      background:#F0EDE6;border:1px solid rgba(45,42,38,0.04);
+      transition:transform .15s ease;
     }
-    .cell.s1{ background:#1A1A1A; }                         /* missed */
-    .cell.s2{ background:rgba(200,169,110,0.18); }          /* partial */
-    .cell.s3{ background:rgba(200,169,110,0.45); }          /* solid */
-    .cell.s4{ background:#C8A96E; box-shadow:0 0 6px rgba(200,169,110,0.35); } /* perfect */
-    .cell.today{ outline:1px solid #C8A96E; outline-offset:1px; }
-    .cell:hover{ transform:scale(1.18); z-index:5; box-shadow:0 0 0 1px rgba(244,241,232,0.18); }
+    .cell.s0{ background:#F0EDE6; }
+    .cell.s1{ background:rgba(110,138,124,0.20); }
+    .cell.s2{ background:rgba(110,138,124,0.50); }
+    .cell.s3{ background:#6E8A7C; }
+    .cell.miss{ background:rgba(184,101,112,0.36); }
+    .cell.today{ outline:1.5px solid #6E8A7C;outline-offset:1px; }
+    .cell:hover{ transform:scale(1.18); z-index:5; box-shadow:0 0 0 1px rgba(45,42,38,0.18); }
 
-    /* Adherence ring */
+    .spark path{ fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round; }
+    .spark .axis{ stroke:rgba(45,42,38,0.06); stroke-width:1; }
+
+    /* Score ring */
     .ring{
-      width:140px;height:140px;border-radius:50%;
+      width:120px;height:120px;border-radius:50%;
       background:
-        radial-gradient(circle at 50% 50%, rgba(200,169,110,0.12), transparent 60%),
+        radial-gradient(circle at 50% 50%, rgba(110,138,124,0.06), transparent 60%),
         conic-gradient(from -90deg,
-          #C8A96E 0%,
-          #C8A96E var(--p, 94%),
-          rgba(200,169,110,0.12) var(--p, 94%),
-          rgba(200,169,110,0.12) 100%);
-      mask: radial-gradient(circle, transparent 62%, black 63%);
-      -webkit-mask: radial-gradient(circle, transparent 62%, black 63%);
-      animation:ring-pulse 6s ease-in-out infinite;
-    }
-    @keyframes ring-pulse{
-      0%,100%{filter:drop-shadow(0 0 0 rgba(200,169,110,0))}
-      50%{filter:drop-shadow(0 0 22px rgba(200,169,110,0.30))}
+          var(--ring-color, #6E8A7C) 0%,
+          var(--ring-color, #6E8A7C) var(--p, 94%),
+          rgba(45,42,38,0.06) var(--p, 94%),
+          rgba(45,42,38,0.06) 100%);
+      mask: radial-gradient(circle, transparent 60%, black 61%);
+      -webkit-mask: radial-gradient(circle, transparent 60%, black 61%);
     }
 
-    /* Status chips */
-    .chip{
-      display:inline-flex;align-items:center;gap:6px;
-      font-family:'JetBrains Mono','SFMono-Regular',Menlo,monospace;
-      font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;
-      padding:4px 10px;border-radius:999px;
-      border:1px solid rgba(244,241,232,0.06);
-      background:#131313;color:#A6A29A;
-    }
-    .chip.gold  { color:#C8A96E; border-color:rgba(200,169,110,0.22); background:rgba(200,169,110,0.08); }
-    .chip.sage  { color:#7D9275; border-color:rgba(125,146,117,0.28); background:rgba(125,146,117,0.10); }
-    .chip.alert { color:#C9745A; border-color:rgba(201,116,90,0.30); background:rgba(201,116,90,0.10); }
-    .chip .dot  { width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse-dot 2.4s ease-in-out infinite }
-
-    /* Roster row */
-    .roster-row{
-      display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;
-      padding:10px 12px;border-radius:12px;
-      cursor:pointer;border:1px solid transparent;
-      transition:background .2s ease, border-color .2s ease;
-    }
-    .roster-row:hover{ background:#131313 }
-    .roster-row.active{ background:#131313;border-color:rgba(200,169,110,0.22); }
-    .roster-row .avatar{
-      width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
-      background:linear-gradient(135deg, rgba(200,169,110,0.18), rgba(200,169,110,0.04));
-      border:1px solid rgba(200,169,110,0.18);
-      color:#C8A96E;font-weight:600;font-size:11px;letter-spacing:0.04em;
-    }
-
-    /* Sparkline */
-    .spark path{ fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round; }
-    .spark .axis{ stroke:rgba(244,241,232,0.05); stroke-width:1; }
-
-    /* Reveal */
-    .reveal{opacity:0;transform:translateY(14px);transition:opacity .8s ease, transform .8s ease}
+    .reveal{opacity:0;transform:translateY(8px);transition:opacity .5s ease, transform .5s ease}
     .reveal.in{opacity:1;transform:none}
-    .d1{transition-delay:.04s}.d2{transition-delay:.10s}.d3{transition-delay:.18s}
-    .d4{transition-delay:.26s}.d5{transition-delay:.34s}
 
-    /* Scrollbar – minimal */
     ::-webkit-scrollbar{width:8px;height:8px}
     ::-webkit-scrollbar-track{background:transparent}
-    ::-webkit-scrollbar-thumb{background:rgba(244,241,232,0.08);border-radius:8px}
-    ::-webkit-scrollbar-thumb:hover{background:rgba(244,241,232,0.14)}
+    ::-webkit-scrollbar-thumb{background:rgba(45,42,38,0.12);border-radius:8px}
+    ::-webkit-scrollbar-thumb:hover{background:rgba(45,42,38,0.22)}
 
-    /* Lucide icon size default */
-    [data-lucide]{ width:16px; height:16px; stroke-width:1.6; }
+    [data-lucide]{ width:15px; height:15px; stroke-width:1.5; }
   </style>
 </head>
-<body class="bg-bg text-ink min-h-screen">
+<body class="bg-paper text-ink min-h-screen">
 
-  <div class="living-bg" aria-hidden="true"></div>
+  <div class="ambient" aria-hidden="true"></div>
 
-  <!-- ─────────────────── NAV (matches index/clinical) ─────────────────── -->
-  <nav id="nav" class="fixed top-0 inset-x-0 z-50 px-6 md:px-12 py-3 flex justify-between items-center bg-bg/60 backdrop-blur-md backdrop-saturate-150 border-b border-hairline transition-all">
-    <a href="/" class="flex items-center gap-3" aria-label="Wylde Self home">
-      <span class="w-7 h-7 rounded-lg grid place-items-center font-bold text-[12px]"
-            style="background:linear-gradient(135deg, rgba(200,169,110,0.18), rgba(200,169,110,0.04));border:1px solid rgba(200,169,110,0.14);color:#C8A96E;">
-        W<span class="text-ink">S</span>
+  <!-- ─────── TOP NAV ─────── -->
+  <nav id="nav" class="fixed top-0 inset-x-0 z-50 px-6 md:px-8 py-3.5 flex justify-between items-center bg-paper/85 backdrop-blur-md border-b border-line">
+    <div class="flex items-center gap-5">
+      <a href="/" class="flex items-center gap-2.5" aria-label="Wylde Self home">
+        <img src="/logo-icon.png" alt="" class="w-7 h-7 rounded-lg block flex-shrink-0" />
+        <span class="hidden sm:inline tracking-[0.16em] text-[12px] font-semibold uppercase text-ink">WYLDE <span class="text-sageDeep">SELF</span></span>
+      </a>
+      <span class="hidden md:inline-block w-px h-4 bg-line2"></span>
+      <span class="hidden md:inline-flex items-center gap-2 text-[14px] font-medium text-ink">
+        Patient Adherence Dashboard
       </span>
-      <span class="font-bold tracking-[0.18em] text-[12px]">WYLDE <span class="text-gold">SELF</span></span>
-    </a>
-    <div class="flex items-center gap-1.5">
-      <a href="/" class="hidden md:inline-block px-3 py-2 rounded-pill text-[12.5px] text-ink2 hover:text-ink hover:bg-elev1 transition">Consumer</a>
-      <a href="/clinical.html" class="hidden md:inline-block px-3 py-2 rounded-pill text-[12.5px] text-ink2 hover:text-ink hover:bg-elev1 transition">Clinical</a>
-      <a href="/command-center.html" class="hidden md:inline-block px-3 py-2 rounded-pill text-[12.5px] text-gold transition">Command Center</a>
-      <a href="/clinical.html#partner" class="ml-2 px-4 py-2 rounded-pill text-[12.5px] font-semibold bg-gold text-bg border border-gold hover:shadow-glow transition">Partner</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="relative hidden sm:block">
+        <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink3 w-4 h-4"></i>
+        <input type="text" placeholder="Search patients" aria-label="Search"
+          class="bg-cream border border-line rounded-full pl-10 pr-4 py-2 text-[13px] w-72 placeholder:text-ink3 focus:outline-none focus:border-line2 transition" />
+      </div>
+      <button class="pill crit" aria-label="3 patients need attention"><i data-lucide="bell" class="w-3 h-3"></i>3 need attention</button>
+      <a href="/clinical.html" class="pill neutral hidden md:inline-flex"><i data-lucide="arrow-left" class="w-3 h-3"></i>Back to site</a>
+      <span class="pill clay"><i data-lucide="circle-user" class="w-3 h-3"></i>Dr. Itzin</span>
     </div>
   </nav>
 
-  <!-- ─────────────────── PAGE SHELL ─────────────────── -->
-  <div class="relative z-10 pt-20 pb-16 px-4 md:px-8 lg:px-12 max-w-[1480px] mx-auto">
+  <!-- ─────── MAIN ─────── -->
+  <div class="relative z-10 pt-20 pb-10 px-4 md:px-8 max-w-[1620px] mx-auto">
 
-    <!-- Page header strip -->
-    <div class="reveal d1 flex flex-wrap items-end justify-between gap-4 mb-6">
-      <div class="flex flex-col gap-2">
-        <span class="eyebrow"><span class="dot"></span>Clinician Command Center · v1</span>
-        <h1 class="text-[clamp(28px,3.4vw,40px)] font-semibold tracking-[-0.03em] leading-[1.05]">
-          Sacred Utility.<span class="text-ink2 font-light"> A cockpit for human optimization.</span>
-        </h1>
+    <!-- ░ Banner ░ -->
+    <div class="alert-banner reveal mb-6">
+      <span class="ico"><i data-lucide="alert-circle" class="w-5 h-5"></i></span>
+      <div class="flex-1 min-w-0">
+        <div class="text-[15px] font-medium text-ink leading-snug">3 patients need attention today</div>
+        <div class="text-[13px] text-ink2 mt-1 leading-snug">Adherence has dropped, refills are overdue, or biometrics are trending below baseline.</div>
       </div>
-      <div class="flex items-center gap-2">
-        <button class="chip"><i data-lucide="search"></i>Search patients</button>
-        <button class="chip"><i data-lucide="bell"></i>3 alerts</button>
-        <button class="chip gold"><i data-lucide="circle-user"></i>Dr. Itzin</button>
+      <button class="btn attention" onclick="document.getElementById('alerts').scrollIntoView({behavior:'smooth'})">
+        Review now <i data-lucide="arrow-right" class="w-3 h-3"></i>
+      </button>
+    </div>
+
+    <!-- ░ KPI ROW ░ -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5 mb-6">
+      <div class="kpi reveal">
+        <div class="label">Cohort adherence</div>
+        <div class="num">87<span class="text-ink2 text-[22px] font-normal font-sans">%</span></div>
+        <div class="flex items-center gap-2.5 mt-1">
+          <span class="pill success"><span class="dot"></span>On track</span>
+          <span class="sub">+3% vs last week</span>
+        </div>
+      </div>
+      <div class="kpi reveal">
+        <div class="label">Active patients</div>
+        <div class="num">47</div>
+        <div class="sub mt-1">Across 8 active protocols</div>
+      </div>
+      <div class="kpi alert reveal">
+        <div class="label">Need attention</div>
+        <div class="num text-crit">6</div>
+        <div class="flex items-center gap-2 mt-1">
+          <span class="pill crit">Review today</span>
+        </div>
+      </div>
+      <div class="kpi warn reveal">
+        <div class="label">Refills due</div>
+        <div class="num text-warn">3</div>
+        <div class="flex items-center gap-2 mt-1">
+          <span class="pill warn">Approve when ready</span>
+        </div>
       </div>
     </div>
 
-    <!-- ─────────────────── LAYOUT GRID ─────────────────── -->
-    <div class="grid grid-cols-12 gap-4 lg:gap-5">
+    <!-- ░ TWO-COLUMN GRID ░ -->
+    <div class="grid grid-cols-12 gap-5 md:gap-6">
 
-      <!-- ────────── ROSTER SIDEBAR ────────── -->
-      <aside class="reveal d1 col-span-12 lg:col-span-3 surface p-4 lg:sticky lg:top-20 self-start">
-        <div class="flex items-center justify-between mb-3">
-          <span class="font-mono text-[10.5px] tracking-[0.22em] uppercase text-ink3">Roster · 8 active</span>
-          <button class="text-ink3 hover:text-gold transition" aria-label="Add patient"><i data-lucide="plus" class="w-4 h-4"></i></button>
-        </div>
+      <div class="col-span-12 xl:col-span-8 flex flex-col gap-6">
 
-        <div class="relative mb-3">
-          <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-ink3 w-3.5 h-3.5"></i>
-          <input type="text" placeholder="Filter patients" aria-label="Filter patients"
-            class="w-full bg-elev2 border border-hairline rounded-lg pl-9 pr-3 py-2 text-[13px] placeholder:text-ink3 focus:outline-none focus:border-warmline transition" />
-        </div>
-
-        <div id="roster" class="flex flex-col gap-1 max-h-[68vh] overflow-y-auto pr-1"></div>
-
-        <div class="mt-4 pt-4 border-t border-hairline">
-          <div class="font-mono text-[10.5px] tracking-[0.22em] uppercase text-ink3 mb-2">Cohort signals</div>
-          <div class="grid grid-cols-2 gap-2">
-            <div class="bg-elev2 border border-hairline rounded-lg p-2.5">
-              <div class="font-mono text-[10px] tracking-[0.16em] uppercase text-ink3">Avg adherence</div>
-              <div class="text-ink text-base font-semibold mt-0.5">88%</div>
+        <!-- ░ ACTIVE ALERTS ░ -->
+        <section id="alerts" class="surface p-6 md:p-8 reveal">
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+            <div class="flex items-center gap-3">
+              <h2 class="font-serif text-[24px] font-normal tracking-[-0.015em] text-ink">Today's priorities</h2>
+              <span class="pill neutral">8 open</span>
             </div>
-            <div class="bg-elev2 border border-hairline rounded-lg p-2.5">
-              <div class="font-mono text-[10px] tracking-[0.16em] uppercase text-ink3">Drift alerts</div>
-              <div class="text-gold text-base font-semibold mt-0.5">3</div>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <button class="pill neutral active"><span class="dot" style="background:#B86570"></span>Needs attention · 3</button>
+              <button class="pill neutral"><span class="dot" style="background:#C7965E"></span>Trending lower · 4</button>
+              <button class="pill neutral"><span class="dot" style="background:#6B89A8"></span>Updates · 1</button>
             </div>
           </div>
-        </div>
-      </aside>
 
-      <!-- ────────── MAIN COLUMN ────────── -->
-      <main class="col-span-12 lg:col-span-9 flex flex-col gap-4 lg:gap-5">
+          <div id="alertList" class="flex flex-col gap-3"></div>
+        </section>
 
-        <!-- ░░░░░ PATIENT OVERVIEW HEADER ░░░░░ -->
-        <section class="reveal d1 surface p-5 md:p-7">
-          <div class="flex flex-wrap gap-6 items-center justify-between">
-
-            <!-- Identity -->
-            <div class="flex items-center gap-5 min-w-0">
-              <div class="w-16 h-16 rounded-2xl grid place-items-center text-gold font-semibold text-lg tracking-wide flex-shrink-0"
-                   style="background:linear-gradient(135deg, rgba(200,169,110,0.20), rgba(200,169,110,0.04));border:1px solid rgba(200,169,110,0.25);">
-                MR
-              </div>
-              <div class="min-w-0">
-                <div class="flex items-center gap-2 flex-wrap">
-                  <h2 class="text-[22px] md:text-[26px] font-semibold tracking-[-0.02em] truncate">Marcus Reed</h2>
-                  <span class="chip"><span class="dot" style="background:#7D9275"></span>On-protocol</span>
-                </div>
-                <div class="flex items-center gap-3 flex-wrap mt-1.5 font-mono text-[11.5px] tracking-[0.04em] text-ink2">
-                  <span>Age 38</span><span class="text-ink3">·</span>
-                  <span>M · 5'11" · 184 lb</span><span class="text-ink3">·</span>
-                  <span>MRN #WS-04412</span><span class="text-ink3">·</span>
-                  <span>Last visit · Apr 12, 2026</span>
-                </div>
-                <div class="mt-3 flex items-center gap-2 flex-wrap">
-                  <span class="chip gold"><i data-lucide="shield-check"></i>Phase 2</span>
-                  <span class="font-mono text-[11.5px] tracking-[0.04em] text-ink2">Week 6 of 12 · Neural Recovery</span>
-                </div>
-                <!-- Phase progress bar -->
-                <div class="mt-2 w-72 max-w-full h-1 bg-elev3 rounded-full overflow-hidden">
-                  <div class="h-full bg-gold rounded-full" style="width:50%"></div>
-                </div>
-              </div>
+        <!-- ░ AT-RISK PATIENTS TABLE ░ -->
+        <section class="surface overflow-hidden reveal">
+          <div class="flex items-center justify-between p-6 md:p-8 pb-4 flex-wrap gap-3">
+            <div class="flex items-center gap-3">
+              <h2 class="font-serif text-[24px] font-normal tracking-[-0.015em] text-ink">Patients to review</h2>
+              <span class="pill neutral">9 patients</span>
             </div>
+            <div class="flex items-center gap-2">
+              <button class="pill neutral"><i data-lucide="filter" class="w-3 h-3"></i>Filter</button>
+              <button class="pill neutral"><i data-lucide="download" class="w-3 h-3"></i>Export</button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="ptable">
+              <thead>
+                <tr>
+                  <th>Patient</th>
+                  <th>Adherence</th>
+                  <th>7-day trend</th>
+                  <th>Last check-in</th>
+                  <th>Notes</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="patientTbody"></tbody>
+            </table>
+          </div>
+        </section>
 
-            <!-- Adherence Score -->
-            <div class="flex items-center gap-5 ml-auto">
-              <div class="flex flex-col items-end text-right">
-                <span class="font-mono text-[10.5px] tracking-[0.22em] uppercase text-ink3">Standard Adherence</span>
-                <span class="text-ink2 text-[12px] font-mono mt-0.5">30-day rolling</span>
-                <div class="mt-3 flex items-center gap-2">
-                  <span class="chip sage"><span class="dot"></span>+4% vs prior 30d</span>
-                </div>
+      </div>
+
+      <!-- RIGHT — Selected Patient Detail -->
+      <aside class="col-span-12 xl:col-span-4 xl:sticky xl:top-24 self-start flex flex-col gap-6">
+
+        <!-- ░ PATIENT HEADER ░ -->
+        <section class="surface p-6 md:p-8 reveal">
+          <div class="flex items-center justify-between mb-5">
+            <div class="text-[12px] font-medium text-ink3">Selected patient</div>
+            <span class="pill crit"><span class="dot"></span>Needs attention</span>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="w-14 h-14 rounded-2xl grid place-items-center font-medium text-[14px] tracking-wide flex-shrink-0"
+                 style="background:linear-gradient(135deg, #FAF8F3, #F0EDE6);border:1px solid rgba(45,42,38,0.08);color:#6B675F;">
+              MR
+            </div>
+            <div class="min-w-0 flex-1">
+              <h3 class="font-serif text-[22px] font-normal tracking-[-0.015em] text-ink leading-tight">Marcus Reed</h3>
+              <div class="text-[12.5px] text-ink2 mt-1.5">38 years · MRN #WS-04412</div>
+              <div class="text-[12.5px] text-ink3 mt-0.5">Phase II protocol · Day 42 of 84</div>
+            </div>
+          </div>
+
+          <!-- Adherence summary — humanized -->
+          <div class="mt-6 pt-6 border-t border-line">
+            <div class="flex items-center justify-between gap-4">
+              <div class="flex-1">
+                <div class="text-[12px] font-medium text-ink3">Adherence</div>
+                <div class="font-serif text-[52px] font-normal tracking-[-0.02em] leading-none mt-2 text-numeric">68<span class="text-ink2 text-[22px] font-normal font-sans">%</span></div>
+                <div class="text-[12.5px] text-ink2 mt-2">Last 30 days · −12% vs the past 60</div>
               </div>
               <div class="relative">
-                <div class="ring" style="--p:94%"></div>
+                <div class="ring" style="--p:68%;--ring-color:#B86570;"></div>
                 <div class="absolute inset-0 grid place-items-center">
                   <div class="text-center">
-                    <div class="text-[34px] font-semibold tracking-[-0.03em] leading-none">94<span class="text-ink2 text-[16px] align-top">%</span></div>
-                    <div class="font-mono text-[10px] tracking-[0.22em] uppercase text-gold mt-1">A-Tier</div>
+                    <i data-lucide="alert-circle" class="text-crit w-6 h-6 mx-auto"></i>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-
-          <!-- Quick stats row -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6 pt-5 border-t border-hairline">
-            <div>
-              <div class="font-mono text-[10.5px] tracking-[0.22em] uppercase text-ink3">Closeout streak</div>
-              <div class="text-ink text-lg font-semibold mt-1">23 <span class="text-ink2 text-xs font-normal">days</span></div>
-            </div>
-            <div>
-              <div class="font-mono text-[10.5px] tracking-[0.22em] uppercase text-ink3">Days remaining</div>
-              <div class="text-ink text-lg font-semibold mt-1">42 <span class="text-ink2 text-xs font-normal">/ 84</span></div>
-            </div>
-            <div>
-              <div class="font-mono text-[10.5px] tracking-[0.22em] uppercase text-ink3">Active scripts</div>
-              <div class="text-ink text-lg font-semibold mt-1">3 <span class="text-ink2 text-xs font-normal">peptides</span></div>
-            </div>
-            <div>
-              <div class="font-mono text-[10.5px] tracking-[0.22em] uppercase text-ink3">Open alerts</div>
-              <div class="text-gold text-lg font-semibold mt-1">1 <span class="text-ink2 text-xs font-normal">drift signal</span></div>
-            </div>
+            <p class="text-[13.5px] text-ink2 leading-relaxed mt-4">
+              Adherence is trending lower than usual, primarily on evening peptide doses.
+            </p>
+            <p class="text-[13.5px] text-sageDeep leading-relaxed mt-2">
+              Suggested: Send a check-in or schedule a brief call before the next visit.
+            </p>
           </div>
         </section>
 
-        <!-- ░░░░░ CLOSEOUT HEATMAP ░░░░░ -->
-        <section class="reveal d2 surface p-5 md:p-7">
-          <div class="flex flex-wrap items-end justify-between gap-3 mb-5">
-            <div>
-              <div class="flex items-center gap-2 mb-2">
-                <span class="eyebrow"><span class="dot"></span>Daily Closeout · 30-day Heatmap</span>
+        <!-- ░ PATIENT-SPECIFIC NOTES ░ -->
+        <section class="surface p-6 md:p-8 reveal">
+          <div class="text-[12px] font-medium text-ink3 mb-4">Notes for this patient</div>
+          <div class="flex flex-col gap-3">
+            <div class="alert-row crit">
+              <span class="flex-shrink-0" style="width:32px;height:32px;border-radius:10px;background:rgba(184,101,112,0.12);color:#8E4951;display:grid;place-items:center;">
+                <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+              </span>
+              <div class="min-w-0">
+                <div class="text-[13.5px] font-medium text-ink">Missed 3 evening peptide doses</div>
+                <div class="text-[12px] text-ink3 mt-0.5">Past 5 days · BPC-157</div>
               </div>
-              <h3 class="text-[20px] md:text-[22px] font-semibold tracking-[-0.02em]">Adherence telemetry by axis.</h3>
-              <p class="text-ink2 text-[13.5px] mt-1 max-w-prose">Every closed-out day at 23:59 local. Gold = completed in full, dim = missed. Hover any cell for the dated record.</p>
+              <span class="text-[11px] text-ink3">2h</span>
+              <button class="btn attention" style="padding:7px 13px;font-size:12px">Send check-in</button>
             </div>
-            <div class="flex items-center gap-3 font-mono text-[11px] tracking-[0.16em] uppercase text-ink3">
-              <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-elev3 border border-hairline"></span>Missed</span>
-              <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm" style="background:rgba(200,169,110,0.18)"></span>Partial</span>
-              <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm" style="background:rgba(200,169,110,0.45)"></span>Solid</span>
-              <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-gold"></span>Perfect</span>
-            </div>
-          </div>
-
-          <!-- Heatmap rows -->
-          <div id="heatmap" class="flex flex-col gap-3"></div>
-
-          <!-- Tooltip -->
-          <div id="cellTip"
-               class="pointer-events-none fixed z-[100] hidden bg-elev2 border border-hairline2 rounded-lg px-3 py-2 text-[12px] text-ink shadow-card">
-          </div>
-        </section>
-
-        <!-- ░░░░░ TWO-COLUMN: BIOMETRICS + PRESCRIPTIONS ░░░░░ -->
-        <section class="grid grid-cols-1 xl:grid-cols-12 gap-4 lg:gap-5">
-
-          <!-- Biometric Sync Panel -->
-          <div class="reveal d1 xl:col-span-7 surface p-5 md:p-7">
-            <div class="flex flex-wrap items-end justify-between gap-3 mb-5">
-              <div>
-                <span class="eyebrow"><span class="dot"></span>Biometric Sync · Identity Import</span>
-                <h3 class="text-[20px] md:text-[22px] font-semibold tracking-[-0.02em] mt-2">Live signal vs. baseline.</h3>
-                <p class="text-ink2 text-[13.5px] mt-1">Drift &gt; 15% from 90-day baseline auto-flags an alert.</p>
+            <div class="alert-row warn">
+              <span class="flex-shrink-0" style="width:32px;height:32px;border-radius:10px;background:rgba(199,150,94,0.12);color:#8B6A3F;display:grid;place-items:center;">
+                <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
+              </span>
+              <div class="min-w-0">
+                <div class="text-[13.5px] font-medium text-ink">Sleep is 18% below baseline</div>
+                <div class="text-[12px] text-ink3 mt-0.5">Training days · 7-night avg</div>
               </div>
-              <div class="flex items-center gap-2 chip sage"><span class="dot"></span>Synced 3m ago</div>
+              <span class="text-[11px] text-ink3">4h</span>
+              <button class="btn ghost" style="padding:7px 13px;font-size:12px">Review</button>
             </div>
-            <div id="biometrics" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+          </div>
+        </section>
+
+        <!-- ░ ADHERENCE HEATMAP ░ -->
+        <section class="surface p-6 md:p-8 reveal">
+          <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
+            <div class="text-[12px] font-medium text-ink3">Daily adherence · last 30 days</div>
+            <div class="flex items-center gap-3 text-[11px] text-ink3">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-warmgray border border-line"></span>Missed</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-sage"></span>Completed</span>
+            </div>
+          </div>
+          <div id="heatmap" class="flex flex-col gap-2.5"></div>
+          <div id="cellTip" class="pointer-events-none fixed z-[100] hidden bg-white border border-line2 rounded-lg px-3 py-2 text-[12px] text-ink shadow-card"></div>
+        </section>
+
+        <!-- ░ BIOMETRICS — humanized ░ -->
+        <section class="surface p-6 md:p-8 reveal">
+          <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
+            <div class="text-[12px] font-medium text-ink3">Baseline + progress tracking</div>
+            <span class="pill success"><span class="dot"></span>Synced 3m ago</span>
+          </div>
+          <div id="biometrics" class="flex flex-col gap-3"></div>
+        </section>
+
+        <!-- ░ ACTIVE PROTOCOL ░ -->
+        <section class="surface p-6 md:p-8 reveal">
+          <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
+            <div class="text-[12px] font-medium text-ink3">Active protocol</div>
+            <span class="pill warn"><span class="dot"></span>Refill due soon</span>
           </div>
 
-          <!-- Prescription Management -->
-          <div class="reveal d2 xl:col-span-5 surface p-5 md:p-7 flex flex-col">
-            <div class="flex items-end justify-between gap-3 mb-5">
-              <div>
-                <span class="eyebrow"><span class="dot"></span>Prescription Management</span>
-                <h3 class="text-[20px] md:text-[22px] font-semibold tracking-[-0.02em] mt-2">Active peptide protocol.</h3>
+          <div class="bg-cream border border-line rounded-2xl p-5 mb-4">
+            <div class="flex items-start justify-between gap-2 mb-3">
+              <div class="min-w-0">
+                <div class="font-serif text-[19px] font-normal tracking-[-0.01em] text-ink truncate">BPC-157 + TB-500</div>
+                <div class="text-[12.5px] text-ink2 mt-0.5">250 mcg + 500 mcg · once daily SC</div>
               </div>
-              <button class="chip"><i data-lucide="plus"></i>New script</button>
+              <span class="pill clay">Vial 2 of 4</span>
             </div>
-
-            <div id="rxTable" class="flex flex-col gap-2"></div>
-
-            <div class="mt-4 pt-4 border-t border-hairline flex flex-wrap items-center justify-between gap-3">
-              <div class="font-mono text-[10.5px] tracking-[0.22em] uppercase text-ink3">Pharmacy · API connected</div>
-              <button id="authoriseAllBtn"
-                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-pill bg-gold text-bg font-semibold text-[13px] tracking-[0.02em] border border-gold hover:-translate-y-px hover:shadow-glow2 transition animate-cta-pulse">
-                <i data-lucide="zap" class="w-4 h-4"></i>
-                Authorise Refill via API
-              </button>
+            <div class="grid grid-cols-4 gap-1.5 mt-3">
+              <div class="h-1.5 rounded-full bg-clay"></div>
+              <div class="h-1.5 rounded-full bg-clay"></div>
+              <div class="h-1.5 rounded-full bg-warmgray border border-line"></div>
+              <div class="h-1.5 rounded-full bg-warmgray border border-line"></div>
             </div>
+            <div class="text-[11.5px] text-ink3 mt-3">Last filled · Apr 02 · Tailor Made Compounding</div>
+          </div>
+
+          <button id="refillBtn" class="btn primary w-full justify-center" style="padding:14px 20px;font-size:13.5px;">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            Approve refill
+          </button>
+          <div class="text-[11px] text-ink3 mt-3 text-center">Routes to Tailor Made · countersigned by Dr. Itzin</div>
+        </section>
+
+        <!-- ░ AI INSIGHT ░ -->
+        <section class="surface p-6 md:p-8 reveal">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-[12px] font-medium text-ink3">Weekly summary</div>
+            <span class="text-[11.5px] text-ink3">Apr 19 – Apr 26</span>
+          </div>
+          <p class="text-[14px] leading-relaxed text-ink">
+            Marcus is meeting protein targets, but sleep has dropped 18% below baseline on training days. Heart-rate variability is also trending lower.
+          </p>
+          <div class="mt-4 px-4 py-3.5 bg-cream border border-line rounded-2xl">
+            <div class="text-[11.5px] font-medium text-sageDeep mb-1.5">Suggested adjustment</div>
+            <p class="text-[13px] text-ink2 leading-relaxed">Move Ipamorelin to morning on training days, and consider 200 mg magnesium glycinate at 21:00.</p>
+          </div>
+          <div class="mt-5 flex items-center gap-2 flex-wrap">
+            <button data-act="approve" class="ai-action btn primary">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>Approve &amp; apply
+            </button>
+            <button data-act="override" class="ai-action btn ghost">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>Edit
+            </button>
+            <button class="ai-action btn ghost">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>Dismiss
+            </button>
           </div>
         </section>
 
-        <!-- ░░░░░ DIRECT INSIGHT LOG ░░░░░ -->
-        <section class="reveal d2 surface p-5 md:p-7">
-          <div class="flex flex-wrap items-end justify-between gap-3 mb-5">
-            <div>
-              <span class="eyebrow"><span class="dot"></span>Direct Insight Log · Coach AI</span>
-              <h3 class="text-[20px] md:text-[22px] font-semibold tracking-[-0.02em] mt-2">Weekly synthesis of the patient's day.</h3>
-              <p class="text-ink2 text-[13.5px] mt-1">On-device summarization of closeout, biometrics, and protocol response. Read-only · physician-supervised.</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <button class="chip"><i data-lucide="filter"></i>Last 6 weeks</button>
-              <button class="chip gold"><i data-lucide="download"></i>Export</button>
-            </div>
-          </div>
-
-          <div id="insightLog" class="flex flex-col gap-3"></div>
-
-          <div class="mt-5 pt-4 border-t border-hairline flex items-center justify-between flex-wrap gap-2">
-            <div class="font-mono text-[10.5px] tracking-[0.22em] uppercase text-ink3">Auto-generated · Reviewed by Dr. Itzin</div>
-            <a href="#" class="font-mono text-[11px] tracking-[0.18em] uppercase text-ink2 hover:text-gold transition inline-flex items-center gap-2">
-              View full log <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-            </a>
-          </div>
-        </section>
-
-      </main>
+      </aside>
     </div>
 
-    <!-- Footer strip -->
-    <div class="mt-10 pt-6 border-t border-hairline flex flex-wrap items-center justify-between gap-3 font-mono text-[11px] tracking-[0.16em] uppercase text-ink3">
+    <!-- footer strip -->
+    <div class="mt-10 pt-6 border-t border-line flex flex-wrap items-center justify-between gap-3 text-[11.5px] text-ink3">
       <span>© <span id="yr">2026</span> Wylde Self · Clinical Infrastructure</span>
-      <span>Sacred · Disciplined · High-End</span>
-      <span class="flex items-center gap-2">HIPAA-aligned <span class="w-1.5 h-1.5 rounded-full bg-sage"></span> SOC 2-track</span>
+      <span>HIPAA-aligned · SOC 2-track · Physician-supervised</span>
+      <span class="font-serif italic">Considered. Clinical. Calm.</span>
     </div>
   </div>
 
-  <!-- Lucide icons -->
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
   <script>
-  /* =====================================================================
-     DATA · MODULAR — replace each block with your real fetch endpoints.
-     Every renderer reads from these objects, so swap them with your API
-     responses without touching the markup or styles.
-     ===================================================================== */
-
+  /* DATA (modular) */
   const ENDPOINTS = {
-    // patient: `/api/patients/${id}`,
-    // closeout: `/api/patients/${id}/closeout?days=30`,
-    // biometrics: `/api/patients/${id}/biometrics`,
-    // prescriptions: `/api/patients/${id}/prescriptions`,
-    // insights: `/api/patients/${id}/insights?weeks=6`,
-    // refill: `/api/prescriptions/${rxId}/authorise`,
+    // alerts:    `/clinical/v1/alerts?status=open`,
+    // patients:  `/clinical/v1/patients?status=needs_attention`,
+    // closeout:  `/clinical/v1/closeout/${id}?days=30`,
+    // biometrics:`/clinical/v1/biometrics/${id}`,
+    // refill:    `/clinical/v1/rx/${id}/approve`,
   };
 
-  const DATA = {
-    roster: [
-      { id:'p_044', initials:'MR', name:'Marcus Reed',    age:38, phase:'Wk 6 / 12', score:94, status:'on',    active:true  },
-      { id:'p_017', initials:'DT', name:'Daniel Tovar',   age:45, phase:'Wk 9 / 12', score:88, status:'on',    active:false },
-      { id:'p_081', initials:'JK', name:'Jonas Klein',    age:51, phase:'Wk 2 / 12', score:73, status:'drift', active:false },
-      { id:'p_062', initials:'RA', name:'Rohan Ahuja',    age:34, phase:'Wk 11 / 12',score:96, status:'on',    active:false },
-      { id:'p_103', initials:'EM', name:'Elias Martin',   age:42, phase:'Wk 4 / 12', score:81, status:'on',    active:false },
-      { id:'p_119', initials:'SO', name:'Sebastian Orr',  age:39, phase:'Wk 7 / 12', score:67, status:'alert', active:false },
-      { id:'p_125', initials:'TG', name:'Theodore Greer', age:48, phase:'Wk 1 / 12', score:90, status:'on',    active:false },
-      { id:'p_133', initials:'AH', name:'Ari Hadid',      age:36, phase:'Wk 12 / 12',score:99, status:'on',    active:false },
-    ],
+  const ALERTS = [
+    { sev:'crit', patient:'Marcus Reed',     initials:'MR', title:'Adherence has dropped 12% over 7 days',          meta:'Missed 3 evening doses · BPC-157',         ago:'2h',  action:'Open patient',      actClass:'attention' },
+    { sev:'crit', patient:'Sara Chen',       initials:'SC', title:'Refill is overdue by 2 days',                    meta:'Sermorelin · last filled Mar 22',          ago:'1d',  action:'Approve refill',    actClass:'attention' },
+    { sev:'crit', patient:'Sebastian Orr',   initials:'SO', title:'Hasn’t checked in for 4 days',               meta:'Adherence currently at 54%',               ago:'1d',  action:'Send a message',    actClass:'attention' },
+    { sev:'warn', patient:'Ana Vasquez',     initials:'AV', title:'Sleep is averaging 18% below baseline',          meta:'Training days · 7-night avg',              ago:'4h',  action:'Send a reminder',   actClass:'ghost' },
+    { sev:'warn', patient:'Daniel Tovar',    initials:'DT', title:'HRV has trended lower for the past 7 days',      meta:'Approaching 15% deviation threshold',      ago:'6h',  action:'Review trend',      actClass:'ghost' },
+    { sev:'warn', patient:'Priya Sharma',    initials:'PS', title:'Protein targets missed 4 of 7 days',             meta:'Avg 142g vs 180g target',                  ago:'12h', action:'Send a reminder',   actClass:'ghost' },
+    { sev:'warn', patient:'Mei Watanabe',    initials:'MW', title:'Refill needed in 3 days',                        meta:'Ipamorelin · auto-route ready',            ago:'12h', action:'Pre-approve',       actClass:'ghost' },
+    { sev:'sky',  patient:'Rohan Ahuja',     initials:'RA', title:'Adherence streak extended to 28 days',           meta:'Currently at 96% · steady',                ago:'2d',  action:'Open patient',      actClass:'ghost' },
+  ];
 
-    closeout: {
-      // 30-day matrix · status: 0 missed · 1 partial · 2 solid · 3 perfect
-      // generated synthetically below in renderer if not supplied
-      days: 30,
-      axes: [
-        { key:'morning',   label:'Morning Protocol',     icon:'sunrise',   target:'05:30 — Cold · Light · Mobility' },
-        { key:'workout',   label:'Workout',              icon:'dumbbell',  target:'5×/wk · Push/Pull/Legs/Conditioning' },
-        { key:'nutrition', label:'Nutrition Targets',    icon:'utensils',  target:'180g protein · sub-30g sugar' },
-        { key:'peptide',   label:'Peptide Administration',icon:'syringe',  target:'BPC-157 + Ipamorelin · AM/PM' },
-      ],
+  const PATIENTS = [
+    { id:'p_044', initials:'MR', name:'Marcus Reed',    age:38, protocol:'Phase II · Neural Recovery',   score:68, trend:-12, lastCheckin:'2h ago',  notes:'3 missed doses', status:'crit',    label:'Needs attention',  active:true  },
+    { id:'p_017', initials:'SC', name:'Sara Chen',      age:42, protocol:'Phase I · Hormone Therapy',    score:54, trend:-8,  lastCheckin:'1d ago',  notes:'Refill overdue', status:'crit',    label:'Needs attention',  active:false },
+    { id:'p_119', initials:'SO', name:'Sebastian Orr',  age:39, protocol:'Phase II · Recovery',          score:54, trend:-15, lastCheckin:'4d ago',  notes:'No check-in 4d', status:'crit',    label:'Needs attention',  active:false },
+    { id:'p_088', initials:'AV', name:'Ana Vasquez',    age:36, protocol:'Phase I · Metabolic Reset',    score:78, trend:-6,  lastCheckin:'4h ago',  notes:'Sleep trend',    status:'warn',    label:'Trending lower',   active:false },
+    { id:'p_103', initials:'DT', name:'Daniel Tovar',   age:45, protocol:'Phase II · Neural Recovery',   score:81, trend:-4,  lastCheckin:'6h ago',  notes:'HRV trend',      status:'warn',    label:'Trending lower',   active:false },
+    { id:'p_125', initials:'PS', name:'Priya Sharma',   age:34, protocol:'Phase I · Onboarding',         score:74, trend:-3,  lastCheckin:'12h ago', notes:'Nutrition gap',  status:'warn',    label:'Trending lower',   active:false },
+    { id:'p_133', initials:'MW', name:'Mei Watanabe',   age:48, protocol:'Phase III · Maintenance',      score:91, trend:+2,  lastCheckin:'12h ago', notes:'Refill in 3d',   status:'warn',    label:'Refill due',       active:false },
+    { id:'p_062', initials:'RA', name:'Rohan Ahuja',    age:34, protocol:'Phase III · Maintenance',      score:96, trend:+3,  lastCheckin:'2d ago',  notes:'—',                status:'success', label:'On track',         active:false },
+    { id:'p_152', initials:'NC', name:'Nora Coleman',   age:41, protocol:'Phase II · Recovery',          score:88, trend:+1,  lastCheckin:'1d ago',  notes:'—',                status:'success', label:'On track',         active:false },
+  ];
+
+  const BIOMETRICS = [
+    {
+      key:'hrv', label:'Heart-rate variability', unit:'ms',
+      current:62, baseline:74, dirGood:'up',
+      history:[78,77,76,76,74,75,73,72,71,70,69,69,68,67,66,65,65,64,63,63,64,63,62,62,62],
+      interp:'Lower than usual — may reflect stress or limited recovery.',
+      suggest:'Confirm sleep window and reduce afternoon caffeine.',
     },
+    {
+      key:'sleep', label:'Sleep score', unit:'/100',
+      current:72, baseline:86, dirGood:'up',
+      history:[88,87,86,86,84,85,84,82,80,82,81,80,78,76,77,76,75,74,73,72,71,72,73,72,72],
+      interp:'Sleep quality has slipped over the past two weeks.',
+      suggest:'Review evening routine and screen exposure.',
+    },
+    {
+      key:'rhr', label:'Resting heart rate', unit:'bpm',
+      current:54, baseline:58, dirGood:'down',
+      history:[60,59,58,57,57,58,57,56,56,55,55,54,54,55,54,53,54,54,55,54,53,54,53,54,54],
+      interp:'Within healthy range — slightly improved versus baseline.',
+      suggest:'Continue current protocol.',
+    },
+  ];
 
-    biometrics: [
-      {
-        key:'rhr', label:'Resting Heart Rate', unit:'bpm', icon:'heart-pulse',
-        current:54, baseline:58, dirGood:'down',
-        history:[60,59,58,57,57,58,57,56,56,55,55,54,54,55,54,53,54,54,55,54,53,54,53,54,54],
-      },
-      {
-        key:'sleep', label:'Sleep Quality', unit:'/100', icon:'moon',
-        current:72, baseline:86, dirGood:'up',
-        history:[88,87,86,86,84,85,84,82,80,82,81,80,78,76,77,76,75,74,73,72,71,72,73,72,72],
-      },
-      {
-        key:'glucose', label:'Fasting Blood Glucose', unit:'mg/dL', icon:'droplet',
-        current:92, baseline:96, dirGood:'down',
-        history:[98,97,96,96,95,96,95,94,95,94,93,93,94,93,92,93,92,92,91,92,92,93,92,92,92],
-      },
-    ],
-
-    prescriptions: [
-      { id:'rx_44012', drug:'BPC-157',     dose:'250 mcg',  freq:'1× daily SC', refills:2, lastFilled:'Apr 02, 2026', status:'active',     adherence:96, dispenseLag:'34h' },
-      { id:'rx_44013', drug:'Ipamorelin',  dose:'200 mcg',  freq:'1× nightly SC',refills:1, lastFilled:'Apr 02, 2026', status:'active',     adherence:91, dispenseLag:'38h' },
-      { id:'rx_44014', drug:'NAD+',        dose:'100 mg',   freq:'2× weekly IM', refills:0, lastFilled:'Mar 19, 2026', status:'refill_due', adherence:88, dispenseLag:'—' },
-    ],
-
-    insights: [
-      {
-        week:'Apr 19 – Apr 26',
-        tag:'Sleep drift',
-        severity:'alert',
-        body:'User is hitting protein targets (avg 184g, +2% vs target) but sleep quality is declining on Push days (avg 68 vs 82 baseline). Resting HR steady. Suggest adjusting nighttime magnesium protocol and shifting peptide AM-only on Push days.',
-        actions:['Magnesium glycinate +200mg','Shift Ipamorelin to AM','Schedule HRV review'],
-      },
-      {
-        week:'Apr 12 – Apr 19',
-        tag:'On track',
-        severity:'sage',
-        body:'Closeout streak extended to 21 days. Workouts trending up in volume (+8%) without HR drift. BPC-157 adherence at 96% — fastest titration window of the cohort.',
-        actions:['Hold protocol','Re-image at week 8'],
-      },
-      {
-        week:'Apr 05 – Apr 12',
-        tag:'Glucose trend',
-        severity:'gold',
-        body:'Fasting glucose down 4 points on the new nutrition cap (sub-30g sugar). One missed peptide dose Tue AM — flagged but within tolerance. No action needed; reinforce evening cutoff at coach touchpoint.',
-        actions:['Reinforce 8pm cutoff'],
-      },
-    ],
-  };
-
-  /* =====================================================================
-     RENDERERS
-     ===================================================================== */
-
-  // ───────────── ROSTER ─────────────
-  function renderRoster(){
-    const el = document.getElementById('roster');
-    el.innerHTML = DATA.roster.map(p => {
-      const dot = p.status === 'on' ? 'sage' : p.status === 'drift' ? 'gold' : 'alert';
-      const dotColor = dot === 'sage' ? '#7D9275' : dot === 'gold' ? '#C8A96E' : '#C9745A';
+  /* RENDERERS */
+  function renderAlerts(){
+    const el = document.getElementById('alertList');
+    el.innerHTML = ALERTS.map(a => {
+      const sevIcon = a.sev === 'crit' ? 'alert-circle' : a.sev === 'warn' ? 'trending-down' : 'info';
+      const sevColor = a.sev === 'crit' ? '#8E4951' : a.sev === 'warn' ? '#8B6A3F' : '#4D6985';
+      const sevBg = a.sev === 'crit' ? 'rgba(184,101,112,0.12)' : a.sev === 'warn' ? 'rgba(199,150,94,0.12)' : 'rgba(107,137,168,0.10)';
       return `
-        <button data-id="${p.id}" class="roster-row ${p.active?'active':''} text-left">
-          <span class="avatar">${p.initials}</span>
-          <span class="min-w-0">
-            <span class="block text-[13.5px] font-medium truncate">${p.name}</span>
-            <span class="block font-mono text-[10.5px] tracking-[0.10em] text-ink3 truncate">${p.phase} · ${p.age}y</span>
-          </span>
-          <span class="flex flex-col items-end gap-1">
-            <span class="font-mono text-[12px] text-ink">${p.score}</span>
-            <span class="w-1.5 h-1.5 rounded-full" style="background:${dotColor}"></span>
-          </span>
-        </button>
-      `;
+        <div class="alert-row ${a.sev}">
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="pavatar">${a.initials}</span>
+            <span style="display:inline-flex;width:30px;height:30px;border-radius:9px;background:${sevBg};color:${sevColor};align-items:center;justify-content:center;flex-shrink:0;">
+              <i data-lucide="${sevIcon}" style="width:14px;height:14px;"></i>
+            </span>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[13.5px] font-medium text-ink truncate">${a.title}</div>
+            <div class="text-[12px] text-ink3 truncate mt-0.5">${a.patient} · ${a.meta}</div>
+          </div>
+          <span class="text-[11.5px] text-ink3 whitespace-nowrap">${a.ago}</span>
+          <button class="btn ${a.actClass}">${a.action}</button>
+        </div>`;
     }).join('');
   }
 
-  // ───────────── CLOSEOUT HEATMAP ─────────────
-  function generateCloseoutMatrix(){
-    // deterministic pseudo-random based on axis to feel real
-    const seed = (s, i) => ((s * 9301 + 49297 * (i+1)) % 233280) / 233280;
-    const matrix = {};
-    DATA.closeout.axes.forEach((axis, ax) => {
-      matrix[axis.key] = [];
-      const baseline = [3, 3, 2, 2][ax]; // peptide more variable
-      for(let i=0;i<DATA.closeout.days;i++){
-        const r = seed(ax+7, i);
-        let v = baseline;
-        if (r < 0.10) v = 0;
-        else if (r < 0.22) v = 1;
-        else if (r < 0.50) v = 2;
+  function renderPatients(){
+    const tb = document.getElementById('patientTbody');
+    tb.innerHTML = PATIENTS.map(p => {
+      const scoreCls = p.score >= 85 ? 'success' : p.score >= 75 ? 'warn' : 'crit';
+      const trendDir = p.trend > 0 ? 'up' : p.trend < 0 ? 'down' : 'flat';
+      const trendIcon = trendDir === 'up' ? 'arrow-up-right' : trendDir === 'down' ? 'arrow-down-right' : 'minus';
+      const action = p.status === 'crit'
+        ? `<button class="btn attention">Open →</button>`
+        : `<button class="btn ghost">Open</button>`;
+      return `
+        <tr data-id="${p.id}" class="${p.active?'active':''}">
+          <td>
+            <div class="pname">
+              <span class="pavatar">${p.initials}</span>
+              <div class="min-w-0">
+                <div class="text-ink font-medium">${p.name}</div>
+                <div class="pinfo">${p.age} years · ${p.protocol}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="score ${scoreCls}">${p.score}<span class="text-ink3 text-[14px] font-sans">%</span></span></td>
+          <td><span class="trend ${trendDir}"><i data-lucide="${trendIcon}" class="w-3 h-3"></i>${p.trend>0?'+':''}${p.trend}%</span></td>
+          <td><span class="text-[12.5px] text-ink2">${p.lastCheckin}</span></td>
+          <td><span class="text-[12.5px] text-ink2">${p.notes}</span></td>
+          <td><span class="pill ${p.status}">${p.label}</span></td>
+          <td class="text-right">${action}</td>
+        </tr>`;
+    }).join('');
+
+    tb.querySelectorAll('tr').forEach(row => {
+      row.addEventListener('click', () => {
+        tb.querySelectorAll('tr').forEach(r => r.classList.remove('active'));
+        row.classList.add('active');
+      });
+    });
+  }
+
+  // Heatmap
+  function generateMatrix(){
+    const days = 30;
+    const seed = (i) => ((i * 9301 + 49297) % 233280) / 233280;
+    const rows = [
+      { key:'doses',     label:'Peptide doses',  icon:'syringe' },
+      { key:'check',     label:'Daily check-in', icon:'check-circle-2' },
+      { key:'workout',   label:'Workout',        icon:'dumbbell' },
+      { key:'nutrition', label:'Nutrition',      icon:'utensils' },
+    ];
+    rows.forEach((r, ri) => {
+      r.series = [];
+      for (let i=0;i<days;i++){
+        const k = seed(i*7 + ri*13);
+        let v;
+        if (r.key === 'doses' && i > 22 && k < 0.5) v = 'miss';
+        else if (k < 0.10) v = 0;
+        else if (k < 0.22) v = 1;
+        else if (k < 0.50) v = 2;
         else v = 3;
-        // simulate drift on sleep/peptide later in window
-        if (axis.key==='peptide' && i>22 && r<0.45) v = Math.max(1,v-1);
-        matrix[axis.key].push(v);
+        r.series.push(v);
       }
     });
-    return matrix;
+    return { days, rows };
   }
 
   function renderHeatmap(){
     const el = document.getElementById('heatmap');
-    const m = generateCloseoutMatrix();
-    const days = DATA.closeout.days;
+    const { days, rows } = generateMatrix();
     const today = new Date();
+    const labels = [];
+    for (let i=days-1;i>=0;i--){ const d = new Date(today); d.setDate(today.getDate()-i); labels.push(d); }
 
-    // day labels (top axis)
-    const dayLabels = [];
-    for (let i=days-1;i>=0;i--){
-      const d = new Date(today); d.setDate(today.getDate()-i);
-      dayLabels.push(d);
-    }
-
-    // header row with week markers
-    let weekRow = `<div class="grid grid-cols-[180px_1fr_120px] gap-3 items-center">
-      <div></div>
-      <div class="grid" style="grid-template-columns:repeat(${days},1fr);gap:3px;">`;
-    for (let i=0;i<days;i++){
-      const d = dayLabels[i];
-      const isWeekStart = d.getDay() === 1;
-      weekRow += `<div class="font-mono text-[8.5px] tracking-[0.10em] text-ink3 text-center ${isWeekStart?'opacity-100':'opacity-0'}">${d.toLocaleString('en-US',{month:'short'}).toUpperCase()} ${d.getDate()}</div>`;
-    }
-    weekRow += `</div><div></div></div>`;
-
-    const axisRows = DATA.closeout.axes.map(axis => {
-      const series = m[axis.key];
-      const completed = series.filter(v => v >= 2).length;
-      const perfect = series.filter(v => v === 3).length;
-      const cells = series.map((v, i) => {
-        const d = dayLabels[i];
+    el.innerHTML = rows.map(r => {
+      const cells = r.series.map((v,i) => {
         const isToday = i === days-1;
-        const dateStr = d.toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric'});
-        const stateLabel = ['Missed','Partial','Solid','Perfect'][v];
-        return `<div class="cell s${v} ${isToday?'today':''}"
-          data-date="${dateStr}"
-          data-axis="${axis.label}"
-          data-state="${stateLabel}"></div>`;
+        const cls = v === 'miss' ? 'miss' : `s${v}`;
+        const stateLabel = v === 'miss' ? 'Missed' : ['Skipped','Partial','Done','Completed'][v];
+        const dateStr = labels[i].toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric'});
+        return `<div class="cell ${cls} ${isToday?'today':''}" data-date="${dateStr}" data-axis="${r.label}" data-state="${stateLabel}"></div>`;
       }).join('');
       return `
-        <div class="grid grid-cols-[180px_1fr_120px] gap-3 items-center">
-          <div class="flex items-center gap-2.5 min-w-0">
-            <span class="w-7 h-7 rounded-lg grid place-items-center text-gold flex-shrink-0"
-                  style="background:rgba(200,169,110,0.10);border:1px solid rgba(200,169,110,0.18);">
-              <i data-lucide="${axis.icon}" class="w-3.5 h-3.5"></i>
+        <div class="grid grid-cols-[120px_1fr] gap-3 items-center">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="w-6 h-6 rounded-lg grid place-items-center flex-shrink-0"
+                  style="background:rgba(110,138,124,0.10);border:1px solid rgba(110,138,124,0.20);color:#5C7A6C;">
+              <i data-lucide="${r.icon}" class="w-3 h-3"></i>
             </span>
-            <span class="min-w-0">
-              <span class="block text-[13.5px] font-medium leading-tight">${axis.label}</span>
-              <span class="block font-mono text-[10px] tracking-[0.04em] text-ink3 truncate">${axis.target}</span>
-            </span>
+            <span class="text-[12.5px] font-medium text-ink truncate">${r.label}</span>
           </div>
-          <div class="grid" style="grid-template-columns:repeat(${days},1fr);gap:3px;">
-            ${cells}
-          </div>
-          <div class="text-right">
-            <div class="font-mono text-[11px] tracking-[0.04em] text-ink">${completed}/${days} <span class="text-ink3">days</span></div>
-            <div class="font-mono text-[10px] tracking-[0.16em] uppercase text-gold">${Math.round((completed/days)*100)}% · ${perfect}p</div>
-          </div>
-        </div>
-      `;
+          <div class="grid" style="grid-template-columns:repeat(${days},1fr);gap:3px;">${cells}</div>
+        </div>`;
     }).join('');
 
-    el.innerHTML = weekRow + axisRows;
-
-    // Tooltip behavior
     const tip = document.getElementById('cellTip');
     el.querySelectorAll('.cell').forEach(c => {
-      c.addEventListener('mouseenter', e => {
+      c.addEventListener('mouseenter', () => {
+        const isMissed = c.classList.contains('miss');
         tip.innerHTML = `
-          <div class="font-mono text-[10px] tracking-[0.18em] uppercase text-ink3 mb-1">${c.dataset.axis}</div>
-          <div class="text-[12.5px]">${c.dataset.date}</div>
-          <div class="font-mono text-[11px] tracking-[0.16em] uppercase mt-1
-            ${c.dataset.state==='Missed'?'text-ink3':c.dataset.state==='Perfect'?'text-gold':'text-ink2'}">${c.dataset.state}</div>`;
+          <div class="text-[11px] font-medium text-ink3 mb-0.5">${c.dataset.axis}</div>
+          <div class="text-[12.5px] text-ink">${c.dataset.date}</div>
+          <div class="text-[11.5px] mt-1
+            ${isMissed?'text-crit':c.dataset.state==='Completed'?'text-sageDeep':'text-ink2'}">${c.dataset.state}</div>`;
         tip.classList.remove('hidden');
       });
       c.addEventListener('mousemove', e => {
@@ -719,8 +749,8 @@
     });
   }
 
-  // ───────────── BIOMETRIC SYNC ─────────────
-  function sparkPath(values, w=140, h=44, pad=4){
+  // Biometrics — humanized
+  function sparkPath(values, w=300, h=36, pad=4){
     const min = Math.min(...values), max = Math.max(...values);
     const range = (max-min) || 1;
     const step = (w - pad*2) / (values.length - 1);
@@ -733,176 +763,96 @@
 
   function renderBiometrics(){
     const el = document.getElementById('biometrics');
-    el.innerHTML = DATA.biometrics.map(b => {
+    el.innerHTML = BIOMETRICS.map(b => {
       const deltaPct = ((b.current - b.baseline) / b.baseline) * 100;
       const absPct = Math.abs(deltaPct);
-      // direction "good": down means lower-is-better
       const directionGood = (b.dirGood==='down' && deltaPct < 0) || (b.dirGood==='up' && deltaPct > 0);
       const isAlert = absPct > 15;
-      const stroke = isAlert ? '#C9745A' : (directionGood ? '#7D9275' : '#C8A96E');
-      const chipCls = isAlert ? 'chip alert' : (directionGood ? 'chip sage' : 'chip gold');
-      const arrowDir = deltaPct > 0 ? 'arrow-up-right' : 'arrow-down-right';
+      const stroke = isAlert ? '#B86570' : (directionGood ? '#5C9678' : '#C7965E');
+      const pillCls = isAlert ? 'crit' : (directionGood ? 'success' : 'warn');
+      const stateLabel = isAlert ? 'Lower than usual' : directionGood ? 'Within range' : 'Watch';
       const path = sparkPath(b.history);
 
       return `
-        <div class="bg-elev2 border border-hairline rounded-2xl p-4 flex flex-col gap-3">
-          <div class="flex items-center justify-between">
-            <span class="flex items-center gap-2">
-              <span class="w-7 h-7 rounded-lg grid place-items-center"
-                    style="background:rgba(200,169,110,0.10);border:1px solid rgba(200,169,110,0.18);color:${stroke}">
-                <i data-lucide="${b.icon}" class="w-3.5 h-3.5"></i>
-              </span>
-              <span class="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink3">${b.label}</span>
-            </span>
-            ${isAlert ? `<span class="${chipCls}"><i data-lucide="alert-triangle" class="w-3 h-3"></i>Alert</span>` : `<span class="${chipCls}"><span class="dot"></span>Within band</span>`}
-          </div>
-
-          <div class="flex items-end justify-between gap-3">
-            <div>
-              <div class="text-[28px] font-semibold tracking-[-0.02em] leading-none">${b.current}<span class="text-ink2 text-[14px] font-normal ml-1">${b.unit}</span></div>
-              <div class="font-mono text-[10.5px] tracking-[0.10em] uppercase text-ink3 mt-1.5">Baseline ${b.baseline}${b.unit}</div>
-            </div>
-            <div class="flex flex-col items-end">
-              <div class="flex items-center gap-1 ${isAlert?'text-danger':directionGood?'text-sage':'text-gold'}">
-                <i data-lucide="${arrowDir}" class="w-3.5 h-3.5"></i>
-                <span class="font-mono text-[12px] tracking-[0.04em]">${deltaPct>=0?'+':''}${deltaPct.toFixed(1)}%</span>
+        <div class="bg-cream border ${isAlert?'border-crit/30':'border-line'} rounded-2xl p-5">
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div class="min-w-0">
+              <div class="text-[12px] font-medium text-ink3">${b.label}</div>
+              <div class="flex items-baseline gap-2 mt-2">
+                <span class="font-serif text-[28px] font-normal tracking-[-0.02em] leading-none text-numeric">${b.current}</span>
+                <span class="text-ink2 text-[13px]">${b.unit}</span>
               </div>
-              <span class="font-mono text-[10px] tracking-[0.16em] uppercase text-ink3 mt-1">25-day trend</span>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <span class="pill ${pillCls}">${stateLabel}</span>
+              <div class="text-[12px] text-ink2 mt-2">${deltaPct>=0?'+':''}${deltaPct.toFixed(0)}% vs baseline</div>
             </div>
           </div>
 
-          <svg class="spark" viewBox="0 0 140 44" width="100%" height="44" preserveAspectRatio="none" aria-hidden="true">
-            <line class="axis" x1="0" y1="22" x2="140" y2="22"/>
+          <svg class="spark w-full" viewBox="0 0 300 36" height="36" preserveAspectRatio="none" aria-hidden="true">
+            <line class="axis" x1="0" y1="18" x2="300" y2="18"/>
             <path d="${path}" stroke="${stroke}" />
           </svg>
-        </div>
-      `;
+
+          <p class="text-[12.5px] text-ink2 leading-relaxed mt-3">${b.interp}</p>
+          <p class="text-[12.5px] text-sageDeep leading-relaxed mt-1.5">Suggested: ${b.suggest}</p>
+        </div>`;
     }).join('');
   }
 
-  // ───────────── PRESCRIPTIONS ─────────────
-  function renderRx(){
-    const el = document.getElementById('rxTable');
-    el.innerHTML = DATA.prescriptions.map(rx => {
-      const isDue = rx.status === 'refill_due';
-      const statusChip = isDue
-        ? `<span class="chip alert"><span class="dot"></span>Refill due</span>`
-        : `<span class="chip sage"><span class="dot"></span>Active</span>`;
-      return `
-        <div class="bg-elev2 border ${isDue?'border-warmline':'border-hairline'} rounded-xl p-3.5 flex flex-col gap-3">
-          <div class="flex items-start justify-between gap-3">
-            <div class="min-w-0">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-[15px] font-semibold tracking-[-0.01em]">${rx.drug}</span>
-                ${statusChip}
-              </div>
-              <div class="font-mono text-[11px] tracking-[0.04em] text-ink2 mt-1">${rx.dose} · ${rx.freq}</div>
-            </div>
-            <button data-rx="${rx.id}"
-              class="rx-authorise inline-flex items-center gap-2 px-3 py-1.5 rounded-pill border border-warmline text-gold text-[11.5px] font-mono tracking-[0.08em] uppercase hover:bg-golddim transition">
-              <i data-lucide="zap" class="w-3 h-3"></i>${isDue?'Authorise refill':'Re-authorise'}
-            </button>
-          </div>
-          <div class="grid grid-cols-3 gap-2 pt-2 border-t border-hairline">
-            <div>
-              <div class="font-mono text-[9.5px] tracking-[0.18em] uppercase text-ink3">Adherence</div>
-              <div class="text-[13px] font-semibold mt-0.5">${rx.adherence}%</div>
-            </div>
-            <div>
-              <div class="font-mono text-[9.5px] tracking-[0.18em] uppercase text-ink3">Refills</div>
-              <div class="text-[13px] font-semibold mt-0.5">${rx.refills}</div>
-            </div>
-            <div>
-              <div class="font-mono text-[9.5px] tracking-[0.18em] uppercase text-ink3">Last filled</div>
-              <div class="text-[13px] font-semibold mt-0.5">${rx.lastFilled}</div>
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  // ───────────── INSIGHT LOG ─────────────
-  function renderInsights(){
-    const el = document.getElementById('insightLog');
-    el.innerHTML = DATA.insights.map((it,idx) => {
-      const sev = it.severity;
-      const sevChip = sev === 'alert' ? 'chip alert' : sev === 'sage' ? 'chip sage' : 'chip gold';
-      const sevIcon = sev === 'alert' ? 'alert-triangle' : sev === 'sage' ? 'check-circle-2' : 'sparkles';
-      return `
-        <article class="bg-elev2 border border-hairline rounded-2xl p-4 md:p-5">
-          <div class="flex items-start gap-4">
-            <span class="w-9 h-9 rounded-lg grid place-items-center flex-shrink-0"
-                  style="background:rgba(200,169,110,0.10);border:1px solid rgba(200,169,110,0.18);color:#C8A96E;">
-              <i data-lucide="${sevIcon}" class="w-4 h-4"></i>
-            </span>
-            <div class="min-w-0 flex-1">
-              <div class="flex items-center gap-2 flex-wrap mb-1">
-                <span class="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink3">${it.week}</span>
-                <span class="${sevChip}">${it.tag}</span>
-                ${idx===0 ? '<span class="chip"><span class="dot" style="background:#C8A96E"></span>New</span>' : ''}
-              </div>
-              <p class="text-ink text-[14px] leading-[1.55]">${it.body}</p>
-              <div class="flex flex-wrap gap-2 mt-3">
-                ${it.actions.map(a => `<button class="chip"><i data-lucide="plus"></i>${a}</button>`).join('')}
-              </div>
-            </div>
-          </div>
-        </article>
-      `;
-    }).join('');
-  }
-
-  /* =====================================================================
-     INIT
-     ===================================================================== */
+  /* INIT */
   document.addEventListener('DOMContentLoaded', () => {
-    renderRoster();
+    renderAlerts();
+    renderPatients();
     renderHeatmap();
     renderBiometrics();
-    renderRx();
-    renderInsights();
-
     if (window.lucide) lucide.createIcons();
 
-    // year
     const y = document.getElementById('yr'); if (y) y.textContent = new Date().getFullYear();
 
-    // nav scroll
-    const nav = document.getElementById('nav');
-    const onScroll = () => {
-      if (window.scrollY > 12) nav.classList.add('shadow-card');
-      else nav.classList.remove('shadow-card');
-    };
-    window.addEventListener('scroll', onScroll, {passive:true});
-    onScroll();
-
-    // reveal
     const io = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }});
-    }, {rootMargin:'0px 0px -8% 0px', threshold:0.05});
+    }, {rootMargin:'0px 0px -6% 0px', threshold:0.05});
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-    // Refill API click — wire to ENDPOINTS.refill in production
+    const refillBtn = document.getElementById('refillBtn');
+    if (refillBtn) {
+      refillBtn.addEventListener('click', () => {
+        const original = refillBtn.innerHTML;
+        refillBtn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Sending to pharmacy…';
+        if (window.lucide) lucide.createIcons();
+        setTimeout(() => {
+          refillBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Refill approved';
+          if (window.lucide) lucide.createIcons();
+          setTimeout(() => { refillBtn.innerHTML = original; if (window.lucide) lucide.createIcons(); }, 2400);
+        }, 900);
+      });
+    }
+
     document.addEventListener('click', (e) => {
-      const btn = e.target.closest('.rx-authorise, #authoriseAllBtn');
-      if (!btn) return;
+      const btn = e.target.closest('.ai-action');
+      if (!btn || !btn.dataset.act) return;
+      const act = btn.dataset.act;
       const original = btn.innerHTML;
-      btn.innerHTML = '<i data-lucide="loader" class="w-3 h-3 animate-spin"></i> Routing to pharmacy…';
+      btn.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> ' + (act==='approve'?'Applying…':'Opening editor…');
       if (window.lucide) lucide.createIcons();
       setTimeout(() => {
-        btn.innerHTML = '<i data-lucide="check" class="w-3 h-3"></i> Authorised';
+        if (act === 'approve') {
+          btn.parentElement.outerHTML = '<div class="mt-5 pill success" style="display:inline-flex"><span class="dot"></span>Adjustment applied · ' + new Date().toLocaleTimeString() + '</div>';
+        } else {
+          btn.innerHTML = original;
+        }
         if (window.lucide) lucide.createIcons();
-        setTimeout(() => { btn.innerHTML = original; if (window.lucide) lucide.createIcons(); }, 2200);
-      }, 900);
+      }, 700);
     });
 
-    // Roster click — swap "active" highlight (data swap is a backend exercise)
-    document.getElementById('roster').addEventListener('click', (e) => {
-      const row = e.target.closest('.roster-row');
-      if (!row) return;
-      document.querySelectorAll('#roster .roster-row').forEach(r => r.classList.remove('active'));
-      row.classList.add('active');
+    document.getElementById('alertList').addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn');
+      if (!btn) return;
+      const original = btn.textContent;
+      btn.innerHTML = '<i data-lucide="check" class="w-3 h-3"></i>Done';
+      if (window.lucide) lucide.createIcons();
+      setTimeout(() => { btn.textContent = original; }, 1800);
     });
   });
   </script>
