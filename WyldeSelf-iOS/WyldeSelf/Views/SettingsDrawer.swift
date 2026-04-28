@@ -35,113 +35,119 @@ struct SettingsDrawer: View {
     }
 
     var body: some View {
-        // Used to be wrapped in a ZStack with a full-screen Color background
-        // when this view was presented as a .sheet. Now it's embedded inside
-        // a left-edge slide overlay (see MainTabView), so the parent provides
-        // the panel background + frame. We just render the scrollable content.
-        ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 0) {
+        // Defensive structure: a ZStack with the drawer panel's own opaque
+        // dark background, ensuring the panel is fully self-contained
+        // regardless of how it's presented (sheet OR side overlay).
+        // VStack inside fills the panel; ScrollView holds the link list
+        // so long lists scroll properly without breaking layout.
+        ZStack {
+            Color(hex: "0B0B0B")
+                .ignoresSafeArea()
 
-                    // ── Header ─────────────────────────────────────
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("WYLDE SELF")
-                                .font(.system(size: 10, weight: .bold))
-                                .tracking(2.5)
-                                .foregroundColor(Color(hex: "C8A96E"))
-                            Text(appState.userName.isEmpty ? "Your account" : appState.userName)
-                                .font(.system(size: 20, weight: .semibold))
-                                .foregroundColor(Color(hex: "F4F1E8"))
-                                .lineLimit(1)
+            VStack(alignment: .leading, spacing: 0) {
+
+                // ── Header (fixed at top) ──────────────────────────
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("WYLDE SELF")
+                            .font(.system(size: 10, weight: .bold))
+                            .tracking(2.5)
+                            .foregroundColor(Color(hex: "C8A96E"))
+                        Text(appState.userName.isEmpty ? "Your account" : appState.userName)
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .lineLimit(1)
+                    }
+                    Spacer(minLength: 8)
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(Color(hex: "A6A29A"))
+                            .frame(width: 36, height: 36)
+                            .background(Color(hex: "161616"))
+                            .clipShape(Circle())
+                    }
+                }
+                .padding(.horizontal, 22)
+                .padding(.top, 24)
+                .padding(.bottom, 22)
+
+                // ── Scrollable middle: founder CTA + nav links ────
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        // Founding Member CTA (only if not Pro)
+                        if !appState.isPro {
+                            founderCTA
+                        } else if appState.isFoundingMember {
+                            founderBadge
                         }
-                        Spacer()
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "xmark")
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(Color(hex: "A6A29A"))
-                                .frame(width: 36, height: 36)
-                                .background(Color(hex: "161616"))
-                                .clipShape(Circle())
+
+                        // Primary nav links — all stacked vertically
+                        VStack(alignment: .leading, spacing: 2) {
+                            DrawerLink(
+                                icon: "books.vertical.fill",
+                                label: "Exercise Library",
+                                action: { openWebScreen("library") }
+                            )
+                            DrawerLink(
+                                icon: "fork.knife",
+                                label: "Nutrition",
+                                action: { openWebScreen("nutrition") }
+                            )
+                            DrawerLink(
+                                icon: "brain.head.profile",
+                                label: "Identity Import",
+                                action: {
+                                    HapticManager.shared.impact(.light)
+                                    showIdentityImport = true
+                                }
+                            )
+                            DrawerLink(
+                                icon: "person.fill",
+                                label: "Edit Profile",
+                                action: { openWebFunction("openEditProfile") }
+                            )
+                            DrawerLink(
+                                icon: "arrow.triangle.2.circlepath",
+                                label: "Rebuild My Program",
+                                action: { openWebFunction("regenerateProgram") }
+                            )
                         }
+                        .padding(.horizontal, 14)
+
+                        // Divider
+                        Rectangle()
+                            .fill(Color(hex: "F4F1E8").opacity(0.06))
+                            .frame(height: 1)
+                            .padding(.horizontal, 22)
+                            .padding(.vertical, 14)
+
+                        // Destructive actions
+                        VStack(alignment: .leading, spacing: 2) {
+                            DrawerLink(
+                                icon: "trash",
+                                label: "Reset Profile",
+                                destructive: false,
+                                action: { showResetConfirm = true }
+                            )
+                            DrawerLink(
+                                icon: "rectangle.portrait.and.arrow.right",
+                                label: "Sign Out",
+                                destructive: true,
+                                action: signOutAndDismiss
+                            )
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.bottom, 32)
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.top, 24)
-                    .padding(.bottom, 28)
-
-                    // ── Founding Member CTA (only if not Pro) ─────
-                    if !appState.isPro {
-                        founderCTA
-                    } else if appState.isFoundingMember {
-                        founderBadge
-                    }
-
-                    // ── Primary nav links ─────────────────────────
-                    VStack(spacing: 2) {
-                        DrawerLink(
-                            icon: "books.vertical.fill",
-                            label: "Exercise Library",
-                            action: { openWebScreen("library") }
-                        )
-                        DrawerLink(
-                            icon: "fork.knife",
-                            label: "Nutrition",
-                            action: { openWebScreen("nutrition") }
-                        )
-                        // Identity Import — Founding Members feature; locked
-                        // state lives inside the screen itself
-                        DrawerLink(
-                            icon: "brain.head.profile",
-                            label: "Identity Import",
-                            action: {
-                                HapticManager.shared.impact(.light)
-                                showIdentityImport = true
-                            }
-                        )
-                        DrawerLink(
-                            icon: "person.fill",
-                            label: "Edit Profile",
-                            action: { openWebFunction("openEditProfile") }
-                        )
-                        DrawerLink(
-                            icon: "arrow.triangle.2.circlepath",
-                            label: "Rebuild My Program",
-                            action: { openWebFunction("regenerateProgram") }
-                        )
-                    }
-                    .padding(.horizontal, 16)
-
-                    // ── Divider ──
-                    Rectangle()
-                        .fill(Color(hex: "F4F1E8").opacity(0.06))
-                        .frame(height: 1)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 16)
-
-                    // ── Account actions ───────────────────────────
-                    VStack(spacing: 2) {
-                        DrawerLink(
-                            icon: "trash",
-                            label: "Reset Profile",
-                            destructive: false,
-                            action: { showResetConfirm = true }
-                        )
-                        DrawerLink(
-                            icon: "rectangle.portrait.and.arrow.right",
-                            label: "Sign Out",
-                            destructive: true,
-                            action: signOutAndDismiss
-                        )
-                    }
-                    .padding(.horizontal, 16)
-
-                    Spacer(minLength: 32)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
+        }
         // Sheets bubble up over the entire app — not constrained inside
-        // the drawer's narrow column. (Drawer is now a left-side overlay,
-        // not a full-screen sheet.)
+        // the drawer's narrow column.
         .sheet(isPresented: $showPaywall) {
             PaywallView().environmentObject(appState)
         }

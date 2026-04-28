@@ -51,10 +51,8 @@ struct MainTabView: View {
                         withAnimation(.easeInOut(duration: 0.25)) { showSettingsDrawer = false }
                     })
                     .environmentObject(appState)
-                    .frame(maxWidth: 340)
+                    .frame(width: 320, alignment: .leading)
                     .frame(maxHeight: .infinity)
-                    .background(Color(hex: "0B0B0B"))
-                    .ignoresSafeArea(edges: [.top, .bottom])
                     .shadow(color: .black.opacity(0.5), radius: 24, x: 8, y: 0)
                     .transition(.move(edge: .leading))
                 }
