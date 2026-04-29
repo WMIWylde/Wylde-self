@@ -6036,8 +6036,27 @@
           document.querySelectorAll('.nav-tab.locked').forEach(function(t){ t.classList.remove('locked'); });
           _updateLevelDisplay();
           setTimeout(function(){
-            showScreen('overview');
-            // Load saved program if exists
+            // ─── Refresh-restore ─────────────────────────────────
+            // Prefer the URL hash (#screen-id), then last-saved screen
+            // in localStorage, else default to overview. This is what
+            // makes a refresh return the user to where they were
+            // instead of dumping them on Today every time.
+            var RESTORABLE = ['overview', 'future', 'coach', 'library',
+                              'progress', 'nutrition', 'program', 'identity'];
+            var target = 'overview';
+            try {
+              var hash = (window.location.hash || '').replace(/^#/, '').trim();
+              if (hash && RESTORABLE.indexOf(hash) !== -1) {
+                target = hash;
+              } else {
+                var lastScreen = localStorage.getItem('wylde_last_screen');
+                if (lastScreen && RESTORABLE.indexOf(lastScreen) !== -1) {
+                  target = lastScreen;
+                }
+              }
+            } catch(_) {}
+            showScreen(target);
+            // Load saved program if exists (does nothing if no program saved)
             loadSavedProgram();
           }, 100);
         }
@@ -6144,6 +6163,13 @@
       history.pushState({ screen: id }, '', '#' + id);
     }
     currentScreen = id;
+    // Persist for refresh-restore. Only top-level / sub-screens worth
+    // returning to — never persist auth or onboard.
+    var RESTORABLE = ['overview', 'future', 'coach', 'library', 'progress',
+                      'nutrition', 'program', 'identity', 'health'];
+    if (RESTORABLE.indexOf(id) !== -1) {
+      try { localStorage.setItem('wylde_last_screen', id); } catch(_) {}
+    }
     window.scrollTo(0,0);
   }
 
