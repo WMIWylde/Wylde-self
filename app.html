@@ -5196,7 +5196,11 @@
   function showLevelUpAnimation() { /* levels removed */ }
   function _updateLevelDisplay() { /* levels removed */ }
 
-  function checkBadges() {
+  function checkBadges(opts) {
+    // opts.silent — backfill state.badges without firing celebration toasts.
+    // Used at page load (retro-credit). Action-driven calls (awardXP, PR
+    // tracking) leave opts undefined so toasts fire normally.
+    var silent = !!(opts && opts.silent);
     var stats = _gatherWyldeStats();
     var existing = (state && state.badges) || [];
     var sb = _getSupabase();
@@ -5210,14 +5214,23 @@
         }
       }
     });
-    state.badges = existing;
-    // Show celebration toast for each new badge (cap at 3 to avoid spam if
-    // many fire at once — e.g. importing historical data)
-    newlyEarned.slice(0, 3).forEach(function(b, i) {
-      setTimeout(function() {
-        showBadgeToast(b);
-      }, i * 700);
-    });
+    // Persist immediately on mutation so a reload never re-celebrates the
+    // same badge. Without this, the load-time retro-credit fires every
+    // time because state.badges in localStorage stays empty.
+    if (newlyEarned.length > 0) {
+      state.badges = existing;
+      try { localStorage.setItem('wylde_profile', JSON.stringify(state)); } catch(_) {}
+    }
+    // Show celebration toast for each new badge (cap at 3 to avoid spam).
+    // Skipped during silent retro-credit so the user isn't celebrated for
+    // achievements they already earned in past sessions.
+    if (!silent) {
+      newlyEarned.slice(0, 3).forEach(function(b, i) {
+        setTimeout(function() {
+          showBadgeToast(b);
+        }, i * 700);
+      });
+    }
     // Refresh the badge UI if it's currently visible
     if (typeof renderRewardsUI === 'function') renderRewardsUI();
   }
@@ -5643,16 +5656,18 @@
     setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 200);
   }
 
-  // Re-render path card on load + retro-credit any badges the user already earned
+  // Re-render path card on load + retro-credit any badges the user already earned.
+  // Pass {silent:true} so the user isn't shown a celebration toast for badges
+  // they earned in past sessions — only live actions in this session celebrate.
   if (typeof window !== 'undefined') {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', function() {
-        try { checkBadges(); } catch(_) {}
+        try { checkBadges({ silent: true }); } catch(_) {}
         try { renderRewardsUI(); } catch(_) {}
       });
     } else {
       setTimeout(function() {
-        try { checkBadges(); } catch(_) {}
+        try { checkBadges({ silent: true }); } catch(_) {}
         try { renderRewardsUI(); } catch(_) {}
       }, 0);
     }
