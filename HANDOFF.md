@@ -1,509 +1,334 @@
-# WYLDE SELF — Cowork Handoff
-> Last updated: April 2026
-> Use this document at the start of every Cowork and Claude chat session.
+# Wylde Self — Handoff
+
+Last updated: 2026-04-28
+
+This is the single document that gets a new collaborator (or future-you after time off) up to speed on what Wylde Self is, what's been built, what works, what doesn't, and what's next.
 
 ---
 
-## What This App Is
+## What Wylde Self is
 
-**Wylde Self** is an AI-powered identity transformation platform.
-Tagline: "Train with the person you're becoming."
-Core thesis: identity precedes behaviour. People quit fitness apps not from lack of discipline but from lack of vision of who they're becoming.
+An identity-based transformation app. Not a fitness tracker. The product is built around the principle that the user is becoming someone — and every surface should reinforce that identity.
 
-**Founder:** Wilke — men's coaching, yoga, somatic work, real estate, entrepreneurship.
-**Mastermind:** Mentor Collective (Chris & Lori Harder).
+**Brand position:** Whoop + Levels + Calm + a high-end men's initiation container.
+
+**Voice:** Grounded, direct, masculine but not aggressive, no fluff, no emojis.
+
+**Core loop:**
+User opens Today → feels identity shift → takes one action → loops back tomorrow.
 
 ---
 
-## Live URLs
+## Stack
 
-| | URL |
+| Layer | What |
 |---|---|
-| Landing | wyldeself.com |
-| App | wyldeself.com/app.html |
-| Gate | wyldeself.com/gate.html |
-| Apply | wyldeself.com/apply.html |
-| Investors | wyldeself.com/investors.html |
+| **Web app** | `app.html` (single-file, ~10k lines), deployed on Vercel at wyldeself.com |
+| **Public paywall** | `founder.html` (standalone page), same Vercel deploy |
+| **iOS app** | `WyldeSelf-iOS/` SwiftUI shell. Today + Library are native, Future/Coach/Progress are WKWebViews wrapping app.html paths |
+| **API** | Vercel serverless under `/api/` (Anthropic proxy, exercises, identity-analyze, founder-count, RevenueCat webhook, Stripe checkout, Stripe webhook) |
+| **Database** | Supabase (auth via magic link, profiles, workouts, food_logs, badges, identity profiles, founder counter, daily walks) |
+| **AI** | Claude Haiku 4.5 (`claude-haiku-4-5-20251001`) via `/api/anthropic` |
+| **Payments** | RevenueCat → Apple StoreKit (iOS), Stripe Checkout (web) |
+| **Image gen** | Gemini 2.5 Flash via `/api/generate-image` |
+| **Exercise data** | 873 exercises in `data/exercises.json`, also bundled in iOS app |
+
+### Brand palette (strict)
+- Background `#070707`
+- Surface `#111111` / `#161616`
+- Gold accent `#C8A96E`
+- Sage accent `#7D9275`
+- Text primary `#F4F1E8`
+- Text secondary `#A6A29A`
+- No bright colors. No gradients except subtle. No emojis.
 
 ---
 
-## Repositories & Access
+## Major systems shipped
 
-| | Detail |
-|---|---|
-| GitHub repo | github.com/WMIWylde/Wylde-self |
-| Vercel | Auto-deploys from GitHub main branch |
-| Deploy time | ~30 seconds after push |
-| Claude Code (web) | `cd ~/Wylde-self && claude` |
-| Claude Code (iOS) | `cd ~/Documents/WyldeSelf && claude` |
+### Today screen (most important surface)
+Cinematic stacked journey, top to bottom:
+- Header with greeting + streak badge
+- Hero card: "Day X of Y" + identity statement + single primary CTA "Enter Today's Training"
+- Morning Routine — 3 fixed practices (Meditation, Journaling, Reading), checkmark each
+- Today's Training (workout)
+- Walk reminder
+- 3-ring Nutrition card (Calories / Protein / Carbs) — animated SVG rings, live-syncs with food log
+- Health snapshot (HealthKit on iOS)
+- Coach access ("Talk to your future self")
+- Daily Closeout — "Close the Loop" gold CTA
+- Founding Member CTA (only if not Pro)
+
+Animations: staggered fade-up on first appearance, spring on toggles, 3-ring fill animation on update.
+
+### Coach
+- Speaks AS user's literal future self ("Future Wilke" not "AI coach")
+- 280 max_tokens, hard format rules: 2–4 sentences, no bullets, no meta-talk, no emojis
+- Occasional single-line science callout (~1 in 4)
+- 4 quick actions: Motivate me / Fix my plan / I'm off track / Optimize everything
+- Pulls full user context (PRs, streak, sleep, walks, vibes, identity profile, phase) into every prompt
+- Identity language cue: when user has set gender, mirrors their natural phrasing
+
+### Identity Import (Founding Members feature)
+- User pastes public URLs (bio, posts, Substack, etc.) or raw text
+- `/api/identity-analyze` server-side fetches URLs (SSRF-hardened) + sends to Claude
+- Claude returns structured JSON: archetype, confidence, tone, motivation triggers, limiting patterns, language to use/avoid, coaching style, discipline level
+- Stored in `user_identity_profile` Supabase table
+- Coach + meal planner pull this profile and mirror the user's actual voice
+- Tested live: model identified "The Architect" archetype, mirrored phrasing like "act like her", "the silence", "stop negotiating"
+
+### Phase progression (replaces stripped Ember/Spark/Flame ladder)
+Driven by sessions completed, not XP grind:
+- Initiate (0)    — "You stepped onto the path. Now keep walking."
+- Foundation (10) — "The first layer is laid. The work is becoming yours."
+- Embodied (30)   — "It's no longer trying — it's who you are."
+- Relentless (100)— "You don't negotiate with yourself anymore."
+- Integrated (300)— "You and the practice are the same thing now."
+
+### Badges (29 across 6 categories)
+- Streaks (3, 7, 14, 21, 30, 100, 365 days)
+- Sessions (1, 10, 50, 100, 500)
+- Practice — mornings (1, 7, 30, 100), walks (1, 7, 30, 100)
+- Strength — PRs (1, 10, 50)
+- Nutrition — meals logged (1, 30, 100)
+- Reflection — feel-prompts logged (1, 7, 30)
+
+Each badge uses a custom SVG glyph (lucide-style, no emojis). Locked badges greyscaled at 45% opacity.
+
+### Library (Exercise browser)
+873 exercises native iOS + web. Body-part chips, search, exercise cards with image thumbnails. YouTube tutorial deep-link button on detail view.
+
+### Set logger
+- PR + Last Weight reference cards above the set rows
+- +/- steppers (weight 5lb, reps 1)
+- Per-set sage checkmark on log
+- Workout finale feel-prompt: 1/2/3/4 with labels Brutal/Off/Solid/Dialed
+- Food feel buttons inline next to logged foods: + / – / ×
+
+### Founding Member paywall
+**Pricing:** Lifetime $149 / Annual $79 / Monthly $9.99 (founder, locked forever for first 1,000)
+**Standard** (post-founder cap): $249 / $99 / $14.99
+
+- iOS: native `PaywallView` (RevenueCat in stub mode until SDK added)
+- Web: `/founder.html` standalone page → Stripe Checkout
+- Both webhook into same Supabase profile fields
+- Atomic `founding_member_number` assignment via RPC (1-1000)
+- Founder counter live-updates across both platforms
+- Personalized thank-you sheet shows the founder's number
+
+### Settings drawer
+Left-slide hamburger on every screen (web + iOS). Lists Exercise Library, Nutrition, Identity Import, Edit Profile, Rebuild Program, Reset Profile, Sign Out. Founding Member CTA shown if not Pro.
+
+### iOS brand assets bundled
+9 imagesets in `Assets.xcassets/`: LogoMark, LogoIcon, HeroBackground, FutureSelfMan, FutureSelfWoman, GlowMale/Female/Neutral, AppInHand. AppIcon set with `Wyldeselflogo2.png` placeholder. AccentColor = brand gold. LaunchBackground = brand bg. Modern UILaunchScreen dict in Info.plist using LogoMark.
+
+### Mobile web polish
+- All inputs forced to 16px font-size on mobile (prevents iOS auto-zoom)
+- Hamburger respects iOS safe-area-inset-top (notch)
+- Bottom nav respects safe-area-inset-bottom (home indicator)
+- 3-ring nutrition card responsive at 320px viewport
+- Modals fill viewport edge-to-edge with bottom-safe padding
+- Settings drawer 92% width on mobile
+- All buttons min 44pt tap target (iOS HIG)
+
+### Refresh-restore
+URL hash + `localStorage.wylde_last_screen` survive page reload. User refreshing on Coach lands back on Coach instead of Today.
+
+### Identity language rotation
+`getIdentityPhrase(context)` returns gendered phrases mixed with neutral pool. Applied to hero, closing, morning protocol, Coach prompt cue. Female users see "the woman you're becoming", male users see "the man you're becoming", unspecified see "the version of you you're becoming". No back-to-back repeats.
+
+### Daily walk reminder
+Native iOS UNCalendarNotificationTrigger fires at 1pm. "Time for your walk — 30+ minutes outside. Phone in your pocket."
+
+### Onboarding simplified
+Gym equipment picker collapsed from 12 pills → 3 type pills (Commercial / Garage / Bodyweight). AI infers equipment from type. Tap count: 8 → 2.
+
+### Gym location finder (web)
+Type-to-search using OpenStreetMap Nominatim (free, no API key). Returns 5 matches with name + address. Saves `gymName`, `gymLat`, `gymLng`, `gymPlaceId`. Foundation for future "members at your gym" community feature.
 
 ---
 
-## Tech Stack
-
-| Layer | Detail |
-|---|---|
-| Web frontend | Single file: app.html (~200KB) |
-| Web hosting | Vercel (Hobby plan, Edge Runtime for image gen) |
-| iOS | SwiftUI, Xcode, ~/Documents/WyldeSelf |
-| Database | Supabase — postgres.huclolzxzpitdpyogolu.supabase.co |
-| Auth | Supabase email/password (Apple Sign In pending) |
-| AI coaching | Claude Haiku via /api/anthropic.js |
-| AI image gen | Gemini 3.1 Flash via /api/generate-image.js |
-| AI video | Grok Imagine API — api.x.ai (planned) |
-| Forms | Formspree (mkoponoz) + EmailJS |
-| Supplements | Fullscript dispensary — Wylde Self Health |
-
----
-
-## Environment Variables (Vercel)
+## File map
 
 ```
-ANTHROPIC_API_KEY
-GEMINI_API_KEY
-SUPABASE_URL        = https://huclolzxzpitdpyogolu.supabase.co
-SUPABASE_ANON_KEY   = sb_publishable_VFZ0Yd0PhqAh3AgZF1TcXQ... (wylde_self key)
-SUPABASE_SERVICE_KEY = sb_secret_8YaBq... (secret key)
-```
-
----
-
-## File Structure
-
-```
-~/Wylde-self/                     WEB APP
-├── index.html                    Landing page
-├── gate.html                     Beta gate (NDA + code: WYLDE2025)
-├── app.html                      Main app — ALL screens in one file
-├── apply.html                    Beta intake form
-├── investors.html                VC pitch deck (live)
+/Wylde-self/
+├── app.html                                   ← single-file web app
+├── founder.html                               ← public paywall page
+├── package.json                               ← dependencies (stripe, supabase, etc.)
+├── data/exercises.json                        ← 873 exercises
 ├── api/
-│   ├── anthropic.js              Claude Haiku proxy
-│   └── generate-image.js        Gemini image gen (Edge Runtime)
-└── HANDOFF.md
-
-~/Documents/WyldeSelf/            iOS SwiftUI APP
-├── Theme.swift                   WyldeTheme colors + level system
-├── WyldeButton.swift             5-variant button component
-├── WyldeCard.swift               Base card + breathing border
-├── CollapsibleWyldeCard.swift    Collapsible card with header summary
-├── PulseDot.swift                Alive pulse animation (6px)
-├── HeartbeatLine.swift           Bottom heartbeat bar
-├── LevelBadge.swift              Level badge with pulse dot
-├── SupabaseService.swift         All Supabase auth + data calls
-├── AuthView.swift                Sign in / create account screen
-├── APIService.swift              Claude API calls
-├── UserProfile.swift             ObservableObject profile
-├── CoachPersona.swift            6 coach definitions
-├── OnboardingView.swift
-├── MainTabView.swift
-├── DashboardView.swift           Draggable + collapsible card grid
-├── ProgramView.swift             Workout + rest timer
-├── CoachView.swift
-├── NutritionView.swift
-├── ProgressView.swift
-├── CommunityView.swift           Feed + leaderboard + events + forums
-├── WorkoutCompleteView.swift     Celebration animation
-├── RestTimerView.swift           Circular rest timer
-├── HealthKitService.swift        HealthKit read/write
-├── ScheduleService.swift         Calendar + reminders (EKEventKit)
-├── WorkoutSchedulerView.swift    Schedule workouts UI
-├── FutureSelfRevealView.swift    3-image parallel gen + drag slider
-└── ConsentView.swift
+│   ├── anthropic.js                           ← Claude proxy
+│   ├── exercises.js                           ← Exercise DB
+│   ├── identity-analyze.js                    ← Identity Import
+│   ├── founder-count.js                       ← Counter for paywall
+│   ├── revenuecat-webhook.js                  ← iOS IAP entitlement sync
+│   ├── stripe-checkout.js                     ← Web Checkout Session creator
+│   └── stripe-webhook.js                      ← Web Stripe entitlement sync
+├── supabase/migrations/
+│   ├── 20260427_pro_entitlements.sql          ← Pro fields + founder RPC
+│   └── 20260428_identity_profile.sql          ← Identity Import schema
+├── WyldeSelf-iOS/
+│   └── WyldeSelf/
+│       ├── WyldeSelfApp.swift                 ← Main app entry
+│       ├── ContentView.swift                  ← Tab routing
+│       ├── Info.plist                         ← UILaunchScreen + permissions
+│       ├── Assets.xcassets/                   ← AppIcon + brand images
+│       ├── Models/
+│       │   ├── AppState.swift                 ← Single source of truth
+│       │   ├── Exercise.swift
+│       │   └── IdentityProfile.swift
+│       ├── Services/
+│       │   ├── PurchaseManager.swift          ← RevenueCat wrapper (stub mode)
+│       │   ├── IdentityAnalysisService.swift
+│       │   ├── HealthKitManager.swift
+│       │   ├── HapticManager.swift
+│       │   ├── NotificationManager.swift
+│       │   └── CameraManager.swift
+│       ├── Utilities/Theme.swift              ← Brand colors
+│       └── Views/
+│           ├── MainTabView.swift              ← Bottom tabs + hamburger overlay
+│           ├── TodayView.swift                ← Native Today screen
+│           ├── ExercisesView.swift            ← Native exercise library
+│           ├── WebViewScreen.swift            ← WKWebView wrapper for hybrid tabs
+│           ├── PaywallView.swift              ← Native Founding Member paywall
+│           ├── SettingsDrawer.swift           ← Native left-slide drawer
+│           └── IdentityImportView.swift       ← Native Identity Import
+├── HANDOFF.md                                 ← This file
+├── PAYWALL_SETUP.md                           ← iOS RevenueCat setup guide
+├── STRIPE_SETUP.md                            ← Web Stripe setup guide
+└── TESTFLIGHT_SUBMISSION.md                   ← iOS submission guide
 ```
 
 ---
 
-## Supabase Database
+## Pricing decided
 
-**Project:** huclolzxzpitdpyogolu.supabase.co
-**RLS:** Enabled on all tables
-
-### Tables (16)
-
-| Table | Purpose |
-|---|---|
-| users | Profile, level, XP, streak, goals |
-| workout_sessions | Completed workouts |
-| workout_sets | Sets logged (weight × reps) |
-| nutrition_logs | Daily macro totals |
-| food_entries | Individual food items |
-| progress_metrics | Weight, sleep, steps, HR |
-| personal_bests | PR per exercise |
-| xp_transactions | XP audit log |
-| badges | 10 badge definitions |
-| user_badges | Badges earned |
-| activity_feed | Community stream (realtime) |
-| feed_reactions | Emoji reactions (realtime) |
-| events | Upcoming events |
-| event_registrations | Event signups |
-| challenges | Group challenges (realtime) |
-| challenge_participants | Challenge progress |
-| forum_threads | Forum posts (3 sections) |
-| forum_replies | Forum replies |
-
-### Views
-- `leaderboard` — XP rank, streak rank, weekly rank
-
-### Functions
-- `award_xp(user_id, amount, reason)` — adds XP, logs transaction, auto-levels user
-
-### Level Thresholds
-- Ember: 0 XP
-- Root: 1,000 XP
-- Rise: 3,500 XP
-- Wylde: 8,000 XP
-
----
-
-## Design System
-
-### Core Aesthetic
-Pure black background (#000000). Gold (#c8a96e) as the ONLY accent color at varying opacities. No cards with heavy fills — sections separated by hairline gold lines (0.5px). Vast negative space. The human figure (logo) is center of identity.
-
-### Brand Reference
-The logo image: gold human figure inside sacred geometry circles on pure black. This IS the design language. Everything in the app derives from this.
-
-### Color Tokens
-
-```css
---bg:       #000000        /* pure black */
---surface:  #0d0c0a        /* barely lifted surface */
---gold:     #c8a96e        /* primary accent */
---gold-hi:  rgba(200,169,110,0.85)   /* high emphasis */
---gold-mid: rgba(200,169,110,0.55)   /* medium emphasis */
---gold-lo:  rgba(200,169,110,0.35)   /* low emphasis */
---gold-dim: rgba(200,169,110,0.15)   /* backgrounds */
---text-hi:  rgba(255,245,220,0.95)   /* primary text */
---text-mid: rgba(255,245,220,0.75)   /* secondary text */
---text-lo:  rgba(200,169,110,0.55)   /* labels (MINIMUM) */
-```
-
-**Text brightness rule:** No text element below rgba(200,169,110,0.40). Labels minimum 0.45. Secondary text minimum 0.65.
-
-### Typography
-
-| Role | Font | Size |
+| Plan | Founder (first 1,000) | Standard (after) |
 |---|---|---|
-| UI / body | Inter 300–500 | 11–16px |
-| Numbers / timers | Space Mono 400/700 | varies |
-| Milestones / wins | Montserrat 800 | varies |
-| Editorial / coach | Cormorant Garamond italic 300 | 13–18px |
+| Lifetime (web only) | **$149** | $249 |
+| Annual web / iOS | **$79 / $99** | $99 / $129.99 |
+| Monthly web / iOS | **$9.99 / $12.99** | $14.99 / $19.99 |
 
-### Button Style
-```css
-/* All buttons — outline only, no fill */
-border: 0.5px solid rgba(200,169,110,0.28);
-background: transparent;
-color: rgba(200,169,110,0.78);
-font-size: 9px;
-letter-spacing: .2em;
-text-transform: uppercase;
-padding: 11px 16px;
-border-radius: 0; /* sharp corners */
+**Per founder sale:**
+- Web Stripe lifetime $149 → you receive **$144.38** (after 2.9% + $0.30 fee)
+- iOS Apple lifetime n/a (subscription only)
+- iOS annual $99 → you receive **$84.15** (15% Apple Small Business Program cut)
 
-/* Primary variant */
-border-color: rgba(200,169,110,0.45);
-color: rgba(200,169,110,0.9);
-```
-
-### Section Anatomy
-No card blocks. Sections separated by:
-```css
-border-top: 0.5px solid rgba(200,169,110,0.09);
-padding: 16px 0 0;
-margin-bottom: 16px;
-```
-
-### Alive Elements
-- Pulse dot: 4px circle, gold 0.7, scale 1→1.8 over 2.5s
-- Heartbeat line: 1px segments, varying widths, gold 0.1–0.36
-- Progress fills: gold gradient with shimmer animation
-- Momentum bar: 0.5px track, filled with gold glow
+Web wins margin AND user pays less. Apple anti-steering rules prevent promoting web pricing inside the iOS app — only mention via direct outreach (email/SMS/social).
 
 ---
 
-## Identity Level System
+## What's working end-to-end (live verified)
 
-| Level | XP | Accent note |
-|---|---|---|
-| Ember | 0 | Fire energy |
-| Root | 1,000 | Earth/growth |
-| Rise | 3,500 | Gold/visible |
-| Wylde | 8,000 | Prismatic/iridescent |
+- ✓ Coach API live with future-self voice + user context
+- ✓ Identity Import returns valid structured profile
+- ✓ 873 exercises returning from `/api/exercises`
+- ✓ Web app renders correctly on dark theme
+- ✓ Mobile web polish (no iOS input zoom, safe-area aware, responsive cards)
+- ✓ Refresh-restore (URL hash + localStorage)
+- ✓ Founder counter API
+- ✓ All Supabase RPCs work (assign_founding_member_number, etc.)
 
-In the pure black aesthetic, level changes manifest through:
-- Badge text brightness increase
-- Pulse dot intensity
-- Subtle glow on key elements
+## What's stub mode (waiting on external setup)
 
----
-
-## Coach Roster
-
-| Name | Energy | Specialty |
-|---|---|---|
-| Adam | Masc | Strength |
-| Marcus | Masc | Performance |
-| Zara | Fem | Movement |
-| Nadia | Fem | Restoration |
-| Sage | Neutral | Mindset |
-| Ren | Neutral | Integration |
+- iOS PaywallView — RevenueCat SDK not added yet, simulates purchases
+- Stripe checkout — endpoint exists, needs real Stripe products + env vars
+- iOS gym location finder — natural next when native onboarding is built
 
 ---
 
-## XP Actions
+## External setup user must do
 
-| Action | XP |
-|---|---|
-| Complete workout | +50 |
-| Log a set | +5 |
-| Log meal | +20 |
-| Hit water goal | +15 |
-| Log sleep | +10 |
-| Complete supplement stack | +15 |
-| Generate Future Self | +25 |
-| 7-day streak bonus | +200 |
-| Forum post | +15 |
-| Forum reply | +5 |
-| Attend event | +100 |
-| Refer member | +250 |
+### Required for Founder launch
+1. **Run Supabase migrations** — paste both `.sql` files in Supabase SQL editor
+2. **Stripe** — see `STRIPE_SETUP.md`. Create account, 3 products, get price IDs, set Vercel env vars, configure webhook endpoint
+3. **Vercel env vars:**
+   - `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` (already set, used by all webhooks)
+   - `ANTHROPIC_API_KEY` (already set)
+   - `STRIPE_SECRET_KEY`
+   - `STRIPE_PRICE_LIFETIME_FOUNDER`
+   - `STRIPE_PRICE_ANNUAL_FOUNDER`
+   - `STRIPE_PRICE_MONTHLY_FOUNDER`
+   - `STRIPE_WEBHOOK_SECRET`
+   - `REVENUECAT_WEBHOOK_SECRET` (when iOS goes live)
 
----
+### Required for App Store / TestFlight
+4. **Apple Developer Program** ($99/yr, 24-48hr approval) — user has this
+5. **App Store Connect entry** — bundle ID `com.wylde.self`, see `TESTFLIGHT_SUBMISSION.md`
+6. **Xcode signing** — Settings & Capabilities → Team + Bundle ID
+7. **App Icon** — final 1024×1024 PNG (placeholder is bundled)
+8. **Privacy policy URL** — required for App Store
+9. **RevenueCat** — see `PAYWALL_SETUP.md`. Create account, entitlement, offering, get API key, add SDK in Xcode, flip `useRealRevenueCat = true`
+10. **Sandbox test** — full purchase flow with test card `4242 4242 4242 4242`
+11. **TestFlight upload** — Xcode → Archive → Distribute → App Store Connect
 
-## App Screens (app.html)
-
-1. **Auth** — email/password sign in + create account. Guest mode fallback.
-2. **Start (Onboarding)** — name, gender, age, height, weight, goals (up to 3), fitness level, days/week, health concerns, dietary restrictions
-3. **Dashboard** — draggable + collapsible sections. Momentum bar. All 9 data modules.
-4. **Future Self** — photo upload → 3 parallel Gemini calls → drag-reveal slider with timeline tabs
-5. **Program** — AI workout generator. Rest timer. Set logging with inline history. Finish → celebration.
-6. **Coach** — 6 coaches, roster + AI chat (Claude Haiku)
-7. **Progress** — streak, session log, personal bests, sleep chart
-8. **Nutrition** — macros, AI meal plan, food log (text + photo), water tracker
-9. **Supplements** — AI stack generator + Fullscript links
-10. **Health+** — Everwell peptide protocols, lab upload, clinical records
-11. **Community** — Feed | Forums (Wylde Man / Wylde Woman / Wylde Self) | Leaderboard | Events
+### Suggested
+- `billing@wyldeself.com` email for Stripe account login (Cloudflare Email Routing free, forwards to your inbox)
 
 ---
 
-## iOS App Screens
+## Recurring infra issue (the git lock)
 
-Same as above plus:
-- WorkoutCompleteView (celebration fullscreen)
-- RestTimerView (sheet, 90s/60s)
-- WorkoutSchedulerView (calendar + reminders)
-- FutureSelfRevealView (3-image parallel + drag slider)
-
----
-
-## Community Forums
-
-Three sections in the Forums tab:
-
-| Section | Accent | Tagline |
-|---|---|---|
-| Wylde Man | ember #ff6030 | "Iron sharpens iron." |
-| Wylde Woman | blush #e88a9a | "She remembered who she was." |
-| Wylde Self | gold #f0c040 | "Become who you were always becoming." |
-
-Supabase tables: forum_threads, forum_replies
-XP: +15 for post, +5 for reply
-
----
-
-## Future Self — Image Generation
-
-**Provider:** Gemini 3.1 Flash Image via /api/generate-image.js (Edge Runtime, 30s timeout)
-**Flow:** Upload photo → 3 parallel API calls → each timeline resolves independently → drag slider reveal
-
-**Timeline prompts:**
-- 12 weeks: leaner, more athletic, 4-6% fat reduction
-- 6 months: significant recomposition, 8-12% fat reduction, clear muscle
-- 1 year: dramatic transformation, athletic/performance physique
-
-**Goal modifiers:** fat_loss / muscle / athletic / toning
-
----
-
-## Planned Features (Not Yet Built)
-
-### HIGH PRIORITY
-1. **Design overhaul** — apply pure black / gold hairline system to ALL screens in app.html. Currently only partially applied.
-2. **Workout flow fix** — make workout logging feel seamless. Quick-tap weight/reps adjusters (+5/-5 lbs, +1/-1 rep). Inline exercise video. Swap exercise button.
-3. **Inline exercise history** — show last session's weight × reps on each exercise so user knows what to beat.
-4. **Wylde Strength Score** — proprietary metric. Compounds volume + consistency + progression. Shows on dashboard + leaderboard.
-5. **Shareable workout card** — after completing workout, generates branded card: logo, workout name, sets/time/streak/score. Share to Instagram Stories.
-6. **Muscle map** — SVG body diagram, trained muscles highlight in gold. Shows in workout completion + progress screen.
-7. **Text brightness fix** — all secondary/label text too dark. Minimum opacity 0.45 throughout.
-8. **Opening sequence** — logo animation on first launch. Logo image already in repo. Progress line fills. Then onboarding starts.
-
-### MEDIUM PRIORITY
-9. **Exercise video player** — Grok Imagine generated videos per exercise. Cloudflare Stream hosting. Plays inline during set logging.
-10. **PeptideView.swift** — iOS peptide protocol screen (prompt designed, not built)
-11. **SupplementView.swift** — iOS supplement screen (prompt designed, not built)
-12. **Apple Watch companion** — basic watchOS app: start workout, log set, rest timer on wrist
-13. **Supabase full verification** — confirm auth screen live on wyldeself.com, verify all data flows
-
-### LOWER PRIORITY
-14. **Apple Sign In** — waiting on Apple Developer verification (48+ hrs pending, contact support)
-15. **Clinical Health Records** — HealthKit, requires separate Apple review. Everwell partnership justifies it.
-16. **wyldeself.ai domain** — buy (~$50-80/yr)
-17. **Trademark** — file post-funding (~$350)
-18. **Fullscript links** — update from placeholder to real dispensary URL
-
----
-
-## Competitive Intelligence (Fitbod)
-
-**What they do well:**
-- Exercise database + video demos alongside set logging
-- Clean set logging UI (quick-tap increments)
-- Muscle recovery table (which muscles need rest)
-- Apple Watch integration
-
-**What we do better:**
-- AI program generation (they have zero AI)
-- Identity system / XP / levels
-- Coach AI chat
-- Future Self transformation
-- Community + forums
-- Nutrition integration
-- Brand / emotional resonance
-- Shareable cards
-
-**Specific Fitbod features to replicate and exceed:**
-- Inline video during set logging → we do this with Grok-generated videos
-- Muscle map → we have SVG body diagram
-- Swap exercise → one tap, our AI picks contextually better replacement
-- Quick weight/rep input → +5/-5 buttons, no keyboard required
-
----
-
-## Claude Code Workflow
+The dev sandbox can't unlink `.git/index.lock` due to virtiofs permissions. After every commit attempt by the AI agent, the user must clear it manually before pushing:
 
 ```bash
-# Web app
-cd ~/Wylde-self && claude
-
-# iOS app  
-cd ~/Documents/WyldeSelf && claude
+cd ~/Wylde-self
+rm -f .git/index.lock .git/HEAD.lock .git/objects/*/tmp_obj_*
+git push origin main
 ```
 
-**Standard flow:**
-1. Design / plan in Claude chat
-2. Claude writes exact prompt
-3. Paste into Claude Code terminal or Cowork
-4. Vercel auto-deploys in ~30s
-5. Verify on wyldeself.com
-
-**If Claude Code needs re-auth:**
-```bash
-claude auth
-```
+This is a sandbox quirk, not a bug in the code. Just the workflow.
 
 ---
 
-## Known Issues
+## Decisions made (with reasoning)
 
-- [ ] app.html design system only partially applied — needs full pass
-- [ ] All secondary text too dark (below 0.40 opacity)
-- [ ] Workout flow feels clunky — too many taps to get to action
-- [ ] Overview screen is a stub — no content
-- [ ] Coach sidebar doesn't update context on screen change
-- [ ] Alternative workout section rendering needs verification
-- [ ] Fullscript links are placeholder URLs
-- [ ] iOS: ProgramBuilderSheet has no back button
-- [ ] iOS: coach portraits are initials only (pending AI-generated images)
-- [ ] Apple Developer enrollment pending 48+ hrs — contact Apple support
-
----
-
-## Immediate Next Actions for Cowork
-
-Run these in order:
-
-### 1. Design system pass — app.html
-Apply pure black / gold hairline aesthetic to ALL screens. Fix text brightness. Opening sequence with logo. This is the highest priority.
-
-### 2. Workout flow overhaul — app.html
-- Dashboard "Today's session" taps directly into active workout
-- Quick-tap +5/-5 weight, +1/-1 rep buttons
-- Inline exercise history (last session weight × reps)
-- Swap exercise button (AI picks replacement)
-- Workout state persists across screen navigation
-- Rest timer floats as persistent element during active workout
-
-### 3. Wylde Score + Shareable Card — app.html
-- Calculate Wylde Strength Score (volume × consistency × progression index)
-- Show on dashboard + leaderboard
-- Post-workout shareable card with logo, stats, score
-
-### 4. iOS design match — WyldeSelf Xcode
-After web is verified, apply same design tokens to iOS SwiftUI files.
-
-### 5. Grok video integration
-- Set up api.x.ai account + key
-- Build /api/grok-video.js proxy
-- Pre-generate 30 core exercises
-- Upload to Cloudflare Stream
-- Wire video player into Program screen
+- **iOS-first launch, web Stripe in parallel** — TestFlight is the primary milestone; Stripe lets warm contacts buy direct without waiting for App Store review
+- **Hybrid app (native shell + WKWebView tabs) approved by Apple** — App provides real native value (Today, Library, Paywall, Identity Import, HealthKit, IAP, push)
+- **No emojis anywhere** — initiation container brand
+- **Levels stripped, replaced with Phases** — phases reflect identity formation, not video-game tier grinding
+- **Morning Protocol locked to 3 fixed practices** (Meditation, Journaling, Reading) — Workout removed from morning, lives in daily routine
+- **Walk added as separate daily action** — not part of training, not part of morning ritual
+- **Coach speaks AS the user's future self** ("Future Wilke") — not a generic AI assistant
+- **Identity Import behind Founding Members paywall** — high-leverage feature gated to drive conversion
+- **OpenStreetMap Nominatim for gym search** — free, no API key, fine until 10k DAU
+- **Stub-mode RevenueCat in iOS for now** — UI is fully built, swap to live with one config flag
+- **Pantry/forum/peptide/advanced protocols hidden** — out of MVP scope, code preserved for later
+- **Single hamburger menu on every screen** — settings live there, never in a tab
+- **Mobile web is the primary marketing surface** — must be polished even if iOS is the conversion target
 
 ---
 
-## Session Log
+## Pending / next priorities
 
-### Session 7 — April 2026 (current)
-- Competitive analysis vs Fitbod — identified gaps and advantages
-- Decided on pure black / gold hairline design system (derived from logo image)
-- Built dashboard mockup with actual logo embedded (dashboard_preview.html)
-- Identified 8 high-priority build items
-- Planned muscle map, Wylde Score, shareable card, inline exercise history
-- Grok Imagine researched for exercise video — API live, $0.05/sec
-- Moved build operations to Claude Cowork for structured execution
-- This HANDOFF.md written for Cowork transition
+- ❑ User: complete Stripe setup + push live
+- ❑ User: complete iOS App Store Connect entry + signing
+- ❑ User: archive + upload first TestFlight build
+- ❑ Coach insight card on Today screen (replaces rejected red-dot pattern from Gemini audit)
+- ❑ Native iOS gym finder using MKLocalSearch
+- ❑ Native iOS CoachView (replace WebView for full-quality Coach)
+- ❑ Native iOS FutureSelfView (currently WebView)
+- ❑ Native iOS onboarding (currently WebView)
+- ❑ Apple anti-steering compliance audit before App Store submission
+- ❑ "Members at your gym" community feature (foundation already in place via gymPlaceId)
+- ❑ Coach proactive daily insight push notification
 
-### Session 6 — April 2026
-- Gender-neutral rebrand — Ember/Root/Rise/Wylde arc
-- Balanced coach roster (2M/2F/2N)
-- Living color system per identity level
-- New typography system (Inter/Space Mono/Montserrat/Cormorant)
-- Draggable dashboard (web + iOS)
-- Collapsible cards with header summary values
-- Rest timer (90s/60s, 3-phase color journey)
-- Future Self: 3 parallel Gemini, drag-reveal slider, timeline tabs
-- Supabase: 16 tables, leaderboard view, award_xp function, RLS
-- Supabase wired to web + iOS
-- Community screen: feed, leaderboard, events (web + iOS)
-- Forum system: Wylde Man / Wylde Woman / Wylde Self
-- XP engine + badge system
-- WorkoutCompleteView celebration
-- HealthKitService read/write + Clinical Health Records
-- ScheduleService calendar + reminders
-- FutureSelfRevealView 3-image parallel + drag slider
-- Xcode errors fixed: Combine imports, MainActor, deprecations
-- Supabase Swift package added to Xcode
+---
 
-### Session 5 — April 2026
-- Switched image gen to Gemini 3.1 Flash Image
-- Future Self image gen working end-to-end
-- ConsentView, Future Self coach added
-- PeptideView + SupplementView prompts designed
+## Quick context for the AI agent in future sessions
 
-### Session 4 — April 2026
-- Native iOS SwiftUI app scaffolded at ~/Documents/WyldeSelf
-- All core Swift files built
-- CoachPersona, CoachView, ProgramView, NutritionView
-- ExerciseDatabase, WorkoutSession
+If you're an AI agent picking this up:
 
-### Session 3 — April 2026
-- 13-slide VC pitch deck (investors.html live)
-- Pre-seed SAFE $1M ask
+1. **Read this file first.** Then `app.html` and the iOS Views/ folder.
+2. **Brand voice is sacred.** Grounded, direct, masculine but not aggressive. No emojis. No fluff. No SaaS clichés. No video-game gamification.
+3. **The Coach speaks as the user's future self, not as an AI.** Never break that frame.
+4. **Mobile web is critical.** Test every change on a 375px viewport (iPhone SE) before committing.
+5. **The git lock issue is recurring.** Don't waste cycles trying to fix it — just commit locally and tell the user to push.
+6. **Always commit locally, even if you can't push.** The user will push manually.
+7. **iOS WebView tabs DO get web changes automatically** — push to Vercel, WebViews see the update.
+8. **Stub mode is fine for now.** Don't try to wire RevenueCat or real Stripe products without the user's API keys.
+9. **`HANDOFF.md` should be kept current** as major systems ship.
 
-### Session 2 — April 2026
-- Image gen, coach sidebar, food log, supplement stack
-- gate.html, apply.html rebuilt
-- Full design pass
+---
 
-### Session 1 — April 2026
-- Initial build — all 10 screens, Claude API, localStorage, nav
+End of handoff.
