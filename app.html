@@ -4768,8 +4768,19 @@
     return false;
   }
   function openSettingsDrawerThenPaywall() {
-    if (typeof openSettingsDrawer === 'function') openSettingsDrawer();
-    // The drawer has a Founding Member CTA; user clicks that to open the actual paywall flow.
+    // Routes the user to the dedicated founder paywall page (Stripe checkout).
+    // Was: just opened the drawer (dead end). Now navigates to /founder.html
+    // so any "Become a Founding Member" tap actually leads to checkout.
+    window.location.href = '/founder.html';
+  }
+  if (typeof window !== 'undefined') {
+    window.openSettingsDrawerThenPaywall = openSettingsDrawerThenPaywall;
+    // Generic helper for any new CTA — pass an optional tier hint
+    window.openFounderPaywall = function(tier) {
+      var url = '/founder.html';
+      if (tier) url += '?tier=' + encodeURIComponent(tier);
+      window.location.href = url;
+    };
   }
 
   function showIdentityState(name) {

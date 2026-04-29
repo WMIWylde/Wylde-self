@@ -1582,97 +1582,59 @@
       background: var(--accent-gold);
     }
 
-    /* ─── TODAY SCREEN (dark app inside light device) ─── */
-    .ds-today-screen {
-      background: #121212 !important;
-      padding: 8px 14px 10px !important;
-    }
-    .ds-today-screen .ds-status { color: rgba(255,255,255,0.35); }
-    .ds-today-screen .ds-dots span { background: rgba(255,255,255,0.15); }
-    .ds-today-screen .ds-dots span:first-child { background: rgba(255,255,255,0.35); }
-    .ds-today-streak {
-      display: inline-flex; align-items: center; gap: 5px;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px; padding: 3px 9px;
-      font-size: 8px; color: rgba(255,255,255,0.4);
-      background: #1C1C1C; margin-bottom: 10px;
-    }
-    .ds-today-streak-dot { width: 4px; height: 4px; border-radius: 50%; background: #6E7F6B; }
-    .ds-today-title {
-      font-size: 18px; font-weight: 700; color: #fff;
-      letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 3px;
-    }
-    .ds-today-sub { font-size: 9px; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
-    .ds-today-bar { height: 4px; background: #242424; border-radius: 2px; overflow: hidden; margin-bottom: 10px; }
-    .ds-today-bar-fill { height: 100%; width: 8%; background: #6E7F6B; border-radius: 2px; }
-    .ds-today-label {
-      font-size: 8px; font-weight: 600; letter-spacing: 0.1em;
-      text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 6px;
-    }
-    .ds-today-card {
-      background: #F5F2EC; border-radius: 12px; overflow: hidden;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.22); margin-bottom: 8px;
-    }
-    .ds-today-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 11px; }
-    .ds-today-item-primary { padding: 12px 11px; }
-    .ds-today-divider { height: 1px; background: rgba(0,0,0,0.06); margin: 0 11px; }
-    .ds-today-name { font-size: 11px; font-weight: 600; color: #1A1A1A; }
-    .ds-today-meta { font-size: 9px; color: rgba(26,26,26,0.4); margin-top: 1px; }
-    .ds-today-btn {
-      padding: 5px 10px; border-radius: 8px; border: none;
-      background: #1A1A1A; color: #fff;
-      font-size: 9px; font-weight: 600; font-family: 'Inter', sans-serif;
-      white-space: nowrap;
-    }
-    .ds-today-pbar-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    .ds-today-pbar { width: 36px; height: 4px; background: rgba(0,0,0,0.08); border-radius: 2px; overflow: hidden; }
-    .ds-today-pbar-fill { height: 100%; width: 67%; background: #6E7F6B; border-radius: 2px; }
-    .ds-today-ppct { font-size: 8px; font-weight: 600; color: #6E7F6B; }
-    .ds-today-hbar-wrap { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
-    .ds-today-hbar { width: 28px; height: 4px; background: rgba(0,0,0,0.08); border-radius: 2px; overflow: hidden; }
-    .ds-today-hbar-fill { height: 100%; width: 50%; background: #7F907C; border-radius: 2px; }
-    .ds-today-wbtns { display: flex; gap: 2px; }
-    .ds-today-wbtn {
-      width: 18px; height: 18px; border-radius: 6px;
-      border: 1px solid rgba(0,0,0,0.08); background: rgba(0,0,0,0.03);
-      color: #1A1A1A; font-size: 10px; font-weight: 500;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .ds-today-quick { display: flex; gap: 4px; margin-bottom: 8px; }
-    .ds-today-qpill {
-      flex: 1; display: flex; align-items: center; justify-content: center; gap: 3px;
-      padding: 7px 4px; background: #1C1C1C; border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 8px; font-size: 8px; font-weight: 500; color: rgba(255,255,255,0.4);
-    }
-    .ds-today-qi { font-size: 10px; line-height: 1; }
-    .ds-today-future {
-      display: flex; align-items: center; gap: 8px;
-      padding: 9px 10px; margin-bottom: 8px;
-      background: #1C1C1C; border: 1px solid rgba(255,255,255,0.06); border-radius: 10px;
-    }
-    .ds-today-future-thumb { width: 30px; height: 30px; border-radius: 8px; background: #242424; flex-shrink: 0; }
-    .ds-today-future-hl { font-size: 10px; font-weight: 600; color: #fff; }
-    .ds-today-future-sub { font-size: 8px; color: rgba(255,255,255,0.25); margin-top: 1px; }
-    .ds-today-future-arr { font-size: 12px; color: rgba(255,255,255,0.2); margin-left: auto; flex-shrink: 0; }
-    .ds-today-section {
-      background: #1C1C1C; border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 10px; overflow: hidden; margin-bottom: 6px;
-    }
-    .ds-today-section-hdr {
-      display: flex; align-items: center; justify-content: space-between; padding: 9px 10px;
-    }
-    .ds-today-section-title { font-size: 10px; font-weight: 600; color: #fff; }
-    .ds-today-section-tog { font-size: 12px; color: rgba(255,255,255,0.25); }
-    .ds-today-nav {
-      display: flex; justify-content: center;
-      gap: 24px; padding: 10px 0 2px; margin-top: auto;
-    }
-    .ds-today-nav-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.1); }
-    .ds-today-nav-dot.active { background: #6E7F6B; box-shadow: 0 0 6px rgba(110,127,107,0.3); }
-    /* Dark device overrides for Today screen */
-    .ds-today-screen ~ .device-home { background: rgba(255,255,255,0.1) !important; }
-    .device-grid-item:first-child .device { background: #161616; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
-    .device-grid-item:first-child .device-notch { background: #111; }
+    /* ─── TODAY SCREEN v11 (light surface, matches live app) ─── */
+    .ds-app-screen { background: var(--bg-soft) !important; padding: 6px 12px 10px !important; }
+    .ds-app-screen .ds-status { color: rgba(0,0,0,0.35); }
+    .ds-app-hero { position: relative; border-radius: 16px; overflow: hidden; margin-bottom: 10px; min-height: 160px; background: #20241C; }
+    .ds-app-hero-img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; opacity: 0.7; }
+    .ds-app-hero::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(32,36,28,0.55) 0%, rgba(32,36,28,0.15) 60%, transparent 100%), linear-gradient(to top, rgba(32,36,28,0.5) 0%, transparent 50%); }
+    .ds-app-hero-badge { position: absolute; top: 8px; right: 8px; z-index: 3; background: rgba(255,255,255,0.18); backdrop-filter: blur(10px); border-radius: 12px; padding: 4px 8px; font-size: 7px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; gap: 3px; }
+    .ds-app-hero-content { position: relative; z-index: 2; padding: 14px 14px 16px; display: flex; flex-direction: column; justify-content: flex-end; min-height: 160px; }
+    .ds-app-hero-top { font-size: 8px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.8); margin-bottom: 4px; }
+    .ds-app-hero-title { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 4px; max-width: 65%; }
+    .ds-app-hero-sub { font-size: 8px; color: rgba(255,255,255,0.6); margin-bottom: 10px; max-width: 65%; line-height: 1.4; }
+    .ds-app-cta { display: inline-flex; align-items: center; gap: 5px; padding: 8px 14px; border: none; border-radius: 8px; background: #C6A96B; color: #0B0B0B; font-size: 9px; font-weight: 600; font-family: 'Inter', sans-serif; }
+    /* Stack rows */
+    .ds-app-stack { background: var(--bg-surface); border-radius: 14px; overflow: hidden; margin-bottom: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+    .ds-app-stack-label { font-size: 8px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-primary); margin-bottom: 6px; }
+    .ds-app-row { display: flex; align-items: center; gap: 8px; padding: 10px 10px; }
+    .ds-app-row + .ds-app-row { border-top: 1px solid rgba(0,0,0,0.04); }
+    .ds-app-row-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; }
+    .ds-app-row-left { flex: 1; min-width: 0; }
+    .ds-app-row-name { font-size: 11px; font-weight: 600; color: var(--text-primary); }
+    .ds-app-row-meta { font-size: 9px; color: var(--text-muted); margin-top: 1px; }
+    .ds-app-row-status { font-size: 8px; font-weight: 500; color: var(--accent-sage); padding: 3px 7px; border: 1px solid rgba(110,127,102,0.18); border-radius: 12px; white-space: nowrap; display: flex; align-items: center; gap: 3px; }
+    .ds-app-row-status-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent-sage); }
+    /* Nutrition rings */
+    .ds-app-nutrition { background: var(--bg-surface); border-radius: 14px; padding: 10px; margin-bottom: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+    .ds-app-nut-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .ds-app-nut-label { font-size: 8px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-primary); }
+    .ds-app-nut-arrow { color: var(--text-muted); font-size: 14px; }
+    .ds-app-rings { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+    .ds-app-ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .ds-app-ring-name { font-size: 8px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted); }
+    .ds-app-ring-val { font-size: 10px; font-weight: 700; color: var(--text-primary); }
+    .ds-app-ring-goal { font-weight: 400; color: var(--text-muted); font-size: 9px; }
+    /* Secondary grid */
+    .ds-app-sec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+    .ds-app-sec-card { background: var(--bg-surface); border-radius: 12px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+    .ds-app-sec-icon { width: 24px; height: 24px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-bottom: 5px; }
+    .ds-app-sec-title { font-size: 10px; font-weight: 600; color: var(--text-primary); line-height: 1.2; }
+    .ds-app-sec-sub { font-size: 8px; color: var(--text-muted); margin-top: 2px; }
+    /* Streak */
+    .ds-app-streak { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+    .ds-app-streak-msg { font-weight: 400; color: var(--text-muted); font-size: 9px; }
+    /* Future self */
+    .ds-app-future { display: flex; align-items: center; gap: 8px; padding: 10px 10px; background: linear-gradient(135deg, #fff 60%, rgba(110,127,102,0.06) 100%); border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+    .ds-app-future-thumb { width: 40px; height: 40px; border-radius: 10px; background: rgba(110,127,102,0.08); flex-shrink: 0; }
+    .ds-app-future-label { font-size: 7px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-sage); margin-bottom: 1px; }
+    .ds-app-future-hl { font-size: 11px; font-weight: 600; color: var(--text-primary); }
+    .ds-app-future-sub { font-size: 9px; color: var(--text-muted); margin-top: 1px; }
+    .ds-app-future-arr { font-size: 14px; color: var(--text-muted); margin-left: auto; }
+    /* Nav dots */
+    .ds-app-nav { display: flex; justify-content: center; gap: 20px; padding: 8px 0 2px; }
+    .ds-app-nav-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(0,0,0,0.1); }
+    .ds-app-nav-dot.active { background: var(--accent-sage); }
 
     /* Card inner layout */
     .card-inner {
@@ -2324,101 +2286,10 @@
 
     <div class="device-grid">
 
-      <!-- TODAY — inline app mockup -->
+      <!-- TODAY — real photo -->
       <div class="device-grid-item reveal d1">
-        <div class="device">
-          <div class="device-notch"></div>
-          <div class="device-screen ds-today-screen">
-            <div class="ds-status">
-              <span>9:41</span>
-              <div class="ds-dots"><span></span><span></span><span></span><span></span></div>
-            </div>
-
-            <!-- Header -->
-            <div class="ds-today-streak"><span class="ds-today-streak-dot"></span> 7 day streak</div>
-            <div class="ds-today-title">Day 7 — Prove it.</div>
-            <div class="ds-today-sub">Week 1 of 12</div>
-            <div class="ds-today-bar"><div class="ds-today-bar-fill"></div></div>
-
-            <!-- Mission Card -->
-            <div class="ds-today-label">Today's Mission</div>
-            <div class="ds-today-card">
-              <div class="ds-today-item ds-today-item-primary">
-                <div>
-                  <div class="ds-today-name">Workout</div>
-                  <div class="ds-today-meta">Upper Body &middot; 6 exercises</div>
-                </div>
-                <button class="ds-today-btn">Start Session &rarr;</button>
-              </div>
-              <div class="ds-today-divider"></div>
-              <div class="ds-today-item">
-                <div>
-                  <div class="ds-today-name">Protein</div>
-                  <div class="ds-today-meta">120g of 180g</div>
-                </div>
-                <div class="ds-today-pbar-wrap">
-                  <div class="ds-today-pbar"><div class="ds-today-pbar-fill"></div></div>
-                  <span class="ds-today-ppct">67%</span>
-                </div>
-              </div>
-              <div class="ds-today-divider"></div>
-              <div class="ds-today-item">
-                <div>
-                  <div class="ds-today-name">Water</div>
-                  <div class="ds-today-meta">64 / 128 oz</div>
-                </div>
-                <div class="ds-today-hbar-wrap">
-                  <div class="ds-today-hbar"><div class="ds-today-hbar-fill"></div></div>
-                  <div class="ds-today-wbtns">
-                    <div class="ds-today-wbtn">&minus;</div>
-                    <div class="ds-today-wbtn">+</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="ds-today-quick">
-              <div class="ds-today-qpill"><span class="ds-today-qi">📷</span> Fuel up</div>
-              <div class="ds-today-qpill"><span class="ds-today-qi">💧</span> Hydrate</div>
-              <div class="ds-today-qpill"><span class="ds-today-qi">💬</span> Coach</div>
-            </div>
-
-            <!-- Future Self -->
-            <div class="ds-today-future">
-              <div class="ds-today-future-thumb"></div>
-              <div>
-                <div class="ds-today-future-hl">This is you in 12 weeks</div>
-                <div class="ds-today-future-sub">See your future self &rarr;</div>
-              </div>
-              <span class="ds-today-future-arr">&rsaquo;</span>
-            </div>
-
-            <!-- Workout collapsed -->
-            <div class="ds-today-section">
-              <div class="ds-today-section-hdr">
-                <span class="ds-today-section-title">Today's Workout</span>
-                <span class="ds-today-section-tog">+</span>
-              </div>
-            </div>
-
-            <!-- Protocol collapsed -->
-            <div class="ds-today-section">
-              <div class="ds-today-section-hdr">
-                <span class="ds-today-section-title">Protocol</span>
-                <span class="ds-today-section-tog">+</span>
-              </div>
-            </div>
-
-            <!-- Nav -->
-            <div class="ds-today-nav">
-              <div class="ds-today-nav-dot active"></div>
-              <div class="ds-today-nav-dot"></div>
-              <div class="ds-today-nav-dot"></div>
-              <div class="ds-today-nav-dot"></div>
-            </div>
-          </div>
-          <div class="device-home" style="background:rgba(255,255,255,0.1);"></div>
+        <div class="device-photo">
+          <img src="/app-inhand.png" alt="Wylde Self app in hand" width="280" height="560" loading="lazy" />
         </div>
         <div class="device-grid-caption">
           <strong>Today</strong>
@@ -2486,58 +2357,134 @@
         </div>
       </div>
 
-      <!-- FUEL -->
+      <!-- TODAY SCREEN — v11 app cards -->
       <div class="device-grid-item reveal d4">
         <div class="device">
           <div class="device-notch"></div>
-          <div class="device-screen">
+          <div class="device-screen ds-app-screen">
             <div class="ds-status">
               <span>9:41</span>
               <div class="ds-dots"><span></span><span></span><span></span><span></span></div>
             </div>
-            <div style="padding-top:8px;">
-              <div class="ds-food-icon">🥗</div>
-              <div class="ds-food-name">Grilled Chicken Salad</div>
-              <div class="ds-food-sub">Scanned just now</div>
-              <div class="ds-food-cal-row">
-                <span class="ds-food-cal-num">540</span>
-                <span class="ds-food-cal-unit">cal</span>
+
+            <!-- Hero mission card -->
+            <div class="ds-app-hero">
+              <div class="ds-app-hero-badge">&#9889; 12 Weeks</div>
+              <div class="ds-app-hero-content">
+                <p class="ds-app-hero-top">Today</p>
+                <div class="ds-app-hero-title">Day 7 of 84</div>
+                <p class="ds-app-hero-sub">You&rsquo;re becoming someone who follows through.</p>
+                <button class="ds-app-cta">Enter Today&rsquo;s Training &rarr;</button>
               </div>
-              <div class="ds-food-macros">
-                <div class="ds-food-macro">
-                  <div class="ds-food-macro-val">42g</div>
-                  <div class="ds-food-macro-label">Protein</div>
+            </div>
+
+            <!-- Today stack -->
+            <p class="ds-app-stack-label">Today's Path</p>
+            <div class="ds-app-stack">
+              <div class="ds-app-row">
+                <div class="ds-app-row-icon" style="background:rgba(200,169,110,0.10);color:#B89B5E;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="11" width="14" height="2"/></svg>
                 </div>
-                <div class="ds-food-macro">
-                  <div class="ds-food-macro-val">38g</div>
-                  <div class="ds-food-macro-label">Carbs</div>
+                <div class="ds-app-row-left">
+                  <p class="ds-app-row-name">Today's Training</p>
+                  <p class="ds-app-row-meta">Upper Body &middot; 6 Exercises</p>
                 </div>
-                <div class="ds-food-macro">
-                  <div class="ds-food-macro-val">22g</div>
-                  <div class="ds-food-macro-label">Fat</div>
+                <span class="ds-app-row-status"><span class="ds-app-row-status-dot"></span> Not Started</span>
+              </div>
+              <div class="ds-app-row">
+                <div class="ds-app-row-icon" style="background:rgba(110,127,102,0.10);color:#6E7F6B;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="13" cy="4" r="2"/><path d="M15 22l-3-7-3 7"/><path d="M9 13l-3-2 3-6 4 1 3 4"/></svg>
+                </div>
+                <div class="ds-app-row-left">
+                  <p class="ds-app-row-name">Walk</p>
+                  <p class="ds-app-row-meta">30+ minutes outside</p>
+                </div>
+                <span class="ds-app-row-status"><span class="ds-app-row-status-dot"></span> Not yet</span>
+              </div>
+              <div class="ds-app-row">
+                <div class="ds-app-row-icon" style="background:rgba(110,127,102,0.10);color:#6E7F6B;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                </div>
+                <div class="ds-app-row-left">
+                  <p class="ds-app-row-name">Water</p>
+                  <p class="ds-app-row-meta">64 of 128 oz</p>
+                </div>
+                <span class="ds-app-row-status" style="color:#4285F4;border-color:rgba(66,133,244,0.18);"><span class="ds-app-row-status-dot" style="background:#4285F4;"></span> 50%</span>
+              </div>
+            </div>
+
+            <!-- Nutrition rings -->
+            <div class="ds-app-nutrition">
+              <div class="ds-app-nut-header">
+                <p class="ds-app-nut-label">Nutrition</p>
+                <span class="ds-app-nut-arrow">&rsaquo;</span>
+              </div>
+              <div class="ds-app-rings">
+                <div class="ds-app-ring-wrap">
+                  <svg width="40" height="40" viewBox="0 0 60 60"><circle cx="30" cy="30" r="24" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="4"/><circle cx="30" cy="30" r="24" fill="none" stroke="#C6A96B" stroke-width="4" stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="90.5" transform="rotate(-90 30 30)"/></svg>
+                  <span class="ds-app-ring-name">Calories</span>
+                  <span class="ds-app-ring-val">960<span class="ds-app-ring-goal">/2400</span></span>
+                </div>
+                <div class="ds-app-ring-wrap">
+                  <svg width="40" height="40" viewBox="0 0 60 60"><circle cx="30" cy="30" r="24" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="4"/><circle cx="30" cy="30" r="24" fill="none" stroke="#6E7F6B" stroke-width="4" stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="50.3" transform="rotate(-90 30 30)"/></svg>
+                  <span class="ds-app-ring-name">Protein</span>
+                  <span class="ds-app-ring-val">120g<span class="ds-app-ring-goal">/180g</span></span>
+                </div>
+                <div class="ds-app-ring-wrap">
+                  <svg width="40" height="40" viewBox="0 0 60 60"><circle cx="30" cy="30" r="24" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="4"/><circle cx="30" cy="30" r="24" fill="none" stroke="#B89B5E" stroke-width="4" stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="113.1" transform="rotate(-90 30 30)"/></svg>
+                  <span class="ds-app-ring-name">Carbs</span>
+                  <span class="ds-app-ring-val">62g<span class="ds-app-ring-goal">/250g</span></span>
                 </div>
               </div>
-              <div class="ds-food-bar-wrap">
-                <div class="ds-food-bar-header">
-                  <span class="ds-food-bar-label">Daily protein</span>
-                  <span class="ds-food-bar-pct">67%</span>
+            </div>
+
+            <!-- Coach + Meal grid -->
+            <div class="ds-app-sec-grid">
+              <div class="ds-app-sec-card">
+                <div class="ds-app-sec-icon" style="background:rgba(200,169,110,0.10);color:#B89B5E;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 </div>
-                <div class="ds-food-bar-track">
-                  <div class="ds-food-bar-fill" style="width:67%;background:linear-gradient(90deg,var(--accent-sage),var(--accent-sage-soft));"></div>
+                <p class="ds-app-sec-title">Talk to your future self</p>
+                <p class="ds-app-sec-sub">The version that already did it</p>
+              </div>
+              <div class="ds-app-sec-card">
+                <div class="ds-app-sec-icon" style="background:rgba(110,127,102,0.10);color:#6E7F6B;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3m0 0v7"/></svg>
                 </div>
+                <p class="ds-app-sec-title">Fuel the machine</p>
+                <p class="ds-app-sec-sub">Log what you ate</p>
               </div>
-              <div class="ds-food-btn">Confirm &amp; Log</div>
-              <div class="ds-food-logged">
-                <div class="ds-food-logged-dot"></div>
-                <span>3 meals logged today</span>
+            </div>
+
+            <!-- Streak -->
+            <div class="ds-app-streak">
+              &#128293; 7 day streak <span class="ds-app-streak-msg">&middot; Keep the chain alive.</span>
+            </div>
+
+            <!-- Future self -->
+            <div class="ds-app-future">
+              <div class="ds-app-future-thumb"></div>
+              <div>
+                <p class="ds-app-future-label">Future You</p>
+                <p class="ds-app-future-hl">See who you're becoming</p>
+                <p class="ds-app-future-sub">12-week transformation preview</p>
               </div>
+              <span class="ds-app-future-arr">&rsaquo;</span>
+            </div>
+
+            <!-- Nav -->
+            <div class="ds-app-nav">
+              <div class="ds-app-nav-dot active"></div>
+              <div class="ds-app-nav-dot"></div>
+              <div class="ds-app-nav-dot"></div>
+              <div class="ds-app-nav-dot"></div>
             </div>
           </div>
           <div class="device-home"></div>
         </div>
         <div class="device-grid-caption">
-          <strong>Fuel</strong>
-          <span>Feed the machine.</span>
+          <strong>Your Day</strong>
+          <span>One screen. One mission. No negotiating.</span>
         </div>
       </div>
 

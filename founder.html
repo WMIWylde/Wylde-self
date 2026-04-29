@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0" />
+  <title>Wylde Self — Founding Member</title>
+  <meta name="description" content="Sponsor the work. Lock in lifetime. The first 1,000 founders get founder pricing forever." />
+  <meta property="og:title" content="Wylde Self — Founding Member" />
+  <meta property="og:description" content="Sponsor the work. Lock in lifetime." />
+  <meta property="og:image" content="https://wyldeself.com/og-image.png" />
+  <meta name="theme-color" content="#070707" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --bg:#070707; --surface:#111; --surface2:#161616;
+      --gold:#C8A96E; --gold-dim:rgba(200,169,110,0.10); --gold-mid:rgba(200,169,110,0.55);
+      --sage:#7D9275;
+      --text:#F4F1E8; --text2:#A6A29A; --text3:#6E6B65;
+      --border:rgba(244,241,232,0.08);
+    }
+    html,body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5;}
+    body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px 20px 60px;overflow-x:hidden;}
+
+    /* Soft gold radial glow at top */
+    body::before{
+      content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);
+      width:800px;height:800px;background:radial-gradient(circle,rgba(200,169,110,0.10) 0%,transparent 60%);
+      pointer-events:none;z-index:0;
+    }
+    .wrap{position:relative;z-index:1;width:100%;max-width:480px;}
+
+    /* Header */
+    .header{text-align:center;margin-bottom:36px;padding-top:20px;}
+    .badge{display:inline-flex;align-items:center;gap:6px;background:var(--gold-dim);border:1px solid var(--gold-mid);padding:6px 14px;border-radius:24px;margin-bottom:18px;}
+    .badge-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);}
+    .badge-text{font-size:10px;font-weight:700;letter-spacing:0.18em;color:var(--gold);}
+    .counter{font-size:13px;color:var(--text);font-weight:500;letter-spacing:0.01em;}
+    .counter-loading{color:var(--text2);font-style:italic;}
+
+    h1{font-size:clamp(34px,9vw,48px);font-weight:700;letter-spacing:-0.02em;line-height:1.05;margin:32px 0 18px;text-align:center;}
+    h1 span{color:var(--gold);}
+    .pitch{font-size:15px;color:var(--text2);line-height:1.6;text-align:center;max-width:440px;margin:0 auto 36px;}
+
+    /* Price tiles */
+    .tiles{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+    .tile{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:all 0.18s cubic-bezier(0.2,0.8,0.2,1);text-align:left;position:relative;font-family:inherit;color:inherit;width:100%;display:flex;align-items:center;gap:14px;}
+    .tile:hover{border-color:var(--gold-mid);background:var(--surface2);}
+    .tile.selected{border-color:var(--gold);background:var(--surface2);}
+    .tile.selected .tile-radio::after{content:'';width:12px;height:12px;border-radius:50%;background:var(--gold);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);}
+    .tile-radio{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(166,162,154,0.4);position:relative;flex-shrink:0;}
+    .tile.selected .tile-radio{border-color:var(--gold);}
+    .tile-body{flex:1;min-width:0;}
+    .tile-row{display:flex;align-items:center;gap:8px;margin-bottom:3px;}
+    .tile-name{font-size:16px;font-weight:600;color:var(--text);}
+    .tile-flag{font-size:9px;font-weight:700;letter-spacing:0.12em;color:#070707;background:var(--gold);padding:3px 6px;border-radius:4px;text-transform:uppercase;}
+    .tile-meta{font-size:12px;color:var(--text2);}
+    .tile-price{font-size:18px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;flex-shrink:0;}
+
+    /* CTA */
+    .cta{width:100%;padding:17px;background:var(--gold);color:#070707;border:none;border-radius:14px;font-family:inherit;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:filter 0.15s,transform 0.1s;box-shadow:0 12px 36px rgba(200,169,110,0.18);margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px;}
+    .cta:hover{filter:brightness(1.08);}
+    .cta:active{transform:scale(0.98);}
+    .cta:disabled{opacity:0.5;cursor:not-allowed;}
+    .cta-spinner{width:14px;height:14px;border:2px solid rgba(7,7,7,0.25);border-top-color:#070707;border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+    .cta.loading .cta-spinner{display:block;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    /* Trust line */
+    .trust{font-size:11px;color:var(--text3);text-align:center;line-height:1.6;max-width:380px;margin:8px auto 0;}
+
+    /* Email field (only shown when needed) */
+    .email-row{margin-bottom:14px;}
+    .email-row label{display:block;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text2);margin-bottom:6px;font-weight:600;}
+    .email-row input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:inherit;font-size:14px;padding:13px 16px;outline:none;transition:border-color 0.15s;}
+    .email-row input:focus{border-color:var(--gold-mid);}
+
+    /* Success / Cancel state */
+    .state-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:32px 24px;text-align:center;margin-bottom:24px;}
+    .state-card.success{border-color:var(--gold-mid);background:linear-gradient(135deg,rgba(200,169,110,0.10),rgba(125,146,117,0.04));}
+    .state-num{font-size:72px;font-weight:700;color:var(--text);letter-spacing:-2px;line-height:1;margin:12px 0;}
+    .state-label{font-size:11px;font-weight:700;letter-spacing:0.18em;color:var(--gold);}
+    .state-msg{font-size:14px;color:var(--text2);line-height:1.6;margin-top:14px;}
+
+    .err{font-size:13px;color:#C26B5A;text-align:center;margin-top:14px;display:none;}
+
+    /* Soft brand footer */
+    .footer{margin-top:40px;text-align:center;font-size:11px;color:var(--text3);letter-spacing:0.04em;}
+    .footer a{color:var(--text2);text-decoration:none;border-bottom:1px solid var(--text3);}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- ════════ NORMAL PURCHASE STATE ════════ -->
+    <div id="purchaseState">
+      <div class="header">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          <span class="badge-text">FOUNDING MEMBER OFFER</span>
+        </div>
+        <div class="counter" id="counter">
+          <span class="counter-loading">Reserving your spot…</span>
+        </div>
+      </div>
+
+      <h1>Sponsor the work.<br><span>Lock in lifetime.</span></h1>
+
+      <p class="pitch">
+        Wylde Self is in active beta. We're building toward something that doesn't exist yet — a system that helps you become who you said you'd be. The first 1,000 people who fund this work get lifetime access, founder pricing forever, and a direct line to the build.
+      </p>
+
+      <div class="tiles">
+        <button class="tile selected" data-tier="lifetime" onclick="selectTier(this)">
+          <div class="tile-radio"></div>
+          <div class="tile-body">
+            <div class="tile-row">
+              <span class="tile-name">Lifetime</span>
+              <span class="tile-flag">Best Value</span>
+            </div>
+            <div class="tile-meta">One-time, yours forever</div>
+          </div>
+          <div class="tile-price">$149</div>
+        </button>
+        <button class="tile" data-tier="annual" onclick="selectTier(this)">
+          <div class="tile-radio"></div>
+          <div class="tile-body">
+            <div class="tile-row"><span class="tile-name">Annual</span></div>
+            <div class="tile-meta">Billed yearly · founder price locked</div>
+          </div>
+          <div class="tile-price">$79</div>
+        </button>
+        <button class="tile" data-tier="monthly" onclick="selectTier(this)">
+          <div class="tile-radio"></div>
+          <div class="tile-body">
+            <div class="tile-row"><span class="tile-name">Monthly</span></div>
+            <div class="tile-meta">Billed monthly · founder price locked</div>
+          </div>
+          <div class="tile-price">$9.99</div>
+        </button>
+      </div>
+
+      <div class="email-row">
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="email" placeholder="you@example.com" />
+      </div>
+
+      <button class="cta" id="cta" onclick="startCheckout()">
+        <span class="cta-spinner"></span>
+        <span class="cta-label">Become a Founding Member</span>
+      </button>
+
+      <p class="trust">
+        Annual & monthly auto-renew. Cancel anytime. Lifetime is a one-time payment, yours forever. Secure checkout via Stripe.
+      </p>
+
+      <div class="err" id="err"></div>
+    </div>
+
+    <!-- ════════ SUCCESS STATE ════════ -->
+    <div id="successState" style="display:none;">
+      <div class="state-card success">
+        <p class="state-label">FOUNDING MEMBER</p>
+        <div class="state-num" id="successNum">—</div>
+        <p style="font-size:22px;font-weight:600;color:var(--text);margin-top:4px;">You're in.</p>
+        <p class="state-msg">
+          Founder pricing locked. Lifetime access. A direct line to the build.<br><br>
+          Check your email for receipt + onboarding next steps.
+        </p>
+      </div>
+      <button class="cta" onclick="window.location.href='/'">Continue to Wylde Self</button>
+    </div>
+
+    <!-- ════════ CANCEL STATE ════════ -->
+    <div id="cancelState" style="display:none;">
+      <div class="state-card">
+        <p class="state-label" style="color:var(--text2);">CHECKOUT CANCELED</p>
+        <p style="font-size:18px;font-weight:600;color:var(--text);margin-top:14px;">No worries.</p>
+        <p class="state-msg">
+          The offer is still here when you're ready. Founder pricing is available until we hit 1,000.
+        </p>
+      </div>
+      <button class="cta" onclick="document.getElementById('cancelState').style.display='none';document.getElementById('purchaseState').style.display='block';">See the offer again</button>
+    </div>
+
+    <p class="footer">
+      <a href="/">wyldeself.com</a> · <a href="/privacy">privacy</a> · <a href="/terms">terms</a>
+    </p>
+  </div>
+
+  <script>
+    // Selected tier — defaults to lifetime, can be deep-linked via ?tier=
+    var selectedTier = 'lifetime';
+    var initialParams = new URLSearchParams(window.location.search);
+    var preselectTier = (initialParams.get('tier') || '').toLowerCase();
+    if (['lifetime', 'annual', 'monthly'].indexOf(preselectTier) !== -1) {
+      selectedTier = preselectTier;
+      // Defer DOM selection until after the tiles render
+      document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.tile').forEach(function(t) { t.classList.remove('selected'); });
+        var t = document.querySelector('.tile[data-tier="' + selectedTier + '"]');
+        if (t) t.classList.add('selected');
+      });
+    }
+
+    function selectTier(el) {
+      document.querySelectorAll('.tile').forEach(function(t) { t.classList.remove('selected'); });
+      el.classList.add('selected');
+      selectedTier = el.dataset.tier;
+    }
+
+    // Load founder counter
+    async function loadCounter() {
+      try {
+        var r = await fetch('/api/founder-count');
+        var data = await r.json();
+        var taken = data.total_founders || 0;
+        var cap = data.founder_cap || 1000;
+        var counter = document.getElementById('counter');
+        if (taken >= cap) {
+          counter.innerHTML = '<span style="color:#C26B5A;">Founder spots filled. Check standard pricing &rarr;</span>';
+          document.getElementById('cta').disabled = true;
+          document.getElementById('cta').querySelector('.cta-label').textContent = 'Sold Out';
+        } else {
+          counter.innerHTML = 'Founding member <strong>' + (taken + 1) + '</strong> of <strong>' + cap + '</strong>';
+        }
+      } catch (e) {
+        // Soft fail — counter not critical
+        document.getElementById('counter').innerHTML = '<span class="counter-loading">First 1,000 only</span>';
+      }
+    }
+
+    // Start checkout — POST to /api/stripe-checkout, redirect to Stripe
+    async function startCheckout() {
+      var email = (document.getElementById('email').value || '').trim();
+      if (!email || !/.+@.+\..+/.test(email)) {
+        showError('Add your email so we can send your receipt + access details.');
+        document.getElementById('email').focus();
+        return;
+      }
+
+      var cta = document.getElementById('cta');
+      cta.classList.add('loading');
+      cta.disabled = true;
+      cta.querySelector('.cta-label').textContent = 'Securing your spot…';
+      hideError();
+
+      try {
+        var r = await fetch('/api/stripe-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tier: selectedTier,
+            email: email,
+            return_origin: window.location.origin
+          })
+        });
+        var data = await r.json();
+        if (!r.ok || !data.url) {
+          throw new Error(data.error || 'Checkout failed');
+        }
+        // Redirect to Stripe-hosted checkout
+        window.location.href = data.url;
+      } catch (e) {
+        cta.classList.remove('loading');
+        cta.disabled = false;
+        cta.querySelector('.cta-label').textContent = 'Become a Founding Member';
+        showError(e.message || 'Something went wrong. Try again in a moment.');
+      }
+    }
+
+    function showError(msg) {
+      var el = document.getElementById('err');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+    function hideError() {
+      document.getElementById('err').style.display = 'none';
+    }
+
+    // ─── State routing on page load ───────────────────────────────
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true') {
+      document.getElementById('purchaseState').style.display = 'none';
+      document.getElementById('successState').style.display  = 'block';
+      // Show the actual founder number from /api/founder-count (refreshes
+      // after purchase so the new count is reflected)
+      fetch('/api/founder-count').then(function(r){ return r.json(); }).then(function(data){
+        var n = data.total_founders || 1;
+        document.getElementById('successNum').textContent = '#' + n;
+      }).catch(function(){
+        document.getElementById('successNum').textContent = '#—';
+      });
+    } else if (params.get('canceled') === 'true') {
+      document.getElementById('purchaseState').style.display = 'none';
+      document.getElementById('cancelState').style.display   = 'block';
+    } else {
+      loadCounter();
+    }
+  </script>
+</body>
+</html>
