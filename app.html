@@ -1,15 +1,38 @@
 <!DOCTYPE html>
-<html lang="en" style="background:#F7F6F3;">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0"/>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="theme-color" content="#070707" />
-  <meta name="theme-color" content="#F7F6F3"/>
+  <meta name="theme-color" content="#070707" id="metaThemeColor" />
   <link rel="icon" type="image/png" href="/logo-icon.png" />
   <link rel="apple-touch-icon" href="/logo-icon.png" />
   <title>Wylde Self — App</title>
+
+  <!--
+    THEME PRE-PAINT
+    Runs synchronously before CSS loads so the active theme is set
+    before first paint — no flash of dark theme on light users.
+    Uses <html data-theme="..."> so CSS [data-theme=...] selectors
+    can override the :root variables.
+    Persistence key: wylde_theme. Allowed values: 'dark' | 'light'.
+    Defaults to dark if nothing saved.
+  -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('wylde_theme');
+        if (t !== 'light' && t !== 'dark') t = 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+        // Sync <meta name="theme-color"> for iOS Safari address bar tint
+        document.documentElement.style.background = (t === 'light') ? '#F4EFE6' : '#070707';
+      } catch(_) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.documentElement.style.background = '#070707';
+      }
+    })();
+  </script>
 
   <!-- Open Graph — link previews (iMessage, social, etc.) -->
   <meta property="og:title" content="Wylde Self" />
@@ -105,10 +128,105 @@
       --radius-card: 20px;
       --radius-pill: 999px;
     }
-    html, body { background: #070707 !important; color: var(--text); font-family: var(--font-ui); overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; line-height: 1.6; }
-    /* Force-dark for inputs/textareas so browser autofill doesn't go white */
-    input, textarea, select { color-scheme: dark; }
-    input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
+
+    /* ═══════════════════════════════════════════════════════════════
+       WYLDE LIGHT THEME — A/B test variant
+       Overrides ONLY the variables that change. Layout, type scale,
+       spacing, radii all stay identical. The user experience is the
+       same product in two visual treatments.
+
+       Light variant goal: warm, spacious, cinematic, less masculine,
+       more universally inviting. Cream bg + soft taupe/gold accents.
+       Apply via <html data-theme="light"> (set by pre-paint script).
+       ═══════════════════════════════════════════════════════════════ */
+    html[data-theme="light"] {
+      --bg:         #F4EFE6;     /* warm cream, not pure white */
+      --bg-main:    #F4EFE6;
+      --bg-surface: #FAF6EE;
+      --bg-soft:    #EDE5D6;     /* subtle taupe wash for input backgrounds */
+      --bg-elevated:#FFFFFF;
+      --surface:    #FAF6EE;
+      --surface2:   #EDE5D6;
+      --card-light: #FFFFFF;
+      --sand:       #E2D9C4;
+      --cream:      #FAF6EE;
+      --border:     rgba(60,50,30,0.10);
+      --border2:    rgba(60,50,30,0.14);
+      --border-soft: rgba(60,50,30,0.08);
+      --border-warm: rgba(184,154,90,0.25);
+
+      /* Warm dark text — never pure black, more like espresso */
+      --text:       #2A2724;
+      --text2:      #6B6258;
+      --text3:      #9B9489;
+      --text-dark:  #2A2724;
+      --text-primary:   #2A2724;
+      --text-secondary: #6B6258;
+      --text-muted:     #9B9489;
+
+      /* Soft taupe-gold — slightly darker than dark theme gold to keep
+         contrast on cream. Sage darkened a touch for the same reason. */
+      --gold:       #B89A5A;
+      --gold-hi:    rgba(184,154,90,0.95);
+      --gold-mid:   rgba(184,154,90,0.55);
+      --gold-lo:    rgba(184,154,90,0.30);
+      --gold-dim:   rgba(184,154,90,0.10);
+      --gold-glow:  rgba(184,154,90,0.18);
+      --ember:      #B89A5A;
+      --sage:       #6E8366;
+      --sage-soft:  #8FA486;
+      --sage-dim:   rgba(110,131,102,0.10);
+      --sage-glow:  rgba(110,131,102,0.16);
+      --green:      #6E8366;
+
+      --accent:        #6E8366;
+      --accent-bg:     rgba(110,131,102,0.10);
+      --accent-border: rgba(110,131,102,0.22);
+
+      /* Lighter, warmer shadows for the light theme */
+      --shadow-soft: 0 2px 12px rgba(60,50,30,0.06);
+      --shadow-card: 0 6px 24px rgba(60,50,30,0.08);
+      --shadow-hover: 0 12px 36px rgba(60,50,30,0.12);
+      --shadow-glow: 0 0 60px rgba(184,154,90,0.10);
+
+      --black:       #2A2724;
+      --charcoal:    #4A433B;
+      --white:       #2A2724;
+      --muted:       #6B6258;
+    }
+
+    /* Body background follows the theme. !important prevents any
+       legacy fixed-color rules from breaking light mode. */
+    html, body {
+      background: var(--bg) !important;
+      color: var(--text);
+      font-family: var(--font-ui);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    /* Force input color-scheme to match theme so browser-native UI
+       (autofill highlights, date pickers, etc.) reads correctly */
+    html[data-theme="dark"] input,
+    html[data-theme="dark"] textarea,
+    html[data-theme="dark"] select { color-scheme: dark; }
+    html[data-theme="light"] input,
+    html[data-theme="light"] textarea,
+    html[data-theme="light"] select { color-scheme: light; }
+
+    /* Autofill — both themes need their own override */
+    html[data-theme="dark"] input:-webkit-autofill,
+    html[data-theme="dark"] input:-webkit-autofill:hover,
+    html[data-theme="dark"] input:-webkit-autofill:focus {
+      -webkit-text-fill-color: var(--text);
+      -webkit-box-shadow: 0 0 0 1000px var(--bg-soft) inset;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+    html[data-theme="light"] input:-webkit-autofill,
+    html[data-theme="light"] input:-webkit-autofill:hover,
+    html[data-theme="light"] input:-webkit-autofill:focus {
       -webkit-text-fill-color: var(--text);
       -webkit-box-shadow: 0 0 0 1000px var(--bg-soft) inset;
       transition: background-color 5000s ease-in-out 0s;
@@ -2084,7 +2202,7 @@
 
 <!-- SETTINGS DRAWER — slide-in from left, identity-driven copy -->
 <div id="settingsDrawer" style="position:fixed;inset:0;z-index:9998;display:none;background:rgba(7,7,7,0.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);" onclick="if(event.target===this)closeSettingsDrawer()">
-  <aside id="settingsDrawerPanel" style="position:absolute;top:0;left:0;bottom:0;width:88%;max-width:340px;background:#0B0B0B;border-right:1px solid var(--border);padding:64px 24px 32px;overflow-y:auto;transform:translateX(-100%);transition:transform 0.32s cubic-bezier(0.2,0.8,0.2,1);box-shadow:24px 0 60px rgba(0,0,0,0.4);">
+  <aside id="settingsDrawerPanel" style="position:absolute;top:0;left:0;bottom:0;width:88%;max-width:340px;background:var(--bg);border-right:1px solid var(--border);padding:64px 24px 32px;overflow-y:auto;transform:translateX(-100%);transition:transform 0.32s cubic-bezier(0.2,0.8,0.2,1);box-shadow:24px 0 60px rgba(0,0,0,0.4);">
     <button onclick="closeSettingsDrawer()" aria-label="Close" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);width:36px;height:36px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
@@ -2125,7 +2243,16 @@
       </button>
     </div>
 
-    <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);">
+    <!-- ── Theme toggle (A/B testing) ── -->
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+      <p style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin:0 0 10px;font-weight:600;padding-left:4px;">Appearance</p>
+      <div id="themeToggleWrap" style="display:flex;gap:6px;background:var(--bg-soft);padding:4px;border-radius:12px;border:1px solid var(--border);">
+        <!-- Buttons populated by renderThemeToggle() so adding a 3rd theme later requires no HTML changes -->
+      </div>
+      <p id="themeToggleHint" style="font-size:11px;color:var(--text3);margin:8px 4px 0;line-height:1.4;font-style:italic;"></p>
+    </div>
+
+    <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border);">
       <button class="drawer-link" onclick="closeSettingsDrawer();signOutUser();">
         <span class="drawer-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
         <span>Sign Out</span>
@@ -2167,7 +2294,7 @@
 <style>
   .geo-transition {
     position: fixed; inset: 0; z-index: 9998;
-    background: #0B0B0B;
+    background: var(--bg);
     display: none; align-items: center; justify-content: center;
     overflow: hidden;
   }
@@ -2243,7 +2370,7 @@
 </style>
 
 <!-- ═══ MORNING PROTOCOL SETUP OVERLAY (post-onboarding) ═══ -->
-<div id="mpSetupOverlay" style="display:none;position:fixed;inset:0;z-index:9997;background:#0B0B0B;overflow-y:auto;">
+<div id="mpSetupOverlay" style="display:none;position:fixed;inset:0;z-index:9997;background:var(--bg);overflow-y:auto;">
   <div style="max-width:480px;margin:0 auto;padding:60px 24px 100px;">
     <p style="font-size:11px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:rgba(200,169,110,0.6);margin-bottom:12px;">One Last Thing</p>
     <h1 style="font-family:var(--ff-display);font-size:28px;font-weight:700;color:#fff;margin:0 0 8px;">Design Your Morning Protocol</h1>
@@ -4528,6 +4655,114 @@
 
   // Identity-based progression. Phases reflect WHO the user is becoming
   // through consistent action — not how many points they grinded.
+  // ═══ THEME SYSTEM (A/B testing) ═══════════════════════════════════
+  // Two themes ship today: dark (default) + light. CSS variables do all
+  // the visual work; this JS just toggles the data-theme attribute and
+  // persists the choice to localStorage.
+  //
+  // Adding a future theme:
+  //   1. Add a name to WYLDE_THEMES below
+  //   2. Add a [data-theme="<name>"] CSS block that overrides :root vars
+  //   3. Add a tile to the toggle UI in the settings drawer
+  //   4. Done — no other changes needed
+  var WYLDE_THEMES = {
+    dark: {
+      name: 'Wylde Dark',
+      desc: 'Cinematic, premium, grounded',
+      bgForMeta: '#070707'
+    },
+    light: {
+      name: 'Wylde Light',
+      desc: 'Warm, spacious, inviting',
+      bgForMeta: '#F4EFE6'
+    }
+  };
+  var WYLDE_THEME_KEY = 'wylde_theme';
+
+  function getActiveTheme() {
+    try {
+      var t = localStorage.getItem(WYLDE_THEME_KEY);
+      return WYLDE_THEMES[t] ? t : 'dark';
+    } catch(_) {
+      return 'dark';
+    }
+  }
+
+  function setWyldeTheme(name) {
+    if (!WYLDE_THEMES[name]) return false;
+    var html = document.documentElement;
+    html.setAttribute('data-theme', name);
+    // Update the meta theme-color so iOS Safari address bar tint follows
+    var meta = document.getElementById('metaThemeColor');
+    if (meta) meta.setAttribute('content', WYLDE_THEMES[name].bgForMeta);
+    // Update the html background fallback (used during initial paint
+    // before CSS loads)
+    html.style.background = WYLDE_THEMES[name].bgForMeta;
+    try { localStorage.setItem(WYLDE_THEME_KEY, name); } catch(_) {}
+    // Broadcast so any open UI can re-render its active state
+    try {
+      window.dispatchEvent(new CustomEvent('wylde:themechange', {
+        detail: { theme: name, config: WYLDE_THEMES[name] }
+      }));
+    } catch(_) {}
+    return true;
+  }
+
+  if (typeof window !== 'undefined') {
+    window.WYLDE_THEMES = WYLDE_THEMES;
+    window.getActiveTheme = getActiveTheme;
+    window.setWyldeTheme = setWyldeTheme;
+  }
+
+  // Render the toggle pills inside the settings drawer. Iterates over
+  // WYLDE_THEMES so adding a 3rd theme later requires only a config
+  // entry — no markup edits.
+  function renderThemeToggle() {
+    var wrap = document.getElementById('themeToggleWrap');
+    var hint = document.getElementById('themeToggleHint');
+    if (!wrap) return;
+    var active = getActiveTheme();
+    var keys = Object.keys(WYLDE_THEMES);
+    wrap.innerHTML = keys.map(function(k) {
+      var cfg = WYLDE_THEMES[k];
+      var isActive = (k === active);
+      var bg = isActive ? 'var(--surface)' : 'transparent';
+      var color = isActive ? 'var(--text)' : 'var(--text2)';
+      var border = isActive ? '1px solid var(--gold-mid)' : '1px solid transparent';
+      // Strip the "Wylde " prefix from display label since "Appearance: Wylde Dark / Wylde Light" reads redundant
+      var label = cfg.name.replace(/^Wylde\s+/, '');
+      return '<button onclick="_pickWyldeTheme(\'' + k + '\')" ' +
+        'style="flex:1;padding:11px 12px;border-radius:8px;background:' + bg + ';' +
+        'border:' + border + ';color:' + color + ';font-family:var(--ff-body);' +
+        'font-size:13px;font-weight:600;cursor:pointer;transition:all 0.18s;letter-spacing:0.01em;">' +
+        label + '</button>';
+    }).join('');
+    if (hint) {
+      hint.textContent = WYLDE_THEMES[active].desc;
+    }
+  }
+  window._pickWyldeTheme = function(name) {
+    if (typeof HapticManager !== 'undefined' && HapticManager) {
+      try { HapticManager.impact('light'); } catch(_) {}
+    }
+    setWyldeTheme(name);
+    // Re-render so the active state reflects the new selection
+    renderThemeToggle();
+  };
+  // Re-render the toggle whenever the drawer opens (in case theme
+  // changed elsewhere) + on cross-tab theme changes
+  if (typeof window !== 'undefined') {
+    window.renderThemeToggle = renderThemeToggle;
+    window.addEventListener('wylde:themechange', renderThemeToggle);
+    // localStorage 'storage' event fires when ANOTHER tab changes the theme
+    window.addEventListener('storage', function(e) {
+      if (e.key === WYLDE_THEME_KEY && e.newValue) {
+        document.documentElement.setAttribute('data-theme', e.newValue);
+        renderThemeToggle();
+      }
+    });
+  }
+
   var WYLDE_PHASES = [
     { id: 'initiate',   name: 'Initiate',   minSessions: 0,   line: 'You stepped onto the path. Now keep walking.' },
     { id: 'foundation', name: 'Foundation', minSessions: 10,  line: 'The first layer is laid. The work is becoming yours.' },
@@ -4722,6 +4957,8 @@
     if (nameEl && typeof state === 'object' && state) nameEl.textContent = state.name || 'Your account';
     overlay.style.display = 'block';
     requestAnimationFrame(function() { panel.style.transform = 'translateX(0)'; });
+    // Render the theme toggle each open so the active state stays accurate
+    if (typeof renderThemeToggle === 'function') renderThemeToggle();
     if (typeof HapticManager !== 'undefined') { try { HapticManager.impact('light'); } catch(_) {} }
   };
   window.closeSettingsDrawer = function() {

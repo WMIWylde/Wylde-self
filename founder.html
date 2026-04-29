@@ -12,6 +12,23 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Pre-paint theme application — same key as app.html so the user's
+       theme persists across both surfaces. No flash on load. -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('wylde_theme');
+        if (t !== 'light' && t !== 'dark') t = 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+        document.documentElement.style.background = (t === 'light') ? '#F4EFE6' : '#070707';
+      } catch(_) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.documentElement.style.background = '#070707';
+      }
+    })();
+  </script>
+
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     :root{
@@ -20,6 +37,24 @@
       --sage:#7D9275;
       --text:#F4F1E8; --text2:#A6A29A; --text3:#6E6B65;
       --border:rgba(244,241,232,0.08);
+    }
+    /* Wylde Light theme — same overrides as app.html so the user's
+       choice persists from app to paywall page seamlessly */
+    html[data-theme="light"]{
+      --bg:#F4EFE6; --surface:#FAF6EE; --surface2:#EDE5D6;
+      --gold:#B89A5A; --gold-dim:rgba(184,154,90,0.10); --gold-mid:rgba(184,154,90,0.55);
+      --sage:#6E8366;
+      --text:#2A2724; --text2:#6B6258; --text3:#9B9489;
+      --border:rgba(60,50,30,0.10);
+    }
+    html[data-theme="light"] body::before{
+      background:radial-gradient(circle,rgba(184,154,90,0.06) 0%,transparent 60%) !important;
+    }
+    /* Light theme tile selection styling */
+    html[data-theme="light"] .tile{background:var(--surface);border-color:var(--border);}
+    html[data-theme="light"] .tile.selected{background:var(--surface2);}
+    html[data-theme="light"] .state-card.success{
+      background:linear-gradient(135deg,rgba(184,154,90,0.10),rgba(110,131,102,0.04)) !important;
     }
     html,body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5;}
     body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px 20px 60px;overflow-x:hidden;}
