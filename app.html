@@ -2,7 +2,10 @@
 <html lang="en" style="background:#F7F6F3;">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0"/>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#070707" />
   <meta name="theme-color" content="#F7F6F3"/>
   <link rel="icon" type="image/png" href="/logo-icon.png" />
   <link rel="apple-touch-icon" href="/logo-icon.png" />
@@ -489,6 +492,183 @@
     @media (max-width: 768px) {
       nav { display: none !important; }
       .screen { padding-left: 0 !important; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       MOBILE POLISH PASS
+       Audit-driven fixes for the mobile web experience.
+       Targets: iPhone SE (320px) → iPhone 15 Pro Max (430px)
+       ═══════════════════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      /* iOS safe-area awareness — content respects notch + home indicator */
+      body { padding-bottom: env(safe-area-inset-bottom); }
+
+      /* Containers fill viewport edge-to-edge with breathing padding */
+      .container, .ov-shell {
+        max-width: 100% !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+      .screen { padding-bottom: 100px !important; }
+
+      /* Hamburger respects iOS notch */
+      #topMenuBtn {
+        top: calc(env(safe-area-inset-top) + 12px) !important;
+        left: 14px !important;
+      }
+
+      /* CRITICAL: Inputs >= 16px to prevent iOS auto-zoom on focus.
+         Anything below 16px causes Safari/Chrome to zoom into the input
+         when tapped — extremely jarring UX on mobile. */
+      input, textarea, select,
+      .input, .alt-workout-input, .stepper-input, .pantry-add-input,
+      .identity-url-input, #libSearchInput, #identityRawText {
+        font-size: 16px !important;
+      }
+
+      /* Hero card — tighter on mobile, less aggressive height */
+      .ov-hero {
+        min-height: 360px !important;
+        margin-bottom: 16px !important;
+      }
+      .ov-hero-content {
+        min-height: 360px !important;
+        padding: 20px 20px 24px !important;
+      }
+      .ov-hero-title {
+        max-width: 88% !important;
+        font-size: clamp(28px, 8vw, 38px) !important;
+      }
+      .ov-hero-identity, .ov-hero-sub {
+        max-width: 90% !important;
+      }
+
+      /* Nutrition card — 3 rings can feel cramped at <360px */
+      .ov-nut-rings { gap: 6px !important; }
+      .ov-nut-ring { width: 64px !important; height: 64px !important; }
+      .ov-nut-name { font-size: 10px !important; }
+      .ov-nut-value { font-size: 13px !important; }
+      .ov-nut-goal  { font-size: 11px !important; }
+      .ov-nutrition-card { padding: 16px 14px 18px !important; }
+
+      /* Stack rows — tighter padding, ensure tap targets */
+      .ov-stack-row { padding: 16px 16px !important; gap: 12px !important; min-height: 64px; }
+      .ov-stack-icon { flex-shrink: 0; }
+      .ov-stack-name { font-size: 14px !important; }
+      .ov-stack-meta { font-size: 12px !important; }
+
+      /* Cards — full-width with margin instead of fixed widths */
+      .ov-stack-card, .ov-nutrition-card, .ov-path-card,
+      .ov-sec-row, #completeDayCard, #mpCard {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      /* Secondary strip stacks vertically on mobile (was 2 columns) */
+      .ov-secondary {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+      }
+
+      /* Bottom nav — proper safe area + larger tap targets */
+      nav {
+        padding-bottom: env(safe-area-inset-bottom) !important;
+      }
+      .nav-tab {
+        min-height: 56px !important;
+        padding: 10px 4px !important;
+      }
+      .nav-tab span:not(.nav-icon) {
+        font-size: 9px !important;
+        letter-spacing: 0.06em !important;
+      }
+      .nav-icon { width: 22px !important; height: 22px !important; }
+
+      /* All buttons — minimum 44pt tap target (iOS HIG) */
+      button:not(.set-log-btn):not(.stepper-btn):not(.food-feel-btn):not(.feel-btn):not(.tile-radio):not(.ov-sb) {
+        min-height: 44px;
+      }
+
+      /* Modals/sheets — fill viewport, leave safe-area room */
+      .form-modal-inner, .protocol-modal-inner,
+      #startProtocolModal > div, #intakeModal,
+      .feel-prompt-card, .rewards-modal-card,
+      #libDetailCard {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        border-radius: 20px 20px 0 0 !important;
+        padding-bottom: calc(env(safe-area-inset-bottom) + 24px) !important;
+      }
+
+      /* Settings drawer — wider on mobile so the close X isn't cramped */
+      #settingsDrawerPanel {
+        width: 92% !important;
+        max-width: 360px !important;
+        padding: calc(env(safe-area-inset-top) + 56px) 20px 32px !important;
+      }
+
+      /* Coach chat — fits viewport height properly */
+      .chat-wrap {
+        height: calc(100vh - 380px) !important;
+        min-height: 320px !important;
+      }
+      .coach-actions {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+      }
+      .coach-action-btn {
+        font-size: 12px !important;
+        padding: 12px 8px !important;
+      }
+      .coach-title { font-size: 22px !important; line-height: 1.2 !important; }
+
+      /* Set logger — stepper rows should not overflow */
+      .set-row { gap: 4px !important; }
+      .set-stepper { height: 36px !important; }
+      .stepper-btn { width: 28px !important; }
+      .stepper-input { font-size: 16px !important; }
+      .set-log-btn { padding: 0 12px !important; min-width: 50px !important; height: 36px !important; }
+      .ex-stat-cards { gap: 6px !important; margin: 10px 0 4px !important; }
+      .ex-stat-card { padding: 8px 10px !important; }
+      .ex-stat-value { font-size: 12px !important; }
+
+      /* Feel-prompt overlay — stays readable on small screens */
+      .feel-prompt-card { padding: 24px 18px 20px !important; }
+      .feel-prompt-title { font-size: 18px !important; }
+
+      /* Identity Import + paywall locked CTAs — fit viewport */
+      #identityLockedState, #identityInputState,
+      #identityResultState { max-width: 100% !important; }
+
+      /* Onboarding step content — pad away from bottom CTA bar */
+      .ob-step { padding-bottom: 120px !important; }
+      .ob-step-title { font-size: 24px !important; line-height: 1.2 !important; }
+      .pill { padding: 11px 14px !important; font-size: 13px !important; }
+
+      /* Touch scroll inertia for any scroll containers */
+      .chat-messages, .ex-list, .session-log,
+      #libResults, #identityResultContent {
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Long words break instead of overflowing */
+      h1, h2, h3, p, span, button { word-wrap: break-word; overflow-wrap: break-word; }
+    }
+
+    /* Smaller mobile (≤375px iPhone SE) — extra tightening */
+    @media (max-width: 375px) {
+      .container { padding-left: 14px !important; padding-right: 14px !important; }
+      .ov-hero-title { font-size: 26px !important; }
+      .ov-nut-ring { width: 58px !important; height: 58px !important; }
+      .coach-action-btn { font-size: 11px !important; padding: 11px 6px !important; }
+      .ob-step-title { font-size: 22px !important; }
+    }
+
+    /* Landscape mobile — reduce vertical padding */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .ov-hero, .ov-hero-content { min-height: 280px !important; }
+      .screen { padding-top: 12px !important; }
     }
     #topMenuBtn:hover { border-color:var(--gold-mid); color:var(--gold); }
     #topMenuBtn:active { transform: scale(0.96); }
@@ -1882,6 +2062,7 @@
          the workout flow + via Coach. Settings lives in the top-left
          hamburger menu. Bottom nav stays at 4 tabs as per the brief. -->
     <button class="nav-tab" id="navLibraryHidden" onclick="showScreen('library')" style="display:none;">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="11" width="14" height="2"/></svg>
       <span>Library</span>
     </button>
   </div>
@@ -1917,7 +2098,7 @@
          the screen as a horizontal strip. <div> avoids the cascade entirely. -->
     <div class="drawer-link-list" role="navigation" aria-label="Settings menu" style="display:flex;flex-direction:column;gap:4px;">
       <button class="drawer-link" onclick="closeSettingsDrawer();showScreen('library')">
-        <span class="drawer-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+        <span class="drawer-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="11" width="14" height="2"/></svg></span>
         <span>Exercise Library</span>
       </button>
       <button class="drawer-link" onclick="closeSettingsDrawer();showScreen('nutrition')">

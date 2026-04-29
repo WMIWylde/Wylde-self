@@ -89,6 +89,34 @@
     /* Soft brand footer */
     .footer{margin-top:40px;text-align:center;font-size:11px;color:var(--text3);letter-spacing:0.04em;}
     .footer a{color:var(--text2);text-decoration:none;border-bottom:1px solid var(--text3);}
+
+    /* ── MOBILE POLISH ── */
+    @media (max-width:480px){
+      body{padding:20px 16px calc(env(safe-area-inset-bottom) + 40px);}
+      h1{font-size:32px;margin:24px 0 16px;}
+      .pitch{font-size:14px;margin-bottom:28px;}
+      .header{margin-bottom:28px;padding-top:8px;}
+      .badge{padding:5px 12px;}
+      .badge-text{font-size:9px;letter-spacing:0.16em;}
+      .tile{padding:14px;gap:12px;}
+      .tile-name{font-size:15px;}
+      .tile-meta{font-size:11px;}
+      .tile-price{font-size:17px;}
+      .tile-flag{font-size:8px;padding:2px 5px;}
+      /* Inputs at 16px to prevent iOS auto-zoom on focus */
+      .email-row input{font-size:16px !important;padding:14px 16px;}
+      .cta{padding:16px;font-size:12px;letter-spacing:0.10em;}
+      .state-num{font-size:60px;}
+      /* Long emails wrap */
+      h1,p,button{word-wrap:break-word;overflow-wrap:break-word;}
+    }
+    /* Tiny screens — iPhone SE */
+    @media (max-width:360px){
+      h1{font-size:28px;}
+      .tile{padding:12px;}
+      .tile-name{font-size:14px;}
+      .tile-price{font-size:16px;}
+    }
   </style>
 </head>
 <body>
