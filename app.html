@@ -116,6 +116,8 @@
       --charcoal:    #111111;
       --white:       #F4F1E8;
       --muted:       #A6A29A;
+      /* Mobile bottom-nav background (translucent, blurred) */
+      --nav-bg-mobile: rgba(11,11,11,0.94);
       --ff-hero:     'Inter', system-ui, sans-serif;
       --ff-serif:    'Inter', system-ui, sans-serif;
       --ff-body:     'Inter', system-ui, sans-serif;
@@ -193,6 +195,8 @@
       --charcoal:    #4A433B;
       --white:       #2A2724;
       --muted:       #6B6258;
+      /* Cream-tinted translucent bottom nav for light theme */
+      --nav-bg-mobile: rgba(244,239,230,0.94);
     }
 
     /* Body background follows the theme. !important prevents any
@@ -606,9 +610,13 @@
     .drawer-link:active { background:rgba(244,241,232,0.07); }
     .drawer-link-icon { color:var(--text2); display:flex; align-items:center; justify-content:center; flex-shrink:0; width:22px; }
     .drawer-link:hover .drawer-link-icon { color:var(--gold); }
-    /* Hide left side-nav on mobile sizing — bottom nav + hamburger only */
+    /* Mobile sizing — drop the side-nav padding (the existing
+       @media (max-width:700px) below transforms <nav> into a bottom
+       tab bar. We only kill the left-side padding here so screens
+       fill viewport. iOS WebViews hide the nav entirely via injected
+       script in WebViewScreen.swift — that's the right place for it,
+       NOT this stylesheet.) */
     @media (max-width: 768px) {
-      nav { display: none !important; }
       .screen { padding-left: 0 !important; }
     }
 
@@ -1018,7 +1026,9 @@
 
     /* MOBILE — bottom tab bar */
     @media (max-width: 700px) {
-      nav { position: fixed; top: auto; bottom: 0; left: 0; right: 0; width: 100%; height: auto; border-right: none; border-top: 1px solid var(--border); flex-direction: column; padding: 0; z-index: 200; background: rgba(11,11,11,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+      /* Bottom-nav transformation. Background uses var() so the
+         theme system controls it (overridden per theme below). */
+      nav { position: fixed; top: auto; bottom: 0; left: 0; right: 0; width: 100%; height: auto; border-right: none; border-top: 1px solid var(--border); flex-direction: column; padding: 0; z-index: 200; background: var(--nav-bg-mobile, rgba(11,11,11,0.94)); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); padding-bottom: env(safe-area-inset-bottom); }
       .nav-logo { display: none; }
       .nav-tabs { flex-direction: row; padding: 0; justify-content: space-around; }
       .nav-tab { padding: 12px 0; height: auto; font-size: 10px; border-left: none; border-bottom: none; white-space: nowrap; flex: 1; text-align: center; justify-content: center; }
