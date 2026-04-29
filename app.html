@@ -4364,14 +4364,16 @@
     try { localStorage.setItem('wylde_profile', JSON.stringify(state)); } catch(e) {}
     var sb = _getSupabase();
     if (!sb || !currentUser) return;
-    sb.from('profiles').upsert({
-      id: currentUser.id,
-      email: currentUser.email,
-      profile_data: state,
-      xp: state.xp || 0,
-      streak: state.streak || 0,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'id' }).catch(function(){});
+    try {
+      await sb.from('profiles').upsert({
+        id: currentUser.id,
+        email: currentUser.email,
+        profile_data: state,
+        xp: state.xp || 0,
+        streak: state.streak || 0,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' });
+    } catch(e) { console.warn('saveProfile:', e); }
   }
 
   // ═══ REWARD SYSTEM — phases + badges ═══
@@ -5922,17 +5924,6 @@
   }
 
   // ── XP Toast (new floating version) ──
-  function showXPToast(text) {
-    var t = document.createElement('div');
-    t.className = 'xp-toast';
-    t.textContent = text;
-    document.body.appendChild(t);
-    setTimeout(function() {
-      t.classList.add('removing');
-      setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, 400);
-    }, 2200);
-  }
-
   // ── Forum helpers ──
   function levelToVariant(level) {
     var map = { 'Ember':'ember', 'Root':'gold', 'Rise':'blue', 'Wylde':'purple' };
@@ -8178,12 +8169,13 @@
     if (btn) { btn.textContent = 'Building your program...'; btn.disabled = true; }
     var output = document.getElementById('programOutput');
     var container = document.getElementById('programDays');
-    output.classList.add('show');
-    container.innerHTML = '<div style="padding:32px 0;text-align:center;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:16px;color:var(--muted);">Your AI coach is building your program...</p><div style="width:40px;height:1px;background:var(--gold);margin:16px auto;"></div></div>';
-    document.getElementById('altProgramSection').style.display = 'none';
+    if (output) output.classList.add('show');
+    if (container) container.innerHTML = '<div style="padding:32px 0;text-align:center;"><p style="font-family:var(--ff-serif);font-style:italic;font-size:16px;color:var(--muted);">Your AI coach is building your program...</p><div style="width:40px;height:1px;background:var(--gold);margin:16px auto;"></div></div>';
+    var altSection = document.getElementById('altProgramSection');
+    if (altSection) altSection.style.display = 'none';
 
     var goalsStr = (state.goals && state.goals.length > 0) ? state.goals.join(', ') : (state.goal || 'General fitness');
-    var healthStr = state.health.length > 0 ? state.health.join(', ') : 'none';
+    var healthStr = (state.health && state.health.length > 0) ? state.health.join(', ') : 'none';
     var notesStr = state.healthNotes || 'none';
     var equipStr = state.equipment || 'not specified';
     var gymStr = state.gymAccess || 'not specified';
@@ -9202,6 +9194,7 @@
 
   function renderMealPlan(plan) {
     var output = document.getElementById('mealPlanOutput');
+    if (!output) return;
     output.innerHTML = '';
     plan.forEach(function(day, dayIdx) {
       // Calculate day totals
