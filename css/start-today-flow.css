@@ -1,0 +1,228 @@
+/* ═══ START TODAY FLOW (STF) ════════════════════════════════════════
+   Full-screen guided 6-step daily flow. Bottom-sheet on mobile, modal
+   on desktop. Calm, one decision per step, escape always one tap away.
+   Uses existing design tokens (--bg-surface, --gold, --sage, etc.)
+   defined on :root in app.html so it matches the rest of the app
+   without introducing new colors.
+   ============================================================== */
+#stf-overlay {
+  /* z-index 2500 clears modals/drawers (≤2000) but stays below the
+     once-only intro splash (9999). */
+  position: fixed; inset: 0; z-index: 2500;
+  display: none;
+  background: rgba(7, 7, 7, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  align-items: flex-end;
+  justify-content: center;
+  animation: stfFadeIn 0.25s ease;
+}
+@media (min-width: 720px) {
+  #stf-overlay { align-items: center; }
+}
+#stf-overlay.is-open { display: flex; }
+@keyframes stfFadeIn { from { opacity: 0 } to { opacity: 1 } }
+
+.stf-sheet {
+  width: 100%;
+  max-width: 480px;
+  max-height: 92vh;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 22px 22px 0 0;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  animation: stfSlideUp 0.32s cubic-bezier(.2,.8,.2,1);
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.35);
+}
+@media (min-width: 720px) {
+  .stf-sheet { border-radius: 22px; max-height: 86vh; }
+}
+@keyframes stfSlideUp { from { transform: translateY(24px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+
+.stf-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.stf-step-label {
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--text-muted, var(--muted));
+  font-weight: 600;
+}
+.stf-back, .stf-close {
+  background: none; border: 0;
+  color: var(--text2, var(--text-secondary));
+  font-size: 18px; line-height: 1;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.stf-back:hover, .stf-close:hover { background: var(--bg-soft, rgba(255,255,255,0.04)); }
+.stf-back[disabled] { opacity: 0.25; cursor: default; pointer-events: none; }
+
+.stf-progress {
+  height: 2px;
+  background: var(--bg-soft, rgba(255,255,255,0.05));
+  flex-shrink: 0;
+}
+.stf-progress-fill {
+  height: 100%;
+  background: var(--gold);
+  width: 0;
+  transition: width 0.3s ease;
+}
+
+.stf-body {
+  padding: 28px 22px 22px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+}
+.stf-step { display: none; }
+.stf-step.is-active { display: block; animation: stfStepIn 0.28s ease; }
+@keyframes stfStepIn { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
+
+.stf-eyebrow {
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+.stf-title {
+  font-size: 24px; line-height: 1.2;
+  color: var(--text);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 8px;
+}
+.stf-sub {
+  font-size: 14px; line-height: 1.55;
+  color: var(--text2, var(--text-secondary));
+  margin: 0 0 22px;
+}
+.stf-meta {
+  font-size: 13px;
+  color: var(--text-muted, var(--muted));
+  margin: 0 0 14px;
+}
+.stf-card {
+  padding: 14px 16px;
+  background: var(--bg-soft, rgba(255,255,255,0.03));
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 10px;
+}
+.stf-card .stf-card-title {
+  font-size: 15px; font-weight: 600; color: var(--text); margin: 0 0 4px;
+}
+.stf-card .stf-card-sub {
+  font-size: 12px; color: var(--text-muted, var(--muted)); margin: 0;
+}
+
+.stf-foot {
+  /* max() keeps the home-indicator safe area on notched iPhones from
+     eating the buttons; falls back to 18px elsewhere. */
+  padding: 14px 18px max(18px, env(safe-area-inset-bottom, 18px));
+  border-top: 1px solid var(--border);
+  display: flex; gap: 10px;
+  flex-shrink: 0;
+}
+.stf-btn {
+  flex: 1;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 0.10em; text-transform: uppercase;
+  border: 0; cursor: pointer;
+  transition: filter 0.15s, transform 0.15s;
+}
+.stf-btn:active { transform: translateY(1px); }
+.stf-btn-primary {
+  background: var(--gold);
+  color: #0B0B0B;
+}
+.stf-btn-primary:hover { filter: brightness(1.06); }
+.stf-btn-ghost {
+  background: transparent;
+  color: var(--text2, var(--text-secondary));
+  border: 1px solid var(--border);
+  flex: 0 0 auto;
+  padding: 14px 18px;
+}
+.stf-btn-ghost:hover { background: var(--bg-soft, rgba(255,255,255,0.04)); }
+
+.stf-ritual-list { list-style: none; padding: 0; margin: 0 0 18px; }
+.stf-ritual-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.stf-ritual-item:hover { background: var(--bg-soft, rgba(255,255,255,0.04)); }
+.stf-ritual-item.done { border-color: rgba(125,146,117,0.4); background: rgba(125,146,117,0.05); }
+.stf-ritual-check {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid var(--border);
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  color: var(--sage);
+  font-size: 13px;
+}
+.stf-ritual-item.done .stf-ritual-check {
+  background: var(--sage);
+  border-color: var(--sage);
+  color: #0B0B0B;
+}
+.stf-ritual-name {
+  font-size: 14px; color: var(--text); font-weight: 500;
+}
+.stf-ritual-feedback {
+  font-size: 12px; color: var(--sage); font-style: italic;
+  margin: 6px 0 14px;
+  min-height: 18px;
+}
+
+.stf-options { display: grid; gap: 8px; margin: 8px 0 18px; }
+.stf-option {
+  text-align: left;
+  padding: 16px 16px;
+  background: var(--bg-soft, rgba(255,255,255,0.03));
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  font-size: 14px; font-weight: 500;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px;
+}
+.stf-option:hover { border-color: rgba(200,169,110,0.3); }
+.stf-option-arrow { color: var(--text-muted, var(--muted)); font-size: 16px; }
+
+.stf-checks { display: flex; gap: 14px; flex-wrap: wrap; margin: 12px 0 18px; }
+.stf-check {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--text-muted, var(--muted));
+}
+.stf-check.done { color: var(--text); }
+.stf-check-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1.5px solid var(--border);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 9px;
+}
+.stf-check.done .stf-check-dot { background: var(--sage); border-color: var(--sage); color: #0B0B0B; }
+
+.stf-final {
+  text-align: center;
+  padding: 14px 0 6px;
+}
+.stf-final-icon {
+  font-size: 32px; color: var(--sage); margin-bottom: 8px;
+}

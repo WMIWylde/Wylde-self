@@ -57,6 +57,7 @@
   <meta name="twitter:image" content="https://wyldeself.com/og-image.png" />
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/start-today-flow.css"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -2101,6 +2102,37 @@
   }
   #opening-sequence .os-progress-fill.active { width: 100%; }
   #opening-sequence { background: #F7F6F3 !important; }
+
+  /* ═══ TODAY SCREEN — VISUAL ORDER OVERRIDE ═══════════════════════════
+     The .ov-shell is already display:flex column. We use CSS `order` to
+     re-prioritize cards per the guided-day brief WITHOUT touching the
+     existing markup or any JS hooks. Default order is 0 — anything we
+     don't list keeps its natural document position.
+
+     Priority (top → bottom):
+       1. Hero (.ov-hero)
+       2. Day complete state (.ov-complete) — only visible when day done
+       3. Today's Path stack (.ov-stack)
+       4. Nutrition rings (.ov-nutrition-card)
+       5. Future You strip (.ov-future-strip)
+       6. Morning Routine (.mp-card)
+       7. Daily Closeout (#completeDayCard)
+       8. Your Path / phase + badges (.ov-path-card)  — secondary
+       9. Secondary strip (coach + nutrition links)   — secondary
+      10. Streak pill (.ov-streak-wrap)               — secondary
+  */
+  .ov-shell .ov-hero            { order: 1; }
+  .ov-shell .ov-complete        { order: 2; }
+  .ov-shell .ov-stack           { order: 3; }
+  .ov-shell .ov-nutrition-card  { order: 4; }
+  .ov-shell .ov-future-strip    { order: 5; }
+  .ov-shell .mp-card            { order: 6; }
+  .ov-shell #completeDayCard    { order: 7; }
+  .ov-shell .ov-path-card       { order: 8; }
+  .ov-shell .ov-secondary       { order: 9; }
+  .ov-shell .ov-streak-wrap     { order: 10; }
+
+  /* StartTodayFlow styles live in /css/start-today-flow.css (linked above). */
   </style>
 </head>
 <body style="background:#F7F6F3;">
@@ -2751,7 +2783,10 @@
       <p class="ov-hero-identity" id="ov-identity">You&rsquo;re becoming someone who follows through.</p>
       <p class="ov-hero-sub" id="ov-sub">One day. One choice. The version of you that does this is already watching.</p>
       <div class="ov-cta-wrap">
-        <button class="ov-cta" onclick="showScreen('program')">Enter Today&rsquo;s Training <span class="ov-cta-arrow">&rarr;</span></button>
+        <!-- Primary CTA opens the guided StartTodayFlow if available, falls
+             back to the program screen so existing users hit a working button
+             even if STF hasn't loaded yet. -->
+        <button class="ov-cta" id="ov-start-today-btn" onclick="(window.STF && window.STF.open) ? window.STF.open() : showScreen('program')">Start Today <span class="ov-cta-arrow">&rarr;</span></button>
       </div>
     </div>
     <!-- Hidden bar elements for JS compat -->
@@ -3010,7 +3045,7 @@
         <div class="ov-sec-icon-wrap meal" style="display:flex;align-items:center;justify-content:center;color:var(--sage);">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
         </div>
-        <span class="ov-sec-title">Eat like the man you&rsquo;re becoming</span>
+        <span class="ov-sec-title">Eat for who you&rsquo;re becoming</span>
       </div>
       <p class="ov-sec-subtitle">Log what you ate. Adjust the plan.</p>
       <span class="ov-sec-arrow">&#8250;</span>
@@ -3034,7 +3069,7 @@
     <div class="ov-future-text">
       <p class="ov-future-label">Future You</p>
       <p class="ov-future-headline" id="ov-future-headline">This is you in 12 weeks.</p>
-      <p class="ov-future-sub">See your future self and stay locked in.</p>
+      <p class="ov-future-sub">This is the version you’re beginning to build.</p>
     </div>
     <span class="ov-future-arrow">&#8250;</span>
   </div>
@@ -3202,6 +3237,15 @@
     if (weeksBadge) weeksBadge.innerHTML = weeksLeft + ' Week' + (weeksLeft !== 1 ? 's' : '') + '<br/>To Your Next Level';
     var futureBadge = document.getElementById('ov-future-badge');
     if (futureBadge) futureBadge.textContent = weeksLeft + ' Week' + (weeksLeft !== 1 ? 's' : '');
+
+    // Evolving Future You sub-line: changes by week-band so the same card
+    // reads differently in week 1 vs week 8. Calm, no hype. Falls back
+    // to the static line if helpers aren't loaded yet.
+    var futureSub = document.querySelector('.ov-future-sub');
+    if (futureSub && typeof getFutureYouCopy === 'function') {
+      var currentWeek = Math.max(1, Math.ceil(d / 7));
+      futureSub.textContent = getFutureYouCopy(currentWeek);
+    }
   }
 
   function ovSyncData() {
@@ -3432,6 +3476,15 @@
     }
   }
 
+  // Expose the morning-protocol read/write helpers so the StartTodayFlow
+  // overlay can drive the same source of truth the Today screen uses.
+  // No behavior change — these were already pure helpers.
+  if (typeof window !== 'undefined') {
+    window.mpLoad = mpLoad;
+    window.mpSave = mpSave;
+    window.mpGetToday = mpGetToday;
+  }
+
   // Calculate protocol day number
   function mpDayNumber(data) {
     if (!data || !data.startDate) return 1;
@@ -3542,14 +3595,17 @@
     var doneWrap = document.getElementById('mpDoneWrap');
     if (completedCount === totalCount) {
       doneWrap.style.display = 'block';
-      var msg = _mpDoneMessages[dayNum % _mpDoneMessages.length];
-      document.getElementById('mpDoneMsg').textContent = msg.msg;
+      // Use the centralized coachLine helper for the headline so the
+      // ritual-completion voice stays consistent with the rest of the app.
+      // Fall back to the prior copy if the helper isn't loaded yet.
+      var headline = (typeof coachLine === 'function')
+        ? coachLine('ritualDone')
+        : _mpDoneMessages[dayNum % _mpDoneMessages.length].msg;
+      document.getElementById('mpDoneMsg').textContent = headline;
       // Personalize the sub-line with a rotated identity phrase. Falls back
-      // to the static `msg.sub` if the engine isn't loaded yet.
-      var subText = msg.sub;
-      if (typeof getIdentityPhrase === 'function') {
-        subText = 'Another morning as ' + getIdentityPhrase('hero') + '.';
-      }
+      // to a neutral default if the engine isn't loaded yet.
+      var subText = 'Another morning as ' +
+        (typeof getIdentityPhrase === 'function' ? getIdentityPhrase('hero') : 'the person you’re becoming') + '.';
       document.getElementById('mpDoneSub').textContent = subText;
       document.getElementById('mpDailyTitle').textContent = 'Routine complete.';
       document.getElementById('mpDailySub').textContent = 'Day ' + dayNum + ' is claimed.';
@@ -3800,9 +3856,16 @@
     var doneCard = document.getElementById('completeDayDone');
     if (doneCard) {
       doneCard.style.display = 'block';
-      var subEl = doneCard.querySelector('p:last-child');
+      // Closeout uses the centralized coachLine helper so the closing voice
+      // matches the rest of the app. A personalized identity sub-line is
+      // appended below. Calm, never dramatic \u2014 per the brief.
+      var headlineEl = doneCard.querySelector('p:first-of-type');
+      var subEl = doneCard.querySelector('p:last-of-type');
+      if (headlineEl && typeof coachLine === 'function') {
+        headlineEl.textContent = coachLine('closeout');
+      }
       if (subEl && typeof getIdentityPhrase === 'function') {
-        subEl.textContent = 'You showed up as ' + getIdentityPhrase('closing') + '. That\u2019s the whole game.';
+        subEl.textContent = 'You showed up as ' + getIdentityPhrase('closing') + '.';
       }
     }
 
@@ -4673,8 +4736,10 @@
       pool = IDENTITY_PHRASES.neutral.slice();
     } else if (IDENTITY_PHRASES[ctx]) {
       var gendered = (IDENTITY_PHRASES[ctx][key] || IDENTITY_PHRASES[ctx].unspecified || []).slice();
-      // Add 2 neutrals so rotation includes action-based identity, not just gender
-      pool = gendered.concat(IDENTITY_PHRASES.neutral.slice(0, 2));
+      // Mix the FULL neutral pool with gendered phrases so the core Wylde Self app
+      // skews welcoming/identity-led rather than masculine-led. Wylde Man (separate
+      // program) keeps its own voice elsewhere; the core app stays inclusive.
+      pool = gendered.concat(IDENTITY_PHRASES.neutral.slice());
     } else {
       pool = IDENTITY_PHRASES.neutral.slice();
     }
@@ -4694,6 +4759,101 @@
     return pool[idx];
   }
   if (typeof window !== 'undefined') window.getIdentityPhrase = getIdentityPhrase;
+
+  // ═══ COACH LINE HELPER ═════════════════════════════════════════════
+  // One short sentence per moment. Centralized so the whole app's tone
+  // stays consistent. mealLogged auto-swaps to mealLowProtein/mealOnTrack
+  // when daily protein context is passed.
+  var _coachLineLastIdx = {};
+  function coachLine(context, data) {
+    var ctx = context || 'generic';
+    var d = data || {};
+    var pools = {
+      mealLogged: [
+        'Solid. Keep it simple from here.',
+        'Logged. That counts.',
+        'One more aligned choice.'
+      ],
+      mealLowProtein: [
+        'You’re low on protein. Make the next meal protein-forward.',
+        'Protein’s lagging — anchor the next plate around it.',
+        'Next meal: lead with protein.'
+      ],
+      mealOnTrack: [
+        'On track for protein today.',
+        'Protein is landing. Stay with it.',
+        'Macros are tracking. Keep going.'
+      ],
+      workoutDone: [
+        'You showed up. That was the hard part.',
+        'Work logged. Recovery starts now.',
+        'One honest session in the bank.'
+      ],
+      ritualDone: [
+        'Good. That’s how the day starts.',
+        'Standard set. The rest follows.',
+        'You started clean. That counts.'
+      ],
+      closeout: [
+        'You followed through today.',
+        'Day closed. Momentum logged.',
+        'You kept your word.'
+      ],
+      missed: [
+        'Not perfect. Still progress.',
+        'No shame. Re-enter the day.',
+        'The next aligned choice is enough.'
+      ],
+      generic: [
+        'Stay consistent.',
+        'This compounds.',
+        'One honest step.'
+      ]
+    };
+    if (ctx === 'mealLogged' && typeof d.protein === 'number' && typeof d.proteinGoal === 'number' && d.proteinGoal > 0) {
+      var pct = d.protein / d.proteinGoal;
+      if (pct < 0.5) ctx = 'mealLowProtein';
+      else if (pct >= 0.7) ctx = 'mealOnTrack';
+    }
+    var pool = pools[ctx] || pools.generic;
+    var last = _coachLineLastIdx[ctx];
+    var i = (typeof last === 'number' && pool.length > 1)
+      ? (last + 1) % pool.length
+      : Math.floor(Math.random() * pool.length);
+    _coachLineLastIdx[ctx] = i;
+    return pool[i];
+  }
+  if (typeof window !== 'undefined') window.coachLine = coachLine;
+
+  // ═══ FUTURE YOU EVOLVING COPY ═════════════════════════════════════
+  // Returns a calm, one-line headline that evolves with the user's week
+  // in their 12-week journey. Used in the Today screen Future You strip
+  // so the same card reads differently in week 1 vs week 8 — quietly
+  // signaling that the app is tracking with them.
+  function getFutureYouCopy(weekNum) {
+    var w = parseInt(weekNum, 10) || 1;
+    if (w <= 1)  return 'This is the version you’re beginning to build.';
+    if (w <= 3)  return 'Early days. The pattern is forming.';
+    if (w <= 5)  return 'You’re starting to see it: consistency changes identity.';
+    if (w <= 7)  return 'No longer guessing. You have evidence.';
+    if (w <= 10) return 'The work is becoming who you are.';
+    return 'This is what follow-through looks like.';
+  }
+  if (typeof window !== 'undefined') window.getFutureYouCopy = getFutureYouCopy;
+
+  // ═══ JOURNEY PHASE (parallel to getCurrentPhase) ══════════════════
+  // Maps day-in-program (1..84) to the brief's 4-phase structure.
+  // Used ONLY for new surfaces (StartTodayFlow Identity Anchor,
+  // Future You sub-line). The existing identity-progression phase
+  // system (Initiate/Foundation/etc., tied to badges) is untouched.
+  function getJourneyPhase(day) {
+    var d = parseInt(day, 10) || 1;
+    if (d <= 14) return { name: 'Foundation', focus: 'Consistency. Rhythm. Showing up.', range: 'Days 1–14' };
+    if (d <= 42) return { name: 'Build',      focus: 'Stronger habits. Better fuel. Progressive load.', range: 'Days 15–42' };
+    if (d <= 70) return { name: 'Embody',     focus: 'Identity integration. Confidence. Deeper consistency.', range: 'Days 43–70' };
+    return        { name: 'Integrate',        focus: 'Maintenance. Reflection. The next plan.', range: 'Days 71–84' };
+  }
+  if (typeof window !== 'undefined') window.getJourneyPhase = getJourneyPhase;
 
   // Identity-based progression. Phases reflect WHO the user is becoming
   // through consistent action — not how many points they grinded.
@@ -6445,6 +6605,16 @@
       if (greeting && typeof _futureSelfLabel === 'function') {
         var greetingLabel = greeting.querySelector('.msg-label');
         if (greetingLabel) greetingLabel.textContent = _futureSelfLabel();
+      }
+      // Hydrate any prior conversation so the chat feels continuous
+      // across reloads. Hides the static greeting if there's real history.
+      if (typeof window.hydrateChatFromStorage === 'function') {
+        try {
+          window.hydrateChatFromStorage();
+          if (greeting && Array.isArray(chatHistory) && chatHistory.length > 0) {
+            greeting.style.display = 'none';
+          }
+        } catch(_) {}
       }
     }
     if (id === 'progress' && typeof renderProgressScreen === 'function') renderProgressScreen();
@@ -8954,7 +9124,53 @@
   }
 
   // COACH
+  // Chat history persists to localStorage so the conversation continues
+  // across reloads — the app remembers you. Capped at the last 30 messages
+  // so storage stays small and the prompt context stays scoped to recent
+  // conversation. (Future: mirror to Supabase coach_conversations table.)
+  var WYLDE_CHAT_KEY = 'wylde_coach_chat';
+  var WYLDE_CHAT_MAX = 30;
   var chatHistory = [];
+  try {
+    var _savedChat = JSON.parse(localStorage.getItem(WYLDE_CHAT_KEY) || '[]');
+    if (Array.isArray(_savedChat)) chatHistory = _savedChat.slice(-WYLDE_CHAT_MAX);
+  } catch(_) { chatHistory = []; }
+
+  function saveChatHistory() {
+    try {
+      var trimmed = chatHistory.slice(-WYLDE_CHAT_MAX);
+      localStorage.setItem(WYLDE_CHAT_KEY, JSON.stringify(trimmed));
+    } catch(_) {}
+  }
+
+  // Hydrate the visible chat from saved history when the Coach screen opens.
+  // Idempotent — runs once per page load. The static greeting is a permanent
+  // child of #chatMessages so we use a flag instead of children.length.
+  var _chatHydrated = false;
+  function hydrateChatFromStorage() {
+    if (_chatHydrated) return;
+    var messages = document.getElementById('chatMessages');
+    if (!messages) return;
+    if (!chatHistory || chatHistory.length === 0) { _chatHydrated = true; return; }
+    chatHistory.forEach(function(turn) {
+      var div = document.createElement('div');
+      if (turn.role === 'user') {
+        div.className = 'msg msg-user';
+        div.innerHTML = '<div class="msg-label">' + ((typeof state === 'object' && state && state.name) || 'You') + '</div><div class="msg-bubble">' + (turn.content || '').replace(/\n/g, '<br>') + '</div>';
+      } else {
+        div.className = 'msg msg-ai';
+        var label = (typeof _futureSelfLabel === 'function') ? _futureSelfLabel() : 'Future Self';
+        div.innerHTML = '<div class="msg-label">' + label + '</div><div class="msg-bubble">' + (turn.content || '').replace(/\n/g, '<br>') + '</div>';
+      }
+      messages.appendChild(div);
+    });
+    messages.scrollTop = messages.scrollHeight;
+    _chatHydrated = true;
+  }
+  if (typeof window !== 'undefined') {
+    window.hydrateChatFromStorage = hydrateChatFromStorage;
+    window.saveChatHistory = saveChatHistory;
+  }
 
   window.coachQuickAction = function(action) {
     var input = document.getElementById('chatInput');
@@ -8985,7 +9201,10 @@
     messages.scrollTop = messages.scrollHeight;
 
     chatHistory.push({ role: 'user', content: msg });
-    if (chatHistory.length > 8) chatHistory = chatHistory.slice(chatHistory.length - 8);
+    // Keep the prompt context tight (last 8 turns) but persist a longer
+    // tail so the user can scroll back through past conversations.
+    if (chatHistory.length > WYLDE_CHAT_MAX) chatHistory = chatHistory.slice(chatHistory.length - WYLDE_CHAT_MAX);
+    saveChatHistory();
 
     // Pull the user's actual history (workouts, PRs, mood, food, feels,
     // walks, current phase) so the Coach can reference real numbers and
@@ -9025,7 +9244,7 @@
         // ─── VOICE ───────────────────────────────────────────────
         'You are the Wylde Coach. You are not a generic AI assistant. You speak as the user\u2019s FUTURE SELF \u2014 the version of them that has already done the work, walked the path, and built the identity they\u2019re reaching for. ' +
         _selfRefBlock + ' ' +
-        'You are calm, grounded, direct. Masculine but not aggressive. Warm but never soft. You don\u2019t cheerlead, you don\u2019t lecture, you don\u2019t therapize. You speak like someone who remembers what it was like to be where they are now \u2014 and knows what comes next.\n\n' +
+        'You are calm, grounded, direct. Strong but not aggressive. Warm but never soft. You don\u2019t cheerlead, you don\u2019t lecture, you don\u2019t therapize. You speak like someone who remembers what it was like to be where they are now \u2014 and knows what comes next.\n\n' +
 
         // ─── FORMAT (HARD RULES) ──────────────────────────────────
         'FORMAT \u2014 hard rules:\n' +
@@ -9062,7 +9281,7 @@
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 280,             // tighter ceiling reinforces brevity
           system: systemPrompt,
-          messages: chatHistory.slice(0, -1).concat([{ role: 'user', content: msg }])
+          messages: chatHistory.slice(-8, -1).concat([{ role: 'user', content: msg }])
         })
       });
     })
@@ -9071,6 +9290,7 @@
       typingDiv.remove();
       var reply = (data.content && data.content[0] && data.content[0].text) || "I'm here. Keep going.";
       chatHistory.push({ role: 'assistant', content: reply });
+      saveChatHistory();
       var aiDiv = document.createElement('div');
       aiDiv.className = 'msg msg-ai';
       aiDiv.innerHTML = '<div class="msg-label">' + _futureSelfLabel() + '</div><div class="msg-bubble">' + reply.replace(/\n/g, '<br>') + '</div>';
@@ -9562,6 +9782,18 @@
 
         var hasRecipe = (m.ingredients && m.ingredients.length > 0) || (m.steps && m.steps.length > 0);
 
+        // Build a calm "Why this works" rationale for each meal based on its
+        // dominant macro. Two short sentences. No long paragraphs, no videos
+        // — per the brief: teach while doing, don't gate progress on learning.
+        var whyId = mealId + '_why';
+        var whyBullets = [];
+        var p = m.protein || 0, c = m.carbs || 0, f = m.fat || 0;
+        if (p >= 25)        whyBullets.push('Protein here supports recovery and keeps hunger steady.');
+        else if (p > 0)     whyBullets.push('Some protein, but lean toward more in your next meal.');
+        if (c >= 35)        whyBullets.push('Carbs help fuel training and stable energy through the day.');
+        if (f >= 12)        whyBullets.push('Fats support hormones and satiety — keeps you full longer.');
+        if (whyBullets.length === 0) whyBullets.push('Simple plate. Easy to repeat. Aligned enough.');
+
         mealDiv.innerHTML =
           '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
             '<div style="flex:1;">' +
@@ -9572,9 +9804,14 @@
             '</div>' +
             (m.prep ? '<span style="font-size:11px;color:var(--muted);flex-shrink:0;margin-left:12px;">⏱ ' + esc(m.prep) + '</span>' : '') +
           '</div>' +
-          '<div style="display:flex;gap:8px;margin-top:10px;">' +
+          '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">' +
             (hasRecipe ? '<button onclick="toggleMealRecipe(\'' + mealId + '\')" style="font-size:11px;padding:6px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:var(--text);cursor:pointer;">View Recipe</button>' : '') +
+            '<button onclick="toggleMealRecipe(\'' + whyId + '\')" style="font-size:11px;padding:6px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:var(--text);cursor:pointer;">Why this works</button>' +
             '<button onclick="logMealFromPlan(' + (m.calories||0) + ',' + (m.protein||0) + ',' + (m.carbs||0) + ',' + (m.fat||0) + ',\'' + esc(m.title || m.foods).replace(/'/g, "\\'") + '\')" style="font-size:11px;padding:6px 12px;border-radius:8px;border:1px solid var(--sage);background:transparent;color:var(--sage);cursor:pointer;">Log This Meal</button>' +
+          '</div>' +
+          '<div id="' + whyId + '" style="display:none;margin-top:12px;padding:12px 14px;background:rgba(110,127,102,0.06);border-radius:10px;border-left:2px solid var(--sage);">' +
+            '<p style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--sage);margin:0 0 6px;">Why this works</p>' +
+            whyBullets.map(function(b) { return '<p style="font-size:13px;color:var(--text);margin:0 0 4px;line-height:1.5;">' + b + '</p>'; }).join('') +
           '</div>' +
           (hasRecipe ? '<div id="' + mealId + '" style="display:none;margin-top:12px;padding:14px;background:rgba(0,0,0,0.02);border-radius:10px;">' +
             (m.ingredients && m.ingredients.length > 0 ?
@@ -9791,6 +10028,29 @@
     // sees the protein bar climb in real time. Without this the two
     // surfaces drift apart and feel like double-logging.
     if (typeof syncOverviewMacros === 'function') syncOverviewMacros();
+
+    // Surface a single calm coach line under the food log so the user
+    // gets one piece of feedback per meal — never a celebration, never
+    // a lecture. Replaced on the next log so it doesn't pile up.
+    try {
+      var feedbackHost = document.getElementById('foodLogFeedback');
+      if (!feedbackHost) {
+        var logContainer = document.getElementById('foodLog');
+        if (logContainer && logContainer.parentNode) {
+          feedbackHost = document.createElement('p');
+          feedbackHost.id = 'foodLogFeedback';
+          feedbackHost.style.cssText = 'font-size:12px;color:var(--text2);margin:10px 16px 0;font-style:italic;line-height:1.5;letter-spacing:0.005em;';
+          logContainer.parentNode.insertBefore(feedbackHost, logContainer.nextSibling);
+        }
+      }
+      if (feedbackHost && typeof coachLine === 'function') {
+        var proteinGoal = (state && state.macros && state.macros.protein) || 180;
+        feedbackHost.textContent = coachLine('mealLogged', {
+          protein: foodLogTotals.protein,
+          proteinGoal: proteinGoal
+        });
+      }
+    } catch(_) {}
 
     awardXP(10, 'Food logged');
   }
@@ -11202,6 +11462,9 @@
   }
 })();
 </script>
+
+<!-- StartTodayFlow: markup is injected by the script; styles live in /css/start-today-flow.css -->
+<script src="/js/start-today-flow.js" defer></script>
 
 </body>
 </html>
