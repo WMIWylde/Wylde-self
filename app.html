@@ -24,9 +24,18 @@
       try {
         var t = localStorage.getItem('wylde_theme');
         if (t !== 'light' && t !== 'dark') t = 'dark';
-        document.documentElement.setAttribute('data-theme', t);
+        // Force light theme during onboarding for legibility — the
+        // guided walkthrough is dark-on-dark unreadable in dark mode.
+        // We detect "user is on onboard" by the absence of a completed
+        // profile (no name persisted yet).
+        var hasProfile = !!localStorage.getItem('wylde_name')
+                      || !!localStorage.getItem('wylde_profile');
+        var paintTheme = hasProfile ? t : 'light';
+        document.documentElement.setAttribute('data-theme', paintTheme);
         // Sync <meta name="theme-color"> for iOS Safari address bar tint
-        document.documentElement.style.background = (t === 'light') ? '#F4EFE6' : '#070707';
+        document.documentElement.style.background = (paintTheme === 'light') ? '#F4EFE6' : '#070707';
+        var metaColor = document.querySelector('meta[name="theme-color"]');
+        if (metaColor) metaColor.setAttribute('content', (paintTheme === 'light') ? '#F4EFE6' : '#070707');
       } catch(_) {
         document.documentElement.setAttribute('data-theme', 'dark');
         document.documentElement.style.background = '#070707';
@@ -2095,6 +2104,17 @@
 (function(){
   var os = document.getElementById('opening-sequence');
   if (!os) return;
+  // ─── Skip on returning visit ────────────────────────────
+  // If we already have a saved screen (i.e. the user has been
+  // here before / is just refreshing), don't replay the intro.
+  // It feels jarring to watch the opening movie every time the
+  // tab reloads. First-time visitors still get the full sequence.
+  try {
+    var hasReturned = !!localStorage.getItem('wylde_last_screen')
+                   || !!localStorage.getItem('wylde_name')
+                   || !!localStorage.getItem('wylde_profile');
+    if (hasReturned) { os.remove(); return; }
+  } catch(_) {}
   var logo = os.querySelector('.os-logo');
   var wordmark = os.querySelector('.os-wordmark');
   var tagline = os.querySelector('.os-tagline');
@@ -6361,6 +6381,31 @@
       }
       return;
     }
+    // ─── Onboarding always renders in light mode ───────────
+    // The guided walkthrough is a high-contrast first impression.
+    // Force light theme while on the onboard screen, then restore
+    // whatever theme the user has chosen the moment they leave.
+    // We set the attribute directly (not via setWyldeTheme) so this
+    // doesn't overwrite the persisted preference in localStorage.
+    try {
+      var html = document.documentElement;
+      if (id === 'onboard') {
+        html.setAttribute('data-theme', 'light');
+        var metaLight = document.getElementById('metaThemeColor');
+        if (metaLight && window.WYLDE_THEMES && window.WYLDE_THEMES.light) {
+          metaLight.setAttribute('content', window.WYLDE_THEMES.light.bgForMeta);
+        }
+      } else {
+        var preferred = (typeof getActiveTheme === 'function') ? getActiveTheme() : 'dark';
+        if (html.getAttribute('data-theme') !== preferred) {
+          html.setAttribute('data-theme', preferred);
+          var metaPref = document.getElementById('metaThemeColor');
+          if (metaPref && window.WYLDE_THEMES && window.WYLDE_THEMES[preferred]) {
+            metaPref.setAttribute('content', window.WYLDE_THEMES[preferred].bgForMeta);
+          }
+        }
+      }
+    } catch(_) {}
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
