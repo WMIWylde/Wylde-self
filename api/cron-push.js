@@ -1,10 +1,10 @@
 const webpush = require('web-push');
 const { createClient } = require('@supabase/supabase-js');
 
-const VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY || 'BNGQFMUQu7IPUrks8ibBTzsrR_m22cwdI-fpPe7cz0A8GX-GaGvYFfhvQ5mOkdDV242WXPOIXVUzg531eh289m4';
-const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY || 'f7Sux0dfkRmg7-UMe__6kPriQTMmaTbDjkHbwnOopJU';
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://huclolzxzpitdpyogolu.supabase.co';
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY;
+const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY;
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
 webpush.setVapidDetails('mailto:wilkemitzin@gmail.com', VAPID_PUBLIC, VAPID_PRIVATE);
 
@@ -48,7 +48,7 @@ module.exports = async function handler(req, res) {
   }
 
   if (!SUPABASE_SERVICE_KEY) {
-    return res.status(500).json({ error: 'Missing SUPABASE_SERVICE_ROLE_KEY env var' });
+    return res.status(500).json({ error: 'Missing SUPABASE_SERVICE_KEY env var' });
   }
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);

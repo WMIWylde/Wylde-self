@@ -20,7 +20,7 @@
 //   We verify it against REVENUECAT_WEBHOOK_SECRET env var.
 // ────────────────────────────────────────────────────────────────────
 
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://huclolzxzpitdpyogolu.supabase.co';
+const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || ''; // service_role key required for writes
 const REVENUECAT_WEBHOOK_SECRET = process.env.REVENUECAT_WEBHOOK_SECRET || '';
 

@@ -13,7 +13,7 @@
 // ────────────────────────────────────────────────────────────────────
 
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY || '';
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://huclolzxzpitdpyogolu.supabase.co';
+const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || '';
 const MODEL = 'claude-haiku-4-5-20251001';
 

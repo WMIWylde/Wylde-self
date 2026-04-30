@@ -116,9 +116,9 @@ export default async function handler(req) {
 
     // Try models in order — names change often, first success wins
     const models = [
-      'gemini-2.5-flash-image',
-      'gemini-3.1-flash-image-preview',
-      'gemini-3-pro-image-preview',
+      'gemini-2.0-flash-exp',
+      'imagen-3.0-generate-002',
+      'gemini-2.0-flash',
     ];
 
     // Helper: attempt generation with given contents

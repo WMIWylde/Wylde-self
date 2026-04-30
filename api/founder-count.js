@@ -7,7 +7,7 @@
 //   Cached for 60s in CDN to avoid hammering Supabase on every paywall view.
 // ────────────────────────────────────────────────────────────────────
 
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://huclolzxzpitdpyogolu.supabase.co';
+const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || ''; // anon key works too for the view
 
 module.exports = async function handler(req, res) {

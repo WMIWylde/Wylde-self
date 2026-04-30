@@ -1,7 +1,7 @@
 const webpush = require('web-push');
 
-const VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY || 'BNGQFMUQu7IPUrks8ibBTzsrR_m22cwdI-fpPe7cz0A8GX-GaGvYFfhvQ5mOkdDV242WXPOIXVUzg531eh289m4';
-const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY || 'f7Sux0dfkRmg7-UMe__6kPriQTMmaTbDjkHbwnOopJU';
+const VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY;
+const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY;
 
 webpush.setVapidDetails('mailto:wilkemitzin@gmail.com', VAPID_PUBLIC, VAPID_PRIVATE);
 
