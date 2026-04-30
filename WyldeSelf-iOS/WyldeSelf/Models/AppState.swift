@@ -15,7 +15,11 @@ class AppState: ObservableObject {
     @Published var xp: Int = 0                                      { didSet { defaults.set(xp, forKey: "wylde_xp") } }
 
     // Profile
-    @Published var gender: String = "Male"                          { didSet { defaults.set(gender, forKey: "wylde_gender") } }
+    // Empty default keeps the core app inclusive — Wylde Self should not
+    // assume a gender. The user can set this explicitly during onboarding.
+    // Existing users who already chose "Male"/"Female" keep their value
+    // because loadFromDefaults reads the persisted string.
+    @Published var gender: String = ""                              { didSet { defaults.set(gender, forKey: "wylde_gender") } }
     @Published var goals: [String] = []                             { didSet { defaults.set(goals, forKey: "wylde_goals") } }
     @Published var gymName: String = ""                             { didSet { defaults.set(gymName, forKey: "wylde_gym") } }
 
@@ -141,7 +145,7 @@ class AppState: ObservableObject {
         if currentDay == 0 { currentDay = 1 }
         streak = defaults.integer(forKey: "wylde_streak")
         xp = defaults.integer(forKey: "wylde_xp")
-        gender = defaults.string(forKey: "wylde_gender") ?? "Male"
+        gender = defaults.string(forKey: "wylde_gender") ?? ""
         goals = defaults.stringArray(forKey: "wylde_goals") ?? []
         gymName = defaults.string(forKey: "wylde_gym") ?? ""
 

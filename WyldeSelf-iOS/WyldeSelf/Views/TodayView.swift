@@ -6,6 +6,7 @@ struct TodayView: View {
     @State private var healthSteps: Int = 0
     @State private var healthCalories: Int = 0
     @State private var showPaywall = false
+    @State private var showStartToday = false
 
     @State private var didAppear = false
 
@@ -18,15 +19,47 @@ struct TodayView: View {
                     .offset(y: didAppear ? 0 : 8)
                     .animation(.easeOut(duration: 0.5), value: didAppear)
 
-                // Hero card — day + streak (no level/XP — those were stripped
-                // because the brand is about transforming your relationship
-                // with yourself, not climbing a ladder)
+                // Hero card — day + Start Today CTA. (Level/XP stripped —
+                // brand is about transforming your relationship with
+                // yourself, not climbing a ladder.)
                 heroCard
                     .opacity(didAppear ? 1 : 0)
                     .offset(y: didAppear ? 0 : 12)
                     .animation(.easeOut(duration: 0.6).delay(0.05), value: didAppear)
 
-                // Morning Protocol — three fixed practices
+                // ─── Today's Path: required actions first ───────────────
+                // Order mirrors the web brief: Today's Path (training,
+                // walk) → Nutrition → Future You → Morning Routine →
+                // Health. Reduces cognitive load so the user knows what
+                // to do next, not everything at once.
+
+                workoutCard
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 12)
+                    .animation(.easeOut(duration: 0.6).delay(0.10), value: didAppear)
+
+                walkCard
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 12)
+                    .animation(.easeOut(duration: 0.6).delay(0.15), value: didAppear)
+
+                nutritionCard
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 12)
+                    .animation(.easeOut(duration: 0.6).delay(0.20), value: didAppear)
+
+                // Future You strip — calm reminder of what consistency is
+                // building toward. Copy evolves week-by-week via
+                // FutureYouCopy.forWeek so it doesn't read like a
+                // template. Tap routes to the Future tab.
+                futureYouCard
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 12)
+                    .animation(.easeOut(duration: 0.6).delay(0.25), value: didAppear)
+
+                // Morning Protocol — moved lower since users can also run
+                // it inside the StartTodayFlow now. Stays here for
+                // direct check-off when they don't want the guided flow.
                 if !appState.morningProtocolCompleted {
                     morningProtocolCard
                         .transition(.asymmetric(
@@ -35,32 +68,13 @@ struct TodayView: View {
                         ))
                         .opacity(didAppear ? 1 : 0)
                         .offset(y: didAppear ? 0 : 12)
-                        .animation(.easeOut(duration: 0.6).delay(0.10), value: didAppear)
+                        .animation(.easeOut(duration: 0.6).delay(0.30), value: didAppear)
                 }
 
-                // Workout CTA
-                workoutCard
-                    .opacity(didAppear ? 1 : 0)
-                    .offset(y: didAppear ? 0 : 12)
-                    .animation(.easeOut(duration: 0.6).delay(0.15), value: didAppear)
-
-                // Daily Long Walk — separate from training
-                walkCard
-                    .opacity(didAppear ? 1 : 0)
-                    .offset(y: didAppear ? 0 : 12)
-                    .animation(.easeOut(duration: 0.6).delay(0.20), value: didAppear)
-
-                // Nutrition snapshot
-                nutritionCard
-                    .opacity(didAppear ? 1 : 0)
-                    .offset(y: didAppear ? 0 : 12)
-                    .animation(.easeOut(duration: 0.6).delay(0.25), value: didAppear)
-
-                // Health data
                 healthCard
                     .opacity(didAppear ? 1 : 0)
                     .offset(y: didAppear ? 0 : 12)
-                    .animation(.easeOut(duration: 0.6).delay(0.30), value: didAppear)
+                    .animation(.easeOut(duration: 0.6).delay(0.35), value: didAppear)
 
                 // Founding Member offer — only shown to non-Pro users.
                 // Soft CTA, never blocks. Identity-driven framing.
@@ -68,7 +82,7 @@ struct TodayView: View {
                     foundingMemberCard
                         .opacity(didAppear ? 1 : 0)
                         .offset(y: didAppear ? 0 : 12)
-                        .animation(.easeOut(duration: 0.6).delay(0.35), value: didAppear)
+                        .animation(.easeOut(duration: 0.6).delay(0.40), value: didAppear)
                 }
 
                 Spacer(minLength: 100)
@@ -86,6 +100,12 @@ struct TodayView: View {
         }
         .sheet(isPresented: $showPaywall) {
             PaywallView().environmentObject(appState)
+        }
+        .sheet(isPresented: $showStartToday) {
+            StartTodayFlow(isPresented: $showStartToday)
+                .environmentObject(appState)
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
         }
     }
 
@@ -180,6 +200,29 @@ struct TodayView: View {
             Text("of becoming who you said you'd be")
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(Theme.muted)
+
+            // Primary CTA — opens the StartTodayFlow guided 6-step flow.
+            // Native equivalent of the web "Start Today" button.
+            Button {
+                HapticManager.shared.impact(.medium)
+                showStartToday = true
+            } label: {
+                HStack(spacing: 8) {
+                    Text("Start Today")
+                        .font(.system(size: 14, weight: .bold))
+                        .tracking(1.0)
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 12, weight: .bold))
+                }
+                .foregroundColor(Color(hex: "0B0B0B"))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(
+                    RoundedRectangle(cornerRadius: 12).fill(Theme.gold)
+                )
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 6)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Theme.cardPadding)
@@ -371,6 +414,55 @@ struct TodayView: View {
             .frame(height: 4)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    // MARK: - Future You
+
+    /// Calm reminder strip. Copy evolves by week via FutureYouCopy.forWeek
+    /// so the same card reads differently in week 1 vs week 8 — quietly
+    /// signaling that the app is tracking with the user. Tap → Future tab.
+    private var futureYouCard: some View {
+        let week = max(1, Int(ceil(Double(appState.currentDay) / 7.0)))
+        let weeksLeft = max(1, 12 - (week - 1))
+        return Button {
+            HapticManager.shared.impact(.light)
+            appState.selectedTab = .future
+        } label: {
+            HStack(spacing: 14) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Theme.sage.opacity(0.08))
+                    Text("\(weeksLeft)w")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(Theme.sage)
+                }
+                .frame(width: 56, height: 56)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("FUTURE YOU")
+                        .font(.system(size: 10, weight: .bold))
+                        .tracking(1.6)
+                        .foregroundColor(Theme.gold)
+                    Text("This is you in \(weeksLeft) week\(weeksLeft == 1 ? "" : "s").")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(Theme.text)
+                    Text(FutureYouCopy.forWeek(week))
+                        .font(.system(size: 12))
+                        .foregroundColor(Theme.muted)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(Theme.muted)
+            }
+            .padding(Theme.cardPadding)
+            .background(Theme.surface)
+            .cornerRadius(Theme.cardRadius)
+            .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Health
