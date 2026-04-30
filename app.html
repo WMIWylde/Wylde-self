@@ -929,7 +929,7 @@
     .set-row { display:flex;align-items:center;gap:6px;padding:2px 0;transition:opacity 0.2s; }
     .set-label-num { width:22px;font-size:13px;font-weight:600;color:var(--text2);text-align:center;flex-shrink:0;line-height:1; }
     .set-row.logged .set-label-num { color:var(--sage); }
-    .set-row.logged .set-label-num::after { content:'\u2713';display:block;font-size:11px;line-height:1;margin-top:1px; }
+    .set-row.logged .set-label-num::after { content:'\2713 ';display:block;font-size:11px;line-height:1;margin-top:1px; }
     /* Stepper input — touch-friendly +/- */
     .set-stepper { display:flex;align-items:stretch;background:var(--bg-soft);border:1px solid var(--border);border-radius:9px;overflow:hidden;height:38px;flex:1;min-width:0; }
     .set-stepper:focus-within { border-color:var(--sage);box-shadow:0 0 0 2px rgba(110,127,102,0.10); }
@@ -974,6 +974,24 @@
     .food-feel-btn.selected.bad { background:rgba(194,107,90,0.18);border-color:rgba(194,107,90,0.5); }
     .food-feel-btn.selected.gross { background:rgba(140,90,90,0.20);border-color:rgba(140,90,90,0.55); }
     .day-body.open { max-height: 2000px; padding: 0 24px 20px; }
+    /* Default-today behavior: only today's day card is visible; the rest of
+       the week sits behind the "View full program" toggle below. */
+    .day-card.is-hidden { display: none; }
+    .day-card.is-today .day-header { background: rgba(184,154,90,0.06); }
+    .show-full-week-btn {
+      display: block; width: 100%;
+      margin: 12px 0 4px;
+      padding: 12px 14px;
+      background: transparent;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      color: var(--text2, var(--text-secondary));
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .show-full-week-btn:hover { background: var(--bg-soft, rgba(255,255,255,0.04)); color: var(--text); }
     .ex-demo-wrap { display: flex; justify-content: center; margin-bottom: 20px; background: #0a0a0a; border-radius: 14px; overflow: hidden; position: relative; }
     .ex-demo-wrap img { width: 100%; max-width: 320px; height: auto; display: block; mix-blend-mode: normal; }
     .ex-demo-wrap .ex-demo-loading { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; }
@@ -8614,6 +8632,12 @@
         document.getElementById('altProgramSection').style.display = 'block';
         var rb = document.getElementById('rebuildProgramBtn');
         if (rb) { rb.textContent = 'Rebuild'; rb.disabled = false; }
+        // ─── Default-to-today behavior ──────────────────────────────
+        // Show only today's day expanded; tuck the rest of the week
+        // behind a "View full program" toggle so the screen doesn't
+        // dump the whole week on the user. Same day-index logic as
+        // StartTodayFlow (wylde_day wraps to plan.length).
+        try { applyDefaultTodayLayout(plan, container); } catch(_) {}
         return;
       }
       var d = plan[i];
@@ -8630,6 +8654,44 @@
       setTimeout(addDay, 200);
     }
     addDay();
+  }
+
+  // Compute today's index inside the plan and apply the default-today
+  // layout: today expanded, the rest hidden behind a toggle. Idempotent
+  // — re-running on the same container resets to the today-only state.
+  function applyDefaultTodayLayout(plan, container) {
+    if (!plan || !plan.length || !container) return;
+    var dayNum = 1;
+    try { dayNum = parseInt(localStorage.getItem('wylde_day') || '1', 10) || 1; } catch(_) {}
+    var todayIdx = ((dayNum - 1) % plan.length + plan.length) % plan.length;
+    var cards = container.querySelectorAll('.day-card');
+    cards.forEach(function(card, idx) {
+      card.classList.remove('is-today', 'is-hidden');
+      var body = card.querySelector('.day-body');
+      if (idx === todayIdx) {
+        card.classList.add('is-today');
+        if (body) body.classList.add('open');
+      } else {
+        card.classList.add('is-hidden');
+      }
+    });
+    // Toggle button — shows the rest of the week. Only added when the
+    // plan actually has more than one day.
+    var existing = container.querySelector('.show-full-week-btn');
+    if (existing) existing.remove();
+    if (plan.length > 1) {
+      var toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'show-full-week-btn';
+      toggle.textContent = 'View full program (' + plan.length + ' days)';
+      toggle.onclick = function() {
+        container.querySelectorAll('.day-card.is-hidden').forEach(function(c) {
+          c.classList.remove('is-hidden');
+        });
+        toggle.remove();
+      };
+      container.appendChild(toggle);
+    }
   }
 
   // ═══ PROGRAM PERSISTENCE ═══
