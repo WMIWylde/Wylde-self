@@ -164,13 +164,15 @@ export default async function handler(req) {
       ];
     }
 
-    // Try models in order — names change often, first success wins
+    // Try models in order — names change often, first success wins.
+    // All entries must support the :generateContent endpoint with
+    // responseModalities: ['TEXT', 'IMAGE']. Imagen models use a
+    // different :predict shape and are intentionally excluded.
     const models = [
-      'gemini-3.1-flash',
-      'gemini-3.0-flash',
-      'gemini-2.0-flash-exp',
-      'imagen-3.0-generate-002',
-      'gemini-2.0-flash',
+      'gemini-3.1-flash-image-preview', // Nano Banana 2 — high-efficiency native image gen (preview)
+      'gemini-3-pro-image-preview',     // Nano Banana Pro — pro-tier native image gen (preview)
+      'gemini-2.5-flash-image',         // Nano Banana — GA fallback
+      'gemini-2.0-flash-exp',           // legacy fallback
     ];
 
     // Helper: attempt generation with given contents

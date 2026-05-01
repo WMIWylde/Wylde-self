@@ -84,8 +84,9 @@ Internally, the AI shifts between context modes (Warrior, Athlete, Yogi, Archite
 - Never gimmicky, chatty, or hype-heavy
 
 ### Image generation
-- **Provider:** Gemini 3.1 Flash
-- **Why:** Chosen after evaluating fal.ai, DALL-E 2, and gpt-image-1. Gemini 3.1 Flash gave the best identity preservation + aesthetic match for the Future Self use case.
+- **Provider:** Google Gemini, native multi-modal image generation (Nano Banana family)
+- **Primary model:** `gemini-3.1-flash-image-preview` ("Nano Banana 2"). Falls back through `gemini-3-pro-image-preview`, `gemini-2.5-flash-image` (GA), and `gemini-2.0-flash-exp`. All entries hit the `:generateContent` endpoint with `responseModalities: ['TEXT', 'IMAGE']`.
+- **Why:** Chosen after evaluating fal.ai, DALL-E 2, and gpt-image-1. Gemini's native image generation gave the best identity preservation + aesthetic match for the Future Self use case.
 - **Endpoint:** runs on Vercel Edge Runtime to bypass the Hobby plan's 10-second function timeout
 
 ---
