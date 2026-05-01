@@ -1,121 +1,174 @@
-# CLAUDE.md
+# Wylde-self (Web / API)
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## North Star
 
-## What This Is
+This repo is the **web and API backend** for WyldeSelf — an AI-guided identity transformation system that helps users become their future self through daily structured actions.
 
-Wylde Self is an identity-based transformation app — not a fitness tracker. The product is built around the principle that the user is becoming someone, and every surface reinforces that identity. Brand position: Whoop + Levels + Calm + high-end men's initiation container.
+WyldeSelf is the entry point into the broader Wylde ecosystem. This codebase serves the iOS app and (eventually) a marketing/onboarding web surface.
 
-**Voice:** Grounded, direct, masculine but not aggressive, no fluff, no emojis.
+The promise to the user, every time they open the app:
 
-## Architecture
+> *"I am stepping into a higher version of myself."*
 
-**Hybrid app — three layers:**
+Clarity > complexity. Experience > features. Identity shift > information.
 
-1. **Web SPA** (`app.html`) — Single-file vanilla HTML/CSS/JS (~11k lines), no framework, no bundler. Deployed on Vercel at `wyldeself.com/app.html`. Contains all screens: Today, Coach, Progress, Future Self, Library, Workouts, Nutrition, Settings.
+---
 
-2. **Native iOS shell** (`WyldeSelf-iOS/`) — SwiftUI. Today + Exercise Library are native Swift views. Future/Coach/Progress are WKWebViews wrapping `app.html` paths (auto-updated on Vercel deploy). `AppState` is the single ObservableObject for all state.
+## What this repo is responsible for
 
-3. **Serverless API** (`api/`) — Vercel Node.js functions. No Express, no framework — each file exports a handler. Functions reference env vars set in Vercel dashboard, not `.env` files.
+- **API endpoints** consumed by the WyldeSelf iOS app
+- **AI orchestration** — calls to Gemini, Claude, and other model providers
+- **Image generation** — Future Self photo generation pipeline
+- **Marketing site** (current or future) at wyldeself.com
+- **Auth and user data** (planned, via Supabase)
+- **Webhooks and integrations** (HealthKit relay, Stripe, etc. — future)
 
-**Database:** Supabase (auth via magic link, profiles, workouts, food_logs, badges, identity profiles, push subscriptions). Schema migrations in `supabase/migrations/`.
+What lives elsewhere:
+- iOS UI/UX → `WyldeSelf` repo (Xcode/SwiftUI)
+- Wylde Man marketing site → separate Wylde-man repo
+- Marketplace, programs, clinical layer → future repos / future scope
 
-**No build step.** Static HTML files served at URL root. `vercel --prod` deploys everything. Vercel also auto-deploys on push to `main`.
+---
 
-## Common Commands
+## Positioning
 
-```bash
-# Deploy
-cd ~/Wylde-self
-git push origin main              # triggers Vercel auto-deploy
-vercel --prod                     # manual deploy
+**WyldeSelf is universal — designed for both men and women.**
 
-# Git — clear stale locks before commits (Xcode causes these)
-rm -f .git/index.lock .git/HEAD.lock
+Integrating four pillars:
+- Physical fitness
+- Mental clarity
+- Emotional regulation
+- Lifestyle optimization
 
-# Open iOS project
-open WyldeSelf-iOS/WyldeSelf.xcodeproj
-```
+Tone: grounded, powerful, clean, balanced. Masculine structure + feminine openness. Precision and presence — never dominance or softness alone.
 
-There are no test, lint, or build commands. `package.json` scripts section is empty.
+### What WyldeSelf is NOT
+- Not a men's coaching app
+- Not a multi-coach platform
+- Not content-heavy or guru-driven
+- Not aggressive, "alpha," or bro-coded
+- Not overly spiritual, mystical, or esoteric
 
-## Deployment
+### Where Wylde Man fits
+Wylde Man is a specialized program within the Wylde ecosystem — a deeper masculine track. It is not the front door and should not influence WyldeSelf's tone, copy, or visual language. Wylde Woman, Wylde Child, and other verticals will sit alongside it.
 
-- **Vercel project:** `wyldeself` (under `wilkemitzin-8619s-projects`)
-- **Domain:** `wyldeself.com` / `www.wyldeself.com`
-- **Git remote:** `https://github.com/WMIWylde/Wylde-self.git`
-- **Branch:** `main` (production)
-- **Cron:** `/api/cron-push` runs daily at 8am UTC (push notifications)
-- `vercel.json` configures function timeouts and `includeFiles` for exercise data
+---
 
-## Key Environment Variables (Vercel Dashboard)
+## Core Product: The Daily Journey Loop
 
-```
-ANTHROPIC_API_KEY          — Claude API (Coach, Identity Import)
-OPENAI_API_KEY             — OpenAI (workout generation)
-GEMINI_API_KEY             — Google Gemini (future-self image gen)
-SUPABASE_URL               — Supabase project URL
-SUPABASE_SERVICE_KEY       — Supabase service_role key
-VAPID_PUBLIC_KEY           — Web push notifications
-VAPID_PRIVATE_KEY          — Web push notifications
-```
-
-Supabase URL and anon key are also hardcoded in `app.html` (lines ~4433-4434) for client-side auth — this is intentional for the browser client.
-
-## API Functions (`api/`)
-
-| File | Purpose | External Service |
-|------|---------|-----------------|
-| `anthropic.js` | Claude proxy (Coach voice) | Anthropic |
-| `openai.js` | GPT proxy (workout generation) | OpenAI |
-| `generate-image.js` | Future-self image generation | Google Gemini |
-| `exercises.js` | Exercise search/filter (local DB) | None |
-| `exercise-demo.js` | Exercise detail lookup (local DB, RapidAPI fallback) | Optional RapidAPI |
-| `identity-analyze.js` | Identity Import — URL fetch + Claude analysis | Anthropic + Supabase |
-| `founder-count.js` | Founding member counter | Supabase |
-| `cron-push.js` | Scheduled push notifications | Supabase + web-push |
-| `send-push.js` | Send individual push notification | web-push |
-| `predict-protocol.js` | Protocol outcome prediction | Anthropic + Supabase |
-| `protocol-checklist.js` | Protocol dose logging | Supabase |
-| `revenuecat-webhook.js` | iOS purchase webhook | Supabase |
-
-## Exercise Data
-
-`data/exercises.json` — 873 exercises with muscles, equipment, level, descriptions. Bundled in both web app (loaded by API functions) and iOS app (`WyldeSelf-iOS/WyldeSelf/exercises.json`). Keep both copies in sync.
-
-## iOS App Structure
-
-- `AppState.swift` — Single source of truth (ObservableObject)
-- `MainTabView.swift` — Bottom tab bar (Today, Library, Future, Coach, Progress) + hamburger menu
-- `TodayView.swift` — Native Today screen (the most important surface)
-- `WebViewScreen.swift` — WKWebView wrapper for hybrid tabs
-- `Theme.swift` — Brand colors and design tokens
-- `PurchaseManager.swift` — RevenueCat wrapper (currently in stub mode, flip `useRealRevenueCat` when ready)
-
-## Brand Palette (Strict)
+The iOS app revolves around one structured daily flow. This backend exists to power that loop and persist its state.
 
 ```
-Background:      #070707
-Surface:         #111111 / #161616
-Gold accent:     #C8A96E
-Sage accent:     #7D9275
-Text primary:    #F4F1E8
-Text secondary:  #A6A29A
+1. Identity Anchor       Who you are becoming today
+2. Morning Ritual        Customizable practices
+3. Training              Workout or movement
+4. Nutrition             Simple tracking / awareness
+5. Future Self Check-in  Visual + emotional reinforcement
+6. Close the Loop        Completion + reward
 ```
 
-No bright colors. No gradients except subtle. No emojis in UI or copy.
+API design and data models should reflect this loop. Endpoints, schemas, and AI prompts should be organized around journey state — not feature silos.
 
-## Known Issues & Gotchas
+---
 
-- **Git lock files:** Xcode running in background causes `.git/index.lock` conflicts. Always `rm -f .git/index.lock .git/HEAD.lock` before git operations.
-- **Vercel function limit:** Pro plan (no longer Hobby). Was previously limited to 12 functions.
-- **`app.html` is massive:** ~11k lines, single file. Edits require care — search for the exact function/section before modifying. Major sections are marked with `═══` comment banners.
-- **Coach speaks as the user's future self** — never as "AI assistant." The prompt says "You ARE Future {firstName}."
-- **RevenueCat is stub mode** on iOS — purchase UI is built but real SDK isn't wired. When ready, set `useRealRevenueCat = true` in `PurchaseManager.swift`.
+## AI Architecture
 
-## Reference Documentation
+There is **one unified AI guide** from the user's perspective. Not multiple coaches. Not selectable personas.
 
-- `HANDOFF.md` — Comprehensive project state, architecture decisions, what's shipped vs. stubbed
-- `STRIPE_SETUP.md` — Stripe product/webhook configuration
-- `PAYWALL_SETUP.md` — iOS RevenueCat setup guide
-- `TESTFLIGHT_SUBMISSION.md` — App Store Connect / TestFlight process
+Internally, the AI shifts between context modes (Warrior, Athlete, Yogi, Architect, Mentor, Monk) based on what the user is doing — but these are server-side prompt strategies, never exposed in API responses or UI. The iOS client should never receive or surface persona names.
+
+### AI guide voice
+- Calm, intelligent, evolving
+- Aware of the user's goals, history, and patterns
+- Confident but not performative
+- Never gimmicky, chatty, or hype-heavy
+
+### Image generation
+- **Provider:** Gemini 3.1 Flash
+- **Why:** Chosen after evaluating fal.ai, DALL-E 2, and gpt-image-1. Gemini 3.1 Flash gave the best identity preservation + aesthetic match for the Future Self use case.
+- **Endpoint:** runs on Vercel Edge Runtime to bypass the Hobby plan's 10-second function timeout
+
+---
+
+## Stack
+
+- **Framework:** Next.js
+- **Hosting:** Vercel (Hobby plan currently — Edge Runtime used for long-running AI calls)
+- **Domain:** wyldeself.com
+- **Auth:** Supabase (planned, deferred)
+- **Database:** Supabase Postgres (planned)
+- **AI providers:** Gemini (image), Claude / others (conversation) — abstracted behind a service layer so providers can be swapped
+- **Repo:** github.com/WMIWylde/Wylde-self
+
+---
+
+## Repo conventions
+
+- `.env.local` holds secrets — never commit
+- API routes live under `app/api/` (or `pages/api/` depending on Next.js version in use)
+- AI provider clients are wrapped in their own modules so model swaps don't ripple through the codebase
+- Edge Runtime is used for any endpoint that calls a generative model — note the `export const runtime = 'edge'` at the top of the route
+
+---
+
+## Design Direction (for any web-facing surface)
+
+If/when this repo serves a marketing or onboarding web surface, the visual language must align with the iOS app:
+
+### Aesthetic
+Premium, minimal, cinematic. Neutral but powerful. Nature + human performance.
+
+### Reference brands
+Equinox, Tracksmith, Function Health, Aesop, Rapha, Levels, Ten Thousand, Future, Whoop.
+
+### Move AWAY from
+- Hyper-masculine visual language
+- Dark/aggressive "alpha" energy
+- Heavy sacred geometry as a focal point
+- Mystical or overtly spiritual cues
+- Full black + gold maximalism
+
+### Move TOWARD
+- Warm neutrals, deep charcoal (not full black), considered accent colors
+- Cinematic photography of real human movement
+- Quiet, restrained sacred geometry as fine detail
+- Generous whitespace
+- Subtle motion over visual ornament
+
+### Typography
+- Cormorant Garamond — keep for editorial / display
+- Replace Bebas Neue with a softer display face (Migra, GT Sectra Display, Söhne Breit are candidates)
+- Body: clean modern sans (Söhne, Inter)
+
+### Color
+`#C9A84C` gold can stay as one accent but should not dominate. Build around warm bronze, sand, deep charcoal, off-white. Gold reserved for moments of significance.
+
+---
+
+## Future Ecosystem (architectural awareness, not MVP scope)
+
+Schema and account design should leave room for:
+- **Marketplace** — white-labeled Wylde products, proprietary supplement blends
+- **Programs** — structured transformation journeys (12-week protocols, Wylde Man, Wylde Woman verticals)
+- **Clinical layer** — labs, peptides, hormone optimization integrations
+- **Content + community** — present, never core
+
+Not MVP. Inform data model extensibility — nothing more right now.
+
+---
+
+## Working Style
+
+- Direct and concise — skip preamble
+- Mobile for drafting, desktop for deployment
+- Move fast from idea to production
+- Ship working code, polish iteratively
+- Decisive over exhaustive
+
+---
+
+## Active Direction (as of latest session)
+
+Strategic pivot in progress: WyldeSelf has been re-positioned from a men's-only product to a universal identity transformation platform. Backend code, API responses, copy, and any web surfaces need an audit against this document. Persona-based logic stays internal — never exposed in API responses or UI. Daily journey loop is the new architectural center.
+
+When working in this codebase: assume the new direction is the source of truth. Flag any existing code, copy, schema, or design that conflicts with it.
