@@ -28,8 +28,12 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   // ─── Auth ───────────────────────────────────────────────────────
+  if (!REVENUECAT_WEBHOOK_SECRET) {
+    console.error('[rc-webhook] REVENUECAT_WEBHOOK_SECRET not set — refusing to run');
+    return res.status(500).json({ error: 'Server misconfigured' });
+  }
   const authHeader = req.headers['authorization'] || '';
-  if (REVENUECAT_WEBHOOK_SECRET && authHeader !== 'Bearer ' + REVENUECAT_WEBHOOK_SECRET) {
+  if (authHeader !== 'Bearer ' + REVENUECAT_WEBHOOK_SECRET) {
     console.warn('[rc-webhook] Bad auth header');
     return res.status(401).json({ error: 'Unauthorized' });
   }

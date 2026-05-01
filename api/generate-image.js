@@ -2,11 +2,41 @@ export const config = {
   runtime: 'edge',
 };
 
-const cors = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
+// Edge runtime: inline allowlist (can't require() CommonJS modules from Edge).
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://wyldeself.com,https://www.wyldeself.com')
+  .split(',').map(s => s.trim()).filter(Boolean);
+
+function isAllowedOrigin(origin) {
+  if (!origin) return false;
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+}
+
+function corsHeaders(origin, allowed) {
+  const h = {};
+  if (origin && allowed) {
+    h['Access-Control-Allow-Origin'] = origin;
+    h['Vary'] = 'Origin';
+    h['Access-Control-Allow-Methods'] = 'POST, OPTIONS';
+    h['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
+  }
+  return h;
+}
+
+// Edge per-instance per-IP limiter (mirrors lib/security.js shape)
+const _buckets = new Map();
+function rateLimit(ip, limit, windowMs) {
+  const now = Date.now();
+  const arr = (_buckets.get(ip) || []).filter(t => now - t < windowMs);
+  if (arr.length >= limit) {
+    const retryAfter = Math.ceil((windowMs - (now - arr[0])) / 1000);
+    _buckets.set(ip, arr);
+    return { ok: false, retryAfter };
+  }
+  arr.push(now);
+  _buckets.set(ip, arr);
+  return { ok: true };
+}
 
 function buildPrompt(timeline, goals, gender, hasImage) {
   const g = gender || 'male';
@@ -66,13 +96,33 @@ Rules: Photorealistic. No text/watermarks. EXAGGERATE the transformation — mak
 }
 
 export default async function handler(req) {
+  const origin = req.headers.get('origin') || '';
+  const allowed = isAllowedOrigin(origin);
+  const cors = corsHeaders(origin, allowed);
+
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 200, headers: cors });
+    return new Response(null, { status: allowed || !origin ? 204 : 403, headers: cors });
+  }
+  if (origin && !allowed) {
+    return new Response(JSON.stringify({ error: 'Origin not allowed' }), {
+      status: 403,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
   }
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ success: false, error: 'Method not allowed' }), {
       status: 405,
       headers: { ...cors, 'Content-Type': 'application/json' },
+    });
+  }
+
+  // Rate limit: image gen is expensive — 5/min per IP
+  const ip = (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'unknown';
+  const rl = rateLimit(ip, 5, 60_000);
+  if (!rl.ok) {
+    return new Response(JSON.stringify({ success: false, error: 'Rate limit exceeded' }), {
+      status: 429,
+      headers: { ...cors, 'Content-Type': 'application/json', 'Retry-After': String(rl.retryAfter) },
     });
   }
 
@@ -116,6 +166,8 @@ export default async function handler(req) {
 
     // Try models in order — names change often, first success wins
     const models = [
+      'gemini-3.1-flash',
+      'gemini-3.0-flash',
       'gemini-2.0-flash-exp',
       'imagen-3.0-generate-002',
       'gemini-2.0-flash',

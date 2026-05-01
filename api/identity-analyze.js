@@ -12,6 +12,8 @@
 //     • User can re-run or delete via the same endpoint.
 // ────────────────────────────────────────────────────────────────────
 
+const { applyCors, rateLimit, clientIp } = require('../lib/security');
+
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY || '';
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || '';
@@ -23,11 +25,15 @@ const URL_FETCH_TIMEOUT_MS = 7000;
 const MAX_FETCHED_LEN_PER_URL = 6000; // truncate fetched page text to keep context small
 
 module.exports = async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (applyCors(req, res, { methods: 'POST, OPTIONS' })) return;
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  const ip = clientIp(req);
+  const limit = rateLimit({ key: 'identity-analyze', ip, limit: 10, windowMs: 60_000 });
+  if (!limit.ok) {
+    res.setHeader('Retry-After', String(limit.retryAfter));
+    return res.status(429).json({ error: 'Rate limit exceeded' });
+  }
 
   if (!ANTHROPIC_KEY) {
     return res.status(500).json({ error: 'Server misconfigured (no ANTHROPIC_API_KEY)' });

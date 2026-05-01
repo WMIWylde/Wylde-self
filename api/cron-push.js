@@ -42,8 +42,12 @@ const NOTIFICATIONS = {
 };
 
 module.exports = async function handler(req, res) {
+  if (!process.env.CRON_SECRET) {
+    console.error('[cron-push] CRON_SECRET not set — refusing to run');
+    return res.status(500).json({ error: 'Server misconfigured' });
+  }
   const authHeader = req.headers.authorization;
-  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
