@@ -344,6 +344,7 @@
 				CODE_SIGN_ENTITLEMENTS = WyldeSelf/WyldeSelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WyldeSelf/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Wylde Self";
@@ -374,6 +375,7 @@
 				CODE_SIGN_ENTITLEMENTS = WyldeSelf/WyldeSelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WyldeSelf/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Wylde Self";

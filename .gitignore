@@ -3,3 +3,33 @@ node_modules/
 .env.*
 .vercel
 .env*.local
+
+# macOS
+.DS_Store
+
+# Xcode — user-specific
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+
+# Xcode — build output
+DerivedData/
+build/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.swiftpm/
+.build/
+Package.resolved.bak
+
+# CocoaPods (in case it's ever added)
+Pods/
+
+# Fastlane (in case it's ever added)
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
