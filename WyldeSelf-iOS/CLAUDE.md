@@ -76,8 +76,10 @@ The AI should NOT:
 - Feel like a chatbot
 - Use heavy slang, hype, or motivational-poster language
 
-### Internal architecture note
-The earlier persona work (Warrior, Athlete, Yogi, Architect, Mentor, Monk) is preserved as **internal context modes** the single AI shifts between based on what the user is doing. Users never see persona names or selection UI. From the user's perspective, there is one intelligent guide that happens to know how to coach strength, mobility, mindset, etc. with the right framing for each.
+### Current implementation note
+The codebase uses `identity_archetype`, `coaching_style`, a visible Identity Import UI, and `WYLDE_PHASES` labels. These should function as **internal AI modulation parameters** — server-side context that shapes how the unified AI guide responds — not as user-facing selectable personas. Audit needed: confirm whether the Identity Import UI and any archetype/style labels exposed to the user align with the "one unified AI presence" principle, or whether they should be hidden / refactored to feel like a single guide that adapts intelligently rather than a system the user configures.
+
+The earlier exploratory work around six named coach personas (Warrior, Athlete, Yogi, Architect, Mentor, Monk) is no longer part of the system. Do not reintroduce them.
 
 ---
 
@@ -122,7 +124,7 @@ The current `#C9A84C` gold can stay as one accent but should not dominate. Consi
 
 ### Backend
 - Next.js on Vercel
-- Local repo: `~/Wylde-self` (or wherever cloned)
+- Local repo: `~/Projects/Wylde-self` (or wherever cloned)
 - Repo: `github.com/WMIWylde/Wylde-self`
 - Vercel Edge Runtime used to bypass Hobby plan's 10-second function timeout
 
@@ -160,7 +162,7 @@ Tier names (gender-neutral, retained from earlier work):
 - **Steel** — established
 - **Wylde** — embodied
 
-These represent the user's evolving identity over time, surfaced in the Future Self view.
+These represent the user's evolving identity over time, surfaced in the Future Self view. Confirm `WYLDE_PHASES` labels in the codebase align with these names and remain gender-neutral.
 
 ---
 
@@ -188,6 +190,6 @@ These are not MVP. They inform schema design, account structure, and navigation 
 
 ## Active Direction (as of latest session)
 
-Strategic pivot in progress: WyldeSelf has been re-positioned from a men's-only product to a universal identity transformation platform. Code, copy, and design audit needed against this document. Persona-based UI is being collapsed into a single AI guide. Daily journey loop is the new architectural center. Visual identity is moving from dark/masculine/sacred-geometry toward premium/minimal/cinematic.
+Strategic pivot in progress: WyldeSelf has been re-positioned from a men's-only product to a universal identity transformation platform. Code, copy, and design audit needed against this document. The six-coach persona system is out (and not in the current codebase). The current `identity_archetype` + `coaching_style` + Identity Import UI implementation needs review against the "one unified AI guide" principle. Daily journey loop is the new architectural center. Visual identity is moving from dark/masculine/sacred-geometry toward premium/minimal/cinematic.
 
 When working in this codebase: assume the new direction is the source of truth. Flag any existing code, copy, or design that conflicts with it.
