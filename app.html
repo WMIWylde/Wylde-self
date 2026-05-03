@@ -6981,8 +6981,16 @@
     // Auto-generate workout program after profile completion
     setTimeout(function() { generateProgram(); }, 500);
 
-    // Go straight to Today screen — no transition animation
-    showScreen('overview');
+    // Animated entry: intro video (first onboard only) → geo transition → Today.
+    // Reset _introSkipped so the chain's callback fires even on re-onboard in
+    // the same session — leaving it stale was the previous bug that prevented
+    // the Today screen from appearing.
+    window._introSkipped = false;
+    if (!localStorage.getItem('wylde_intro_seen')) {
+      playIntro(function() { showScreen('overview'); });
+    } else {
+      playGeoTransition(function() { showScreen('overview'); });
+    }
   }
 
   function playIntro(callback) {
@@ -7377,6 +7385,13 @@
   var ovCoachHistory = [];
 
   function updateOverview() {
+    // Dashboard markup this function targets (#ovWeek, #ovGoal, #ovStreak,
+    // #ovWaterBar, etc. — 25 IDs total) was removed from app.html at some
+    // point. Every getElementById below would return null and crash the
+    // function, which in turn aborts the rest of showScreen('overview')
+    // hydration (mpInit, renderRewardsUI, renderDailyWalkUI, syncOverviewMacros).
+    // Bail early until the dashboard markup is restored.
+    if (!document.getElementById('ovWeek')) return;
     // Header meta
     var wl = document.getElementById('dashWeekLabel');
     document.getElementById('ovWeek').textContent = wl ? wl.textContent : '—';
