@@ -1,8 +1,9 @@
-export const config = {
-  runtime: 'edge',
-};
+// Runs on Vercel's default Node.js (Fluid Compute) runtime so we get the
+// 300s execution budget. Was previously Edge for the old Hobby 10s cap —
+// that's gone, and Edge's 25s initial-response cap was killing the function
+// before Gemini's first model could respond. maxDuration is set in vercel.json.
 
-// Edge runtime: inline allowlist (can't require() CommonJS modules from Edge).
+// Inline allowlist (kept inline from the prior Edge config).
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://wyldeself.com,https://www.wyldeself.com')
   .split(',').map(s => s.trim()).filter(Boolean);
 

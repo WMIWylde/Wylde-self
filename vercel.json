@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/generate-image.js": {
-      "maxDuration": 30
+      "maxDuration": 90
     },
     "api/send-push.js": {
       "maxDuration": 10
