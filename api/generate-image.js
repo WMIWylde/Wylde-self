@@ -96,42 +96,35 @@ Goal: ${emphasis} — ${goalList.join(', ')}.
 Rules: Photorealistic. No text/watermarks. EXAGGERATE the transformation — make it dramatic and motivating. Err on the side of MORE muscle, MORE definition, LESS body fat. Do NOT be conservative.`;
 }
 
-export default async function handler(req) {
-  const origin = req.headers.get('origin') || '';
+module.exports = async function handler(req, res) {
+  const origin = req.headers['origin'] || '';
   const allowed = isAllowedOrigin(origin);
   const cors = corsHeaders(origin, allowed);
+  for (const [k, v] of Object.entries(cors)) res.setHeader(k, v);
 
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: allowed || !origin ? 204 : 403, headers: cors });
+    return res.status(allowed || !origin ? 204 : 403).end();
   }
   if (origin && !allowed) {
-    return new Response(JSON.stringify({ error: 'Origin not allowed' }), {
-      status: 403,
-      headers: { ...cors, 'Content-Type': 'application/json' },
-    });
+    return res.status(403).json({ error: 'Origin not allowed' });
   }
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ success: false, error: 'Method not allowed' }), {
-      status: 405,
-      headers: { ...cors, 'Content-Type': 'application/json' },
-    });
+    return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
   // Rate limit: image gen is expensive — 5/min per IP
-  const ip = (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'unknown';
+  const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
   const rl = rateLimit(ip, 5, 60_000);
   if (!rl.ok) {
-    return new Response(JSON.stringify({ success: false, error: 'Rate limit exceeded' }), {
-      status: 429,
-      headers: { ...cors, 'Content-Type': 'application/json', 'Retry-After': String(rl.retryAfter) },
-    });
+    res.setHeader('Retry-After', String(rl.retryAfter));
+    return res.status(429).json({ success: false, error: 'Rate limit exceeded' });
   }
 
   try {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error('GEMINI_API_KEY not configured');
 
-    const { image_base64, timeline, goal, userGoal, goals, gender } = await req.json();
+    const { image_base64, timeline, goal, userGoal, goals, gender } = req.body || {};
 
     // goals array takes precedence, then userGoal, then legacy goal field
     const effectiveGoals = (Array.isArray(goals) && goals.length > 0)
@@ -257,16 +250,10 @@ export default async function handler(req) {
     }
 
     const { mimeType, data: imgData } = result.imagePart.inlineData;
-    return new Response(
-      JSON.stringify({ success: true, image_base64: `data:${mimeType};base64,${imgData}` }),
-      { status: 200, headers: { ...cors, 'Content-Type': 'application/json' } }
-    );
+    return res.status(200).json({ success: true, image_base64: `data:${mimeType};base64,${imgData}` });
 
   } catch (err) {
     console.error('generate-image error:', err.message);
-    return new Response(
-      JSON.stringify({ success: false, error: err.message }),
-      { status: 500, headers: { ...cors, 'Content-Type': 'application/json' } }
-    );
+    return res.status(500).json({ success: false, error: err.message });
   }
 }
