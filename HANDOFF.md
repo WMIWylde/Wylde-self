@@ -248,9 +248,32 @@ Session pattern:
 `CLAUDE.md`, `DESIGN.md`, `PRIVACY.md` are stable references — only update on real direction changes. `HANDOFF.md` updates every session.
 # Wylde Self — Handoff
 
-Last updated: 2026-04-28
+Last updated: 2026-04-30
 
 This is the single document that gets a new collaborator (or future-you after time off) up to speed on what Wylde Self is, what's been built, what works, what doesn't, and what's next.
+
+---
+
+## Machine handoff (laptop → Mac mini, 2026-04-30)
+
+**This session was on the laptop. The Mac mini will pick up here.**
+
+To resume on the mini:
+
+```bash
+cd ~/Wylde-self
+git pull origin main          # latest main with all work below
+rm -f .git/index.lock .git/HEAD.lock   # if Xcode is running
+open WyldeSelf-iOS/WyldeSelf.xcodeproj
+```
+
+Verify the build is green in Xcode (Cmd+B). All of this session's iOS files were committed in `9a24df5 iOS: native StartTodayFlow + tone helpers + Today reorder` and should be in the project target. If the build flags any of these as missing, drag them into the project navigator under their respective folders and re-add to the WyldeSelf target:
+
+- `Utilities/CoachLine.swift`
+- `Utilities/JourneyPhase.swift`
+- `Views/StartTodayFlow.swift`
+
+**Where we paused:** Strategic decision made to go native-first. The Mac mini's first job is **Port #1 of 5: native Coach tab**. Detailed plan is in the **Native-first transition** section near the bottom of this document. Read that section + the conversation transcript to pick up exactly where the laptop left off.
 
 ---
 
@@ -258,12 +281,74 @@ This is the single document that gets a new collaborator (or future-you after ti
 
 An identity-based transformation app. Not a fitness tracker. The product is built around the principle that the user is becoming someone — and every surface should reinforce that identity.
 
-**Brand position:** Whoop + Levels + Calm + a high-end men's initiation container.
+**Brand position:** Whoop + Levels + Calm + a high-end identity transformation container.
 
-**Voice:** Grounded, direct, masculine but not aggressive, no fluff, no emojis.
+**Voice:** Grounded, direct, strong but not aggressive, no fluff, no emojis. The **core Wylde Self app is welcoming to men and women** (per the inclusivity work shipped this session). **Wylde Man** is a separate sub-program that keeps its masculine-specific voice — gendered phrasing belongs there, not in the core app.
 
 **Core loop:**
-User opens Today → feels identity shift → takes one action → loops back tomorrow.
+User opens Today → feels identity shift → taps "Start Today" → moves through the 6-step guided flow → closes the loop → loops back tomorrow.
+
+---
+
+## Latest session — 2026-04-30 (laptop)
+
+This session shipped a major Today-screen evolution + iOS native foundation work + a strategic pivot to native-first architecture.
+
+### Web app (app.html → 11,470 lines, refactored)
+
+**StartTodayFlow** — new 6-step guided daily flow (Identity Anchor → Morning Ritual → Training → Nutrition → Future Self → Close the Loop). Originally inline; later refactored out to `/css/start-today-flow.css` (228 lines) and `/js/start-today-flow.js` (455 lines). Markup now injected by the JS at script load. State persists per day via `wylde_stf_state` UserDefaults/localStorage key.
+
+**Today screen reorder** — primary hero CTA changed from "Enter Today's Training" to **"Start Today"** which opens StartTodayFlow. Card priority reordered via CSS `order` (no markup moved): Hero → Workout → Walk → Nutrition → Future You → Morning Routine → Daily Closeout → Path → Streak.
+
+**Inclusivity sweep** — `Eat like the man you're becoming` → `Eat for who you're becoming`. Coach prompt `Masculine but not aggressive` → `Strong but not aggressive`. `getIdentityPhrase()` rotation engine rebalanced: full neutral pool now mixed in with gendered phrases so even male users skew toward inclusive phrasing in the core app.
+
+**Coach chat persistence** — `chatHistory` now persists to `localStorage["wylde_coach_chat"]` (capped at 30 messages, prompt context capped at last 8). Hydrates on `showScreen('coach')` via a `_chatHydrated` closure flag (the original guard was broken because the static greeting bubble was always a child of `#chatMessages`). Conversations now continue across reloads and across web ↔ iOS.
+
+**Future You evolving copy** — `getFutureYouCopy(week)` returns a calm one-liner that evolves week-by-week (week 1: "this is the version you're beginning to build" → week 12: "this is what follow-through looks like"). Wired into the Today Future You strip via `ovUpdateHero`.
+
+**`coachLine()` helper** — centralized one-sentence coach voice with 8 contextual pools (mealLogged / mealLowProtein / mealOnTrack / workoutDone / ritualDone / closeout / missed / generic). Auto-swaps mealLogged → mealLowProtein/mealOnTrack based on daily protein context. Wired into `appendFoodLogItem`, morning protocol completion, and `completeDay()`.
+
+**`getJourneyPhase()`** — maps day 1..84 to the 4-phase Foundation/Build/Embody/Integrate structure. Used by StartTodayFlow Step 1 (Identity Anchor) and the Future You strip. Parallel to the existing identity-based phases (Initiate/Foundation/Embodied/Relentless/Integrated) — does not replace them.
+
+**Nutrition "Why this works"** — meal plan cards now have an expandable section explaining why the macros work (protein → recovery + hunger; carbs → fuel; fats → hormones + satiety). Macro-aware rationale.
+
+**Post-meal feedback** — after `appendFoodLogItem`, a single calm coach line renders below the food log via `coachLine('mealLogged', { protein, proteinGoal })`. Replaces on each subsequent log so it never piles up.
+
+### Web app — bug fixes shipped
+
+**Badge toast flashing on every page load** (commit `374ce9e`) — `checkBadges()` was retro-celebrating already-earned badges on every load because (a) toast fired even for retro-credit and (b) `state.badges` was never persisted after mutation. Fix: `checkBadges({ silent: true })` for the load-time call + persist `state.badges` to localStorage immediately on mutation. Live actions (e.g. hitting a PR) still celebrate normally.
+
+**Set checkmark unicode escape** — CSS `content: '✓'` was rendering as the literal text `u2713` next to set numbers. CSS unicode escapes use `\XXXX` (no `u`), not the JavaScript `\uXXXX` form. Fixed to `content: '\2713 '` with trailing space terminator.
+
+**Program screen defaults to today's day only** (commit `23be2f3`) — previously stacked all 5 days. Now today's day card is auto-expanded, others hidden behind a `View full program (5 days)` toggle. Today index computed via `wylde_day mod plan.length`. Re-rendering resets to today-only. Single-day plans skip the toggle.
+
+### iOS app — three native phases shipped (commit `9a24df5`)
+
+**Phase 1 — Helpers + tone defaults**
+
+- `Utilities/CoachLine.swift` — Swift port of the web `coachLine()` helper. Same 8 pools, same protein-aware auto-swap, same rotation logic. Used in StartTodayFlow ritual + closeout steps.
+- `Utilities/JourneyPhase.swift` — Swift port of `getJourneyPhase` and `getFutureYouCopy`. `JourneyPhase.forDay(_:)` and `FutureYouCopy.forWeek(_:)`.
+- `AppState.swift` — `gender: String = "Male"` default changed to `""`. Backwards-compatible: existing users keep their saved value via `UserDefaults.string(forKey: "wylde_gender")`. New users start unspecified.
+
+**Phase 2 — StartTodayFlow native sheet**
+
+- `Views/StartTodayFlow.swift` (~595 lines) — full native 6-step flow. Presented as `.sheet` with `.presentationDetents([.large])`. Uses `@MainActor final class StartTodayFlowState` for step persistence to the same `wylde_stf_state` UserDefaults key the web uses, so a user moving between web and iOS during a single day resumes at the same step.
+- `TodayView.swift` — new gold "Start Today" CTA inside the hero card, opens the sheet.
+
+Step 6 (Close the Loop) writes `wylde_last_completed_day` and `wylde_last_day_key` matching web behavior, increments `appState.currentDay`, updates streak via the same yesterday-comparison logic, awards 50 XP. Web and iOS see consistent day state.
+
+Step 3 (Training) and Step 4 (Nutrition) dismiss the flow on action — workout and nutrition are still web-only on iOS. Both are flagged for native port (see Native-first transition below).
+
+**Phase 3 — Today reorder + Future You strip**
+
+- `TodayView.swift` body reordered to match the web brief priority: Hero → Workout → Walk → Nutrition → Future You → Morning Protocol → Health → Founding. Animation delays restaggered cleanly (0.05 → 0.40 in 0.05 steps).
+- New `futureYouCard` view between Nutrition and Morning Protocol. Shows weeks-remaining sigil, evolving copy from `FutureYouCopy.forWeek(week)`, taps through to the Future tab.
+
+### Strategic decision
+
+**Native-first.** The hybrid (native shell + WebView tabs) was a useful prototype. The product is the native app. Going forward, the WebView tabs (Future, Coach, Settings/Progress) will be replaced outright with native SwiftUI ports, in a deliberate order. Native polish (haptics, voice input, native camera, animations) layers on after each tab is 1:1 ported and stable.
+
+The web `app.html` continues to exist as the desktop browser experience and as the source of truth for any features not yet native-ported — but is no longer the primary surface.
 
 ---
 
@@ -271,13 +356,13 @@ User opens Today → feels identity shift → takes one action → loops back to
 
 | Layer | What |
 |---|---|
-| **Web app** | `app.html` (single-file, ~10k lines), deployed on Vercel at wyldeself.com |
+| **Web app** | `app.html` (single-file, ~11.5k lines) + `/css/start-today-flow.css` + `/js/start-today-flow.js`, deployed on Vercel at wyldeself.com |
 | **Public paywall** | `founder.html` (standalone page), same Vercel deploy |
-| **iOS app** | `WyldeSelf-iOS/` SwiftUI shell. Today + Library are native, Future/Coach/Progress are WKWebViews wrapping app.html paths |
-| **API** | Vercel serverless under `/api/` (Anthropic proxy, exercises, identity-analyze, founder-count, RevenueCat webhook, Stripe checkout, Stripe webhook) |
+| **iOS app** | `WyldeSelf-iOS/` SwiftUI shell. Today + Library + Identity Import + StartTodayFlow are native. Future / Coach / Progress are still WKWebView wrappers (Coach is the next port — see Native-first transition below) |
+| **API** | Vercel serverless under `/api/` (Anthropic proxy, exercises, identity-analyze, founder-count, RevenueCat webhook, Stripe checkout, Stripe webhook, generate-image) |
 | **Database** | Supabase (auth via magic link, profiles, workouts, food_logs, badges, identity profiles, founder counter, daily walks) |
 | **AI** | Claude Haiku 4.5 (`claude-haiku-4-5-20251001`) via `/api/anthropic` |
-| **Payments** | RevenueCat → Apple StoreKit (iOS), Stripe Checkout (web) |
+| **Payments** | RevenueCat → Apple StoreKit (iOS, stub mode), Stripe Checkout (web) |
 | **Image gen** | Gemini 2.5 Flash via `/api/generate-image` |
 | **Exercise data** | 873 exercises in `data/exercises.json`, also bundled in iOS app |
 
@@ -295,27 +380,40 @@ User opens Today → feels identity shift → takes one action → loops back to
 ## Major systems shipped
 
 ### Today screen (most important surface)
-Cinematic stacked journey, top to bottom:
+Cinematic stacked journey, top to bottom (post-2026-04-30 reorder):
 - Header with greeting + streak badge
-- Hero card: "Day X of Y" + identity statement + single primary CTA "Enter Today's Training"
-- Morning Routine — 3 fixed practices (Meditation, Journaling, Reading), checkmark each
-- Today's Training (workout)
-- Walk reminder
+- Hero card: "Day X" + identity statement + **gold "Start Today" CTA** (opens StartTodayFlow)
+- Today's Workout
+- Long Walk (separate from training)
 - 3-ring Nutrition card (Calories / Protein / Carbs) — animated SVG rings, live-syncs with food log
+- **Future You strip** — week-evolving copy, taps to Future tab
+- Morning Routine — 3 fixed practices (Meditation, Journaling, Reading), checkmark each (collapsed/hidden once complete)
 - Health snapshot (HealthKit on iOS)
-- Coach access ("Talk to your future self")
-- Daily Closeout — "Close the Loop" gold CTA
+- Coach access ("Talk to your future self") — secondary
+- Daily Closeout — "Close the Loop" gold CTA (web)
 - Founding Member CTA (only if not Pro)
 
 Animations: staggered fade-up on first appearance, spring on toggles, 3-ring fill animation on update.
 
-### Coach
+### StartTodayFlow (web + iOS native)
+6-step guided daily flow:
+1. **Identity Anchor** — phase + day + grounding line
+2. **Morning Ritual** — checkable list, reuses Morning Protocol data
+3. **Training** — today's session metadata + "Start Training" CTA
+4. **Nutrition** — 3 options (log meal / photo / view plan)
+5. **Future Self** — calm check-in + "Talk to your future self"
+6. **Close the Loop** — 4 completion checks + final state, calls existing `completeDay()`
+
+State persists per day via `wylde_stf_state`. Closing and reopening returns to the same step. Date change resets to step 1. Both surfaces share the same key — a user mid-flow on web continues from the same step on iOS.
+
+### Coach (still web-based on iOS — next port)
 - Speaks AS user's literal future self ("Future Wilke" not "AI coach")
 - 280 max_tokens, hard format rules: 2–4 sentences, no bullets, no meta-talk, no emojis
 - Occasional single-line science callout (~1 in 4)
 - 4 quick actions: Motivate me / Fix my plan / I'm off track / Optimize everything
 - Pulls full user context (PRs, streak, sleep, walks, vibes, identity profile, phase) into every prompt
 - Identity language cue: when user has set gender, mirrors their natural phrasing
+- **Chat history persists** to `wylde_coach_chat` localStorage key, hydrates on screen open, capped at 30 messages
 
 ### Identity Import (Founding Members feature)
 - User pastes public URLs (bio, posts, Substack, etc.) or raw text
@@ -323,87 +421,56 @@ Animations: staggered fade-up on first appearance, spring on toggles, 3-ring fil
 - Claude returns structured JSON: archetype, confidence, tone, motivation triggers, limiting patterns, language to use/avoid, coaching style, discipline level
 - Stored in `user_identity_profile` Supabase table
 - Coach + meal planner pull this profile and mirror the user's actual voice
-- Tested live: model identified "The Architect" archetype, mirrored phrasing like "act like her", "the silence", "stop negotiating"
 
-### Phase progression (replaces stripped Ember/Spark/Flame ladder)
-Driven by sessions completed, not XP grind:
+### Phase progression (driven by sessions completed)
 - Initiate (0)    — "You stepped onto the path. Now keep walking."
 - Foundation (10) — "The first layer is laid. The work is becoming yours."
 - Embodied (30)   — "It's no longer trying — it's who you are."
 - Relentless (100)— "You don't negotiate with yourself anymore."
 - Integrated (300)— "You and the practice are the same thing now."
 
-### Badges (29 across 6 categories)
-- Streaks (3, 7, 14, 21, 30, 100, 365 days)
-- Sessions (1, 10, 50, 100, 500)
-- Practice — mornings (1, 7, 30, 100), walks (1, 7, 30, 100)
-- Strength — PRs (1, 10, 50)
-- Nutrition — meals logged (1, 30, 100)
-- Reflection — feel-prompts logged (1, 7, 30)
+Parallel to this, the **Journey Phase** (Foundation / Build / Embody / Integrate, day-driven) is used by the new StartTodayFlow.
 
-Each badge uses a custom SVG glyph (lucide-style, no emojis). Locked badges greyscaled at 45% opacity.
+### Badges (29 across 6 categories)
+Streaks / Sessions / Practice / Strength / Nutrition / Reflection. Custom SVG glyphs. Locked badges greyscaled at 45%. **Toasts only fire for live achievements** (retro-credit on load is silent — fixed 2026-04-30).
 
 ### Library (Exercise browser)
-873 exercises native iOS + web. Body-part chips, search, exercise cards with image thumbnails. YouTube tutorial deep-link button on detail view.
+873 exercises native iOS + web. Body-part chips, search, exercise cards. YouTube tutorial deep-link button.
 
 ### Set logger
-- PR + Last Weight reference cards above the set rows
-- +/- steppers (weight 5lb, reps 1)
-- Per-set sage checkmark on log
-- Workout finale feel-prompt: 1/2/3/4 with labels Brutal/Off/Solid/Dialed
-- Food feel buttons inline next to logged foods: + / – / ×
+PR + Last Weight reference cards, +/- steppers (5lb / 1 rep), per-set sage checkmark, Workout finale feel-prompt (Brutal/Off/Solid/Dialed), inline food feel buttons (+ / – / ×).
+
+### Program screen
+- **Default-to-today behavior** (shipped 2026-04-30): only today's day card auto-expanded; "View full program (5 days)" toggle reveals the rest.
+- Today index computed via `wylde_day mod plan.length`.
+- Day cards collapsible. Alt-workout swap available per day.
 
 ### Founding Member paywall
-**Pricing:** Lifetime $149 / Annual $79 / Monthly $9.99 (founder, locked forever for first 1,000)
-**Standard** (post-founder cap): $249 / $99 / $14.99
-
-- iOS: native `PaywallView` (RevenueCat in stub mode until SDK added)
+Lifetime $149 / Annual $79 / Monthly $9.99 (founder, locked forever for first 1,000). Standard pricing applies after.
+- iOS: native `PaywallView` (RevenueCat in stub mode)
 - Web: `/founder.html` standalone page → Stripe Checkout
 - Both webhook into same Supabase profile fields
-- Atomic `founding_member_number` assignment via RPC (1-1000)
-- Founder counter live-updates across both platforms
-- Personalized thank-you sheet shows the founder's number
 
 ### Settings drawer
-Left-slide hamburger on every screen (web + iOS). Lists Exercise Library, Nutrition, Identity Import, Edit Profile, Rebuild Program, Reset Profile, Sign Out. Founding Member CTA shown if not Pro.
+Left-slide hamburger on every screen (web + iOS). Lists Library, Nutrition, Identity Import, Edit Profile, Rebuild Program, Reset Profile, Sign Out.
 
 ### iOS brand assets bundled
-9 imagesets in `Assets.xcassets/`: LogoMark, LogoIcon, HeroBackground, FutureSelfMan, FutureSelfWoman, GlowMale/Female/Neutral, AppInHand. AppIcon set with `Wyldeselflogo2.png` placeholder. AccentColor = brand gold. LaunchBackground = brand bg. Modern UILaunchScreen dict in Info.plist using LogoMark.
-
-### Mobile web polish
-- All inputs forced to 16px font-size on mobile (prevents iOS auto-zoom)
-- Hamburger respects iOS safe-area-inset-top (notch)
-- Bottom nav respects safe-area-inset-bottom (home indicator)
-- 3-ring nutrition card responsive at 320px viewport
-- Modals fill viewport edge-to-edge with bottom-safe padding
-- Settings drawer 92% width on mobile
-- All buttons min 44pt tap target (iOS HIG)
-
-### Refresh-restore
-URL hash + `localStorage.wylde_last_screen` survive page reload. User refreshing on Coach lands back on Coach instead of Today.
-
-### Identity language rotation
-`getIdentityPhrase(context)` returns gendered phrases mixed with neutral pool. Applied to hero, closing, morning protocol, Coach prompt cue. Female users see "the woman you're becoming", male users see "the man you're becoming", unspecified see "the version of you you're becoming". No back-to-back repeats.
-
-### Daily walk reminder
-Native iOS UNCalendarNotificationTrigger fires at 1pm. "Time for your walk — 30+ minutes outside. Phone in your pocket."
-
-### Onboarding simplified
-Gym equipment picker collapsed from 12 pills → 3 type pills (Commercial / Garage / Bodyweight). AI infers equipment from type. Tap count: 8 → 2.
-
-### Gym location finder (web)
-Type-to-search using OpenStreetMap Nominatim (free, no API key). Returns 5 matches with name + address. Saves `gymName`, `gymLat`, `gymLng`, `gymPlaceId`. Foundation for future "members at your gym" community feature.
+9 imagesets in `Assets.xcassets/`. AppIcon set with `Wyldeselflogo2.png`. AccentColor = brand gold.
 
 ---
 
-## File map
+## File map (post-2026-04-30)
 
 ```
 /Wylde-self/
-├── app.html                                   ← single-file web app
+├── app.html                                   ← single-file web app (~11,470 lines)
 ├── founder.html                               ← public paywall page
-├── package.json                               ← dependencies (stripe, supabase, etc.)
+├── package.json                               ← dependencies
 ├── data/exercises.json                        ← 873 exercises
+├── css/
+│   └── start-today-flow.css                   ← extracted STF styles (228 lines)
+├── js/
+│   └── start-today-flow.js                    ← extracted STF controller (455 lines)
 ├── api/
 │   ├── anthropic.js                           ← Claude proxy
 │   ├── exercises.js                           ← Exercise DB
@@ -411,37 +478,43 @@ Type-to-search using OpenStreetMap Nominatim (free, no API key). Returns 5 match
 │   ├── founder-count.js                       ← Counter for paywall
 │   ├── revenuecat-webhook.js                  ← iOS IAP entitlement sync
 │   ├── stripe-checkout.js                     ← Web Checkout Session creator
-│   └── stripe-webhook.js                      ← Web Stripe entitlement sync
+│   ├── stripe-webhook.js                      ← Web Stripe entitlement sync
+│   └── generate-image.js                      ← Gemini image gen
 ├── supabase/migrations/
-│   ├── 20260427_pro_entitlements.sql          ← Pro fields + founder RPC
-│   └── 20260428_identity_profile.sql          ← Identity Import schema
+│   ├── 20260427_pro_entitlements.sql
+│   └── 20260428_identity_profile.sql
 ├── WyldeSelf-iOS/
 │   └── WyldeSelf/
-│       ├── WyldeSelfApp.swift                 ← Main app entry
+│       ├── WyldeSelfApp.swift
 │       ├── ContentView.swift                  ← Tab routing
-│       ├── Info.plist                         ← UILaunchScreen + permissions
-│       ├── Assets.xcassets/                   ← AppIcon + brand images
+│       ├── Info.plist
+│       ├── Assets.xcassets/
 │       ├── Models/
-│       │   ├── AppState.swift                 ← Single source of truth
+│       │   ├── AppState.swift                 ← Single source of truth (gender default = "" as of 2026-04-30)
 │       │   ├── Exercise.swift
 │       │   └── IdentityProfile.swift
 │       ├── Services/
-│       │   ├── PurchaseManager.swift          ← RevenueCat wrapper (stub mode)
+│       │   ├── PurchaseManager.swift
 │       │   ├── IdentityAnalysisService.swift
 │       │   ├── HealthKitManager.swift
 │       │   ├── HapticManager.swift
 │       │   ├── NotificationManager.swift
 │       │   └── CameraManager.swift
-│       ├── Utilities/Theme.swift              ← Brand colors
+│       ├── Utilities/
+│       │   ├── Theme.swift                    ← Brand colors
+│       │   ├── CoachLine.swift                ← NEW (2026-04-30) — coach voice helper
+│       │   └── JourneyPhase.swift             ← NEW (2026-04-30) — 4-phase + Future You week-band
 │       └── Views/
 │           ├── MainTabView.swift              ← Bottom tabs + hamburger overlay
-│           ├── TodayView.swift                ← Native Today screen
+│           ├── TodayView.swift                ← Native Today (Start Today CTA + Future You + reorder, 2026-04-30)
+│           ├── StartTodayFlow.swift           ← NEW (2026-04-30) — native 6-step sheet
 │           ├── ExercisesView.swift            ← Native exercise library
-│           ├── WebViewScreen.swift            ← WKWebView wrapper for hybrid tabs
+│           ├── WebViewScreen.swift            ← WKWebView wrapper for hybrid tabs (Future / Coach / Progress)
 │           ├── PaywallView.swift              ← Native Founding Member paywall
 │           ├── SettingsDrawer.swift           ← Native left-slide drawer
 │           └── IdentityImportView.swift       ← Native Identity Import
 ├── HANDOFF.md                                 ← This file
+├── CLAUDE.md                                  ← AI agent project context
 ├── PAYWALL_SETUP.md                           ← iOS RevenueCat setup guide
 ├── STRIPE_SETUP.md                            ← Web Stripe setup guide
 └── TESTFLIGHT_SUBMISSION.md                   ← iOS submission guide
@@ -457,31 +530,96 @@ Type-to-search using OpenStreetMap Nominatim (free, no API key). Returns 5 match
 | Annual web / iOS | **$79 / $99** | $99 / $129.99 |
 | Monthly web / iOS | **$9.99 / $12.99** | $14.99 / $19.99 |
 
-**Per founder sale:**
-- Web Stripe lifetime $149 → you receive **$144.38** (after 2.9% + $0.30 fee)
-- iOS Apple lifetime n/a (subscription only)
-- iOS annual $99 → you receive **$84.15** (15% Apple Small Business Program cut)
-
-Web wins margin AND user pays less. Apple anti-steering rules prevent promoting web pricing inside the iOS app — only mention via direct outreach (email/SMS/social).
+Web wins margin AND user pays less. Apple anti-steering rules prevent promoting web pricing inside the iOS app — only mention via direct outreach.
 
 ---
 
 ## What's working end-to-end (live verified)
 
-- ✓ Coach API live with future-self voice + user context
+- ✓ Coach API live with future-self voice + user context (web)
 - ✓ Identity Import returns valid structured profile
 - ✓ 873 exercises returning from `/api/exercises`
 - ✓ Web app renders correctly on dark theme
 - ✓ Mobile web polish (no iOS input zoom, safe-area aware, responsive cards)
 - ✓ Refresh-restore (URL hash + localStorage)
 - ✓ Founder counter API
-- ✓ All Supabase RPCs work (assign_founding_member_number, etc.)
+- ✓ All Supabase RPCs work
+- ✓ **StartTodayFlow on web — full 6-step flow tested via jsdom (47 assertions pass)**
+- ✓ **iOS Phase 1–3 build green in Xcode (user verified 2026-04-30)**
+- ✓ **Coach chat persistence across reloads + cross-surface (web ↔ web)**
+- ✓ **Badge toasts only fire for live achievements (retro-credit silent)**
+- ✓ **Program screen defaults to today's day**
 
-## What's stub mode (waiting on external setup)
+## What's stub mode
 
 - iOS PaywallView — RevenueCat SDK not added yet, simulates purchases
 - Stripe checkout — endpoint exists, needs real Stripe products + env vars
-- iOS gym location finder — natural next when native onboarding is built
+- iOS native gym location finder — natural next when native onboarding is built
+
+---
+
+## Native-first transition (port plan)
+
+**Decision (2026-04-30):** Replace WebView tabs with native SwiftUI ports, in deliberate order. No dual maintenance. Native polish (haptics / voice / camera / animation) layers on after each tab is 1:1 ported and stable.
+
+**Port order:**
+1. **Coach** — emotional and behavioral core. Highest perceived "feels native" win.
+2. **Future** — reinforces the identity transformation promise.
+3. **Settings / Progress** — clean lower-complexity port.
+4. **Nutrition** — heavy. Photo capture, vision API, food log persistence, macro tallying.
+5. **Program / Workout** — heaviest. Set logging, day cards, swap-day generation.
+
+### Port #1 — Coach (next session, Mac mini)
+
+**Plan summary** (full plan in conversation transcript with the laptop session, dated 2026-04-30):
+
+**New files (5):**
+- `Services/WyldeAPI.swift` (~120 lines) — generic URLSession wrapper. `post<T: Decodable>(path:body:) async throws -> T` and `get<T: Decodable>(path:) async throws -> T`. Holds `baseURL = "https://wyldeself.com"`. Throws `APIError`.
+- `Models/CoachModels.swift` (~80 lines) — `ChatMessage` (Codable, with `id: UUID` + `timestamp: Date` plus a custom decoder that handles the web's leaner `{role, content}` form so cross-surface continuity works), `AnthropicRequest`, `AnthropicResponse`, `AnthropicContent`, `APIError`, `CoachUserContext`.
+- `Views/CoachView.swift` (~350 lines) — native chat screen. Header with "Future {firstName}", greeting bubble (visible only when chatHistory empty), 4 quick-action chips, ScrollView+LazyVStack of message bubbles, typing indicator, error banner, sticky input row.
+- `Utilities/WyldeStyles.swift` (~70 lines) — `WyldeCard` view modifier + `WyldePrimaryButton` style extracted from existing TodayView/StartTodayFlow patterns.
+- `Utilities/CoachSystemPrompt.swift` (~80 lines) — verbatim port of the Coach voice rules from `app.html` line ~9024. Single function: `CoachSystemPrompt.build(name:phase:idPhrase:context:) -> String`.
+
+**Modified files (1):**
+- `Views/MainTabView.swift` — one line: `tabContent(.coach) { WebViewScreen(path: "#coach") }` → `tabContent(.coach) { CoachView() }`
+
+**Persistence:** reuses `wylde_coach_chat` UserDefaults key (same as web `localStorage`). Cap at 30 messages. Prompt context capped at last 8 turns. `ChatMessage` decoder tolerates web's leaner JSON form (auto-fills `id` and `timestamp`).
+
+**API flow:** `CoachView.send` → build context from `appState` + `JourneyPhase.forDay` → build system prompt via `CoachSystemPrompt.build` → `WyldeAPI.shared.post("/api/anthropic", body: AnthropicRequest)` → decode response → append assistant message → save to UserDefaults → hide typing indicator. No auth header (Vercel function holds API key server-side, same as web).
+
+**Open questions to confirm with user before starting:**
+- Streaming responses? (1:1 port = non-streaming, matches web. Streaming is its own engineering project.)
+- Live Supabase fetch for `user_identity_profile`? (1:1 port = use locally-cached `appState.identityProfile`. Live Supabase requires adding the Swift package.)
+- All 4 quick-action chips? (Likely yes.)
+- Greeting bubble hides when chatHistory exists? (Likely yes, mirrors web.)
+
+**Test plan (22 checks):**
+1. `xcodebuild -scheme WyldeSelf clean build` returns 0
+2. App launches, Coach tab opens, greeting visible
+3. Quick action "Motivate me" → response renders
+4. Custom typed message → response renders
+5. Force-quit + relaunch → history restored
+6. Web → iOS continuity (open `wyldeself.com` while logged in, send message, return to iOS, see it)
+7. Empty message guard
+8. Airplane mode → graceful error
+9. 30+ messages → oldest pruned, no crash
+10. Switch tab mid-typing → typing indicator survives
+11. StartTodayFlow Step 5 "Talk to your future self" → lands on native Coach (not WebView)
+12. Long response (200+ words) → renders without truncation
+13. 500 error → graceful banner
+14. Concurrent send while in-flight → handled
+15. Hamburger overlay over Coach tab
+16. `WyldeAPI.shared.post` with malformed body throws decoding error caught in CoachView
+17. `WyldeCard` applied to existing TodayView heroCard renders identically (visual regression)
+18. iOS 17 deployment target — no new warnings beyond existing
+19. ChatMessage decoder handles web's leaner JSON form
+20. ChatMessage encoder writes the iOS-rich form
+21. Identity profile presence vs absence both render correctly
+22. App backgrounded mid-stream → returns cleanly
+
+### After Coach
+
+Once Coach is shipped + audited, the foundation (`WyldeAPI`, `WyldeStyles`, models pattern) makes Ports 2–5 faster. Future is the next port (~1-2 days), then Settings (~1-2 days), then Nutrition (~1 week), then Program (~1.5-2 weeks).
 
 ---
 
@@ -489,35 +627,25 @@ Web wins margin AND user pays less. Apple anti-steering rules prevent promoting 
 
 ### Required for Founder launch
 1. **Run Supabase migrations** — paste both `.sql` files in Supabase SQL editor
-2. **Stripe** — see `STRIPE_SETUP.md`. Create account, 3 products, get price IDs, set Vercel env vars, configure webhook endpoint
-3. **Vercel env vars:**
-   - `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` (already set, used by all webhooks)
-   - `ANTHROPIC_API_KEY` (already set)
-   - `STRIPE_SECRET_KEY`
-   - `STRIPE_PRICE_LIFETIME_FOUNDER`
-   - `STRIPE_PRICE_ANNUAL_FOUNDER`
-   - `STRIPE_PRICE_MONTHLY_FOUNDER`
-   - `STRIPE_WEBHOOK_SECRET`
-   - `REVENUECAT_WEBHOOK_SECRET` (when iOS goes live)
+2. **Stripe** — see `STRIPE_SETUP.md`
+3. **Vercel env vars:** `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `ANTHROPIC_API_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_PRICE_*`, `STRIPE_WEBHOOK_SECRET`, `REVENUECAT_WEBHOOK_SECRET`
 
 ### Required for App Store / TestFlight
-4. **Apple Developer Program** ($99/yr, 24-48hr approval) — user has this
+4. **Apple Developer Program** ($99/yr)
 5. **App Store Connect entry** — bundle ID `com.wylde.self`, see `TESTFLIGHT_SUBMISSION.md`
 6. **Xcode signing** — Settings & Capabilities → Team + Bundle ID
-7. **App Icon** — final 1024×1024 PNG (placeholder is bundled)
+7. **App Icon** — final 1024×1024 PNG
 8. **Privacy policy URL** — required for App Store
-9. **RevenueCat** — see `PAYWALL_SETUP.md`. Create account, entitlement, offering, get API key, add SDK in Xcode, flip `useRealRevenueCat = true`
+9. **RevenueCat** — see `PAYWALL_SETUP.md`. Create entitlement, offering, get API key, add SDK in Xcode, flip `useRealRevenueCat = true`
 10. **Sandbox test** — full purchase flow with test card `4242 4242 4242 4242`
 11. **TestFlight upload** — Xcode → Archive → Distribute → App Store Connect
 
-### Suggested
-- `billing@wyldeself.com` email for Stripe account login (Cloudflare Email Routing free, forwards to your inbox)
-
 ---
 
-## Recurring infra issue (the git lock)
+## Recurring infra issues
 
-The dev sandbox can't unlink `.git/index.lock` due to virtiofs permissions. After every commit attempt by the AI agent, the user must clear it manually before pushing:
+### Git lock (sandbox)
+The dev sandbox can't unlink `.git/index.lock` due to virtiofs permissions. After every commit attempt by the AI agent, manually clear before pushing:
 
 ```bash
 cd ~/Wylde-self
@@ -525,41 +653,57 @@ rm -f .git/index.lock .git/HEAD.lock .git/objects/*/tmp_obj_*
 git push origin main
 ```
 
-This is a sandbox quirk, not a bug in the code. Just the workflow.
+### Xcode locks
+Xcode running in the background also causes `.git/index.lock` conflicts. Same fix.
+
+### Adding new Swift files to the Xcode project
+Xcode does not auto-discover loose `.swift` files in directories. After an AI agent creates a new file, you must drag it into the Xcode project navigator under its folder and confirm it's added to the WyldeSelf target. The build will fail with "cannot find type X in scope" otherwise.
 
 ---
 
 ## Decisions made (with reasoning)
 
 - **iOS-first launch, web Stripe in parallel** — TestFlight is the primary milestone; Stripe lets warm contacts buy direct without waiting for App Store review
-- **Hybrid app (native shell + WKWebView tabs) approved by Apple** — App provides real native value (Today, Library, Paywall, Identity Import, HealthKit, IAP, push)
+- **Native-first transition (2026-04-30)** — hybrid was a useful prototype; native is the product. WebView tabs replaced outright as each native port lands. No dual maintenance.
 - **No emojis anywhere** — initiation container brand
+- **Inclusivity in core app, masculine voice in Wylde Man only (2026-04-30)** — core Wylde Self welcomes men and women; Wylde Man (separate program) keeps gendered voice
 - **Levels stripped, replaced with Phases** — phases reflect identity formation, not video-game tier grinding
-- **Morning Protocol locked to 3 fixed practices** (Meditation, Journaling, Reading) — Workout removed from morning, lives in daily routine
-- **Walk added as separate daily action** — not part of training, not part of morning ritual
+- **Morning Protocol locked to 3 fixed practices** (Meditation, Journaling, Reading)
+- **Walk added as separate daily action**
 - **Coach speaks AS the user's future self** ("Future Wilke") — not a generic AI assistant
-- **Identity Import behind Founding Members paywall** — high-leverage feature gated to drive conversion
-- **OpenStreetMap Nominatim for gym search** — free, no API key, fine until 10k DAU
-- **Stub-mode RevenueCat in iOS for now** — UI is fully built, swap to live with one config flag
-- **Pantry/forum/peptide/advanced protocols hidden** — out of MVP scope, code preserved for later
-- **Single hamburger menu on every screen** — settings live there, never in a tab
-- **Mobile web is the primary marketing surface** — must be polished even if iOS is the conversion target
+- **Coach voice tone (2026-04-30)** — "Strong but not aggressive" replaces "Masculine but not aggressive" in the Coach system prompt
+- **Identity Import behind Founding Members paywall**
+- **Stub-mode RevenueCat in iOS for now** — UI fully built, swap with one config flag
+- **Single hamburger menu on every screen**
+- **Mobile web is the primary marketing surface**
+- **StartTodayFlow exists as both native (iOS) and external (web `/css/start-today-flow.css` + `/js/start-today-flow.js`)** — both share the `wylde_stf_state` key for cross-surface continuity
+- **Today screen card priority (2026-04-30)** — Hero+CTA → Workout → Walk → Nutrition → Future You → Morning Routine → Health → Founding. Reduces cognitive load by surfacing required actions before optional ones.
 
 ---
 
 ## Pending / next priorities
 
-- ❑ User: complete Stripe setup + push live
-- ❑ User: complete iOS App Store Connect entry + signing
-- ❑ User: archive + upload first TestFlight build
-- ❑ Coach insight card on Today screen (replaces rejected red-dot pattern from Gemini audit)
+**Immediate (Mac mini next session):**
+- ❑ **Native Coach port** (Port #1) — full plan above. Foundation work (`WyldeAPI`, models, styles, system prompt) lands as part of this PR.
+
+**Next 4 native ports (in order):**
+- ❑ Native Future tab (Port #2)
+- ❑ Native Settings/Progress tab (Port #3)
+- ❑ Native Nutrition logger (Port #4) — heavy: photo capture, vision API, food log
+- ❑ Native Program/Workout (Port #5) — heaviest: set logging, swap-day, default-to-today
+
+**After native MVP is stable:**
+- ❑ **Protocol system** — pluggable into existing Today/adherence/check-in surfaces. NOT a separate experience. Will track adherence to specific multi-week protocols (TRT cycles, sleep optimization blocks, fasting windows). Wait until the core native app is shipped and stable.
 - ❑ Native iOS gym finder using MKLocalSearch
-- ❑ Native iOS CoachView (replace WebView for full-quality Coach)
-- ❑ Native iOS FutureSelfView (currently WebView)
-- ❑ Native iOS onboarding (currently WebView)
 - ❑ Apple anti-steering compliance audit before App Store submission
 - ❑ "Members at your gym" community feature (foundation already in place via gymPlaceId)
 - ❑ Coach proactive daily insight push notification
+- ❑ Streaming responses for Coach (currently non-streaming, matches web)
+
+**User-side actions:**
+- ❑ Complete Stripe setup + push live
+- ❑ Complete iOS App Store Connect entry + signing
+- ❑ Archive + upload first TestFlight build
 
 ---
 
@@ -567,15 +711,18 @@ This is a sandbox quirk, not a bug in the code. Just the workflow.
 
 If you're an AI agent picking this up:
 
-1. **Read this file first.** Then `app.html` and the iOS Views/ folder.
-2. **Brand voice is sacred.** Grounded, direct, masculine but not aggressive. No emojis. No fluff. No SaaS clichés. No video-game gamification.
+1. **Read this file first.** Then `app.html` and the iOS Views/ folder. Read the conversation transcript for the in-flight session if there's a Mac-laptop-to-Mac-mini handoff.
+2. **Brand voice is sacred.** Grounded, direct, strong but not aggressive. No emojis. No fluff. No SaaS clichés. No video-game gamification. Core app is welcoming to men and women — Wylde Man (separate program) keeps masculine-specific voice.
 3. **The Coach speaks as the user's future self, not as an AI.** Never break that frame.
-4. **Mobile web is critical.** Test every change on a 375px viewport (iPhone SE) before committing.
+4. **Mobile web is critical.** Test every change on a 375pt viewport before committing.
 5. **The git lock issue is recurring.** Don't waste cycles trying to fix it — just commit locally and tell the user to push.
-6. **Always commit locally, even if you can't push.** The user will push manually.
-7. **iOS WebView tabs DO get web changes automatically** — push to Vercel, WebViews see the update.
+6. **Always commit locally, even if you can't push.**
+7. **iOS WebView tabs (Future / Settings) get web changes automatically** — push to Vercel, WebViews see the update. Coach tab is being replaced with native — see Native-first transition.
 8. **Stub mode is fine for now.** Don't try to wire RevenueCat or real Stripe products without the user's API keys.
 9. **`HANDOFF.md` should be kept current** as major systems ship.
+10. **Native-first ordering matters.** Don't skip ahead to Nutrition or Program before Coach + Future + Settings are done. The foundation files (`WyldeAPI`, `WyldeStyles`, models pattern) need to land first.
+11. **Shared UserDefaults / localStorage keys are sacred.** `wylde_*` keys are shared between web and iOS native — never change a key during a port. Add new ones if needed; never rename existing ones.
+12. **New Swift files must be added to the Xcode project target manually.** Xcode does not auto-discover. After file creation, the user drags them into the project navigator before Cmd+B.
 
 ---
 
