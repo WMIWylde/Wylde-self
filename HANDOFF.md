@@ -1,3 +1,186 @@
+# HANDOFF — Native iOS Build Phase
+
+**Last updated:** Tuesday, May 5, 2026 (laptop session, end of day)
+**Next pickup:** Mac mini
+
+---
+
+## TL;DR
+
+The strategic and architectural direction for WyldeSelf iOS is now fully captured across four files:
+
+- **`CLAUDE.md`** — North Star, positioning, architecture mandate (fully native), AI presence rules, IA target state
+- **`DESIGN.md`** — Visual language: palette, type, components, motion, voice in copy
+- **`PRIVACY.md`** — Apple-ready data handling, App Store privacy declarations, user rights
+- **`HANDOFF.md`** (this file) — current state, migration plan, open work
+
+The next phase of work is migrating WyldeSelf iOS from its current WebView-hybrid state to a fully native SwiftUI app, while keeping the same backend shared with the web app at wyldeself.com.
+
+---
+
+## Resolved decisions
+
+### Architecture: fully native (no wrapping)
+- All journey loop surfaces, AI guide interactions, Identity work, onboarding, profile, settings → SwiftUI
+- WebView **only** acceptable for: future marketplace, billing portals, terms/privacy pages — none of which are MVP
+- Backend (Vercel API) is shared with the web app — same endpoints, same data, different render layers
+- See `CLAUDE.md` "Architecture Mandate" for full detail
+
+### Coach feature path: Path B (chat UI inside Today, no Coach tab)
+- Earlier session drafted a 6-step plan to build a dedicated CoachView as a Coach tab
+- That conflicts with `CLAUDE.md` ("one unified AI guide, no chatbot, no Coach tab in target IA")
+- **Resolution:** infrastructure (Steps 1-3) proceeds as drafted; Step 4 reshapes into `CoachSheet` or `CoachInline` integrated inside Today, surfacing contextually; Step 5 is dropped (the Coach tab is being collapsed entirely, not replaced)
+- Detailed migration plan below
+
+### Visual direction
+- Premium, minimal, cinematic — Equinox / Tracksmith / Function Health / Levels / Whoop register
+- Move away from full black + dominant gold + Bebas Neue
+- Full palette and type scale in `DESIGN.md`
+
+---
+
+## Migration Plan: WebView-hybrid → Fully Native
+
+### Phase 0 — Foundation (do first, blocks everything else)
+
+**0a. Establish design components in code**
+Create `Utilities/WyldeStyles.swift` and `Components/` folder with the 10 base components defined in `DESIGN.md`:
+- `WyldePrimaryButton`, `WyldeSecondaryButton`
+- `WyldeTextField`
+- `WyldeCard`, `WyldeSectionHeader`
+- `WyldeStageRow`, `WyldeTab`
+- `WyldeStat`, `WyldeProgressArc`
+- `WyldeImageHero`
+
+Every screen will use these. Build them with the exact tokens from `DESIGN.md` — colors, type, spacing, motion.
+
+**0b. Establish networking layer**
+Create `Services/WyldeAPI.swift` — generic POST/GET wrapper for the shared backend. Handles JSON encode/decode, errors, auth headers.
+
+**0c. Establish data models**
+Create `Models/CoachModels.swift` and other shared data models. The `ChatMessage` decoder must round-trip with the web app's `wylde_coach_chat` UserDefaults / localStorage blob.
+
+**0d. Port the Coach system prompt verbatim**
+Create `Utilities/CoachSystemPrompt.swift` — exact verbatim port of the system prompt from `app.html:9024`, same VOICE / FORMAT / CONTEXT / COACHING RULES / QUICK ACTIONS sections.
+
+### Phase 1 — Today screen (highest priority)
+
+The Today screen is the home of the app. It defines the daily journey loop and sets the visual language for everything else.
+
+Build `Views/TodayView.swift` (replace existing) implementing the journey loop:
+1. Identity Anchor — hero treatment, Cormorant display type, paper-warm background
+2. Morning Ritual
+3. Training
+4. Nutrition
+5. Future Self Check-in
+6. Close the Loop
+
+Match `DESIGN.md` exactly: palette, type, spacing, single-primary-action-per-stage, vertical rhythm with `xl` between stages.
+
+Use placeholder data initially (no API calls). Once visual is locked, wire to backend.
+
+### Phase 2 — Replace WebViews one by one
+
+Audit `MainTabView.swift` for every `WebViewScreen(...)` usage. For each:
+1. Build native SwiftUI replacement
+2. Wire to same backend endpoints the WebView was hitting
+3. Remove the WebView reference
+4. Test web ↔ iOS continuity (data flows correctly between them)
+
+Known WebView surfaces to replace:
+- `path: "#coach"` → integrate as `CoachSheet` inside Today (Path B from Coach decision)
+- `path: "#future"` → native FutureSelfView
+- `path: "#settings"` → native SettingsView
+
+Plus any others discovered during audit.
+
+### Phase 3 — Onboarding native
+
+Onboarding is currently web-driven. Port to native SwiftUI for:
+- App Store first-impression quality
+- Offline robustness
+- Sign in with Apple integration (Apple requirement when other social login present)
+
+Includes Identity Import flow — refactor away from psychographic-profile-card UI per `CLAUDE.md` AI Presence section.
+
+### Phase 4 — Auth & user data
+
+Wire up Supabase auth (currently deferred). Implement:
+- Sign in with Apple (required by Apple guidelines for MVP launch)
+- Email + password as fallback
+- Secure session management
+- User data export and deletion flows per `PRIVACY.md`
+
+### Phase 5 — HealthKit (later)
+
+Read-only at first. Workout, nutrition, body measurements. On-device only unless user explicitly opts in to sync.
+
+Detailed rules in `PRIVACY.md` "HealthKit" section.
+
+### Phase 6 — Polish, ship to TestFlight, App Store
+
+- Privacy nutrition label per `PRIVACY.md` "App Store Privacy Nutrition Label" section
+- All Info.plist permission strings using exact wording from `PRIVACY.md`
+- TestFlight beta with internal testers
+- App Store submission
+
+---
+
+## Pending bugs (separate from native migration, fix when convenient)
+
+### Onboarding routing (web app)
+- File: `~/Projects/Wylde-self/app.html`
+- State: under investigation. Original premise (onboarding routes to wrong screen) is in question.
+- Diagnosis from earlier session: `completeOnboard()` at `app.html:6975` correctly calls `showScreen('overview')`. The two `showScreen` definitions (line 3980 wrapper and line 6575 function) — wrapper at 3980 is dead code. Live function at 6575 runs.
+- **Next step:** verify whether the bug actually reproduces on a fresh state. Start dev server (`npm run dev`), clear localStorage, run through onboarding, observe.
+- If bug doesn't reproduce → close the issue
+- If bug reproduces → trace `wylde_last_screen` writes (suspect #2 from earlier diagnosis)
+
+### Future Self image generation regression
+- File: `~/Projects/Wylde-self/api/generate-image.js`
+- **Issue:** 12-week generated future self looks MORE developed than 1-year future self. Timeline runs backward visually.
+- **Root cause:** prompt logic over-indexes on aggressive cut/Men's Health/bodybuilding language for 12-week, then softens too much for 1-year. Net effect: 1-year looks like a regression from 12-week.
+- **Two issues to fix together:**
+  1. Realign 12-week vs 1-year so progression actually progresses (1-year = refined, embodied, established practice — not just "more 12-week")
+  2. Strip masculine-coded language ("Men's Health cover," bodybuilding tropes) per `CLAUDE.md` universal positioning. Reference aesthetic: Equinox cover, NOT Men's Health cover.
+- **Bonus:** also account for user's starting fitness level — for already-fit users, future self differentiation is subtle; lean into refinement, posture, presence, lighting, not raw muscle mass
+
+### Side findings (web — fix later)
+- Dead `showScreen` wrapper at `app.html:3980` — never executes due to script ordering. The setTimeout calls inside (`ovSyncData`, `ovSyncHeroImage`, `completeDayInit`) never fire on screen change. Should be deleted; calls moved into the live `showScreen` function's `'overview'` branch.
+- `identity_archetype` and `coaching_style` are user-facing today — flagged in earlier audit, need to be hidden from UI per `CLAUDE.md` direction. Refactor Identity Import result UI from psychographic-profile-card into a guidance moment.
+
+---
+
+## Resume on Mac mini
+
+```bash
+cd ~/Projects/Wylde-self    # or wherever the iOS subfolder lives
+git pull
+cat HANDOFF.md
+cat CLAUDE.md
+cat DESIGN.md
+cat PRIVACY.md
+```
+
+Then in Claude Code (in Cursor's terminal):
+
+> "Read CLAUDE.md, DESIGN.md, PRIVACY.md, and HANDOFF.md fully — these together define the strategic direction, design language, data handling, and current migration plan for WyldeSelf iOS. After reading, audit the current iOS codebase against these documents and produce a prioritized refactor plan. Don't change anything yet — just give me the audit."
+
+That gives Claude Code complete context. From then on, tactical instructions ("build the Today view per DESIGN.md") will land correctly because the spec is fully captured.
+
+---
+
+## Working pattern (commit to this going forward)
+
+- **Cursor + Claude Code in terminal** = primary code workspace, both machines
+- **Claude.ai** (this conversation, or successors) = strategy, planning, prompt drafting, sanity checks
+- **Cowork** = files outside repos (brand assets, PDFs) — not used yet, save for later
+
+Session pattern:
+- **Start:** `git pull`, read `HANDOFF.md`
+- **End:** update `HANDOFF.md`, commit, push
+
+`CLAUDE.md`, `DESIGN.md`, `PRIVACY.md` are stable references — only update on real direction changes. `HANDOFF.md` updates every session.
 # Wylde Self — Handoff
 
 Last updated: 2026-04-28
