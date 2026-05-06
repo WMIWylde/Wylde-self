@@ -15,7 +15,7 @@ struct WyldeSelfApp: App {
                     scheduleDailyReminders()
                     // Initialize the in-app purchase SDK. Stub mode until
                     // RevenueCat package + API key are added (see PAYWALL_SETUP.md).
-                    PurchaseManager.shared.configure(supabaseUserID: nil)
+                    PurchaseManager.shared.configure(supabaseUserID: nil as String?)
                     Task { await PurchaseManager.shared.fetchProducts() }
                 }
         }
@@ -32,14 +32,13 @@ struct WyldeSelfApp: App {
     }
 
     private func configureAppearance() {
-        // Status bar
-        UIApplication.shared.statusBarStyle = .darkContent
+        // Status bar icons follow light trait + UIViewController hierarchy (avoid deprecated globals).
 
-        // Tab bar appearance
+        // Tab bar appearance — match paper chrome from DESIGN tokens
         let tabAppearance = UITabBarAppearance()
         tabAppearance.configureWithOpaqueBackground()
-        tabAppearance.backgroundColor = .white
-        tabAppearance.shadowColor = UIColor.black.withAlphaComponent(0.06)
+        tabAppearance.backgroundColor = Theme.paperUIColor
+        tabAppearance.shadowColor = Theme.hairlineShadowUIColor
         UITabBar.appearance().standardAppearance = tabAppearance
         UITabBar.appearance().scrollEdgeAppearance = tabAppearance
 

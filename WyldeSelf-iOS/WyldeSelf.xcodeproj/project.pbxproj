@@ -24,6 +24,16 @@
 		A10016 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10016; };
 		A10017 /* ExercisesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10017; };
 		A10018 /* exercises.json in Resources */ = {isa = PBXBuildFile; fileRef = B10018; };
+		A10019 /* IdentityProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10019; };
+		A10020 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10020; };
+		A10021 /* SettingsDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10021; };
+		A10022 /* IdentityImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10022; };
+		A10023 /* StartTodayFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10023; };
+		A10024 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10024; };
+		A10025 /* IdentityAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10025; };
+		A10026 /* JourneyPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10026; };
+		A10027 /* CoachLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10027; };
+		A10028 /* WyldeStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10028; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +55,16 @@
 		B10016 /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
 		B10017 /* ExercisesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExercisesView.swift; sourceTree = "<group>"; };
 		B10018 /* exercises.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = exercises.json; sourceTree = "<group>"; };
+		B10019 /* IdentityProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityProfile.swift; sourceTree = "<group>"; };
+		B10020 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		B10021 /* SettingsDrawer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDrawer.swift; sourceTree = "<group>"; };
+		B10022 /* IdentityImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityImportView.swift; sourceTree = "<group>"; };
+		B10023 /* StartTodayFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartTodayFlow.swift; sourceTree = "<group>"; };
+		B10024 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
+		B10025 /* IdentityAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityAnalysisService.swift; sourceTree = "<group>"; };
+		B10026 /* JourneyPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyPhase.swift; sourceTree = "<group>"; };
+		B10027 /* CoachLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachLine.swift; sourceTree = "<group>"; };
+		B10028 /* WyldeStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WyldeStyles.swift; sourceTree = "<group>"; };
 		B99999 /* WyldeSelf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WyldeSelf.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -91,6 +111,7 @@
 			children = (
 				B10004 /* AppState.swift */,
 				B10016 /* Exercise.swift */,
+				B10019 /* IdentityProfile.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -102,6 +123,10 @@
 				B10007 /* WebViewScreen.swift */,
 				B10008 /* TodayView.swift */,
 				B10017 /* ExercisesView.swift */,
+				B10020 /* PaywallView.swift */,
+				B10021 /* SettingsDrawer.swift */,
+				B10022 /* IdentityImportView.swift */,
+				B10023 /* StartTodayFlow.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -113,6 +138,8 @@
 				B10010 /* NotificationManager.swift */,
 				B10011 /* HealthKitManager.swift */,
 				B10012 /* CameraManager.swift */,
+				B10024 /* PurchaseManager.swift */,
+				B10025 /* IdentityAnalysisService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -121,6 +148,9 @@
 			isa = PBXGroup;
 			children = (
 				B10005 /* Theme.swift */,
+				B10026 /* JourneyPhase.swift */,
+				B10027 /* CoachLine.swift */,
+				B10028 /* WyldeStyles.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -225,6 +255,16 @@
 				A10012 /* CameraManager.swift in Sources */,
 				A10016 /* Exercise.swift in Sources */,
 				A10017 /* ExercisesView.swift in Sources */,
+				A10019 /* IdentityProfile.swift in Sources */,
+				A10020 /* PaywallView.swift in Sources */,
+				A10021 /* SettingsDrawer.swift in Sources */,
+				A10022 /* IdentityImportView.swift in Sources */,
+				A10023 /* StartTodayFlow.swift in Sources */,
+				A10024 /* PurchaseManager.swift in Sources */,
+				A10025 /* IdentityAnalysisService.swift in Sources */,
+				A10026 /* JourneyPhase.swift in Sources */,
+				A10027 /* CoachLine.swift in Sources */,
+				A10028 /* WyldeStyles.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

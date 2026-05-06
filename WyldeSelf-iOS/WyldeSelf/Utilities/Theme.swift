@@ -1,24 +1,54 @@
 import SwiftUI
+import UIKit
 
+/// App-wide visuals. Prefer `WyldeStyles` for raw tokens; existing screens use these aliases.
 enum Theme {
-    // Core colors
-    static let background = Color(hex: "F7F6F3")
-    static let surface = Color.white
-    static let text = Color(hex: "1A1A1A")
-    static let muted = Color(hex: "888888")
-    static let text3 = Color(hex: "666666")
-    static let sage = Color(hex: "7A9A6E")
-    static let gold = Color(hex: "C8A96E")
-    static let border = Color.black.opacity(0.06)
+    /// Paper / charcoal system from DESIGN.md (no pure black/white).
+    static var background: Color { WyldeStyles.Colors.paper }
+    static var surface: Color { WyldeStyles.Colors.paper }
+    static var text: Color { WyldeStyles.Colors.ink }
+    static var muted: Color { WyldeStyles.Colors.stone }
+    static var text3: Color { WyldeStyles.Colors.charcoal.opacity(0.55) }
+    static var sage: Color { WyldeStyles.Colors.sage }
+    /// Celebration / founder moments — use bronze for everyday primary accents in new UI.
+    static var gold: Color { WyldeStyles.Colors.gold }
+    static var bronze: Color { WyldeStyles.Colors.bronze }
+    static var border: Color { WyldeStyles.Colors.charcoal.opacity(0.06) }
 
-    // Typography
+    /// Bundled fonts are not finalized; keep names for gradual migration off system fonts.
     static let displayFont = "Inter-Bold"
     static let bodyFont = "Inter-Regular"
 
-    // Spacing
-    static let cardRadius: CGFloat = 16
-    static let cardPadding: CGFloat = 20
-    static let screenPadding: CGFloat = 20
+    static var cardRadius: CGFloat { WyldeStyles.Layout.cardCornerRadius }
+    static var cardPadding: CGFloat { WyldeStyles.Spacing.lg }
+    static var screenPadding: CGFloat { WyldeStyles.Spacing.lg }
+
+    /// For `UITabBarAppearance` / `UINavigationBarAppearance` alongside SwiftUI chrome.
+    static var paperUIColor: UIColor { UIColor(wyldeHex: "F4F1EC") }
+    static var hairlineShadowUIColor: UIColor { UIColor(white: 0, alpha: 0.06) }
+}
+
+private extension UIColor {
+    convenience init(wyldeHex: String, alpha: CGFloat = 1) {
+        let hex = wyldeHex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 6:
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8:
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (255, 244, 241, 236)
+        }
+        self.init(
+            red: CGFloat(r) / 255,
+            green: CGFloat(g) / 255,
+            blue: CGFloat(b) / 255,
+            alpha: CGFloat(a) / 255 * alpha
+        )
+    }
 }
 
 // Hex color extension

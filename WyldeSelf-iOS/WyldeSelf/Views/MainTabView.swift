@@ -96,7 +96,7 @@ struct BottomTabBar: View {
         .padding(.bottom, safeAreaBottom)
         .background(
             Rectangle()
-                .fill(.white)
+                .fill(Theme.surface)
                 .shadow(color: .black.opacity(0.06), radius: 12, y: -4)
                 .ignoresSafeArea(edges: .bottom)
         )

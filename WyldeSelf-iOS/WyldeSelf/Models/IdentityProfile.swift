@@ -56,7 +56,7 @@ struct IdentityProfile: Codable, Equatable {
         communicationTone: "Direct. Visual. Occasionally vulnerable.",
         motivationTriggers: ["Proving wrong people who doubted them", "Visible compounding", "Quiet follow-through"],
         limitingPatterns: ["Over-planning", "Avoiding rest"],
-        aspirationalIdentity: "the man who builds without needing applause",
+        aspirationalIdentity: "the version of you who builds without needing applause",
         coachingStyle: "direct",
         languageToUse: ["build", "compound", "show up", "the work"],
         languageToAvoid: ["journey", "vibes", "manifest", "energy"],
