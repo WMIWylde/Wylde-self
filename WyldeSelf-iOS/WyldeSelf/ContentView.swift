@@ -13,7 +13,9 @@ struct ContentView: View {
                     case "future":
                         appState.selectedTab = .future
                     case "coach":
-                        appState.selectedTab = .coach
+                        // Phase 1c migration: Coach tab removed; route to Today until Phase 5
+                        // builds in-Today CoachSheet. Stale "coach" payloads land here gracefully.
+                        appState.selectedTab = .today
                     case "settings", "optimize", "progress":
                         appState.selectedTab = .settings
                     default:
