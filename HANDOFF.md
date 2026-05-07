@@ -158,6 +158,64 @@ Final design pass against DESIGN.md ref brands. Privacy nutrition label. Submiss
 
 ---
 
+## Active Direction
+
+Phase 1c (tab refactor) partially complete. Today's progress:
+- WyldeStyles.swift design tokens shipped
+- Theme.swift updated to delegate to tokens
+- WebView tab reset bug fixed (WebViewScreen.updateUIView is now no-op)
+- AppState.swift: Coach tab removed from Tab enum
+- MainTabView.swift: Coach tab entry removed
+- ContentView.swift: legacy "coach" notification routing redirected to .today
+
+## OPEN — resolve before continuing
+
+Tab structure beyond the Coach removal is NOT yet locked. Late-session
+iterations explored multiple alternatives without integration. Don't
+re-litigate here — decide tomorrow with fresh eyes.
+
+Tomorrow's first 10 minutes (BEFORE opening any code):
+  1. Re-read CLAUDE.md target IA section
+  2. Ask: "What does each tab uniquely represent that the others don't?"
+  3. Ask: "If Nutrition lives inside Today (Stage 4), what's the right
+     interaction model so a user can log a meal in one tap from Today
+     without forced linear progression through earlier stages?"
+  4. Ask: "What ultimately goes in Future — and is it rich enough to
+     earn the tab slot or does it need to merge with something?"
+  5. Whatever clean answers surface, that's the structure to commit to
+
+Until resolved, do NOT make further changes to MainTabView, AppState,
+ContentView, or StartTodayFlow beyond what's already committed.
+
+## Future work — captured but not designed yet
+
+### First-launch onboarding walkthrough
+Brief tutorial explaining the daily journey loop and how the app works.
+Surfaces the first time a user opens WyldeSelf after onboarding.
+Walks through:
+  - What the journey loop is (Identity Anchor → Morning Ritual → Training
+    → Nutrition → Future Self Check-in → Close the Loop)
+  - That stages can be tapped in any order throughout the day
+  - Where Future, Library, and account live
+  - How the AI guide surfaces (when in-Today CoachSheet exists)
+
+Visual register: matches DESIGN.md (premium, minimal, cinematic).
+NOT a generic feature-tour with arrows pointing at things.
+Closer to: short cinematic vignettes with editorial copy that frame
+the practice as identity work, not "here's how to use this app."
+
+Reference: Function Health's first-launch flow, Whoop's onboarding tour.
+
+Implementation phase: TBD. Not Phase 1 or 2. Probably Phase 6 or 7
+(polish + App Store readiness) — by then the IA is locked, the daily
+loop interaction model is final, and we have something stable to
+walk users through.
+
+### Pending separately
+- StartTodayFlow.swift Step 5 ("coach" navigation) — needs diagnosis
+- Hamburger polish (Phase 1b)
+- Component foundation (Phase 2)
+
 ## Resume on Mac mini
 
 ```bash
