@@ -66,7 +66,6 @@ class AppState: ObservableObject {
         case today = "Today"
         case exercises = "Library"
         case future = "Future"
-        case coach = "Coach"
         case settings = "Settings"
 
         var icon: String {
@@ -74,7 +73,6 @@ class AppState: ObservableObject {
             case .today: return "house.fill"
             case .exercises: return "figure.strengthtraining.traditional"
             case .future: return "person.fill"
-            case .coach: return "bubble.left.fill"
             case .settings: return "gearshape.fill"
             }
         }
