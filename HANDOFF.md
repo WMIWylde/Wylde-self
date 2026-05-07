@@ -63,66 +63,73 @@ Create `Models/CoachModels.swift` and other shared data models. The `ChatMessage
 **0d. Port the Coach system prompt verbatim**
 Create `Utilities/CoachSystemPrompt.swift` — exact verbatim port of the system prompt from `app.html:9024`, same VOICE / FORMAT / CONTEXT / COACHING RULES / QUICK ACTIONS sections.
 
-### Phase 1 — Today screen (highest priority)
+### Phase 1 — Bug fixes + IA cleanup (do first, before any feature work)
 
-The Today screen is the home of the app. It defines the daily journey loop and sets the visual language for everything else.
+These are quick wins that unblock everything else.
 
-Build `Views/TodayView.swift` (replace existing) implementing the journey loop:
-1. Identity Anchor — hero treatment, Cormorant display type, paper-warm background
-2. Morning Ritual
-3. Training
-4. Nutrition
-5. Future Self Check-in
-6. Close the Loop
+**1a. Tab navigation profile reset bug**
+Bug: tapping any of the bottom tabs is resetting the user's profile state. Diagnose root cause first (state management issue — AppState reinitialization, view identity, or .onAppear handler clearing state). Fix surgically.
 
-Match `DESIGN.md` exactly: palette, type, spacing, single-primary-action-per-stage, vertical rhythm with `xl` between stages.
+**1b. Hamburger menu position fix**
+Existing SettingsDrawer.swift hamburger needs:
+- Consistent upper-right position across all screens (24pt from right edge, safe-area top + 12pt)
+- Never covers content
+- Custom mark (NOT three horizontal lines — use a more refined geometric mark with bronze accent)
+- Slides in from right with spring animation per DESIGN.md motion section
+- 44pt minimum hit target
 
-Use placeholder data initially (no API calls). Once visual is locked, wire to backend.
+Decision recorded: keeping the global hamburger menu despite premium-iOS convention against it. Conscious choice. Revisit if user testing shows confusion.
 
-### Phase 2 — Replace WebViews one by one
+**1c. Tab structure refactor**
+Current: 5 tabs including Coach (WebView-wrapped)
+Target: 4 tabs — Today | Future | Library | Profile (no Coach tab; AI guide surfaces contextually inside Today in a future phase)
 
-Audit `MainTabView.swift` for every `WebViewScreen(...)` usage. For each:
-1. Build native SwiftUI replacement
-2. Wire to same backend endpoints the WebView was hitting
-3. Remove the WebView reference
-4. Test web ↔ iOS continuity (data flows correctly between them)
+Remove `Coach` from `AppState.Tab` enum. Update `MainTabView.swift`. Migrate `path: "#progress"` WebView into Profile (or fold into another tab — confirm with audit).
 
-Known WebView surfaces to replace:
-- `path: "#coach"` → integrate as `CoachSheet` inside Today (Path B from Coach decision)
-- `path: "#future"` → native FutureSelfView
-- `path: "#settings"` → native SettingsView
+### Phase 2 — Foundation (component system + tokens)
 
-Plus any others discovered during audit.
+Per DESIGN.md "Component Catalog":
 
-### Phase 3 — Onboarding native
+**2a. Create design tokens**
+`Utilities/WyldeStyles.swift` with palette, type scale, spacing scale. Adaptive colors for light/dark mode.
 
-Onboarding is currently web-driven. Port to native SwiftUI for:
-- App Store first-impression quality
-- Offline robustness
-- Sign in with Apple integration (Apple requirement when other social login present)
+**2b. Update Theme.swift**
+Delegate to WyldeStyles tokens. Replace gold-dominant patterns with bronze-as-default. Replace pure black/white with charcoal/paper.
 
-Includes Identity Import flow — refactor away from psychographic-profile-card UI per `CLAUDE.md` AI Presence section.
+**2c. Extract 10 base components from existing inline styling**
+WyldePrimaryButton, WyldeSecondaryButton, WyldeTextField, WyldeCard, WyldeSectionHeader, WyldeStageRow, WyldeTab, WyldeStat, WyldeProgressArc, WyldeImageHero. Refactor existing screens to use them.
 
-### Phase 4 — Auth & user data
+### Phase 3 — Workout Day screen redesign (Image 2 inspired)
 
-Wire up Supabase auth (currently deferred). Implement:
-- Sign in with Apple (required by Apple guidelines for MVP launch)
-- Email + password as fallback
-- Secure session management
-- User data export and deletion flows per `PRIVACY.md`
+Redesign the workout day surface using the architecture from the reference design (horizontal day picker, block tabs for Warmup/Strength/Accessories/Finisher, hero image per exercise with play button overlay, icon-row metadata, Last Weight + PR as separate framed boxes, sticky Start Workout button) — but rendered in WyldeSelf's actual design language (warm-neutral palette, Cormorant Garamond for editorial moments, varied cinematic photography, bronze as primary accent not sage).
 
-### Phase 5 — HealthKit (later)
+**Includes:**
+- PR card layout fix (Last Weight + Personal Record as separate framed boxes)
+- Light + dark mode support (full implementation per DESIGN.md "Light & Dark Mode" section)
 
-Read-only at first. Workout, nutrition, body measurements. On-device only unless user explicitly opts in to sync.
+### Phase 4 — Dynamic Warmup flow
 
-Detailed rules in `PRIVACY.md` "HealthKit" section.
+Build the timed guided warmup that gates the strength workout. Spec:
 
-### Phase 6 — Polish, ship to TestFlight, App Store
+- Tap "Start Warmup" on the workout day screen → enters dedicated warmup flow
+- Sequence: foam roll 1 min → arm circles 1 min → leg swings 1 min → hip openers 1 min → light jog/jump rope 1 min (default sequence; programmable per workout)
+- Auto-progresses from one exercise to the next as each timer completes
+- Visual countdown timer + exercise name + brief form cue
+- Optional cardio swap: instead of dynamic stretches, user can opt for 10 minutes of cardio (stair master, elliptical, rowing machine, incline walk) — selectable from the warmup screen
+- On warmup complete → automatically transitions to strength block start
+- Cannot skip warmup unless explicitly opted out (encourages adherence; respects user autonomy)
 
-- Privacy nutrition label per `PRIVACY.md` "App Store Privacy Nutrition Label" section
-- All Info.plist permission strings using exact wording from `PRIVACY.md`
-- TestFlight beta with internal testers
-- App Store submission
+### Phase 5 — Replace remaining WebViews
+
+Per migration plan: native FutureSelfView (replace `path: "#future"`), native CoachSheet integrated inside Today (replace `path: "#coach"` AND collapse the Coach tab simultaneously).
+
+### Phase 6 — Privacy alignment + App Store readiness
+
+Info.plist permission strings, HealthKit read-only default, user data export and deletion flows. Per PRIVACY.md.
+
+### Phase 7 — Polish, TestFlight, App Store
+
+Final design pass against DESIGN.md ref brands. Privacy nutrition label. Submission.
 
 ---
 

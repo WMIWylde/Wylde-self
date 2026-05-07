@@ -38,6 +38,27 @@ Wylde Man is a **specialized program within the Wylde ecosystem** — a deeper m
 
 ---
 
+## Personalization vs Identity
+
+WyldeSelf personalizes the product experience based on user data — goals, physiology, history, preferences. This includes biological sex when relevant for programming (e.g., hypertrophy protocols, recovery timelines, hormonal cycle awareness for women who opt in).
+
+**Personalization NEVER changes the brand experience.**
+- One color palette
+- One typography system
+- One photography direction
+- One AI guide voice
+- One overall register
+
+**What CAN vary based on the user:**
+- Programming content (sets, reps, exercise selection, recovery timelines)
+- AI guidance specifics (training advice, nutrition recommendations)
+- Light vs dark mode (user preference, never tied to gender)
+- Future Self image (uses the user's actual photo)
+
+**Identity neutrality stays primary.** Gender is one signal among many that informs programming — never the determining one. Users can decline to specify gender; the AI adapts using other signals (goals, body data, history). The product never makes the user feel categorized.
+
+---
+
 ## Architecture Mandate
 
 **WyldeSelf iOS is FULLY NATIVE.**

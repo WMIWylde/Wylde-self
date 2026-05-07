@@ -59,6 +59,37 @@ Move AWAY from full black + dominant gold. Move TOWARD warm neutrals with restra
 
 ---
 
+## Light & Dark Mode
+
+WyldeSelf supports both light and dark mode as a user preference. Mode is never tied to gender or any user demographic — it's a personal choice surfaced in Settings.
+
+### Light mode (default for users who haven't toggled)
+- **Background:** paper `#F4F1EC`
+- **Surface:** bone `#E8E2D6`
+- **Primary text:** charcoal `#2C2A26`
+- **Secondary text:** stone `#9A9286`
+- **Dividers:** sand `#D4C9B5` at 50% opacity
+
+### Dark mode
+- **Background:** charcoal `#2C2A26` (NEVER pure black)
+- **Surface:** ink `#1A1816`
+- **Primary text:** paper `#F4F1EC`
+- **Secondary text:** sand `#D4C9B5`
+- **Dividers:** stone `#9A9286` at 30% opacity
+
+### Accents in both modes
+Bronze, gold, sage, and clay accents are unchanged across modes — they read warm in both contexts. Adjust opacity slightly if needed for contrast (e.g., bronze at 90% opacity in dark mode reads better than at 100%).
+
+### System behavior
+- **Default:** follow system preference (`@Environment(\.colorScheme)`)
+- **Override:** available in Settings → Display → Appearance (System / Light / Dark)
+- **Persistence:** user override stored in UserDefaults, applied at app launch
+
+### Implementation note for SwiftUI
+All `WyldeStyles.swift` color tokens should be defined as adaptive `Color` instances using `Color(light:dark:)` or asset catalog entries with both color values. Components use the tokens — they should never need to check color scheme directly.
+
+---
+
 ## Typography
 
 ### Font families (loaded as custom fonts in the app bundle)
