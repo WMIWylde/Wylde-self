@@ -6,7 +6,7 @@ struct MainTabView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            // All 5 tab views stay mounted simultaneously. We toggle which
+            // All 4 tab views stay mounted simultaneously. We toggle which
             // one is visible/interactive so WKWebViews don't reload, local
             // @State doesn't reset, and scroll positions are preserved when
             // the user switches tabs.
@@ -14,7 +14,6 @@ struct MainTabView: View {
                 tabContent(.today) { TodayView() }
                 tabContent(.exercises) { ExercisesView() }
                 tabContent(.future) { WebViewScreen(path: "#future") }
-                tabContent(.coach) { WebViewScreen(path: "#coach") }
                 tabContent(.settings) { WebViewScreen(path: "#progress") }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
