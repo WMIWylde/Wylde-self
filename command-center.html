@@ -259,8 +259,137 @@
 
     [data-lucide]{ width:15px; height:15px; stroke-width:1.5; }
   </style>
+
+  <!-- Pre-render unlock check -->
+  <script>
+    (function(){
+      try {
+        if (localStorage.getItem('wyldeself_clinical_access') === 'true') {
+          document.documentElement.setAttribute('data-unlocked', 'true');
+        }
+      } catch(e) {}
+    })();
+  </script>
 </head>
 <body class="bg-paper text-ink min-h-screen">
+
+  <!-- ━━━━━━━━━━━━━━━━━━ ACCESS GATE ━━━━━━━━━━━━━━━━━━ -->
+  <div id="gate-overlay" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+    <div class="gate-card">
+      <img src="/logo-icon.png" alt="" class="gate-logo" />
+      <h2 id="gate-title" class="gate-title">Clinical access</h2>
+      <p class="gate-sub">Enter the access code shared with you to view the live dashboard and clinical overview.</p>
+      <form id="gate-form" autocomplete="off">
+        <input id="gate-input" type="password" placeholder="Access code" autocomplete="off" autofocus aria-label="Access code" />
+        <button id="gate-submit" type="submit">Unlock</button>
+        <p id="gate-error" hidden>That code didn't work. Check your email or request access below.</p>
+      </form>
+      <a class="gate-request" href="mailto:clinical@wyldeself.com?subject=Wylde%20Self%20%C2%B7%20Clinical%20Access&amp;body=Practice%20name%3A%0APractice%20size%3A%0ACurrent%20EHR%3A%0ABiggest%20between-visit%20pain%20point%3A%0A">Don't have a code? Request access →</a>
+    </div>
+  </div>
+  <style>
+    html:not([data-unlocked="true"]) body { overflow: hidden !important; }
+    [data-unlocked="true"] #gate-overlay { display: none !important; }
+    #gate-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(247,245,240,0.96);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      display: grid; place-items: center; padding: 24px;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      transition: opacity 0.4s ease;
+    }
+    .gate-card {
+      width: 100%; max-width: 440px;
+      background: #FFFFFF;
+      border: 1px solid rgba(45,42,38,0.08);
+      border-radius: 24px;
+      padding: 44px 36px 32px;
+      box-shadow: 0 24px 60px rgba(45,42,38,0.10), 0 4px 16px rgba(45,42,38,0.06);
+      text-align: center;
+    }
+    .gate-logo { width: 36px; height: 36px; border-radius: 10px; margin: 0 auto 20px; display: block; }
+    .gate-title {
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 400; font-size: 28px;
+      letter-spacing: -0.018em; line-height: 1.15;
+      color: #2A2823; margin-bottom: 10px;
+    }
+    .gate-sub { font-size: 14.5px; line-height: 1.6; color: #6B675F; margin: 0 auto 26px; max-width: 36ch; }
+    #gate-form { display: flex; flex-direction: column; gap: 12px; }
+    #gate-input {
+      width: 100%; padding: 14px 16px;
+      border: 1px solid rgba(45,42,38,0.14);
+      border-radius: 12px; background: #FAF8F3;
+      font-size: 14px; font-family: inherit; color: #2A2823;
+      letter-spacing: -0.005em;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    #gate-input::placeholder { color: #9A958B; }
+    #gate-input:focus { outline: none; border-color: #6E8A7C; background: #FFFFFF; }
+    #gate-submit {
+      padding: 14px 22px; border-radius: 999px;
+      background: #2A2823; color: #FAF8F3;
+      font-weight: 500; font-size: 14px; letter-spacing: -0.005em;
+      border: 1px solid #2A2823; cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+      font-family: inherit;
+    }
+    #gate-submit:hover { transform: translateY(-1px); background: #3D3A33; }
+    #gate-error {
+      font-size: 13px; color: #8E4951;
+      background: rgba(184,101,112,0.08);
+      border: 1px solid rgba(184,101,112,0.20);
+      border-radius: 10px; padding: 10px 14px; margin: 4px 0 0;
+      line-height: 1.5;
+    }
+    .gate-request {
+      display: block; margin-top: 22px; padding-top: 22px;
+      border-top: 1px solid rgba(45,42,38,0.08);
+      font-size: 13.5px; color: #5C7A6C;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .gate-request:hover { color: #2A2823; }
+  </style>
+  <script>
+    (function() {
+      // ─── CHANGE THIS to whatever code you share with clinicians.
+      // Client-side gate — soft access control, not security.
+      const ACCESS_CODE = 'WyldeClinical2026';
+      const ACCESS_KEY  = 'wyldeself_clinical_access';
+      // ───────────────────────────────────────────────────────
+
+      try {
+        if (localStorage.getItem(ACCESS_KEY) === 'true') {
+          document.documentElement.setAttribute('data-unlocked', 'true');
+          return;
+        }
+      } catch(e) {}
+
+      const form    = document.getElementById('gate-form');
+      const input   = document.getElementById('gate-input');
+      const error   = document.getElementById('gate-error');
+      const overlay = document.getElementById('gate-overlay');
+
+      setTimeout(() => input?.focus(), 60);
+
+      form?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const code = input.value.trim();
+        if (code === ACCESS_CODE) {
+          try { localStorage.setItem(ACCESS_KEY, 'true'); } catch(e) {}
+          document.documentElement.setAttribute('data-unlocked', 'true');
+          overlay.style.opacity = '0';
+          setTimeout(() => overlay.remove(), 400);
+        } else {
+          error.hidden = false;
+          input.value = '';
+          input.focus();
+        }
+      });
+    })();
+  </script>
+  <!-- ━━━━━━━━━━━━━━━━━━ /ACCESS GATE ━━━━━━━━━━━━━━━━━━ -->
 
   <div class="ambient" aria-hidden="true"></div>
 
