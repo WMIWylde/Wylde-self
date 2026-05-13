@@ -222,6 +222,22 @@ These are not MVP. They inform schema design and account structure.
 
 ---
 
+## Relationship to the Wylde Business Model
+
+WyldeSelf the iOS app is **the Tier 1 entry point** of the broader Wylde ecosystem. It is the infrastructure layer that supports — and ultimately funnels users into — premium service tiers (Wylde Membership, Wylde Concierge).
+
+This doesn't change the product spec in this document. The app is built as a great standalone product first. But it's worth knowing the business context for two reasons:
+
+1. **Future surface area.** In post-launch phases (Phase 6+), the app will surface tier-aware content: a Membership view for Tier 2 subscribers, a Concierge view for Tier 3 clients with personalized protocols and direct messaging with Wilke. None of this is Phase 1-5 work — but the architecture should not preclude it.
+
+2. **Personalization principle holds across tiers.** The Personalization vs Identity rules in this document apply equally to all tiers. A Tier 3 concierge client's personalized protocol view doesn't change the brand experience or break the universal positioning. It surfaces personalized *content*, not a personalized brand.
+
+For the full business model, tier definitions, partnership strategy, and 12-month sequencing, see `BUSINESS.md` in the repo root.
+
+When working on app features that touch tier-awareness (billing, membership status, premium content gating, coach-side dashboards), reference BUSINESS.md for the canonical tier structure. When working on core product features (journey loop, AI guide, design system, IA), this document remains the source of truth.
+
+---
+
 ## Active Direction
 
 Strategic pivot in progress: WyldeSelf has been re-positioned from a men's-only product to a universal identity transformation platform. iOS architecture is moving from WebView-hybrid to fully native SwiftUI. AI guide is consolidating to a single presence (no Coach tab, no personas). Visual identity is moving from dark/masculine/sacred-geometry toward premium/minimal/cinematic.
