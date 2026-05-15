@@ -340,6 +340,46 @@
     .ob-diet-pills { margin-bottom: 12px; }
     .ob-diet-notes { margin-top: 4px; }
     .ob-finish { flex: 2; }
+    .ob-progress-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; gap: 12px; }
+    .ob-progress-label { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin: 0; }
+    .ob-progress-time { font-size: 12px; color: var(--text2); margin: 0; white-space: nowrap; }
+    .ob-progress-bar-track { height: 4px; border-radius: 999px; background: rgba(255,248,235,0.08); overflow: hidden; margin-bottom: 14px; }
+    .ob-progress-bar-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, var(--sage), rgba(200,169,110,0.85)); transition: width 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .ob-flow-error {
+      display: none;
+      margin: 0 0 16px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.45;
+      color: var(--text);
+      background: rgba(220, 80, 80, 0.09);
+      border: 1px solid rgba(220, 80, 80, 0.32);
+    }
+    .ob-flow-error.ob-flow-error-visible { display: block; }
+    .ob-container .btn:active { transform: scale(0.98); }
+    .ob-step-sage { margin: 0 -8px 0; padding: 20px 16px 8px; border-radius: 20px; background: linear-gradient(170deg, #6b8b5e 0%, #5a7a4e 45%, #4a6a40 100%); }
+    .ob-step-sage .ob-step-title { color: #fff !important; }
+    .ob-step-sage .ob-step-sub { color: rgba(255,255,255,0.62) !important; }
+    .ob-step-sage .form-group label { color: rgba(255,255,255,0.55) !important; }
+    .ob-upload-zone { position: relative; background: rgba(255,255,255,0.12); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); border-radius: 20px; padding: 36px 20px; text-align: center; cursor: pointer; transition: box-shadow 0.25s, border-color 0.25s; overflow: hidden; }
+    .ob-upload-zone:hover { box-shadow: 0 0 0 1px rgba(200,169,110,0.35), 0 12px 40px rgba(0,0,0,0.2); }
+    .ob-upload-zone.ob-upload-error { border-color: rgba(220,80,80,0.55); }
+    .ob-silhouette { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0.22; pointer-events: none; }
+    .ob-upload-preview { width: 100%; max-height: 280px; object-fit: cover; border-radius: 14px; display: none; position: relative; z-index: 2; }
+    .ob-upload-icon { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; position: relative; z-index: 2; }
+    .ob-timeline-pill { display: inline-block; margin-top: 14px; padding: 6px 14px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.2); }
+    .ob-step-coach { margin: 0 -8px; padding: 24px 16px 8px; border-radius: 20px; background: linear-gradient(165deg, #5a7a4e 0%, #3d4a38 55%, #2a3028 100%); border: 1px solid rgba(255,255,255,0.08); }
+    .ob-coach-gold { font-size: clamp(36px, 10vw, 52px); font-weight: 700; letter-spacing: 0.08em; color: var(--gold); text-align: center; margin: 8px 0 16px; text-shadow: 0 4px 24px rgba(0,0,0,0.35); }
+    .ob-coach-lead { font-size: 17px; font-weight: 600; color: #fff; line-height: 1.45; margin: 0 0 10px; }
+    .ob-coach-body { font-size: 14px; color: rgba(255,255,255,0.72); line-height: 1.55; margin: 0 0 18px; }
+    .ob-phase-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+    .ob-phase-card p { margin: 0; color: rgba(255,255,255,0.55); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+    .ob-phase-card h3 { margin: 8px 0 4px; font-size: 18px; color: #fff; letter-spacing: -0.02em; }
+    .ob-commit-list { list-style: none; padding: 0; margin: 0; font-size: 13px; color: rgba(255,255,255,0.78); line-height: 1.65; }
+    .ob-commit-list li { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .ob-commit-list li:last-child { border-bottom: none; }
+    .ob-cta-gold { background: var(--gold) !important; color: #0B0B0B !important; border-radius: 999px !important; font-weight: 700 !important; letter-spacing: 0.06em; }
 
     /* TIMELINE */
     .timeline-btn { flex:1; font-family:var(--ff-body); font-size:12px; font-weight:500; letter-spacing:0.02em; padding:10px; border:1px solid var(--border); background:transparent; color:var(--text2); cursor:pointer; transition:all 0.2s; border-radius:12px; }
@@ -2526,22 +2566,29 @@
 <div class="screen active" id="screen-onboard">
   <div class="container ob-container">
 
-    <!-- Progress dots -->
+    <div class="ob-progress-head">
+      <p class="ob-progress-label" id="obProgressLabel">Step 1 of 6</p>
+      <p class="ob-progress-time" id="obProgressTime">About 5 min</p>
+    </div>
+    <div class="ob-progress-bar-track"><div class="ob-progress-bar-fill" id="obProgressBarFill"></div></div>
     <div class="ob-progress" id="obProgress">
       <div class="ob-progress-dot ob-current"></div>
       <div class="ob-progress-dot"></div>
       <div class="ob-progress-dot"></div>
       <div class="ob-progress-dot"></div>
+      <div class="ob-progress-dot"></div>
+      <div class="ob-progress-dot"></div>
     </div>
+    <div class="ob-flow-error" id="obFlowError" role="alert" aria-live="polite" aria-atomic="true" aria-hidden="true"></div>
 
-    <!-- STEP 1 — Name + Gender -->
+    <!-- STEP 1 — Name + identity -->
     <div class="ob-step ob-active" id="obStep1">
-      <h1 class="ob-step-title">What should we call you?</h1>
-      <p class="ob-step-sub">This is your journey. Let's make it personal.</p>
+      <h1 class="ob-step-title">Let's start with who you are</h1>
+      <p class="ob-step-sub">This is your story. We&rsquo;ll shape everything around <em>you</em> — not a template.</p>
 
       <div class="form-group ob-field">
         <label>First name</label>
-        <input class="input ob-input-lg" type="text" id="userName" placeholder="Your name" />
+        <input class="input ob-input-lg" type="text" id="userName" placeholder="Your first name" autocomplete="given-name" />
       </div>
 
       <div class="form-group">
@@ -2549,72 +2596,199 @@
         <div class="pill-group" id="genderGroup">
           <button class="pill" onclick="selectPill(this,'genderGroup')">Male</button>
           <button class="pill" onclick="selectPill(this,'genderGroup')">Female</button>
+          <button class="pill" onclick="selectPill(this,'genderGroup')">Non-binary</button>
         </div>
       </div>
 
       <div class="ob-nav">
-        <button class="btn ob-next" onclick="obNext(1)">Continue</button>
+        <button type="button" class="btn ob-next" onclick="obNext(1)">Continue</button>
       </div>
     </div>
 
-    <!-- STEP 2 — Goals + Fitness Level -->
+    <!-- STEP 2 — Photo + future vision (emotional anchor) -->
     <div class="ob-step" id="obStep2">
-      <h1 class="ob-step-title">What are you training for?</h1>
-      <p class="ob-step-sub">Select all that apply — we'll build around your goals.</p>
+      <div class="ob-step-sage">
+        <h1 class="ob-step-title">This is you if you follow through.</h1>
+        <p class="ob-step-sub">Upload a photo of yourself today. See the version of you that did the work.</p>
+
+        <div class="ob-upload-zone" id="obUploadZone" role="button" tabindex="0" onclick="document.getElementById('obPhotoInput').click()">
+          <img class="ob-silhouette" id="obSilhouette" src="futureselfman.png" alt="" />
+          <input type="file" id="obPhotoInput" accept="image/jpeg,image/png,image/webp,image/jpg" style="display:none;" onchange="handleObOnboardPhoto(event.target.files[0])" />
+          <img class="ob-upload-preview" id="obUploadPreview" src="" alt="" />
+          <div id="obUploadPlaceholder">
+            <div class="ob-upload-icon"><span>&#8593;</span></div>
+            <p style="font-size:16px;color:#fff;font-weight:600;margin:0 0 4px;position:relative;z-index:2;">Drag an image here, or tap to choose</p>
+            <p style="font-size:13px;color:rgba(255,255,255,0.5);margin:0;position:relative;z-index:2;">JPG, PNG, or WebP &middot; max 5MB</p>
+          </div>
+        </div>
+        <p class="ob-timeline-pill">12 weeks to transformation</p>
+
+        <p class="ob-step-sub" style="margin-top:28px;margin-bottom:12px;">Most people never see who they could become. You will.</p>
+        <div class="form-group ob-field" style="margin-bottom:0;">
+          <label style="color:rgba(255,255,255,0.55);">Describe the version of you you&rsquo;re becoming <span class="ob-optional">(optional)</span></label>
+          <textarea class="input ob-textarea" id="obVisionText" rows="2" placeholder="e.g., Lean, energetic, confident, stronger" style="background:rgba(0,0,0,0.22);border-color:rgba(255,255,255,0.22);color:#fff;"></textarea>
+        </div>
+      </div>
+
+      <div class="ob-nav">
+        <button type="button" class="btn ob-back" onclick="obBack(2)">Back</button>
+        <button type="button" class="btn ob-next" onclick="obNext(2)">I&rsquo;m Ready to Transform &rarr;</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 — Goals + motivation + obstacles -->
+    <div class="ob-step" id="obStep3">
+      <h1 class="ob-step-title">Your transformation mission</h1>
+      <p class="ob-step-sub">Let&rsquo;s build a program that fits <em>you</em> — goals, fuel, and friction included.</p>
 
       <div class="form-group ob-field">
-        <label>Your goals <span class="ob-optional">(select multiple)</span></label>
+        <label>What are you training for? <span class="ob-optional">(select all that fit)</span></label>
         <div class="pill-group" id="goalGroup">
-          <button class="pill" onclick="togglePill(this)">Burn fat</button>
-          <button class="pill" onclick="togglePill(this)">Build muscle</button>
-          <button class="pill" onclick="togglePill(this)">Get lean &amp; athletic</button>
-          <button class="pill" onclick="togglePill(this)">Build confidence</button>
-          <button class="pill" onclick="togglePill(this)">Improve endurance</button>
-          <button class="pill" onclick="togglePill(this)">Increase flexibility</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Burn fat</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Build muscle</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Get lean &amp; athletic</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Build confidence</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Improve endurance</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Increase flexibility</button>
         </div>
+      </div>
+
+      <div class="form-group ob-field">
+        <label>What&rsquo;s driving you most? <span class="ob-optional">(select all that fit)</span></label>
+        <div class="pill-group" id="motivationGroup">
+          <button type="button" class="pill" onclick="togglePill(this)">Get stronger</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Lose weight / get lean</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Build confidence</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Feel energetic</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Improve health</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Challenge myself</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Look better</button>
+        </div>
+      </div>
+
+      <div class="form-group ob-field">
+        <label>What&rsquo;s your biggest obstacle?</label>
+        <input class="input" id="obstacleInput" type="text" placeholder="e.g., Time, consistency, motivation, injury" />
       </div>
 
       <div class="form-group ob-field">
         <label>Current fitness level</label>
         <div class="pill-group" id="levelGroup">
-          <button class="pill" onclick="selectPill(this,'levelGroup')">Beginner</button>
-          <button class="pill" onclick="selectPill(this,'levelGroup')">Intermediate</button>
-          <button class="pill" onclick="selectPill(this,'levelGroup')">Advanced</button>
+          <button type="button" class="pill" onclick="selectPill(this,'levelGroup')">Beginner</button>
+          <button type="button" class="pill" onclick="selectPill(this,'levelGroup')">Intermediate</button>
+          <button type="button" class="pill" onclick="selectPill(this,'levelGroup')">Advanced</button>
         </div>
       </div>
 
       <div class="form-group">
-        <label>Days per week</label>
+        <label>Days per week you&rsquo;re willing to commit</label>
         <div class="pill-group" id="daysGroup">
-          <button class="pill" onclick="selectPill(this,'daysGroup')">3 days</button>
-          <button class="pill" onclick="selectPill(this,'daysGroup')">4 days</button>
-          <button class="pill" onclick="selectPill(this,'daysGroup')">5 days</button>
-          <button class="pill" onclick="selectPill(this,'daysGroup')">6 days</button>
+          <button type="button" class="pill" onclick="selectPill(this,'daysGroup')">3 days</button>
+          <button type="button" class="pill" onclick="selectPill(this,'daysGroup')">4 days</button>
+          <button type="button" class="pill" onclick="selectPill(this,'daysGroup')">5 days</button>
+          <button type="button" class="pill" onclick="selectPill(this,'daysGroup')">6 days</button>
+        </div>
+      </div>
+
+      <div class="ob-nav">
+        <button type="button" class="btn ob-back" onclick="obBack(3)">Back</button>
+        <button type="button" class="btn ob-next" onclick="obNext(3)">Lock In My Mission &rarr;</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 — Health + lifestyle -->
+    <div class="ob-step" id="obStep4">
+      <h1 class="ob-step-title">Your current foundation</h1>
+      <p class="ob-step-sub">Helps us personalize your coaching — training load, recovery, and how we talk to you.</p>
+
+      <div class="form-group ob-field">
+        <label>Age range</label>
+        <div class="pill-group" id="ageGroup">
+          <button type="button" class="pill" onclick="selectPill(this,'ageGroup')">18–24</button>
+          <button type="button" class="pill" onclick="selectPill(this,'ageGroup')">25–34</button>
+          <button type="button" class="pill" onclick="selectPill(this,'ageGroup')">35–44</button>
+          <button type="button" class="pill" onclick="selectPill(this,'ageGroup')">45–54</button>
+          <button type="button" class="pill" onclick="selectPill(this,'ageGroup')">55+</button>
         </div>
       </div>
 
       <div class="form-group ob-field">
-        <label>Do you have equipment at home?</label>
-        <div class="pill-group" id="equipmentGroup">
-          <button class="pill" onclick="selectPill(this,'equipmentGroup')">Yes — full setup</button>
-          <button class="pill" onclick="selectPill(this,'equipmentGroup')">Some basics</button>
-          <button class="pill" onclick="selectPill(this,'equipmentGroup')">No equipment</button>
+        <label>Height</label>
+        <div class="pill-group" id="heightGroup">
+          <button type="button" class="pill" onclick="selectPill(this,'heightGroup')">Under 5'4"</button>
+          <button type="button" class="pill" onclick="selectPill(this,'heightGroup')">5'4"–5'7"</button>
+          <button type="button" class="pill" onclick="selectPill(this,'heightGroup')">5'8"–5'11"</button>
+          <button type="button" class="pill" onclick="selectPill(this,'heightGroup')">6'0"–6'3"</button>
+          <button type="button" class="pill" onclick="selectPill(this,'heightGroup')">Over 6'3"</button>
         </div>
+      </div>
+
+      <div class="form-group ob-field">
+        <label>Current weight</label>
+        <div class="ob-weight-row">
+          <input class="input ob-weight-input" type="number" id="weightInput" placeholder="e.g. 180" />
+          <div class="pill-group" id="weightUnitGroup">
+            <button type="button" class="pill selected" onclick="selectPill(this,'weightUnitGroup')">lbs</button>
+            <button type="button" class="pill" onclick="selectPill(this,'weightUnitGroup')">kg</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group ob-field">
+        <label>Sleep most nights</label>
+        <div class="pill-group" id="sleepGroup">
+          <button type="button" class="pill" onclick="selectPill(this,'sleepGroup')">4–6 hours</button>
+          <button type="button" class="pill" onclick="selectPill(this,'sleepGroup')">6–7 hours</button>
+          <button type="button" class="pill" onclick="selectPill(this,'sleepGroup')">7–8 hours</button>
+          <button type="button" class="pill" onclick="selectPill(this,'sleepGroup')">8+ hours</button>
+        </div>
+      </div>
+
+      <div class="form-group ob-field">
+        <label>Stress level (right now)</label>
+        <div class="pill-group" id="stressGroup">
+          <button type="button" class="pill" onclick="selectPill(this,'stressGroup')">Low</button>
+          <button type="button" class="pill" onclick="selectPill(this,'stressGroup')">Medium</button>
+          <button type="button" class="pill" onclick="selectPill(this,'stressGroup')">High</button>
+        </div>
+      </div>
+
+      <div class="form-group ob-field">
+        <label>Energy level (today)</label>
+        <div class="pill-group" id="energyGroup">
+          <button type="button" class="pill" onclick="selectPill(this,'energyGroup')">Exhausted</button>
+          <button type="button" class="pill" onclick="selectPill(this,'energyGroup')">Low</button>
+          <button type="button" class="pill" onclick="selectPill(this,'energyGroup')">Medium</button>
+          <button type="button" class="pill" onclick="selectPill(this,'energyGroup')">High</button>
+          <button type="button" class="pill" onclick="selectPill(this,'energyGroup')">Peak</button>
+        </div>
+      </div>
+
+      <div class="form-group ob-field">
+        <label>Health considerations <span class="ob-optional">(optional)</span></label>
+        <div class="pill-group" id="healthGroup">
+          <button type="button" class="pill" onclick="togglePill(this)">Lower back</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Knee</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Shoulder</button>
+          <button type="button" class="pill" onclick="togglePill(this)">High BP</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Diabetes</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Postpartum</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Heart</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Arthritis</button>
+          <button type="button" class="pill" onclick="togglePill(this)">None</button>
+        </div>
+        <textarea class="input ob-textarea" id="healthNotes" placeholder="Anything else we should know..." rows="2"></textarea>
       </div>
 
       <div class="form-group ob-field">
         <label>Do you have access to a gym?</label>
         <div class="pill-group" id="gymGroup">
-          <button class="pill" onclick="selectPill(this,'gymGroup'); toggleGymDetails()">Yes</button>
-          <button class="pill" onclick="selectPill(this,'gymGroup'); toggleGymDetails()">No</button>
-          <button class="pill" onclick="selectPill(this,'gymGroup'); toggleGymDetails()">Sometimes</button>
+          <button type="button" class="pill" onclick="selectPill(this,'gymGroup'); toggleGymDetails()">Yes</button>
+          <button type="button" class="pill" onclick="selectPill(this,'gymGroup'); toggleGymDetails()">No</button>
+          <button type="button" class="pill" onclick="selectPill(this,'gymGroup'); toggleGymDetails()">Sometimes</button>
         </div>
       </div>
 
-      <!-- Gym details (shown when Yes/Sometimes selected) -->
-      <!-- Replaced 12-pill equipment picker with a 3-option type picker.
-           AI program builder infers what equipment is available from the
-           gym type + name. Reduces onboarding tap-count from ~8 to 2. -->
       <div id="gymDetailsSection" style="display:none;">
         <div class="form-group ob-field">
           <label>Which gym? <span class="ob-optional">(we'll find it)</span></label>
@@ -2628,7 +2802,6 @@
                    style="font-size:15px;" />
             <div id="gymSearchDropdown"
                  style="display:none;position:absolute;top:100%;left:0;right:0;margin-top:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px;max-height:280px;overflow-y:auto;z-index:50;box-shadow:0 12px 40px rgba(0,0,0,0.5);">
-              <!-- Populated by searchGymLocations() -->
             </div>
           </div>
           <p id="gymSelectedConfirm" style="display:none;font-size:12px;color:var(--sage);margin:6px 0 0;font-style:italic;">
@@ -2639,118 +2812,98 @@
         <div class="form-group ob-field">
           <label>What kind of setup do you have there?</label>
           <div class="pill-group" id="gymTypeGroup">
-            <button class="pill" onclick="selectPill(this,'gymTypeGroup')">Commercial gym (full equipment)</button>
-            <button class="pill" onclick="selectPill(this,'gymTypeGroup')">Garage / home gym (some equipment)</button>
-            <button class="pill" onclick="selectPill(this,'gymTypeGroup')">Bodyweight / minimal</button>
+            <button type="button" class="pill" onclick="selectPill(this,'gymTypeGroup')">Commercial gym (full equipment)</button>
+            <button type="button" class="pill" onclick="selectPill(this,'gymTypeGroup')">Garage / home gym (some equipment)</button>
+            <button type="button" class="pill" onclick="selectPill(this,'gymTypeGroup')">Bodyweight / minimal</button>
           </div>
+        </div>
+      </div>
+
+      <div class="form-group ob-field">
+        <label>Equipment at home</label>
+        <div class="pill-group" id="equipmentGroup">
+          <button type="button" class="pill" onclick="selectPill(this,'equipmentGroup')">Full setup</button>
+          <button type="button" class="pill" onclick="selectPill(this,'equipmentGroup')">Some basics</button>
+          <button type="button" class="pill" onclick="selectPill(this,'equipmentGroup')">None</button>
         </div>
       </div>
 
       <div class="form-group ob-field">
         <label>Open to workout classes? <span class="ob-optional">(optional)</span></label>
         <div class="pill-group" id="classGroup">
-          <button class="pill" onclick="togglePill(this)">Yoga</button>
-          <button class="pill" onclick="togglePill(this)">Pilates</button>
-          <button class="pill" onclick="togglePill(this)">Spin / Cycling</button>
-          <button class="pill" onclick="togglePill(this)">HIIT classes</button>
-          <button class="pill" onclick="togglePill(this)">Boxing</button>
-          <button class="pill" onclick="togglePill(this)">Swimming</button>
-          <button class="pill" onclick="togglePill(this)">Not interested</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Yoga</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Pilates</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Spin / Cycling</button>
+          <button type="button" class="pill" onclick="togglePill(this)">HIIT classes</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Boxing</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Swimming</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Not interested</button>
         </div>
       </div>
 
       <div class="ob-nav">
-        <button class="btn ob-back" onclick="obBack(2)">Back</button>
-        <button class="btn ob-next" onclick="obNext(2)">Continue</button>
+        <button type="button" class="btn ob-back" onclick="obBack(4)">Back</button>
+        <button type="button" class="btn ob-next" onclick="obNext(4)">Continue</button>
       </div>
     </div>
 
-    <!-- STEP 3 — Body details -->
-    <div class="ob-step" id="obStep3">
-      <h1 class="ob-step-title">A few details</h1>
-      <p class="ob-step-sub">Helps us calibrate your program. Skip anything you'd rather not share.</p>
-
-      <div class="form-group ob-field">
-        <label>Age range</label>
-        <div class="pill-group" id="ageGroup">
-          <button class="pill" onclick="selectPill(this,'ageGroup')">18–24</button>
-          <button class="pill" onclick="selectPill(this,'ageGroup')">25–34</button>
-          <button class="pill" onclick="selectPill(this,'ageGroup')">35–44</button>
-          <button class="pill" onclick="selectPill(this,'ageGroup')">45–54</button>
-          <button class="pill" onclick="selectPill(this,'ageGroup')">55+</button>
-        </div>
-      </div>
-
-      <div class="form-group ob-field">
-        <label>Height</label>
-        <div class="pill-group" id="heightGroup">
-          <button class="pill" onclick="selectPill(this,'heightGroup')">Under 5'4"</button>
-          <button class="pill" onclick="selectPill(this,'heightGroup')">5'4"–5'7"</button>
-          <button class="pill" onclick="selectPill(this,'heightGroup')">5'8"–5'11"</button>
-          <button class="pill" onclick="selectPill(this,'heightGroup')">6'0"–6'3"</button>
-          <button class="pill" onclick="selectPill(this,'heightGroup')">Over 6'3"</button>
-        </div>
-      </div>
-
-      <div class="form-group ob-field">
-        <label>Current weight</label>
-        <div class="ob-weight-row">
-          <input class="input ob-weight-input" type="number" id="weightInput" placeholder="e.g. 180" />
-          <div class="pill-group" id="weightUnitGroup">
-            <button class="pill selected" onclick="selectPill(this,'weightUnitGroup')">lbs</button>
-            <button class="pill" onclick="selectPill(this,'weightUnitGroup')">kg</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-group ob-field">
-        <label>Health concerns <span class="ob-optional">(optional)</span></label>
-        <div class="pill-group" id="healthGroup">
-          <button class="pill" onclick="togglePill(this)">Lower back pain</button>
-          <button class="pill" onclick="togglePill(this)">Knee issues</button>
-          <button class="pill" onclick="togglePill(this)">Shoulder injury</button>
-          <button class="pill" onclick="togglePill(this)">High blood pressure</button>
-          <button class="pill" onclick="togglePill(this)">Diabetes</button>
-          <button class="pill" onclick="togglePill(this)">Postpartum</button>
-          <button class="pill" onclick="togglePill(this)">Heart condition</button>
-          <button class="pill" onclick="togglePill(this)">Arthritis</button>
-          <button class="pill" onclick="togglePill(this)">None</button>
-        </div>
-        <textarea class="input ob-textarea" id="healthNotes" placeholder="Anything else we should know..." rows="2"></textarea>
-      </div>
-
-      <div class="ob-nav">
-        <button class="btn ob-back" onclick="obBack(3)">Back</button>
-        <button class="btn ob-next" onclick="obNext(3)">Continue</button>
-      </div>
-    </div>
-
-    <!-- STEP 4 — Diet + Finish -->
-    <div class="ob-step" id="obStep4">
-      <h1 class="ob-step-title">Almost there</h1>
-      <p class="ob-step-sub">Any dietary preferences? Then we'll build your future self.</p>
+    <!-- STEP 5 — Nutrition foundation -->
+    <div class="ob-step" id="obStep5">
+      <h1 class="ob-step-title">Your nutrition foundation</h1>
+      <p class="ob-step-sub">Food is part of identity. We won&rsquo;t fight who you are — we&rsquo;ll build around it.</p>
 
       <div class="form-group ob-field">
         <label>Dietary preferences <span class="ob-optional">(optional)</span></label>
         <div class="pill-group ob-diet-pills" id="dietGroup">
-          <button class="pill" onclick="togglePill(this)">No restrictions</button>
-          <button class="pill" onclick="togglePill(this)">Vegetarian</button>
-          <button class="pill" onclick="togglePill(this)">Vegan</button>
-          <button class="pill" onclick="togglePill(this)">Gluten-free</button>
-          <button class="pill" onclick="togglePill(this)">Dairy-free</button>
-          <button class="pill" onclick="togglePill(this)">Keto</button>
-          <button class="pill" onclick="togglePill(this)">Paleo</button>
-          <button class="pill" onclick="togglePill(this)">Halal</button>
-          <button class="pill" onclick="togglePill(this)">Kosher</button>
-          <button class="pill" onclick="togglePill(this)">Nut allergy</button>
-          <button class="pill" onclick="togglePill(this)">Shellfish allergy</button>
+          <button type="button" class="pill" onclick="togglePill(this)">No restrictions</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Vegetarian</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Vegan</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Gluten-free</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Dairy-free</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Keto</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Paleo</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Halal</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Kosher</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Nut allergy</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Shellfish allergy</button>
         </div>
         <input class="input ob-diet-notes" id="dietNotes" placeholder="Any other dietary needs or allergies..." />
       </div>
 
       <div class="ob-nav">
-        <button class="btn ob-back" onclick="obBack(4)">Back</button>
-        <button class="btn ob-next ob-finish" onclick="completeOnboard()">Build My Future Self →</button>
+        <button type="button" class="btn ob-back" onclick="obBack(5)">Back</button>
+        <button type="button" class="btn ob-next" onclick="obNext(5)">Continue</button>
+      </div>
+    </div>
+
+    <!-- STEP 6 — Coach introduction + commitment -->
+    <div class="ob-step" id="obStep6">
+      <div class="ob-step-coach">
+        <p class="ob-progress-label" style="color:rgba(255,255,255,0.45);letter-spacing:0.2em;">Meet your future self</p>
+        <h1 class="ob-step-title" style="color:#fff;margin-bottom:8px;">Meet Future <span id="obCoachHeadFirst">You</span></h1>
+        <p class="ob-step-sub" style="color:rgba(255,255,255,0.6);margin-bottom:20px;">Personalized from what you just told us.</p>
+
+        <p class="ob-coach-gold" id="obCoachGoldName">YOU</p>
+        <p class="ob-coach-lead" id="obCoachLead"></p>
+        <p class="ob-coach-body" id="obCoachBody">I&rsquo;m the version of you that&rsquo;s already walked this path. For the next 12 weeks, I&rsquo;m here to make sure you become me.</p>
+
+        <div class="ob-phase-card">
+          <p>Phase 1</p>
+          <h3>Your first transformation</h3>
+          <p style="font-size:13px;color:rgba(255,255,255,0.65);margin:8px 0 0;line-height:1.5;">12 weeks to your next level. Week 1 focus: build the morning ritual — stillness, intention, then motion.</p>
+        </div>
+
+        <p style="font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin:0 0 8px;">Your first day (preview)</p>
+        <ul class="ob-commit-list">
+          <li><strong>Morning ritual</strong> — Meditation 10m &rarr; Journaling 10m &rarr; Reading 15m</li>
+          <li><strong>Training</strong> — Your program, written for your level and schedule</li>
+          <li><strong>Walk + water + nutrition</strong> — Non-negotiables that keep the identity honest</li>
+        </ul>
+      </div>
+
+      <div class="ob-nav">
+        <button type="button" class="btn ob-back" onclick="obBack(6)">Back</button>
+        <button type="button" class="btn ob-next ob-cta-gold ob-finish" onclick="completeOnboard()">Let&rsquo;s Build You &rarr;</button>
       </div>
     </div>
 
@@ -3239,7 +3392,17 @@
     ];
     if (!ovPhase.isSetupComplete) {
       if (hero) hero.textContent = 'Day 1 of ' + dur;
-      if (sub) sub.textContent = SUB_LINES[0];
+      if (sub) {
+        var warm = '';
+        try {
+          if (typeof state !== 'undefined' && state && state.name) {
+            var fn = state.name.trim().split(/\s+/)[0];
+            var g0 = state.goal || ((state.goals && state.goals[0]) || 'this transformation');
+            warm = fn + ', you committed to ' + g0 + '. Your morning ritual starts when you tap Start Today.';
+          }
+        } catch (_) {}
+        sub.textContent = warm || SUB_LINES[0];
+      }
       if (phase) phase.textContent = 'Phase 1 \u00b7 Your First Transformation';
       if (identity) identity.textContent = ovGetIdentityLine(1);
       if (progBar) progBar.style.width = '0%';
@@ -3376,21 +3539,23 @@
   // Sync hero image with future-self generated photo
   function ovSyncHeroImage() {
     var heroImg = document.getElementById('ov-hero-img');
-    if (!heroImg) return;
-    // Try to get the generated 12-week image
+    var src = null;
     if (typeof _generatedImages !== 'undefined' && _generatedImages && _generatedImages['12weeks']) {
-      heroImg.src = _generatedImages['12weeks'];
+      src = _generatedImages['12weeks'];
+    } else if (typeof state !== 'undefined' && state && state.beforePhotoDataUrl) {
+      src = state.beforePhotoDataUrl;
     }
-    // Also populate the future-self thumbnail
+    if (heroImg && src) heroImg.src = src;
     var thumb = document.getElementById('ov-future-thumb');
-    if (thumb && typeof _generatedImages !== 'undefined' && _generatedImages && _generatedImages['12weeks']) {
-      if (!thumb.querySelector('img')) {
+    if (thumb && src) {
+      var existing = thumb.querySelector('img');
+      if (!existing) {
         var img = document.createElement('img');
-        img.src = _generatedImages['12weeks'];
-        img.alt = 'Future you';
+        img.src = src;
+        img.alt = 'Your future self';
         thumb.insertBefore(img, thumb.firstChild);
       } else {
-        thumb.querySelector('img').src = _generatedImages['12weeks'];
+        existing.src = src;
       }
     }
   }
@@ -4571,8 +4736,19 @@
   function signOut() {
     var sb = _getSupabase();
     var doSignOut = function() {
-      Object.assign(state, { name:'', gender:'', age:'', height:'', weight:'', goal:'', level:'', days:'', sessions:0, streak:0, log:[], avatarUrl:'', xp:0, badges:[] });
+      Object.assign(state, {
+        name: '', gender: '', age: '', height: '', weight: '', weightUnit: 'lbs',
+        goal: '', goals: [], motivations: [], obstacle: '', level: '', days: '',
+        sleepPerNight: '', stressLevel: '', energyBaseline: '', futureVisionText: '',
+        equipment: '', gymAccess: '', gymName: '', gymEquipment: [], classPreferences: [],
+        gymType: '', gymLat: null, gymLng: null, gymAddress: '', gymPlaceId: '',
+        health: [], healthNotes: '', diet: [], dietNotes: '',
+        sessions: 0, streak: 0, log: [], avatarUrl: '', beforePhotoDataUrl: '',
+        xp: 0, badges: [], joinedDate: null
+      });
       try { localStorage.removeItem('wylde_profile'); } catch(e) {}
+      try { localStorage.removeItem('wylde_before_photo'); } catch(e) {}
+      try { futurePhotoBase64 = null; } catch (e) {}
       document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.add('locked'); });
       var tabs = document.querySelectorAll('.nav-tab');
       if (tabs[0]) { tabs[0].classList.remove('locked'); tabs[0].classList.add('active'); }
@@ -4611,7 +4787,26 @@
   }
 
   async function saveProfile() {
-    try { localStorage.setItem('wylde_profile', JSON.stringify(state)); } catch(e) {}
+    try {
+      localStorage.setItem('wylde_profile', JSON.stringify(state));
+    } catch (e) {
+      if (e && (e.name === 'QuotaExceededError' || e.code === 22)) {
+        try {
+          var snap = state.beforePhotoDataUrl;
+          state.beforePhotoDataUrl = '';
+          localStorage.setItem('wylde_profile', JSON.stringify(state));
+          if (snap && snap.indexOf('data:') === 0) {
+            try { localStorage.setItem('wylde_before_photo', snap); } catch (_) {}
+          }
+          state.beforePhotoDataUrl = snap;
+          console.warn('saveProfile: profile quota exceeded; retried without inline photo (see wylde_before_photo).');
+        } catch (e2) {
+          console.warn('saveProfile:', e2);
+        }
+      } else {
+        console.warn('saveProfile:', e);
+      }
+    }
     var sb = _getSupabase();
     if (!sb || !currentUser) return;
     try {
@@ -5929,12 +6124,19 @@
         age: s.age || null,
         weight: s.weight ? (s.weight + (s.weightUnit || 'lbs')) : '',
         goal: s.goal || '',
+        level: s.level || '',
         days: s.days || '',
         streak: s.streak || 0,
         sessions: s.sessions || 0,
         diet: Array.isArray(s.diet) ? s.diet : [],
         health: Array.isArray(s.health) ? s.health : [],
-        goals: Array.isArray(s.goals) ? s.goals : (s.goal ? [s.goal] : [])
+        goals: Array.isArray(s.goals) ? s.goals : (s.goal ? [s.goal] : []),
+        motivations: Array.isArray(s.motivations) ? s.motivations : [],
+        obstacle: s.obstacle || '',
+        sleepPerNight: s.sleepPerNight || '',
+        stressLevel: s.stressLevel || '',
+        energyBaseline: s.energyBaseline || '',
+        futureVisionText: s.futureVisionText || ''
       },
       recentSets: [],          // last 25 logged sets
       personalBests: [],       // top PRs
@@ -6075,12 +6277,21 @@
     if (p.age) prof += ', age ' + p.age;
     if (p.weight) prof += ', ' + p.weight;
     if (p.goal) prof += ' — goal: ' + p.goal;
-    if (p.goals.length > 1) prof += ' (also: ' + p.goals.filter(function(g){return g!==p.goal}).join(', ') + ')';
+    if (p.goals && p.goals.length > 1) prof += ' (also: ' + p.goals.filter(function(g){return g!==p.goal}).join(', ') + ')';
     if (p.days) prof += ', training ' + p.days + 'd/wk';
+    if (p.level) prof += ', level ' + p.level;
     prof += ', streak: ' + p.streak + ' days, ' + p.sessions + ' sessions completed';
     lines.push(prof);
-    if (p.diet.length) lines.push('Diet: ' + p.diet.join(', '));
-    if (p.health.length) lines.push('Health concerns: ' + p.health.join(', '));
+    if (p.diet && p.diet.length) lines.push('Diet: ' + p.diet.join(', '));
+    if (p.health && p.health.length) lines.push('Health concerns: ' + p.health.join(', '));
+    var psych = [];
+    if (p.sleepPerNight) psych.push('sleep ' + p.sleepPerNight);
+    if (p.stressLevel) psych.push('stress ' + p.stressLevel);
+    if (p.energyBaseline) psych.push('baseline energy ' + p.energyBaseline);
+    if (psych.length) lines.push('Baseline signals: ' + psych.join(', ') + ' — tune training load and tone accordingly.');
+    if (p.motivations && p.motivations.length) lines.push('Motivations: ' + p.motivations.join(', ') + '.');
+    if (p.obstacle) lines.push('Biggest stated obstacle: "' + p.obstacle + '".');
+    if (p.futureVisionText) lines.push('Future-self vision (their words): "' + p.futureVisionText + '".');
 
     // Personal bests — gives Coach actual numbers to reference
     if (ctx.personalBests.length) {
@@ -6482,7 +6693,8 @@
   // STATE
   var state = {
     name: '', gender: '', age: '', height: '', weight: '', weightUnit: 'lbs',
-    goals: [], level: '', days: '',
+    goals: [], motivations: [], obstacle: '', level: '', days: '',
+    sleepPerNight: '', stressLevel: '', energyBaseline: '', futureVisionText: '',
     equipment: '', gymAccess: '', gymName: '', gymEquipment: [], classPreferences: [],
     // Gym location (set via gym search dropdown). Foundation for the future
     // 'members at your gym' community feature — same gymPlaceId = same gym.
@@ -6491,10 +6703,12 @@
     sessions: 0, streak: 0,
     log: [],
     avatarUrl: '',
+    beforePhotoDataUrl: '',
     joinedDate: null
   };
   // alias for new functions
   userProfile = state;
+  var futurePhotoBase64 = null;
 
   // Load saved profile from localStorage (immediate, offline-first)
   (function loadProfile() {
@@ -6503,6 +6717,17 @@
       if (saved) {
         var p = JSON.parse(saved);
         Object.assign(state, p);
+        try {
+          if (!state.beforePhotoDataUrl) {
+            var extPh = localStorage.getItem('wylde_before_photo');
+            if (extPh && extPh.indexOf('data:') === 0) state.beforePhotoDataUrl = extPh;
+          }
+        } catch (_) {}
+        try {
+          if (state.beforePhotoDataUrl && String(state.beforePhotoDataUrl).indexOf('data:') === 0) {
+            futurePhotoBase64 = state.beforePhotoDataUrl;
+          }
+        } catch (_) {}
         if (state.name) {
           document.getElementById('navUserName').textContent = state.name.toUpperCase();
           document.querySelectorAll('.nav-tab.locked').forEach(function(t){ t.classList.remove('locked'); });
@@ -6536,11 +6761,11 @@
     } catch(e) {}
     if (!state.name) {
       var waitlistName = localStorage.getItem('wylde_name');
-      if (waitlistName) {
-        state.name = waitlistName;
-        document.getElementById('navUserName').textContent = waitlistName.toUpperCase();
-        var nameInput = document.getElementById('userName');
-        if (nameInput) nameInput.value = waitlistName;
+      var nameInput = document.getElementById('userName');
+      // Do not pre-fill or assign waitlist names — it confused users (e.g.
+      // placeholder "Wilke") and incorrectly unlocked the app before onboarding.
+      if (waitlistName && nameInput && !nameInput.value) {
+        nameInput.placeholder = 'Your first name';
       }
     }
     // Auth check (Supabase if configured, else localStorage gate)
@@ -6559,6 +6784,7 @@
   var afterImages = {
     'Male':              ['glow_male.png'],
     'Female':            ['glow_female.png'],
+    'Non-binary':        ['glow_male.png']
   };
 
   function getAfterImage() {
@@ -6638,6 +6864,14 @@
       if (greeting && typeof _futureSelfLabel === 'function') {
         var greetingLabel = greeting.querySelector('.msg-label');
         if (greetingLabel) greetingLabel.textContent = _futureSelfLabel();
+        var bubble = greeting.querySelector('.msg-bubble');
+        if (bubble && typeof state !== 'undefined' && state && state.name) {
+          var fn = state.name.trim().split(/\s+/)[0];
+          var g0 = state.goal || ((state.goals && state.goals[0]) || 'this transformation');
+          var en = state.energyBaseline ? (' Energy check-in: you said today feels ' + String(state.energyBaseline).toLowerCase() + '.') : '';
+          var ob = state.obstacle ? (' I know ' + state.obstacle + " is the friction — we train around it, not through denial.") : '';
+          bubble.textContent = 'Hey ' + fn + ", I see you're committed to " + g0 + '. Your morning ritual is where the identity work starts.' + en + ob;
+        }
       }
       // Hydrate any prior conversation so the chat feels continuous
       // across reloads. Hides the static greeting if there's real history.
@@ -6652,7 +6886,22 @@
     }
     if (id === 'progress' && typeof renderProgressScreen === 'function') renderProgressScreen();
     if (id === 'identity' && typeof initIdentityScreen === 'function') initIdentityScreen();
-    if (id === 'future') { updateFsSilhouette(); }
+    if (id === 'future') {
+      updateFsSilhouette();
+      try {
+        if (typeof state !== 'undefined' && state && state.beforePhotoDataUrl) {
+          if (!futurePhotoBase64 || futurePhotoBase64.indexOf('data:') !== 0) {
+            futurePhotoBase64 = state.beforePhotoDataUrl;
+          }
+          var up = document.getElementById('uploadPreview');
+          var uph = document.getElementById('uploadPlaceholder');
+          var uz = document.getElementById('uploadZone');
+          if (up) { up.src = state.beforePhotoDataUrl; up.style.display = 'block'; }
+          if (uph) uph.style.display = 'none';
+          if (uz) { uz.style.padding = '0'; uz.style.border = '1.5px solid rgba(200,169,110,0.4)'; }
+        }
+      } catch (_) {}
+    }
     if (id === 'program') { autoLoadProgram(); }
     if (id === 'library') {
       if (typeof _libRenderChips === 'function') _libRenderChips();
@@ -6856,20 +7105,133 @@
     document.getElementById('authWelcome').style.display = 'block';
   }
 
-  // ONBOARD STEP NAVIGATION
+  // ONBOARD STEP NAVIGATION (6-step identity-first flow)
   var _obStep = 1;
-  var _obTotal = 4;
+  var _obTotal = 6;
 
-  // Pre-fill name from waitlist signup
-  (function() {
-    var savedName = localStorage.getItem('wylde_name');
-    var nameInput = document.getElementById('userName');
-    if (savedName && nameInput && !nameInput.value) {
-      nameInput.value = savedName;
+  function _obDataUrlToCompressedJpeg(dataUrl, maxDim, quality, cb) {
+    try {
+      var img = new Image();
+      img.onload = function() {
+        var w = img.width, h = img.height, scale = 1;
+        if (w > maxDim || h > maxDim) scale = maxDim / Math.max(w, h);
+        var tw = Math.max(1, Math.round(w * scale)), th = Math.max(1, Math.round(h * scale));
+        var c = document.createElement('canvas');
+        c.width = tw; c.height = th;
+        var x = c.getContext('2d');
+        x.drawImage(img, 0, 0, tw, th);
+        cb(c.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = function() { cb(dataUrl); };
+      img.src = dataUrl;
+    } catch (_) { cb(dataUrl); }
+  }
+
+  function _obIsLikelyImageFile(file) {
+    if (!file) return false;
+    var t = (file.type || '').toLowerCase();
+    if (t.indexOf('image/') === 0) return true;
+    var n = (file.name || '').toLowerCase();
+    return /\.(jpe?g|png|webp|heic|heif)$/i.test(n);
+  }
+
+  function obShowFlowError(msg) {
+    var el = document.getElementById('obFlowError');
+    if (!el) return;
+    el.textContent = msg || '';
+    el.setAttribute('aria-hidden', 'false');
+    el.classList.add('ob-flow-error-visible');
+    try { el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) {}
+  }
+  function obClearFlowError() {
+    var el = document.getElementById('obFlowError');
+    if (!el) return;
+    el.textContent = '';
+    el.setAttribute('aria-hidden', 'true');
+    el.classList.remove('ob-flow-error-visible');
+  }
+
+  window.handleObOnboardPhoto = function(file) {
+    if (!file) return;
+    if (!_obIsLikelyImageFile(file)) {
+      obShowFlowError('Please use a JPG, PNG, WebP, or HEIC photo from your library.');
+      return;
     }
+    if (file.size > 5 * 1024 * 1024) {
+      obShowFlowError('That photo is over 5MB. Choose a smaller image.');
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var raw = e.target.result;
+      var apply = function(dataUrl) {
+        futurePhotoBase64 = dataUrl;
+        try {
+          var prev = document.getElementById('obUploadPreview');
+          var ph = document.getElementById('obUploadPlaceholder');
+          var zone = document.getElementById('obUploadZone');
+          if (prev) { prev.src = dataUrl; prev.style.display = 'block'; }
+          if (ph) ph.style.display = 'none';
+          if (zone) zone.classList.remove('ob-upload-error');
+          obClearFlowError();
+          var bimg = document.getElementById('beforeImg');
+          if (bimg) bimg.src = dataUrl;
+        } catch (_) {}
+      };
+      // Always re-encode through canvas when possible — shrinks payload for
+      // localStorage + keeps HEIC/PNG paths consistent for the Future tab API.
+      _obDataUrlToCompressedJpeg(raw, 1400, 0.78, function(out) {
+        apply(out || raw);
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  (function() {
+    var zone = document.getElementById('obUploadZone');
+    if (!zone) return;
+    zone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      zone.style.borderColor = 'rgba(200,169,110,0.65)';
+    });
+    zone.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      zone.style.borderColor = '';
+    });
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      zone.style.borderColor = '';
+      var files = e.dataTransfer && e.dataTransfer.files;
+      if (files && files.length > 0 && _obIsLikelyImageFile(files[0])) {
+        handleObOnboardPhoto(files[0]);
+      }
+    });
+    zone.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        document.getElementById('obPhotoInput').click();
+      }
+    });
   })();
 
+  function syncCoachIntroStep() {
+    var raw = (document.getElementById('userName') && document.getElementById('userName').value || '').trim();
+    var first = raw.split(/\s+/)[0] || 'You';
+    var goals = Array.from(document.querySelectorAll('#goalGroup .selected')).map(function(p) { return p.textContent; });
+    var primary = goals[0] || 'this transformation';
+    var hf = document.getElementById('obCoachHeadFirst');
+    if (hf) hf.textContent = first;
+    var gold = document.getElementById('obCoachGoldName');
+    if (gold) gold.textContent = first.toUpperCase();
+    var lead = document.getElementById('obCoachLead');
+    if (lead) lead.textContent = first + ', I see what you\'re building — especially around ' + primary + '. You\'re ready.';
+  }
+
   function obGoTo(step) {
+    obClearFlowError();
     for (var i = 1; i <= _obTotal; i++) {
       var el = document.getElementById('obStep' + i);
       if (el) { el.classList.remove('ob-active'); }
@@ -6877,27 +7239,75 @@
     var target = document.getElementById('obStep' + step);
     if (target) target.classList.add('ob-active');
     _obStep = step;
-    // Update progress dots
     var dots = document.querySelectorAll('#obProgress .ob-progress-dot');
     dots.forEach(function(d, idx) {
       d.classList.remove('ob-done', 'ob-current');
       if (idx < step - 1) d.classList.add('ob-done');
       else if (idx === step - 1) d.classList.add('ob-current');
     });
-    window.scrollTo(0, 0);
+    var label = document.getElementById('obProgressLabel');
+    var timeEl = document.getElementById('obProgressTime');
+    var bar = document.getElementById('obProgressBarFill');
+    if (label) {
+      label.textContent = 'Step ' + step + ' of ' + _obTotal + (step === _obTotal ? ' — Ready to start' : '');
+    }
+    var minsLeft = Math.max(0, 6 - step);
+    if (timeEl) timeEl.textContent = step >= _obTotal ? 'Last step' : ('~' + minsLeft + ' min remaining');
+    if (bar) bar.style.width = Math.round(step / _obTotal * 100) + '%';
+
+    if (step === 2) {
+      var gsel = document.querySelector('#genderGroup .selected');
+      var gtext = gsel ? gsel.textContent : '';
+      var sil = document.getElementById('obSilhouette');
+      if (sil) {
+        if (/female/i.test(gtext)) sil.src = 'futureselfwoman.png';
+        else sil.src = 'futureselfman.png';
+      }
+    }
+    if (step === 6) syncCoachIntroStep();
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (_) { window.scrollTo(0, 0); }
   }
 
   function obNext(fromStep) {
-    // Validate step 1 — name required
     if (fromStep === 1) {
       var name = document.getElementById('userName').value.trim();
       if (!name) {
         var inp = document.getElementById('userName');
+        obShowFlowError('Add your first name to continue.');
         inp.style.borderColor = 'rgba(220,80,80,0.6)';
         inp.focus();
         setTimeout(function() { inp.style.borderColor = ''; }, 2000);
         return;
       }
+      if (!document.querySelector('#genderGroup .selected')) {
+        obShowFlowError('Select how you identify so we can personalize your experience.');
+        return;
+      }
+    }
+    if (fromStep === 2) {
+      if (!futurePhotoBase64 || futurePhotoBase64.indexOf('data:') !== 0) {
+        var z = document.getElementById('obUploadZone');
+        if (z) z.classList.add('ob-upload-error');
+        obShowFlowError('Upload a photo — it\'s the anchor for your Future Self and Today card.');
+        return;
+      }
+    }
+    if (fromStep === 3) {
+      var goals = document.querySelectorAll('#goalGroup .selected');
+      var mots = document.querySelectorAll('#motivationGroup .selected');
+      if (!goals.length) { obShowFlowError('Pick at least one training goal.'); return; }
+      if (!mots.length) { obShowFlowError('Pick at least one motivation.'); return; }
+      if (!document.querySelector('#levelGroup .selected')) { obShowFlowError('Select your current fitness level.'); return; }
+      if (!document.querySelector('#daysGroup .selected')) { obShowFlowError('Select training days per week.'); return; }
+    }
+    if (fromStep === 4) {
+      if (!document.querySelector('#ageGroup .selected')) { obShowFlowError('Select an age range.'); return; }
+      if (!document.querySelector('#heightGroup .selected')) { obShowFlowError('Select your height range.'); return; }
+      var w = document.getElementById('weightInput') && document.getElementById('weightInput').value.trim();
+      if (!w) { obShowFlowError('Add your current weight so we can calibrate volume and nutrition.'); return; }
+      if (!document.querySelector('#sleepGroup .selected')) { obShowFlowError('Select your usual sleep.'); return; }
+      if (!document.querySelector('#stressGroup .selected')) { obShowFlowError('Select your stress level.'); return; }
+      if (!document.querySelector('#energyGroup .selected')) { obShowFlowError('Select your energy level.'); return; }
     }
     if (fromStep < _obTotal) obGoTo(fromStep + 1);
   }
@@ -6906,13 +7316,63 @@
     if (fromStep > 1) obGoTo(fromStep - 1);
   }
 
+  function _obValidateCompleteness() {
+    var name = (document.getElementById('userName') && document.getElementById('userName').value || '').trim();
+    if (!name) { obGoTo(1); obShowFlowError('Add your first name to continue.'); return false; }
+    if (!document.querySelector('#genderGroup .selected')) { obGoTo(1); obShowFlowError('Select how you identify.'); return false; }
+    if (!futurePhotoBase64 || futurePhotoBase64.indexOf('data:') !== 0) { obGoTo(2); obShowFlowError('Upload your photo — it anchors your Future Self and Today card.'); return false; }
+    var goals = document.querySelectorAll('#goalGroup .selected');
+    var mots = document.querySelectorAll('#motivationGroup .selected');
+    if (!goals.length) { obGoTo(3); obShowFlowError('Pick at least one training goal.'); return false; }
+    if (!mots.length) { obGoTo(3); obShowFlowError('Pick at least one motivation.'); return false; }
+    if (!document.querySelector('#levelGroup .selected')) { obGoTo(3); obShowFlowError('Select your fitness level.'); return false; }
+    if (!document.querySelector('#daysGroup .selected')) { obGoTo(3); obShowFlowError('Select training days per week.'); return false; }
+    if (!document.querySelector('#ageGroup .selected')) { obGoTo(4); obShowFlowError('Select an age range.'); return false; }
+    if (!document.querySelector('#heightGroup .selected')) { obGoTo(4); obShowFlowError('Select your height range.'); return false; }
+    var w = document.getElementById('weightInput') && document.getElementById('weightInput').value.trim();
+    if (!w) { obGoTo(4); obShowFlowError('Add your current weight.'); return false; }
+    if (!document.querySelector('#sleepGroup .selected')) { obGoTo(4); obShowFlowError('Select your usual sleep.'); return false; }
+    if (!document.querySelector('#stressGroup .selected')) { obGoTo(4); obShowFlowError('Select your stress level.'); return false; }
+    if (!document.querySelector('#energyGroup .selected')) { obGoTo(4); obShowFlowError('Select your energy level.'); return false; }
+    return true;
+  }
+
+  try {
+    var _obFill = document.getElementById('obProgressBarFill');
+    if (_obFill) _obFill.style.width = Math.round(100 / _obTotal) + '%';
+  } catch (_) {}
+
+  function _finalizeOnboardingToOverview() {
+    if (window._onboardingFinalized) return;
+    window._onboardingFinalized = true;
+    if (window._obEmergencyTimer) {
+      try { clearTimeout(window._obEmergencyTimer); } catch (_) {}
+      window._obEmergencyTimer = null;
+    }
+    try { localStorage.setItem('wylde_last_screen', 'overview'); } catch (_) {}
+    var intro = document.getElementById('screen-intro');
+    var geo = document.getElementById('geoTransition');
+    if (intro) intro.style.display = 'none';
+    if (geo) {
+      geo.classList.remove('active', 'dissolving');
+      geo.style.display = 'none';
+    }
+    try { _userContextCache = null; } catch (_) {}
+    showScreen('overview');
+    try { if (typeof ovUpdateHero === 'function') ovUpdateHero(); } catch (_) {}
+    try { if (typeof ovSyncHeroImage === 'function') ovSyncHeroImage(); } catch (_) {}
+  }
+
   // ONBOARDING
   function completeOnboard() {
+    if (!_obValidateCompleteness()) return;
     var name = document.getElementById('userName').value.trim();
     if (!name) { document.getElementById('userName').style.borderColor='rgba(220,80,80,0.6)'; return; }
     var gender  = document.querySelector('#genderGroup .selected');
     var age     = document.querySelector('#ageGroup .selected');
     var goals   = Array.from(document.querySelectorAll('#goalGroup .selected')).map(function(p){ return p.textContent; });
+    var motivations = Array.from(document.querySelectorAll('#motivationGroup .selected')).map(function(p){ return p.textContent; });
+    var obstacle = (document.getElementById('obstacleInput') && document.getElementById('obstacleInput').value.trim()) || '';
     var level   = document.querySelector('#levelGroup .selected');
     var days    = document.querySelector('#daysGroup .selected');
     var height  = document.querySelector('#heightGroup .selected');
@@ -6923,6 +7383,10 @@
     var classes = Array.from(document.querySelectorAll('#classGroup .selected')).map(function(p){ return p.textContent; });
     var health  = Array.from(document.querySelectorAll('#healthGroup .selected')).map(function(p){ return p.textContent; });
     var notes   = document.getElementById('healthNotes').value.trim();
+    var sleepEl = document.querySelector('#sleepGroup .selected');
+    var stressEl = document.querySelector('#stressGroup .selected');
+    var energyEl = document.querySelector('#energyGroup .selected');
+    var visionTxt = (document.getElementById('obVisionText') && document.getElementById('obVisionText').value.trim()) || '';
 
     state.name             = name;
     state.gender           = gender    ? gender.textContent    : 'Male';
@@ -6931,9 +7395,19 @@
     state.weight           = weight    || '';
     state.weightUnit       = wUnit     ? wUnit.textContent      : 'lbs';
     state.goals            = goals.length > 0 ? goals : ['Get lean & athletic'];
+    state.motivations      = motivations;
+    state.obstacle         = obstacle;
+    state.sleepPerNight    = sleepEl   ? sleepEl.textContent    : '';
+    state.stressLevel      = stressEl  ? stressEl.textContent   : '';
+    state.energyBaseline   = energyEl  ? energyEl.textContent   : '';
+    state.futureVisionText = visionTxt;
     state.level            = level     ? level.textContent      : 'Intermediate';
     state.days             = days      ? days.textContent       : '4 days';
-    state.equipment        = equipment ? equipment.textContent  : '';
+    var equipRaw = equipment ? equipment.textContent.trim() : '';
+    if (equipRaw === 'Full setup') state.equipment = 'Yes — full setup';
+    else if (equipRaw === 'Some basics') state.equipment = 'Some basics';
+    else if (equipRaw === 'None') state.equipment = 'No equipment';
+    else state.equipment = equipRaw;
     state.gymAccess        = gym       ? gym.textContent        : '';
     state.gymName          = document.getElementById('gymNameInput').value.trim();
     // Gym type drives equipment inference for the AI program builder.
@@ -6971,6 +7445,20 @@
     // Set joined date on first profile creation
     if (!state.joinedDate) state.joinedDate = new Date().toISOString();
 
+    state.beforePhotoDataUrl = (typeof futurePhotoBase64 === 'string' && futurePhotoBase64.indexOf('data:') === 0) ? futurePhotoBase64 : (state.beforePhotoDataUrl || '');
+    try {
+      if (state.beforePhotoDataUrl) {
+        futurePhotoBase64 = state.beforePhotoDataUrl;
+        var up = document.getElementById('uploadPreview');
+        var uph = document.getElementById('uploadPlaceholder');
+        var uz = document.getElementById('uploadZone');
+        if (up) { up.src = state.beforePhotoDataUrl; up.style.display = 'block'; }
+        if (uph) uph.style.display = 'none';
+        if (uz) { uz.style.padding = '0'; uz.style.border = '1.5px solid rgba(200,169,110,0.4)'; }
+      }
+    } catch (_) {}
+    try { _userContextCache = null; } catch (_) {}
+
     // Persist profile (localStorage + Supabase)
     saveProfile();
     awardXP(100, 'Profile created');
@@ -6985,12 +7473,20 @@
     // Reset _introSkipped so the chain's callback fires even on re-onboard in
     // the same session — leaving it stale was the previous bug that prevented
     // the Today screen from appearing.
+    window._onboardingFinalized = false;
     window._introSkipped = false;
-    if (!localStorage.getItem('wylde_intro_seen')) {
-      playIntro(function() { showScreen('overview'); });
-    } else {
-      playGeoTransition(function() { showScreen('overview'); });
+    if (window._obEmergencyTimer) {
+      try { clearTimeout(window._obEmergencyTimer); } catch (_) {}
+      window._obEmergencyTimer = null;
     }
+    var firstIntro = !localStorage.getItem('wylde_intro_seen');
+    if (!localStorage.getItem('wylde_intro_seen')) {
+      playIntro(function() { _finalizeOnboardingToOverview(); });
+    } else {
+      playGeoTransition(function() { _finalizeOnboardingToOverview(); });
+    }
+    // Safety net: first-time intro can exceed 7s (video + geo). Never cut it short.
+    window._obEmergencyTimer = setTimeout(_finalizeOnboardingToOverview, firstIntro ? 26000 : 9500);
   }
 
   function playIntro(callback) {
@@ -7261,14 +7757,53 @@
         if (p.textContent === state.days) p.classList.add('selected');
       });
     }
-    // Pre-fill equipment
+    // Pre-fill equipment (map legacy strings to new pill labels)
     if (state.equipment) {
+      var eqMap = { 'Yes — full setup': 'Full setup', 'Some basics': 'Some basics', 'No equipment': 'None' };
+      var eqTarget = eqMap[state.equipment] || state.equipment;
       document.querySelectorAll('#equipmentGroup .pill').forEach(function(p){
         p.classList.remove('selected');
-        if (p.textContent === state.equipment) p.classList.add('selected');
+        if (p.textContent === eqTarget || p.textContent === state.equipment) p.classList.add('selected');
       });
     }
-    // Pre-fill gym
+    // Pre-fill motivations + obstacle + baseline signals
+    if (state.motivations && state.motivations.length > 0) {
+      document.querySelectorAll('#motivationGroup .pill').forEach(function(p){
+        p.classList.remove('selected');
+        if (state.motivations.indexOf(p.textContent) !== -1) p.classList.add('selected');
+      });
+    }
+    var obInp = document.getElementById('obstacleInput');
+    if (obInp && state.obstacle) obInp.value = state.obstacle;
+    var vis = document.getElementById('obVisionText');
+    if (vis && state.futureVisionText) vis.value = state.futureVisionText;
+    if (state.sleepPerNight) {
+      document.querySelectorAll('#sleepGroup .pill').forEach(function(p){
+        p.classList.remove('selected');
+        if (p.textContent === state.sleepPerNight) p.classList.add('selected');
+      });
+    }
+    if (state.stressLevel) {
+      document.querySelectorAll('#stressGroup .pill').forEach(function(p){
+        p.classList.remove('selected');
+        if (p.textContent === state.stressLevel) p.classList.add('selected');
+      });
+    }
+    if (state.energyBaseline) {
+      document.querySelectorAll('#energyGroup .pill').forEach(function(p){
+        p.classList.remove('selected');
+        if (p.textContent === state.energyBaseline) p.classList.add('selected');
+      });
+    }
+    if (state.beforePhotoDataUrl) {
+      futurePhotoBase64 = state.beforePhotoDataUrl;
+      var prev = document.getElementById('obUploadPreview');
+      var ph = document.getElementById('obUploadPlaceholder');
+      var zone = document.getElementById('obUploadZone');
+      if (prev) { prev.src = state.beforePhotoDataUrl; prev.style.display = 'block'; }
+      if (ph) ph.style.display = 'none';
+      if (zone) zone.classList.remove('ob-upload-error');
+    }
     if (state.gymAccess) {
       document.querySelectorAll('#gymGroup .pill').forEach(function(p){
         p.classList.remove('selected');
@@ -7324,10 +7859,12 @@
     // Reset state
     Object.assign(state, {
       name: '', gender: '', age: '', height: '', weight: '', weightUnit: 'lbs',
-      goals: [], goal: '', level: '', days: '',
+      goals: [], motivations: [], obstacle: '', goal: '', level: '', days: '',
+      sleepPerNight: '', stressLevel: '', energyBaseline: '', futureVisionText: '',
       equipment: '', gymAccess: '', gymName: '', gymEquipment: [], classPreferences: [],
+      gymType: '', gymLat: null, gymLng: null, gymAddress: '', gymPlaceId: '',
       health: [], healthNotes: '', diet: [], dietNotes: '',
-      avatarUrl: ''
+      avatarUrl: '', beforePhotoDataUrl: ''
     });
     state.sessions = sessions;
     state.streak = streak;
@@ -7337,6 +7874,7 @@
     // Clear saved program
     localStorage.removeItem('wylde_program');
     localStorage.removeItem('wylde_program_date');
+    try { localStorage.removeItem('wylde_before_photo'); } catch (_) {}
     showScreen('onboard');
     obGoTo(1);
   }
@@ -7534,7 +8072,11 @@
     if (ovCoachHistory.length > 6) ovCoachHistory = ovCoachHistory.slice(ovCoachHistory.length - 6);
 
     var profile = state.name
-      ? 'Client: ' + state.name + ', goal: ' + state.goal + ', level: ' + state.level + '.'
+      ? 'Client: ' + state.name + ', primary goal: ' + state.goal + ', level: ' + state.level
+          + (state.obstacle ? ', main obstacle: ' + state.obstacle : '')
+          + (state.energyBaseline ? ', baseline energy: ' + state.energyBaseline : '')
+          + (state.stressLevel ? ', stress: ' + state.stressLevel : '')
+          + '.'
       : 'Client has not set up profile yet.';
 
     fetch('/api/anthropic', {
@@ -7659,7 +8201,6 @@
   // ═══ FUTURE SELF — REVEAL SLIDER ═══
 
   function triggerUpload() { document.getElementById('photoInput').click(); }
-  var futurePhotoBase64 = null;
 
   function handlePhoto(file) {
     if (!file) return;
@@ -7728,7 +8269,8 @@
     var profile = {};
     try { profile = JSON.parse(localStorage.getItem('wylde_profile') || '{}'); } catch(e) {}
     var gender = (profile.gender || 'Male').toLowerCase();
-    sil.src = gender === 'female' ? 'futureselfwoman.png' : 'futureselfman.png';
+    if (gender === 'female') sil.src = 'futureselfwoman.png';
+    else sil.src = 'futureselfman.png';
   }
 
   function switchTimeline(tl) {
@@ -7749,9 +8291,19 @@
       if (displayImg) { displayImg.src = img; displayImg.style.display = 'block'; }
       if (loading) loading.style.display = 'none';
     } else {
-      if (displayImg) displayImg.style.display = 'none';
-      if (loading) loading.style.display = 'flex';
-      if (loadingText) loadingText.textContent = 'Building ' + _timelineLabels[tl] + '...';
+      var hold = null;
+      try {
+        if (typeof state !== 'undefined' && state && state.beforePhotoDataUrl) hold = state.beforePhotoDataUrl;
+      } catch (_) {}
+      if (hold && tl === '12weeks') {
+        if (displayImg) { displayImg.src = hold; displayImg.style.display = 'block'; }
+        if (loading) loading.style.display = 'none';
+        if (loadingText) loadingText.textContent = 'Your photo is locked in. Tap Generate to see timelines.';
+      } else {
+        if (displayImg) displayImg.style.display = 'none';
+        if (loading) loading.style.display = 'flex';
+        if (loadingText) loadingText.textContent = 'Building ' + _timelineLabels[tl] + '...';
+      }
     }
     // Legacy compat
     var afterImg = document.getElementById('afterImg');
