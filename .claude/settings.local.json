@@ -9,7 +9,10 @@
       "Bash(cp \"/Users/goodboyrumi/Downloads/wylde terms/privacy.html\" ~/Wylde-self/privacy.html)",
       "Bash(cp \"/Users/goodboyrumi/Downloads/wylde terms/terms.html\" ~/Wylde-self/terms.html)",
       "Bash(cp \"/Users/goodboyrumi/Downloads/files 2/HANDOFF.md\" \"/Users/goodboyrumi/Wylde-self/HANDOFF.md\")",
-      "Bash(cp \"/Users/goodboyrumi/Downloads/files 2/wylde-pitch-deck.html\" \"/Users/goodboyrumi/Wylde-self/investors.html\")"
+      "Bash(cp \"/Users/goodboyrumi/Downloads/files 2/wylde-pitch-deck.html\" \"/Users/goodboyrumi/Wylde-self/investors.html\")",
+      "Bash(ls -la /Users/wylde/Documents/Wylde-self/ && echo \"---\" && ls -la /Users/wylde/Projects/ 2>/dev/null | head -20)",
+      "Read(//Users/wylde/Projects/**)",
+      "Read(//Users/wylde/Downloads/files 2/**)"
     ]
   }
 }

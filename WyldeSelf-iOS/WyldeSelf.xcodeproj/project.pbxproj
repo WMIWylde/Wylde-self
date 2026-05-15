@@ -7,33 +7,33 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A10001 /* WyldeSelfApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001; };
-		A10002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10002; };
-		A10003 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10003; };
-		A10004 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10004; };
-		A10005 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10005; };
-		A10006 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10006; };
-		A10007 /* WebViewScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10007; };
-		A10008 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10008; };
-		A10009 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10009; };
-		A10010 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10010; };
-		A10011 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10011; };
-		A10012 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10012; };
-		A10013 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B10013; };
-		A10014 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B10014; };
-		A10016 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10016; };
-		A10017 /* ExercisesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10017; };
-		A10018 /* exercises.json in Resources */ = {isa = PBXBuildFile; fileRef = B10018; };
-		A10019 /* IdentityProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10019; };
-		A10020 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10020; };
-		A10021 /* SettingsDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10021; };
-		A10022 /* IdentityImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10022; };
-		A10023 /* StartTodayFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10023; };
-		A10024 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10024; };
-		A10025 /* IdentityAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10025; };
-		A10026 /* JourneyPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10026; };
-		A10027 /* CoachLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10027; };
-		A10028 /* WyldeStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10028; };
+		A10001 /* WyldeSelfApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001 /* WyldeSelfApp.swift */; };
+		A10002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10002 /* ContentView.swift */; };
+		A10003 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10003 /* AppDelegate.swift */; };
+		A10004 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10004 /* AppState.swift */; };
+		A10005 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10005 /* Theme.swift */; };
+		A10006 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10006 /* MainTabView.swift */; };
+		A10007 /* WebViewScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10007 /* WebViewScreen.swift */; };
+		A10008 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10008 /* TodayView.swift */; };
+		A10009 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10009 /* HapticManager.swift */; };
+		A10010 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10010 /* NotificationManager.swift */; };
+		A10011 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10011 /* HealthKitManager.swift */; };
+		A10012 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10012 /* CameraManager.swift */; };
+		A10013 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B10013 /* Assets.xcassets */; };
+		A10014 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B10014 /* HealthKit.framework */; };
+		A10016 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10016 /* Exercise.swift */; };
+		A10017 /* ExercisesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10017 /* ExercisesView.swift */; };
+		A10018 /* exercises.json in Resources */ = {isa = PBXBuildFile; fileRef = B10018 /* exercises.json */; };
+		A10019 /* IdentityProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10019 /* IdentityProfile.swift */; };
+		A10020 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10020 /* PaywallView.swift */; };
+		A10021 /* SettingsDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10021 /* SettingsDrawer.swift */; };
+		A10022 /* IdentityImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10022 /* IdentityImportView.swift */; };
+		A10023 /* StartTodayFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10023 /* StartTodayFlow.swift */; };
+		A10024 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10024 /* PurchaseManager.swift */; };
+		A10025 /* IdentityAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10025 /* IdentityAnalysisService.swift */; };
+		A10026 /* JourneyPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10026 /* JourneyPhase.swift */; };
+		A10027 /* CoachLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10027 /* CoachLine.swift */; };
+		A10028 /* WyldeStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10028 /* WyldeStyles.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -199,7 +199,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1540;
-				LastUpgradeCheck = 1540;
+				LastUpgradeCheck = 2640;
 				TargetAttributes = {
 					E10001 = {
 						CreatedOnToolsVersion = 15.4;
@@ -290,6 +290,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -299,10 +300,13 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = L5869XDHF7;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -322,6 +326,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -346,6 +351,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -355,10 +361,13 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = L5869XDHF7;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -371,6 +380,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -384,7 +394,6 @@
 				CODE_SIGN_ENTITLEMENTS = WyldeSelf/WyldeSelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WyldeSelf/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Wylde Self";
@@ -415,7 +424,6 @@
 				CODE_SIGN_ENTITLEMENTS = WyldeSelf/WyldeSelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WyldeSelf/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Wylde Self";
@@ -460,7 +468,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
 	};
 	rootObject = P10001 /* Project object */;
 }
