@@ -394,222 +394,726 @@
     .timeline-btn:hover { border-color:rgba(255,248,235,0.14); color:var(--text); }
     .timeline-btn.active { border-color:rgba(122,142,118,0.3); background:var(--sage-dim); color:var(--sage); }
 
-    /* FUTURE SELF */
-    .future-container { max-width: 520px; margin-left: auto; margin-right: auto; }
-    .fs-cta-stack {
-      display: flex; flex-direction: column; align-items: center;
-      width: 100%; max-width: 360px; margin-left: auto; margin-right: auto;
-    }
-
-    /* Full sage background for Future Self screen */
+    /* ═══ FUTURE SELF — cinematic restyle (tokens scoped to #screen-future) ═══ */
     #screen-future {
-      background: linear-gradient(170deg, #6b8b5e 0%, #5a7a4e 40%, #4a6a40 100%);
+      --fs-bg-top: #37422F;
+      --fs-bg-mid: #222A20;
+      --fs-bg-bottom: #0E130E;
+      --fs-glow: rgba(222, 202, 150, 0.26);
+      --fs-gold: #C9A86A;
+      --fs-gold-bright: #E6C886;
+      --fs-gold-deep: #A6834A;
+      --fs-text: #F4F1E8;
+      --fs-text-muted: #9DA595;
+      --fs-text-dim: #6E7866;
+      --fs-ink: #16190F;
+      --fs-surface: rgba(248, 244, 232, 0.045);
+      --fs-surface-border: rgba(201, 168, 106, 0.18);
+      --fs-chip-bg: rgba(9, 13, 8, 0.72);
+      --fs-pad-x: 22px;
+      --fs-gap: 18px;
+      --fs-safe-b: env(safe-area-inset-bottom, 0px);
+      --fs-safe-t: env(safe-area-inset-top, 0px);
+      font-family: var(--font-ui, var(--ff-body));
+      color: var(--fs-text);
       min-height: 100vh;
+      min-height: 100dvh;
+      padding: calc(12px + var(--fs-safe-t)) var(--fs-pad-x) calc(88px + var(--fs-safe-b));
+      background:
+        radial-gradient(circle at 84% 7%, var(--fs-glow), transparent 55%),
+        linear-gradient(180deg, var(--fs-bg-top) 0%, var(--fs-bg-mid) 42%, var(--fs-bg-bottom) 100%);
+      box-sizing: border-box;
+    }
+    #screen-future * { box-sizing: border-box; }
+
+    .future-container.fs-shell {
+      max-width: 100%;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--fs-gap);
     }
 
-    /* Header text — directly on sage bg, no card */
+    /* ── Top zone: header + hero ── */
+    .fs-top {
+      position: relative;
+      min-height: 168px;
+      display: grid;
+      grid-template-columns: 1fr 38%;
+      gap: 8px;
+      align-items: start;
+    }
     .fs-header-text {
-      text-align: center; padding: 24px 16px 0; position: relative;
+      text-align: left;
+      padding: 8px 0 0;
+      position: relative;
+      z-index: 2;
+      max-width: 62%;
     }
     .future-label {
-      font-size: 11px; font-weight: 600; letter-spacing: 0.25em;
-      text-transform: uppercase; color: rgba(255,255,255,0.35);
-      margin-bottom: 18px;
-      animation: fsGoldPulse 3s ease-in-out infinite;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--fs-gold);
+      margin: 0 0 10px;
     }
-    @keyframes fsGoldPulse {
-      0%, 100% { color: rgba(255,255,255,0.35); text-shadow: none; }
-      40% { color: #e8d5a3; text-shadow: 0 0 12px rgba(200,169,110,0.5), 0 0 30px rgba(200,169,110,0.2); }
-      60% { color: #e8d5a3; text-shadow: 0 0 12px rgba(200,169,110,0.5), 0 0 30px rgba(200,169,110,0.2); }
+    .fs-sparkle {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      color: var(--fs-gold);
     }
     .future-title {
-      font-size: clamp(28px, 7vw, 36px); font-weight: 700;
-      color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.12; margin: 0 0 12px;
+      font-size: clamp(28px, 8.5vw, 34px);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.08;
+      color: var(--fs-text);
+      margin: 0 0 10px;
     }
     .future-sub {
-      font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.6;
-      max-width: 300px; margin: 0 auto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.45;
+      color: var(--fs-text-muted);
+      margin: 0;
+      max-width: 100%;
     }
+    .fs-board-pills { display: none; }
 
-    /* Upload zone — glass card with silhouette bg */
-    .future-upload-wrap { padding: 24px 16px 0; }
-    .future-upload {
-      background: rgba(255,255,255,0.12);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 20px; padding: 48px 24px; text-align: center;
-      cursor: pointer; transition: all 0.3s;
-      position: relative; overflow: hidden;
-      /* Subtle 4s breathing pulse on the gold-tinted glow ring \u2014 makes
-         the surface feel alive without resorting to SaaS loading shimmers
-         or progress bars. Almost imperceptible, intentional. */
-      animation: fsBreathe 4.2s ease-in-out infinite;
-      box-shadow: 0 0 0 1px rgba(200,169,110,0.0), 0 0 0 0 rgba(200,169,110,0.0);
-    }
-    .future-upload:hover {
-      background: rgba(255,255,255,0.16);
-      animation-play-state: paused;
-      box-shadow: 0 0 0 1px rgba(200,169,110,0.30), 0 0 32px 0 rgba(200,169,110,0.15);
-    }
-    @keyframes fsBreathe {
-      0%, 100% {
-        box-shadow: 0 0 0 1px rgba(200,169,110,0.04), 0 0 0 0 rgba(200,169,110,0.00);
-      }
-      50% {
-        box-shadow: 0 0 0 1px rgba(200,169,110,0.18), 0 0 36px 0 rgba(200,169,110,0.12);
-      }
-    }
-    /* Respect reduced-motion preference \u2014 some users find pulsing animations distracting */
-    @media (prefers-reduced-motion: reduce) {
-      .future-upload { animation: none; }
-    }
-
-    /* Silhouette figure behind upload — uses image if available, CSS fallback */
-    .future-upload::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 55% 45%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.08) 30%, transparent 60%);
+    .fs-hero {
+      position: absolute;
+      top: -8px;
+      right: -6px;
+      width: 52%;
+      height: 200px;
       pointer-events: none;
+      z-index: 1;
     }
-    .fs-silhouette {
-      position: absolute; top: -10%; left: 50%; transform: translateX(-50%);
-      width: 90%; height: 120%;
-      object-fit: contain; object-position: center center;
-      opacity: 0.45; pointer-events: none;
+    .fs-hero-glow {
+      position: absolute;
+      inset: -20% -10% 0 10%;
+      background: radial-gradient(circle at 70% 20%, var(--fs-glow), transparent 62%);
+    }
+    .fs-hero-figure {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top right;
+      opacity: 0.92;
+      -webkit-mask-image: linear-gradient(to left, #000 45%, transparent), linear-gradient(to top, transparent 8%, #000 88%);
+      mask-image: linear-gradient(to left, #000 45%, transparent), linear-gradient(to top, transparent 8%, #000 88%);
+      -webkit-mask-composite: source-in;
+      mask-composite: intersect;
+    }
+    .fs-hero-figure[src=""],
+    .fs-hero-figure:not([src]) { opacity: 0; }
+    .fs-hero-mark {
+      position: absolute;
+      top: 18%;
+      right: 18%;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 1.5px solid var(--fs-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(9, 13, 8, 0.35);
+      z-index: 2;
+    }
+    .fs-hero-mark svg { width: 26px; height: 26px; color: var(--fs-gold); }
+    .fs-hero-tagline {
+      position: absolute;
+      right: 0;
+      bottom: 4px;
+      max-width: 92%;
+      text-align: right;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1.45;
+      color: var(--fs-gold);
+      margin: 0;
     }
 
-    .future-upload-icon { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; position: relative; z-index: 2; }
-    .future-upload-icon span { font-size: 22px; color: rgba(255,255,255,0.7); }
-    .future-upload-label { font-size: 16px; color: #FFFFFF; margin-bottom: 4px; font-weight: 600; position: relative; z-index: 2; }
-    .future-upload-hint { font-size: 13px; color: rgba(255,255,255,0.45); position: relative; z-index: 2; }
-    .future-upload-preview { width: 100%; max-height: 300px; object-fit: cover; border-radius: 12px; display: none; position: relative; z-index: 2; }
-
-    /* Motivational line above CTA */
-    .fs-motivation {
-      text-align: center; margin-top: 20px;
-      font-size: 13px; font-style: italic; color: rgba(255,255,255,0.4);
-      letter-spacing: 0.01em;
+    /* ── Empty gate (no photo) ── */
+    .future-upload-wrap {
+      padding: 0;
+      margin: 0;
     }
-
-    /* Gold CTA — larger, rounder, more premium */
-    .future-generate-btn {
-      width: 100%; max-width: 360px; margin-top: 12px; padding: 18px; border: none; border-radius: 50px;
-      display: block; margin-left: auto; margin-right: auto; text-align: center;
-      font-family: var(--font-ui); font-size: 17px; font-weight: 700;
-      cursor: pointer; letter-spacing: 0.01em;
-      background: linear-gradient(135deg, #d4b87a 0%, #c8a96e 40%, #b5944e 100%);
-      color: #FFFFFF; transition: all 0.25s;
-      box-shadow: 0 4px 20px rgba(200,169,110,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
-      text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    .future-upload {
+      position: relative;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid var(--fs-surface-border);
+      background: var(--fs-surface);
+      min-height: 220px;
+      padding: 0;
+      cursor: pointer;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .future-generate-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(200,169,110,0.45), inset 0 1px 0 rgba(255,255,255,0.2); }
-    .future-generate-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-    .future-skip-wrap { text-align: center; margin-top: 16px; margin-bottom: 24px; width: 100%; }
-    .future-skip {
-      background: none; border: none; color: rgba(255,255,255,0.35);
-      font-family: var(--font-ui); font-size: 13px; cursor: pointer; letter-spacing: 0.02em;
-      display: inline-block; margin: 0 auto; text-align: center;
-    }
-    .future-skip:hover { color: rgba(255,255,255,0.55); }
-
-    /* Implode animation on upload zone */
     .future-upload.imploding {
       animation: fsImplode 0.6s ease-in forwards;
     }
     @keyframes fsImplode {
       0% { transform: scale(1); opacity: 1; border-radius: 20px; }
-      50% { transform: scale(0.85); opacity: 0.6; border-radius: 50%; }
-      100% { transform: scale(0); opacity: 0; border-radius: 50%; }
+      50% { transform: scale(0.92); opacity: 0.55; }
+      100% { transform: scale(0.96); opacity: 0; }
+    }
+    .fs-silhouette {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 72%;
+      max-height: 92%;
+      object-fit: contain;
+      opacity: 0.22;
+      pointer-events: none;
+    }
+    .future-upload-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 1px solid var(--fs-surface-border);
+      background: rgba(9, 13, 8, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      position: relative;
+      z-index: 2;
+    }
+    .future-upload-icon span { font-size: 20px; color: var(--fs-gold); }
+    .future-upload-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--fs-text);
+      margin: 0 0 4px;
+      position: relative;
+      z-index: 2;
+    }
+    .future-upload-hint {
+      font-size: 13px;
+      color: var(--fs-text-muted);
+      margin: 0;
+      position: relative;
+      z-index: 2;
+    }
+    .future-upload-preview { display: none !important; }
+    #uploadPlaceholder {
+      position: relative;
+      z-index: 2;
+      padding: 28px 20px;
+      width: 100%;
+    }
+    .fs-motivation,
+    .fs-cta-stack,
+    .future-skip-wrap { display: none; }
+
+    /* ── Result / main column ── */
+    .fs-result { display: none; flex-direction: column; gap: var(--fs-gap); }
+    .fs-result.active { display: flex; animation: fsFadeUp 0.45s ease both; }
+    @keyframes fsFadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Result gallery — replaces slider */
-    .fs-result { display: none; }
-    .fs-result.active { display: block; animation: fsExplode 0.7s ease-out both; }
-    @keyframes fsExplode {
-      0% { transform: scale(0); opacity: 0; border-radius: 50%; }
-      50% { transform: scale(1.05); opacity: 0.8; border-radius: 20px; }
-      100% { transform: scale(1); opacity: 1; border-radius: 0; }
-    }
-
-    /* Timeline tabs — pill style on sage bg */
+    /* Segmented timeframe control */
     .fs-tabs {
-      display: flex; gap: 6px; margin-bottom: 16px;
-      background: rgba(0,0,0,0.15); border-radius: 14px;
+      display: flex;
+      gap: 0;
       padding: 4px;
+      border-radius: 18px;
+      background: var(--fs-surface);
+      border: 1px solid var(--fs-surface-border);
     }
     .fs-tab {
-      flex: 1; padding: 12px 8px; border: none; border-radius: 10px;
-      background: transparent; cursor: pointer; text-align: center;
-      font-family: var(--font-ui); transition: all 0.2s;
+      flex: 1;
+      min-height: 44px;
+      padding: 10px 6px 8px;
+      border: none;
+      border-radius: 13px;
+      background: transparent;
+      cursor: pointer;
+      text-align: center;
+      font-family: inherit;
+      position: relative;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
     }
-    .fs-tab-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5); display: block; }
-    .fs-tab-sub { font-size: 10px; color: rgba(255,255,255,0.3); display: block; margin-top: 2px; }
-    .fs-tab-status { margin-top: 4px; }
-    .fs-tab.active { background: rgba(255,255,255,0.18); }
-    .fs-tab.active .fs-tab-label { color: #FFFFFF; }
-    .fs-tab.active .fs-tab-sub { color: rgba(255,255,255,0.65); }
-    .fs-tab.ready .fs-tab-status::after { content: '✓'; font-size: 10px; color: rgba(255,255,255,0.6); }
-    .fs-tab.active.ready .fs-tab-status::after { color: #FFFFFF; }
+    .fs-tab + .fs-tab::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 18%;
+      bottom: 18%;
+      width: 1px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .fs-tab.active::before,
+    .fs-tab.active + .fs-tab::before { display: none; }
+    .fs-tab.active {
+      border: 1.5px solid var(--fs-gold);
+      background: rgba(248, 244, 232, 0.06);
+      box-shadow: inset 0 0 20px rgba(201, 168, 106, 0.12);
+    }
+    .fs-tab-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--fs-text);
+    }
+    .fs-tab-sub {
+      display: block;
+      margin-top: 3px;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--fs-text-muted);
+    }
+    .fs-tab-status {
+      display: block;
+      min-height: 14px;
+      margin-top: 5px;
+      font-size: 11px;
+      line-height: 1;
+      color: var(--fs-gold);
+    }
+    .fs-tab.active .fs-tab-label { color: var(--fs-text); }
+    .fs-tab.active .fs-tab-sub { color: var(--fs-text-muted); }
+    .fs-tab.ready:not(.fs-tab-locked) .fs-tab-status::after { content: '✓'; }
+    .fs-tab.fs-tab-locked { cursor: not-allowed; }
+    .fs-tab.fs-tab-locked .fs-tab-label,
+    .fs-tab.fs-tab-locked .fs-tab-sub { color: var(--fs-text-dim); }
+    .fs-tab.fs-tab-locked .fs-tab-status::after { content: '🔒'; font-size: 10px; }
+    .fs-tab.fs-tab-locked.active {
+      border-color: transparent;
+      background: transparent;
+      box-shadow: none;
+    }
+    .fs-unlock-hint {
+      margin: -6px 0 0;
+      font-size: 11px;
+      line-height: 1.45;
+      text-align: center;
+      color: var(--fs-text-dim);
+      letter-spacing: 0.02em;
+    }
 
-    /* Image display */
+    /* Before / after comparison card */
     .fs-image-wrap {
-      position: relative; border-radius: 20px; overflow: hidden;
-      background: rgba(0,0,0,0.2);
-      min-height: 300px;
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--fs-surface-border);
+      background: var(--fs-surface);
+      min-height: 240px;
     }
+    .fs-compare-split {
+      display: flex;
+      width: 100%;
+      min-height: 240px;
+      position: relative;
+    }
+    .fs-compare-half {
+      flex: 1 1 50%;
+      position: relative;
+      min-height: 240px;
+      overflow: hidden;
+      background: #0a0d09;
+    }
+    .fs-compare-half--after::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(40, 60, 40, 0.22);
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .fs-compare-img,
     .fs-image {
-      width: 100%; display: block; border-radius: 20px;
-      min-height: 200px; object-fit: cover;
-      animation: fsFadeIn 0.4s ease both;
+      width: 100%;
+      height: 100%;
+      min-height: 240px;
+      object-fit: cover;
+      display: block;
     }
-    @keyframes fsFadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-    .fs-image-label {
-      position: absolute; top: 14px; left: 14px;
-      font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
-      text-transform: uppercase; color: #fff;
-      padding: 5px 12px; border-radius: 8px;
-      background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+    .fs-image[src=""],
+    .fs-image[style*="display: none"] { display: none !important; }
+    .future-upload-preview {
+      display: none;
+      width: 100%;
+      height: 100%;
+      min-height: 240px;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+      z-index: 0;
     }
-    .fs-loading-overlay {
-      position: absolute; inset: 0; display: none;
-      flex-direction: column; align-items: center; justify-content: center;
-      background: rgba(0,0,0,0.35);
+    .future-upload-preview[style*="display: block"] { display: block !important; }
+    #beforeImg.fs-compare-img {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    #beforeImg[src=""] { display: none; }
+    .fs-week-chip {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 4;
+      padding: 6px 10px;
+      border-radius: 9px;
+      background: var(--fs-chip-bg);
+      pointer-events: none;
+    }
+    .fs-week-chip-line {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--fs-text);
+      line-height: 1.1;
+    }
+    .fs-week-chip-sub {
+      display: block;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--fs-text-muted);
+      margin-top: 2px;
+    }
+    .fs-week-chip--future {
+      left: auto;
+      right: 10px;
+      text-align: right;
+    }
+    .fs-week-chip--future .fs-week-chip-line { color: var(--fs-gold); }
+    .fs-compare-seam {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 1.5px solid var(--fs-gold);
+      background: rgba(9, 13, 8, 0.55);
+      color: var(--fs-gold);
+      font-size: 22px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      cursor: default;
+      pointer-events: none;
+    }
+    .fs-compare-copy {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
       z-index: 3;
+      padding: 42px 12px 12px;
+      background: linear-gradient(to top, rgba(9, 13, 8, 0.88) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    .fs-compare-headline {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--fs-gold);
+      line-height: 1.2;
+    }
+    .fs-compare-subtext {
+      margin: 4px 0 0;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--fs-text);
+      line-height: 1.35;
+      opacity: 0.92;
+    }
+    .fs-image-label { display: none; }
+    .fs-loading-overlay {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(9, 13, 8, 0.72);
+      z-index: 6;
+      padding: 16px;
     }
     .fs-loading-overlay.is-loading { display: flex; }
     .fs-loading-overlay .loading-ring {
-      width: 40px; height: 40px; border: 2px solid var(--border);
-      border-top-color: var(--sage); border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      border-top-color: var(--fs-gold);
+      border-radius: 50%;
       animation: spin 1s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .fs-loading-text { font-size: 13px; color: var(--text3); margin-top: 12px; }
-    .fs-board-pills {
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
-      margin: 16px auto 0; max-width: 340px;
+    .fs-loading-text {
+      margin-top: 12px;
+      font-size: 13px;
+      line-height: 1.45;
+      text-align: center;
+      color: var(--fs-text-muted);
+      max-width: 18em;
     }
-    .fs-board-pill {
-      font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-      padding: 6px 10px; border-radius: 999px;
-      color: rgba(255,255,255,0.72); border: 1px solid rgba(255,255,255,0.22);
-      background: rgba(255,255,255,0.08);
+    .fs-board-caption { display: none; }
+
+    /* Panels: vision + progress */
+    .fs-panel {
+      border-radius: 18px;
+      border: 1px solid var(--fs-surface-border);
+      background: var(--fs-surface);
+      padding: 18px 20px;
     }
-    .fs-board-caption {
-      font-size: 12px; line-height: 1.5; color: rgba(255,255,255,0.48);
-      text-align: center; margin: 12px 16px 0; max-width: 360px; margin-left: auto; margin-right: auto;
+    .fs-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .fs-panel-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--fs-text);
+      margin: 0;
+    }
+    .fs-panel-title svg { width: 18px; height: 18px; color: var(--fs-gold); stroke: var(--fs-gold); fill: none; }
+    .fs-panel-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 44px;
+      padding: 0 4px;
+      border: none;
+      background: none;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--fs-gold);
+      cursor: pointer;
+    }
+    .fs-vision-body {
+      position: relative;
+      padding-left: 8px;
+    }
+    .fs-vision-quote-mark {
+      position: absolute;
+      left: -4px;
+      top: -8px;
+      font-size: 56px;
+      line-height: 1;
+      font-weight: 700;
+      color: var(--fs-gold);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+    .fs-vision-text {
+      margin: 0;
+      padding-left: 28px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--fs-text);
+    }
+    .fs-progress-pct {
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--fs-text);
+      line-height: 1;
+      margin: 0;
+    }
+    .fs-progress-track-wrap { position: relative; padding: 8px 0 4px; }
+    .fs-progress-track {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: visible;
+      position: relative;
+    }
+    .fs-progress-fill {
+      height: 100%;
+      width: 1.2%;
+      border-radius: 999px;
+      background: var(--fs-gold);
+      position: relative;
+      transition: width 0.35s ease;
+    }
+    .fs-progress-fill::after {
+      content: '';
+      position: absolute;
+      right: -6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--fs-gold);
+      box-shadow: 0 0 0 4px rgba(201, 168, 106, 0.22);
+    }
+    .fs-progress-ticks {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+    .fs-progress-ticks span {
+      width: 1px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.14);
+    }
+    .fs-progress-days {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fs-text-muted);
     }
 
-    /* Actions below result */
+    /* Generate (JS hook) + legacy actions */
+    .fs-generate-wrap { margin-top: 2px; }
+    .future-generate-btn {
+      width: 100%;
+      min-height: 48px;
+      padding: 14px 18px;
+      border: 1px solid var(--fs-surface-border);
+      border-radius: 15px;
+      background: rgba(248, 244, 232, 0.06);
+      color: var(--fs-gold);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-align: center;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .future-generate-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
     .future-actions {
-      display: flex; flex-direction: column; align-items: center; gap: 10px;
-      margin-top: 16px; width: 100%; max-width: 360px;
-      margin-left: auto; margin-right: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
     }
     .future-actions .btn {
-      width: 100%; text-align: center; justify-content: center;
+      width: 100%;
+      min-height: 48px;
+      text-align: center;
+      justify-content: center;
+      border-radius: 15px;
     }
-    .future-start-btn { flex: none; }
-    .future-reset-btn { flex: none; padding: 14px 20px; width: 100%; }
+    .future-start-btn,
+    .future-reset-btn { flex: none; width: 100%; }
+
+    /* Sticky primary photo CTA */
+    .fs-sticky-cta {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 40;
+      padding: 12px var(--fs-pad-x) calc(12px + var(--fs-safe-b));
+      background: linear-gradient(to top, rgba(14, 19, 14, 0.96) 55%, transparent);
+      pointer-events: none;
+    }
+    .fs-sticky-cta .fs-primary-btn { pointer-events: auto; }
+    .fs-primary-btn {
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 58px;
+      padding: 0 20px;
+      border: none;
+      border-radius: 15px;
+      background: linear-gradient(180deg, var(--fs-gold-bright), var(--fs-gold-deep));
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+      color: var(--fs-ink);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .fs-primary-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .fs-primary-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* Loading / generating: dim tabs + primary */
+    #screen-future.fs-is-generating .fs-tabs,
+    #screen-future.fs-is-generating .fs-primary-btn {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .fs-result.active,
+      .future-upload.imploding { animation: none; }
+      .fs-loading-overlay .loading-ring { animation: none; }
+    }
+
+    /* Override global .screen padding for Future Self tab */
+    #screen-future.screen {
+      padding: calc(12px + var(--fs-safe-t)) var(--fs-pad-x) calc(96px + var(--fs-safe-b)) !important;
+      padding-left: var(--fs-pad-x) !important;
+      max-width: 100% !important;
+      margin: 0 auto !important;
+    }
+    #screen-future:has(#uploadPreview[src^="data"]) .fs-label-upload,
+    #screen-future:has(#beforeImg[src^="data"]) .fs-label-upload { display: none; }
+    #screen-future:has(#uploadPreview[src^="data"]) .fs-label-update,
+    #screen-future:has(#beforeImg[src^="data"]) .fs-label-update { display: inline; }
+    #screen-future .fs-label-update { display: none; }
+    @media (max-width: 480px) {
+      .fs-top { min-height: 152px; grid-template-columns: 1fr 34%; }
+      .fs-header-text { max-width: 66%; }
+      .fs-hero { width: 46%; }
+    }
 
     /* Legacy upload zone compat */
     .upload-zone { border: 1.5px dashed rgba(255,248,235,0.1); background: rgba(255,248,235,0.02); padding: 60px 24px; text-align: center; cursor: pointer; transition: all 0.25s; position: relative; border-radius: 16px; }
@@ -4193,87 +4697,156 @@
 
 <!-- ═══ FUTURE SELF ═══ -->
 <div class="screen" id="screen-future">
-  <div class="container future-container">
+  <div class="container future-container fs-shell">
 
-    <!-- Header — vision board (health, ease, identity — not physique-only) -->
-    <div class="fs-header-text">
-      <p class="future-label">Future Self</p>
-      <h1 class="future-title">Your vision board.</h1>
-      <p class="future-sub">One image of the healthy, capable, abundant life you&rsquo;re building &mdash; body, mind, and how you live.</p>
-      <div class="fs-board-pills" aria-hidden="true">
-        <span class="fs-board-pill">Vitality</span>
-        <span class="fs-board-pill">Wealth &amp; ease</span>
-        <span class="fs-board-pill">Mind &amp; ritual</span>
-        <span class="fs-board-pill">Purpose</span>
+    <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handlePhoto(event.target.files[0])" />
+
+    <div class="fs-top">
+      <header class="fs-header-text">
+        <p class="future-label">
+          <svg class="fs-sparkle" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l1.4 5.2L19 9l-5.6 1.8L12 16l-1.4-5.2L5 9l5.6-1.8L12 2zm0 14.5l.9 3.3 3.3.9-3.3.9-.9 3.3-.9-3.3-3.3-.9 3.3-.9.9-3.3z"/></svg>
+          Future Self
+        </p>
+        <h1 class="future-title">Your vision board.</h1>
+        <p class="future-sub">One image of the healthy, capable, abundant life you&rsquo;re building &mdash; body, mind, and how you live.</p>
+        <div class="fs-board-pills" aria-hidden="true">
+          <span class="fs-board-pill">Vitality</span>
+          <span class="fs-board-pill">Wealth &amp; ease</span>
+          <span class="fs-board-pill">Mind &amp; ritual</span>
+          <span class="fs-board-pill">Purpose</span>
+        </div>
+      </header>
+      <div>
+        <div class="fs-hero-glow"></div>
+        <img class="fs-hero-figure" id="afterImg" src="" alt="" />
+        <div class="fs-hero-mark">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="1.5"/><path fill="currentColor" d="M16 8v16M8 16h16" opacity="0.85"/></svg>
+        </div>
+        <p class="fs-hero-tagline">Lean. Strong.<br>Unstoppable.</p>
       </div>
     </div>
 
-    <!-- UPLOAD ZONE (implodes on generate) -->
     <div id="fsUploadWrap" class="future-upload-wrap">
       <div class="future-upload" id="uploadZone" onclick="document.getElementById('photoInput').click()">
-        <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handlePhoto(event.target.files[0])" />
         <img class="fs-silhouette" id="fsSilhouette" src="futureselfman.png" alt="" />
-        <img class="future-upload-preview" id="uploadPreview" src="" alt="" />
         <div id="uploadPlaceholder">
-          <div class="future-upload-icon"><span>↑</span></div>
-          <p class="future-upload-label">Upload or drop a photo</p>
-          <p class="future-upload-hint">Drag an image here, or tap to choose</p>
+          <div class="future-upload-icon"><span>&#128247;</span></div>
+          <p class="future-upload-label">Upload your photo</p>
+          <p class="future-upload-hint">Tap to choose from your library</p>
         </div>
       </div>
-
-      <p class="fs-motivation">Your photo anchors the board. We&rsquo;ll visualize health, ease, ritual, and the life you&rsquo;re building.</p>
-
+      <p class="fs-motivation">Your photo anchors the board.</p>
       <div class="fs-cta-stack">
         <button type="button" class="future-generate-btn" id="generateBtn" onclick="generateAllTimelines()">Generate My Vision Board &rarr;</button>
-        <p class="future-skip-wrap">
-          <button type="button" class="future-skip" onclick="showScreen('program')">Not yet</button>
-        </p>
+        <p class="future-skip-wrap"><button type="button" class="future-skip" onclick="showScreen('program')">Not yet</button></p>
       </div>
     </div>
 
-    <!-- RESULT GALLERY (explodes in after generation) -->
     <div class="fs-result" id="fsResult">
 
-      <!-- Timeline tabs -->
-      <div class="fs-tabs" id="fsTabs">
-        <button class="fs-tab active" data-timeline="12weeks" onclick="switchTimeline('12weeks')">
+      <div class="fs-tabs" id="fsTabs" role="tablist" aria-label="Future timeframe">
+        <button type="button" class="fs-tab active" role="tab" data-timeline="12weeks" aria-selected="true" onclick="switchTimeline('12weeks')">
           <span class="fs-tab-label">12 Weeks</span>
-          <span class="fs-tab-sub">Foundation board</span>
-          <div class="fs-tab-status" id="status-12weeks"></div>
+          <span class="fs-tab-sub">Recomposition</span>
+          <span class="fs-tab-status" id="status-12weeks" aria-hidden="true"></span>
         </button>
-        <button class="fs-tab" data-timeline="6months" onclick="switchTimeline('6months')">
+        <button type="button" class="fs-tab fs-tab-locked" role="tab" data-timeline="6months" aria-selected="false" aria-disabled="true" tabindex="-1" title="Unlock by progressing through your current phase">
           <span class="fs-tab-label">6 Months</span>
-          <span class="fs-tab-sub">Momentum board</span>
-          <div class="fs-tab-status" id="status-6months"></div>
+          <span class="fs-tab-sub">Momentum</span>
+          <span class="fs-tab-status" id="status-6months" aria-hidden="true"></span>
         </button>
-        <button class="fs-tab" data-timeline="1year" onclick="switchTimeline('1year')">
+        <button type="button" class="fs-tab fs-tab-locked" role="tab" data-timeline="1year" aria-selected="false" aria-disabled="true" tabindex="-1" title="Unlock by progressing through your current phase">
           <span class="fs-tab-label">1 Year</span>
-          <span class="fs-tab-sub">Embodied board</span>
-          <div class="fs-tab-status" id="status-1year"></div>
+          <span class="fs-tab-sub">Embodied</span>
+          <span class="fs-tab-status" id="status-1year" aria-hidden="true"></span>
         </button>
       </div>
+      <p class="fs-unlock-hint">Unlock by progressing through your current phase.</p>
 
-      <!-- Image display -->
       <div class="fs-image-wrap" id="fsImageWrap">
-        <img class="fs-image" id="fsDisplayImg" src="" alt="Your future self vision board" />
-        <span class="fs-image-label" id="fsImageLabel">12 Weeks</span>
-        <div class="fs-loading-overlay" id="fsLoading">
-          <div class="loading-ring"></div>
-          <p class="fs-loading-text" id="loadingText">Building your vision board...</p>
+        <div class="fs-compare-split">
+          <div class="fs-compare-half fs-compare-half--before">
+            <img id="beforeImg" class="fs-compare-img" src="" alt="Today" />
+            <img class="future-upload-preview" id="uploadPreview" src="" alt="" />
+            <div class="fs-week-chip">
+              <span class="fs-week-chip-line">Week 0</span>
+              <span class="fs-week-chip-sub">Today</span>
+            </div>
+          </div>
+          <div class="fs-compare-half fs-compare-half--after">
+            <img class="fs-image fs-compare-img" id="fsDisplayImg" src="" alt="Your future self vision board" />
+            <div class="fs-week-chip fs-week-chip--future">
+              <span class="fs-week-chip-line">Week 12</span>
+              <span class="fs-week-chip-sub">Your future</span>
+            </div>
+            <div class="fs-loading-overlay" id="fsLoading">
+              <div class="loading-ring" aria-hidden="true"></div>
+              <p class="fs-loading-text" id="loadingText">Generating your 12-week self&hellip;</p>
+            </div>
+            <div class="fs-compare-copy">
+              <p class="fs-compare-headline">Lean. Strong. Unstoppable.</p>
+              <p class="fs-compare-subtext">This is who you become when you follow through.</p>
+            </div>
+          </div>
+          <button type="button" class="fs-compare-seam" aria-hidden="true">&raquo;</button>
         </div>
+        <span class="fs-image-label" id="fsImageLabel">12 Weeks</span>
       </div>
       <p class="fs-board-caption" id="fsBoardCaption">Health, wealth &amp; ease, ritual, and purpose &mdash; one board per horizon.</p>
 
+      <section class="fs-panel fs-panel-vision" aria-labelledby="fsVisionHeading">
+        <div class="fs-panel-head">
+          <h2 class="fs-panel-title" id="fsVisionHeading">
+            <svg viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="2.5"/></svg>
+            Your Vision
+          </h2>
+          <button type="button" class="fs-panel-action" onclick="openEditProfile()">
+            Edit
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+          </button>
+        </div>
+        <div class="fs-vision-body">
+          <span class="fs-vision-quote-mark" aria-hidden="true">&ldquo;</span>
+          <p class="fs-vision-text" id="fsVisionText">I am building a life with health, discipline, and freedom.</p>
+        </div>
+      </section>
+
+      <section class="fs-panel fs-panel-progress" aria-labelledby="fsProgressHeading">
+        <div class="fs-panel-head">
+          <h2 class="fs-panel-title" id="fsProgressHeading">Your Progress</h2>
+          <p class="fs-progress-pct" id="fsProgressPct">1%</p>
+        </div>
+        <div class="fs-progress-track-wrap">
+          <div class="fs-progress-track" aria-hidden="true">
+            <div class="fs-progress-ticks"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="fs-progress-fill" id="fsProgressFill"></div>
+          </div>
+          <div class="fs-progress-days">
+            <span id="fsDayStart">Day 1</span>
+            <span id="fsDayEnd">Day 84</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="fs-generate-wrap">
+        <button type="button" class="future-generate-btn" onclick="generateAllTimelines()">Generate My Vision Board &rarr;</button>
+      </div>
+
       <div class="future-actions">
-        <button class="btn ob-next future-start-btn" onclick="showScreen('program')">Start My Program →</button>
-        <button class="btn future-reset-btn" onclick="resetFutureSelf()">Reset</button>
+        <button type="button" class="btn ob-next future-start-btn" onclick="showScreen('program')">Start My Program &rarr;</button>
+        <button type="button" class="btn future-reset-btn" onclick="resetFutureSelf()">Reset</button>
       </div>
     </div>
 
-    <!-- Hidden compat elements -->
+    <div class="fs-sticky-cta">
+      <button type="button" class="fs-primary-btn" id="fsPrimaryPhotoBtn" onclick="triggerUpload()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span id="fsPrimaryPhotoLabel"><span class="fs-label-upload">Upload Photo</span><span class="fs-label-update">Update Photo</span></span>
+      </button>
+    </div>
+
     <div style="display:none;">
       <span id="becomingTag"></span>
-      <img id="beforeImg" src="" /><img id="afterImg" src="" />
       <span id="afterTimelineLabel"></span>
       <div id="revealWrap"></div><div id="revealSlider"></div>
       <div id="revealHandle"></div><div id="revealLine"></div>
@@ -4282,7 +4855,6 @@
     </div>
   </div>
 </div>
-
 <!-- ═══ PROGRAM ═══ -->
 <div class="screen" id="screen-program">
   <div class="container">
