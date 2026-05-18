@@ -323,8 +323,16 @@
     .ob-progress-dot.ob-current { background: var(--sage-soft); }
     .ob-step-title { font-size: clamp(26px, 5vw, 38px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.12; color: var(--text); margin-bottom: 10px; }
     .ob-step-sub { font-size: 15px; color: var(--text2); line-height: 1.6; margin-bottom: 36px; }
-    .ob-nav { display: flex; gap: 12px; margin-top: 32px; }
-    .ob-nav .btn { flex: 1; padding: 14px 20px; font-size: 13px; }
+    .ob-nav {
+      display: flex; gap: 12px; margin-top: 32px;
+      justify-content: center; align-items: stretch;
+      width: 100%; max-width: 400px; margin-left: auto; margin-right: auto;
+    }
+    .ob-nav .btn {
+      flex: 1; padding: 14px 20px; font-size: 13px;
+      text-align: center; justify-content: center;
+    }
+    .ob-nav:not(:has(.ob-back)) .btn { flex: 0 1 100%; max-width: 360px; width: 100%; }
     .ob-back { background: transparent !important; border: 1px solid var(--border) !important; color: var(--text2) !important; }
     .ob-next { background: #F5F2ED !important; border: none !important; color: #1A1A1A !important; font-weight: 600 !important; }
     .ob-next:hover { opacity: 0.88; color: #1A1A1A !important; }
@@ -387,7 +395,11 @@
     .timeline-btn.active { border-color:rgba(122,142,118,0.3); background:var(--sage-dim); color:var(--sage); }
 
     /* FUTURE SELF */
-    .future-container { max-width: 520px; }
+    .future-container { max-width: 520px; margin-left: auto; margin-right: auto; }
+    .fs-cta-stack {
+      display: flex; flex-direction: column; align-items: center;
+      width: 100%; max-width: 360px; margin-left: auto; margin-right: auto;
+    }
 
     /* Full sage background for Future Self screen */
     #screen-future {
@@ -480,7 +492,8 @@
 
     /* Gold CTA — larger, rounder, more premium */
     .future-generate-btn {
-      width: 100%; margin-top: 12px; padding: 18px; border: none; border-radius: 50px;
+      width: 100%; max-width: 360px; margin-top: 12px; padding: 18px; border: none; border-radius: 50px;
+      display: block; margin-left: auto; margin-right: auto; text-align: center;
       font-family: var(--font-ui); font-size: 17px; font-weight: 700;
       cursor: pointer; letter-spacing: 0.01em;
       background: linear-gradient(135deg, #d4b87a 0%, #c8a96e 40%, #b5944e 100%);
@@ -491,8 +504,12 @@
     .future-generate-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(200,169,110,0.45), inset 0 1px 0 rgba(255,255,255,0.2); }
     .future-generate-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-    .future-skip-wrap { text-align: center; margin-top: 16px; margin-bottom: 24px; }
-    .future-skip { background: none; border: none; color: rgba(255,255,255,0.35); font-family: var(--font-ui); font-size: 13px; cursor: pointer; letter-spacing: 0.02em; }
+    .future-skip-wrap { text-align: center; margin-top: 16px; margin-bottom: 24px; width: 100%; }
+    .future-skip {
+      background: none; border: none; color: rgba(255,255,255,0.35);
+      font-family: var(--font-ui); font-size: 13px; cursor: pointer; letter-spacing: 0.02em;
+      display: inline-block; margin: 0 auto; text-align: center;
+    }
     .future-skip:hover { color: rgba(255,255,255,0.55); }
 
     /* Implode animation on upload zone */
@@ -542,6 +559,7 @@
     }
     .fs-image {
       width: 100%; display: block; border-radius: 20px;
+      min-height: 200px; object-fit: cover;
       animation: fsFadeIn 0.4s ease both;
     }
     @keyframes fsFadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
@@ -553,10 +571,12 @@
       background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
     }
     .fs-loading-overlay {
-      position: absolute; inset: 0; display: flex;
+      position: absolute; inset: 0; display: none;
       flex-direction: column; align-items: center; justify-content: center;
-      background: var(--bg-surface);
+      background: rgba(0,0,0,0.35);
+      z-index: 3;
     }
+    .fs-loading-overlay.is-loading { display: flex; }
     .fs-loading-overlay .loading-ring {
       width: 40px; height: 40px; border: 2px solid var(--border);
       border-top-color: var(--sage); border-radius: 50%;
@@ -564,11 +584,32 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .fs-loading-text { font-size: 13px; color: var(--text3); margin-top: 12px; }
+    .fs-board-pills {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+      margin: 16px auto 0; max-width: 340px;
+    }
+    .fs-board-pill {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 6px 10px; border-radius: 999px;
+      color: rgba(255,255,255,0.72); border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.08);
+    }
+    .fs-board-caption {
+      font-size: 12px; line-height: 1.5; color: rgba(255,255,255,0.48);
+      text-align: center; margin: 12px 16px 0; max-width: 360px; margin-left: auto; margin-right: auto;
+    }
 
     /* Actions below result */
-    .future-actions { display: flex; gap: 10px; margin-top: 16px; }
-    .future-start-btn { flex: 1; }
-    .future-reset-btn { flex-shrink: 0; padding: 14px 20px; }
+    .future-actions {
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      margin-top: 16px; width: 100%; max-width: 360px;
+      margin-left: auto; margin-right: auto;
+    }
+    .future-actions .btn {
+      width: 100%; text-align: center; justify-content: center;
+    }
+    .future-start-btn { flex: none; }
+    .future-reset-btn { flex: none; padding: 14px 20px; width: 100%; }
 
     /* Legacy upload zone compat */
     .upload-zone { border: 1.5px dashed rgba(255,248,235,0.1); background: rgba(255,248,235,0.02); padding: 60px 24px; text-align: center; cursor: pointer; transition: all 0.25s; position: relative; border-radius: 16px; }
@@ -2410,9 +2451,10 @@
   </div>
 </div>
 
-<div id="screen-intro" style="display:none;position:fixed;inset:0;z-index:9999;background:#000000;display:none;align-items:center;justify-content:center;flex-direction:column;">
-  <video id="introVideo" src="intro.mp4" playsinline webkit-playsinline style="width:100%;max-width:500px;border-radius:16px;"></video>
-  <button onclick="skipIntro()" style="margin-top:24px;background:transparent;border:1px solid rgba(201,173,110,0.3);color:var(--gold,#c8a96e);padding:10px 32px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer;">SKIP</button>
+<div id="screen-intro" class="screen-intro-overlay" aria-hidden="true">
+  <video id="introVideo" src="/intro.mp4" playsinline webkit-playsinline preload="auto" style="width:100%;max-width:500px;border-radius:16px;"></video>
+  <button type="button" class="screen-intro-skip" onclick="skipIntro()">SKIP</button>
+  <button type="button" id="introTapPlay" class="screen-intro-tap" style="display:none;" onclick="resumeIntroPlay()">Tap to play</button>
 </div>
 
 <!-- ═══ GEOMETRIC ASSEMBLY TRANSITION ═══ -->
@@ -2455,6 +2497,25 @@
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
     filter: drop-shadow(0 2px 6px rgba(0,0,0,0.7)) drop-shadow(0 0 30px rgba(200,169,110,0.25));
+  }
+  .screen-intro-overlay {
+    display: none; position: fixed; inset: 0; z-index: 10001;
+    background: #000; align-items: center; justify-content: center; flex-direction: column;
+  }
+  .screen-intro-overlay.is-visible { display: flex; }
+  .screen-intro-skip {
+    margin-top: 24px; background: transparent;
+    border: 1px solid rgba(201,173,110,0.3); color: var(--gold, #c8a96e);
+    padding: 10px 32px; border-radius: 8px; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; letter-spacing: 2px; cursor: pointer;
+    align-self: center; text-align: center;
+  }
+  .screen-intro-tap {
+    margin-top: 12px; background: rgba(201,173,110,0.12);
+    border: 1px solid rgba(201,173,110,0.35); color: #e8d5a3;
+    padding: 12px 28px; border-radius: 999px; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; letter-spacing: 0.06em; cursor: pointer;
+    align-self: center; text-align: center;
   }
   .geo-transition.dissolving {
     animation: geoDissolve 0.9s ease-out forwards;
@@ -2609,7 +2670,7 @@
     <div class="ob-step" id="obStep2">
       <div class="ob-step-sage">
         <h1 class="ob-step-title">This is you if you follow through.</h1>
-        <p class="ob-step-sub">Upload a photo of yourself today. See the version of you that did the work.</p>
+        <p class="ob-step-sub">Upload a photo of yourself today. It anchors your vision board &mdash; health, ease, and who you&rsquo;re becoming.</p>
 
         <div class="ob-upload-zone" id="obUploadZone" role="button" tabindex="0" onclick="document.getElementById('obPhotoInput').click()">
           <img class="ob-silhouette" id="obSilhouette" src="futureselfman.png" alt="" />
@@ -2636,39 +2697,28 @@
       </div>
     </div>
 
-    <!-- STEP 3 — Goals + motivation + obstacles -->
+    <!-- STEP 3 — Mission focus + commitment -->
     <div class="ob-step" id="obStep3">
       <h1 class="ob-step-title">Your transformation mission</h1>
-      <p class="ob-step-sub">Let&rsquo;s build a program that fits <em>you</em> — goals, fuel, and friction included.</p>
+      <p class="ob-step-sub">What are you here to build? Pick everything that fits &mdash; we&rsquo;ll shape training around it.</p>
 
       <div class="form-group ob-field">
-        <label>What are you training for? <span class="ob-optional">(select all that fit)</span></label>
+        <label>What matters most right now? <span class="ob-optional">(select all that fit)</span></label>
         <div class="pill-group" id="goalGroup">
-          <button type="button" class="pill" onclick="togglePill(this)">Burn fat</button>
-          <button type="button" class="pill" onclick="togglePill(this)">Build muscle</button>
-          <button type="button" class="pill" onclick="togglePill(this)">Get lean &amp; athletic</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Get lean</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Build muscle &amp; strength</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Athletic performance</button>
+          <button type="button" class="pill" onclick="togglePill(this)">More energy</button>
           <button type="button" class="pill" onclick="togglePill(this)">Build confidence</button>
-          <button type="button" class="pill" onclick="togglePill(this)">Improve endurance</button>
-          <button type="button" class="pill" onclick="togglePill(this)">Increase flexibility</button>
-        </div>
-      </div>
-
-      <div class="form-group ob-field">
-        <label>What&rsquo;s driving you most? <span class="ob-optional">(select all that fit)</span></label>
-        <div class="pill-group" id="motivationGroup">
-          <button type="button" class="pill" onclick="togglePill(this)">Get stronger</button>
-          <button type="button" class="pill" onclick="togglePill(this)">Lose weight / get lean</button>
-          <button type="button" class="pill" onclick="togglePill(this)">Build confidence</button>
-          <button type="button" class="pill" onclick="togglePill(this)">Feel energetic</button>
-          <button type="button" class="pill" onclick="togglePill(this)">Improve health</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Long-term health</button>
           <button type="button" class="pill" onclick="togglePill(this)">Challenge myself</button>
-          <button type="button" class="pill" onclick="togglePill(this)">Look better</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Move better</button>
         </div>
       </div>
 
       <div class="form-group ob-field">
-        <label>What&rsquo;s your biggest obstacle?</label>
-        <input class="input" id="obstacleInput" type="text" placeholder="e.g., Time, consistency, motivation, injury" />
+        <label>Biggest obstacle <span class="ob-optional">(optional)</span></label>
+        <input class="input" id="obstacleInput" type="text" placeholder="e.g., Time, consistency, injury" />
       </div>
 
       <div class="form-group ob-field">
@@ -2699,7 +2749,7 @@
     <!-- STEP 4 — Health + lifestyle -->
     <div class="ob-step" id="obStep4">
       <h1 class="ob-step-title">Your current foundation</h1>
-      <p class="ob-step-sub">Helps us personalize your coaching — training load, recovery, and how we talk to you.</p>
+      <p class="ob-step-sub">Body basics and how you&rsquo;re feeling — so load and coaching tone fit today.</p>
 
       <div class="form-group ob-field">
         <label>Age range</label>
@@ -2825,19 +2875,6 @@
           <button type="button" class="pill" onclick="selectPill(this,'equipmentGroup')">Full setup</button>
           <button type="button" class="pill" onclick="selectPill(this,'equipmentGroup')">Some basics</button>
           <button type="button" class="pill" onclick="selectPill(this,'equipmentGroup')">None</button>
-        </div>
-      </div>
-
-      <div class="form-group ob-field">
-        <label>Open to workout classes? <span class="ob-optional">(optional)</span></label>
-        <div class="pill-group" id="classGroup">
-          <button type="button" class="pill" onclick="togglePill(this)">Yoga</button>
-          <button type="button" class="pill" onclick="togglePill(this)">Pilates</button>
-          <button type="button" class="pill" onclick="togglePill(this)">Spin / Cycling</button>
-          <button type="button" class="pill" onclick="togglePill(this)">HIIT classes</button>
-          <button type="button" class="pill" onclick="togglePill(this)">Boxing</button>
-          <button type="button" class="pill" onclick="togglePill(this)">Swimming</button>
-          <button type="button" class="pill" onclick="togglePill(this)">Not interested</button>
         </div>
       </div>
 
@@ -4158,11 +4195,17 @@
 <div class="screen" id="screen-future">
   <div class="container future-container">
 
-    <!-- Header copy — sacred framing, the brief: feel like a ritual -->
+    <!-- Header — vision board (health, ease, identity — not physique-only) -->
     <div class="fs-header-text">
       <p class="future-label">Future Self</p>
-      <h1 class="future-title">This is you if you follow through.</h1>
-      <p class="future-sub">Upload a photo of yourself today. See the version of you that did the work.</p>
+      <h1 class="future-title">Your vision board.</h1>
+      <p class="future-sub">One image of the healthy, capable, abundant life you&rsquo;re building &mdash; body, mind, and how you live.</p>
+      <div class="fs-board-pills" aria-hidden="true">
+        <span class="fs-board-pill">Vitality</span>
+        <span class="fs-board-pill">Wealth &amp; ease</span>
+        <span class="fs-board-pill">Mind &amp; ritual</span>
+        <span class="fs-board-pill">Purpose</span>
+      </div>
     </div>
 
     <!-- UPLOAD ZONE (implodes on generate) -->
@@ -4178,13 +4221,14 @@
         </div>
       </div>
 
-      <p class="fs-motivation">Most people never see who they could become. You will.</p>
+      <p class="fs-motivation">Your photo anchors the board. We&rsquo;ll visualize health, ease, ritual, and the life you&rsquo;re building.</p>
 
-      <button class="future-generate-btn" id="generateBtn" onclick="generateAllTimelines()">Show Me Who I'm Becoming &rarr;</button>
-
-      <p class="future-skip-wrap">
-        <button class="future-skip" onclick="showScreen('program')">Not yet</button>
-      </p>
+      <div class="fs-cta-stack">
+        <button type="button" class="future-generate-btn" id="generateBtn" onclick="generateAllTimelines()">Generate My Vision Board &rarr;</button>
+        <p class="future-skip-wrap">
+          <button type="button" class="future-skip" onclick="showScreen('program')">Not yet</button>
+        </p>
+      </div>
     </div>
 
     <!-- RESULT GALLERY (explodes in after generation) -->
@@ -4194,30 +4238,31 @@
       <div class="fs-tabs" id="fsTabs">
         <button class="fs-tab active" data-timeline="12weeks" onclick="switchTimeline('12weeks')">
           <span class="fs-tab-label">12 Weeks</span>
-          <span class="fs-tab-sub">Recomposition</span>
+          <span class="fs-tab-sub">Foundation board</span>
           <div class="fs-tab-status" id="status-12weeks"></div>
         </button>
         <button class="fs-tab" data-timeline="6months" onclick="switchTimeline('6months')">
           <span class="fs-tab-label">6 Months</span>
-          <span class="fs-tab-sub">Transformed</span>
+          <span class="fs-tab-sub">Momentum board</span>
           <div class="fs-tab-status" id="status-6months"></div>
         </button>
         <button class="fs-tab" data-timeline="1year" onclick="switchTimeline('1year')">
           <span class="fs-tab-label">1 Year</span>
-          <span class="fs-tab-sub">Peak form</span>
+          <span class="fs-tab-sub">Embodied board</span>
           <div class="fs-tab-status" id="status-1year"></div>
         </button>
       </div>
 
       <!-- Image display -->
       <div class="fs-image-wrap" id="fsImageWrap">
-        <img class="fs-image" id="fsDisplayImg" src="" alt="Your future self" />
+        <img class="fs-image" id="fsDisplayImg" src="" alt="Your future self vision board" />
         <span class="fs-image-label" id="fsImageLabel">12 Weeks</span>
         <div class="fs-loading-overlay" id="fsLoading">
           <div class="loading-ring"></div>
-          <p class="fs-loading-text" id="loadingText">Building your future self...</p>
+          <p class="fs-loading-text" id="loadingText">Building your vision board...</p>
         </div>
       </div>
+      <p class="fs-board-caption" id="fsBoardCaption">Health, wealth &amp; ease, ritual, and purpose &mdash; one board per horizon.</p>
 
       <div class="future-actions">
         <button class="btn ob-next future-start-btn" onclick="showScreen('program')">Start My Program →</button>
@@ -4748,7 +4793,9 @@
       });
       try { localStorage.removeItem('wylde_profile'); } catch(e) {}
       try { localStorage.removeItem('wylde_before_photo'); } catch(e) {}
+      try { localStorage.removeItem('wylde_future_boards'); } catch(e) {}
       try { futurePhotoBase64 = null; } catch (e) {}
+      _generatedImages = { '12weeks': null, '6months': null, '1year': null };
       document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.add('locked'); });
       var tabs = document.querySelectorAll('.nav-tab');
       if (tabs[0]) { tabs[0].classList.remove('locked'); tabs[0].classList.add('active'); }
@@ -6289,7 +6336,13 @@
     if (p.stressLevel) psych.push('stress ' + p.stressLevel);
     if (p.energyBaseline) psych.push('baseline energy ' + p.energyBaseline);
     if (psych.length) lines.push('Baseline signals: ' + psych.join(', ') + ' — tune training load and tone accordingly.');
-    if (p.motivations && p.motivations.length) lines.push('Motivations: ' + p.motivations.join(', ') + '.');
+    if (p.motivations && p.motivations.length) {
+      var goalKey = (p.goals && p.goals.length) ? p.goals.join('|') : (p.goal || '');
+      var motKey = p.motivations.join('|');
+      if (motKey !== goalKey && motKey !== (p.goal || '')) {
+        lines.push('Motivations: ' + p.motivations.join(', ') + '.');
+      }
+    }
     if (p.obstacle) lines.push('Biggest stated obstacle: "' + p.obstacle + '".');
     if (p.futureVisionText) lines.push('Future-self vision (their words): "' + p.futureVisionText + '".');
 
@@ -6753,9 +6806,13 @@
               }
             } catch(_) {}
             showScreen(target);
-            // Load saved program if exists (does nothing if no program saved)
             loadSavedProgram();
+            if (target === 'future' && typeof syncFutureSelfScreen === 'function') {
+              setTimeout(syncFutureSelfScreen, 80);
+            }
           }, 100);
+        } else if (typeof syncFutureSelfScreen === 'function') {
+          setTimeout(syncFutureSelfScreen, 80);
         }
       }
     } catch(e) {}
@@ -6888,19 +6945,7 @@
     if (id === 'identity' && typeof initIdentityScreen === 'function') initIdentityScreen();
     if (id === 'future') {
       updateFsSilhouette();
-      try {
-        if (typeof state !== 'undefined' && state && state.beforePhotoDataUrl) {
-          if (!futurePhotoBase64 || futurePhotoBase64.indexOf('data:') !== 0) {
-            futurePhotoBase64 = state.beforePhotoDataUrl;
-          }
-          var up = document.getElementById('uploadPreview');
-          var uph = document.getElementById('uploadPlaceholder');
-          var uz = document.getElementById('uploadZone');
-          if (up) { up.src = state.beforePhotoDataUrl; up.style.display = 'block'; }
-          if (uph) uph.style.display = 'none';
-          if (uz) { uz.style.padding = '0'; uz.style.border = '1.5px solid rgba(200,169,110,0.4)'; }
-        }
-      } catch (_) {}
+      if (typeof syncFutureSelfScreen === 'function') syncFutureSelfScreen();
     }
     if (id === 'program') { autoLoadProgram(); }
     if (id === 'library') {
@@ -7109,6 +7154,30 @@
   var _obStep = 1;
   var _obTotal = 6;
 
+  var _OB_LEGACY_GOALS = {
+    'Burn fat': 'Get lean',
+    'Get lean & athletic': 'Get lean',
+    'Lose weight / get lean': 'Get lean',
+    'Look better': 'Get lean',
+    'Build muscle': 'Build muscle & strength',
+    'Get stronger': 'Build muscle & strength',
+    'Improve endurance': 'Athletic performance',
+    'Increase flexibility': 'Move better',
+    'Feel energetic': 'More energy',
+    'Improve health': 'Long-term health'
+  };
+
+  function _obNormalizeGoalLabel(label) {
+    if (!label) return '';
+    return _OB_LEGACY_GOALS[label] || label;
+  }
+
+  function _obCollectGoalsFromDom() {
+    return Array.from(document.querySelectorAll('#goalGroup .selected')).map(function(p) {
+      return p.textContent;
+    });
+  }
+
   function _obDataUrlToCompressedJpeg(dataUrl, maxDim, quality, cb) {
     try {
       var img = new Image();
@@ -7294,9 +7363,7 @@
     }
     if (fromStep === 3) {
       var goals = document.querySelectorAll('#goalGroup .selected');
-      var mots = document.querySelectorAll('#motivationGroup .selected');
-      if (!goals.length) { obShowFlowError('Pick at least one training goal.'); return; }
-      if (!mots.length) { obShowFlowError('Pick at least one motivation.'); return; }
+      if (!goals.length) { obShowFlowError('Pick at least one focus for your mission.'); return; }
       if (!document.querySelector('#levelGroup .selected')) { obShowFlowError('Select your current fitness level.'); return; }
       if (!document.querySelector('#daysGroup .selected')) { obShowFlowError('Select training days per week.'); return; }
     }
@@ -7320,11 +7387,12 @@
     var name = (document.getElementById('userName') && document.getElementById('userName').value || '').trim();
     if (!name) { obGoTo(1); obShowFlowError('Add your first name to continue.'); return false; }
     if (!document.querySelector('#genderGroup .selected')) { obGoTo(1); obShowFlowError('Select how you identify.'); return false; }
-    if (!futurePhotoBase64 || futurePhotoBase64.indexOf('data:') !== 0) { obGoTo(2); obShowFlowError('Upload your photo — it anchors your Future Self and Today card.'); return false; }
+    var photoOk = (typeof futurePhotoBase64 === 'string' && futurePhotoBase64.indexOf('data:') === 0)
+      || (state.beforePhotoDataUrl && String(state.beforePhotoDataUrl).indexOf('data:') === 0);
+    if (!photoOk) { obGoTo(2); obShowFlowError('Upload your photo — it anchors your Future Self and Today card.'); return false; }
+    if (!futurePhotoBase64 && state.beforePhotoDataUrl) futurePhotoBase64 = state.beforePhotoDataUrl;
     var goals = document.querySelectorAll('#goalGroup .selected');
-    var mots = document.querySelectorAll('#motivationGroup .selected');
-    if (!goals.length) { obGoTo(3); obShowFlowError('Pick at least one training goal.'); return false; }
-    if (!mots.length) { obGoTo(3); obShowFlowError('Pick at least one motivation.'); return false; }
+    if (!goals.length) { obGoTo(3); obShowFlowError('Pick at least one focus for your mission.'); return false; }
     if (!document.querySelector('#levelGroup .selected')) { obGoTo(3); obShowFlowError('Select your fitness level.'); return false; }
     if (!document.querySelector('#daysGroup .selected')) { obGoTo(3); obShowFlowError('Select training days per week.'); return false; }
     if (!document.querySelector('#ageGroup .selected')) { obGoTo(4); obShowFlowError('Select an age range.'); return false; }
@@ -7342,25 +7410,75 @@
     if (_obFill) _obFill.style.width = Math.round(100 / _obTotal) + '%';
   } catch (_) {}
 
-  function _finalizeOnboardingToOverview() {
-    if (window._onboardingFinalized) return;
-    window._onboardingFinalized = true;
+  function _hideOnboardingForCinematic() {
+    // Only hide onboarding — cinematic layers are fixed overlays. Stripping
+    // .active from every .screen was leaving no visible screen if intro/geo
+    // stalled (common on mobile when video autoplay is blocked).
+    var ob = document.getElementById('screen-onboard');
+    if (ob) ob.classList.remove('active');
+  }
+
+  function _isCoarseMobileDevice() {
+    try {
+      if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) return true;
+      if (window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches) return true;
+    } catch (_) {}
+    return false;
+  }
+
+  function _dismissOnboardingCinematicOverlays() {
     if (window._obEmergencyTimer) {
       try { clearTimeout(window._obEmergencyTimer); } catch (_) {}
       window._obEmergencyTimer = null;
     }
-    try { localStorage.setItem('wylde_last_screen', 'overview'); } catch (_) {}
-    var intro = document.getElementById('screen-intro');
+    if (window._introAutoplayWatchdog) {
+      try { clearTimeout(window._introAutoplayWatchdog); } catch (_) {}
+      window._introAutoplayWatchdog = null;
+    }
+    var vid = document.getElementById('introVideo');
+    if (vid) { try { vid.pause(); } catch (_) {} }
+    _showIntroOverlay(false);
+    var tap = document.getElementById('introTapPlay');
+    if (tap) tap.style.display = 'none';
     var geo = document.getElementById('geoTransition');
-    if (intro) intro.style.display = 'none';
     if (geo) {
       geo.classList.remove('active', 'dissolving');
       geo.style.display = 'none';
     }
+  }
+
+  function _playOnboardingMilestoneCinematic(onDone) {
+    onDone = onDone || function() {};
+    if (_isCoarseMobileDevice()) {
+      try { localStorage.setItem('wylde_intro_seen', '1'); } catch (_) {}
+      playGeoTransition(onDone);
+      return;
+    }
+    playIntro(onDone);
+  }
+
+  function _showIntroOverlay(show) {
+    var intro = document.getElementById('screen-intro');
+    if (!intro) return;
+    if (show) {
+      intro.classList.add('is-visible');
+      intro.setAttribute('aria-hidden', 'false');
+    } else {
+      intro.classList.remove('is-visible');
+      intro.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  function _finalizeOnboardingToOverview() {
+    if (window._onboardingFinalized) return;
+    window._onboardingFinalized = true;
+    _dismissOnboardingCinematicOverlays();
+    try { localStorage.setItem('wylde_last_screen', 'overview'); } catch (_) {}
     try { _userContextCache = null; } catch (_) {}
     showScreen('overview');
     try { if (typeof ovUpdateHero === 'function') ovUpdateHero(); } catch (_) {}
     try { if (typeof ovSyncHeroImage === 'function') ovSyncHeroImage(); } catch (_) {}
+    try { if (typeof syncFutureSelfScreen === 'function') syncFutureSelfScreen(); } catch (_) {}
   }
 
   // ONBOARDING
@@ -7370,8 +7488,8 @@
     if (!name) { document.getElementById('userName').style.borderColor='rgba(220,80,80,0.6)'; return; }
     var gender  = document.querySelector('#genderGroup .selected');
     var age     = document.querySelector('#ageGroup .selected');
-    var goals   = Array.from(document.querySelectorAll('#goalGroup .selected')).map(function(p){ return p.textContent; });
-    var motivations = Array.from(document.querySelectorAll('#motivationGroup .selected')).map(function(p){ return p.textContent; });
+    var goals   = _obCollectGoalsFromDom();
+    var motivations = goals.slice();
     var obstacle = (document.getElementById('obstacleInput') && document.getElementById('obstacleInput').value.trim()) || '';
     var level   = document.querySelector('#levelGroup .selected');
     var days    = document.querySelector('#daysGroup .selected');
@@ -7394,7 +7512,7 @@
     state.height           = height    ? height.textContent     : '';
     state.weight           = weight    || '';
     state.weightUnit       = wUnit     ? wUnit.textContent      : 'lbs';
-    state.goals            = goals.length > 0 ? goals : ['Get lean & athletic'];
+    state.goals            = goals.length > 0 ? goals : ['Get lean'];
     state.motivations      = motivations;
     state.obstacle         = obstacle;
     state.sleepPerNight    = sleepEl   ? sleepEl.textContent    : '';
@@ -7431,7 +7549,7 @@
     state.dietNotes   = dNotes;
 
     // Backward compat: keep goal as primary for display
-    state.goal = state.goals[0] || 'Get lean & athletic';
+    state.goal = state.goals[0] || 'Get lean';
 
     document.getElementById('programName').textContent = name;
     document.getElementById('programSub').textContent  = 'A ' + state.days + ' program built around your goals.';
@@ -7479,49 +7597,125 @@
       try { clearTimeout(window._obEmergencyTimer); } catch (_) {}
       window._obEmergencyTimer = null;
     }
-    var firstIntro = !localStorage.getItem('wylde_intro_seen');
-    if (!localStorage.getItem('wylde_intro_seen')) {
-      playIntro(function() { _finalizeOnboardingToOverview(); });
-    } else {
-      playGeoTransition(function() { _finalizeOnboardingToOverview(); });
+    _hideOnboardingForCinematic();
+    // Enter Today immediately — do not block the app on intro video / geo (mobile
+    // autoplay often never fires onended). Milestone animation runs as overlay.
+    _finalizeOnboardingToOverview();
+    window._introSkipped = false;
+    _playOnboardingMilestoneCinematic(_dismissOnboardingCinematicOverlays);
+    window._obEmergencyTimer = setTimeout(
+      _dismissOnboardingCinematicOverlays,
+      _isCoarseMobileDevice() ? 7000 : 22000
+    );
+  }
+
+  function resumeIntroPlay() {
+    var tap = document.getElementById('introTapPlay');
+    if (tap && tap.textContent === 'Continue') {
+      skipIntro();
+      return;
     }
-    // Safety net: first-time intro can exceed 7s (video + geo). Never cut it short.
-    window._obEmergencyTimer = setTimeout(_finalizeOnboardingToOverview, firstIntro ? 26000 : 9500);
+    var vid = document.getElementById('introVideo');
+    if (!vid) { skipIntro(); return; }
+    if (tap) {
+      tap.textContent = 'Tap to play';
+      tap.style.display = 'none';
+    }
+    var p = vid.play();
+    if (p && typeof p.then === 'function') {
+      p.catch(function() {
+        if (tap) {
+          tap.textContent = 'Continue';
+          tap.style.display = 'block';
+        } else {
+          skipIntro();
+        }
+      });
+    }
   }
 
   function playIntro(callback) {
     var intro = document.getElementById('screen-intro');
     var vid = document.getElementById('introVideo');
-    if (!intro || !vid || !vid.src || vid.error) {
-      // No intro video — skip straight to geo transition
-      if (callback) {
-        playGeoTransition(function() { callback(); });
-      }
+    if (!intro || !vid) {
+      if (callback) playGeoTransition(function() { callback(); });
       return;
     }
-    intro.style.display = 'flex';
+    _hideOnboardingForCinematic();
     window._introCallback = callback;
-    vid.currentTime = 0;
-    vid.play().catch(function(){
-      // Autoplay blocked or video missing — auto-skip after brief delay
-      setTimeout(function() { skipIntro(); }, 500);
-    });
+    window._introSkipped = false;
+    if (window._introTimeout) { clearTimeout(window._introTimeout); window._introTimeout = null; }
+
+    if (!vid.getAttribute('src') || vid.getAttribute('src').indexOf('intro') === -1) {
+      vid.setAttribute('src', '/intro.mp4');
+    }
+
+    var tap = document.getElementById('introTapPlay');
+    if (tap) tap.style.display = 'none';
+
+    _showIntroOverlay(true);
     vid.onended = function() { skipIntro(); };
-    vid.onerror = function() { skipIntro(); };
-    // Safety timeout — if nothing happens in 15s, force skip
-    window._introTimeout = setTimeout(function() { skipIntro(); }, 15000);
+    vid.onerror = function() {
+      console.warn('[intro] video error — continuing to geometric welcome');
+      skipIntro();
+    };
+
+    function startPlayback() {
+      vid.currentTime = 0;
+      var p = vid.play();
+      if (p && typeof p.then === 'function') {
+        p.catch(function() {
+          if (tap) {
+            tap.textContent = 'Continue';
+            tap.style.display = 'block';
+          } else {
+            skipIntro();
+          }
+        });
+      }
+    }
+
+    if (vid.readyState >= 2) {
+      startPlayback();
+    } else {
+      vid.onloadeddata = function() {
+        vid.onloadeddata = null;
+        startPlayback();
+      };
+      try { vid.load(); } catch (_) {}
+    }
+
+    if (window._introAutoplayWatchdog) {
+      try { clearTimeout(window._introAutoplayWatchdog); } catch (_) {}
+    }
+    window._introAutoplayWatchdog = setTimeout(function() {
+      if (window._introSkipped) return;
+      if (!vid.paused || vid.ended) return;
+      if (tap) {
+        tap.textContent = 'Continue';
+        tap.style.display = 'block';
+      } else {
+        skipIntro();
+      }
+    }, 1500);
+
+    window._introTimeout = setTimeout(function() { skipIntro(); }, 90000);
   }
 
   function skipIntro() {
     if (window._introSkipped) return;
     window._introSkipped = true;
+    if (window._introAutoplayWatchdog) {
+      try { clearTimeout(window._introAutoplayWatchdog); } catch (_) {}
+      window._introAutoplayWatchdog = null;
+    }
     if (window._introTimeout) { clearTimeout(window._introTimeout); window._introTimeout = null; }
-    var intro = document.getElementById('screen-intro');
     var vid = document.getElementById('introVideo');
-    if (vid) vid.pause();
-    if (intro) intro.style.display = 'none';
-    localStorage.setItem('wylde_intro_seen', '1');
-    // Play geometric assembly before showing the next screen
+    if (vid) { try { vid.pause(); } catch (_) {} }
+    _showIntroOverlay(false);
+    var tap = document.getElementById('introTapPlay');
+    if (tap) tap.style.display = 'none';
+    try { localStorage.setItem('wylde_intro_seen', '1'); } catch (_) {}
     playGeoTransition(function() {
       if (window._introCallback) { window._introCallback(); window._introCallback = null; }
     });
@@ -7531,9 +7725,28 @@
   function playGeoTransition(callback) {
     var overlay = document.getElementById('geoTransition');
     var canvas  = document.getElementById('geoCanvas');
-    var ctx     = canvas.getContext('2d');
+    if (!overlay || !canvas) {
+      if (callback) callback();
+      return;
+    }
+    var ctx;
+    try {
+      ctx = canvas.getContext('2d');
+    } catch (geoErr) {
+      console.warn('[geo] canvas unavailable:', geoErr);
+      if (callback) callback();
+      return;
+    }
+    if (!ctx) {
+      if (callback) callback();
+      return;
+    }
     var nameEl  = document.getElementById('geoName');
     var textEl  = overlay.querySelector('.geo-text-reveal');
+    if (!nameEl || !textEl) {
+      if (callback) callback();
+      return;
+    }
 
     // Set name
     nameEl.textContent = (state.name || 'YOU').toUpperCase();
@@ -7545,6 +7758,7 @@
     var W = canvas.width, H = canvas.height;
 
     overlay.classList.remove('dissolving');
+    overlay.style.display = '';
     overlay.classList.add('active');
 
     // Colors
@@ -7736,11 +7950,15 @@
         if (p.textContent === state.gender) p.classList.add('selected');
       });
     }
-    // Pre-fill goals (multi-select)
-    if (state.goals && state.goals.length > 0) {
+    // Pre-fill goals (multi-select; map legacy labels)
+    var goalSel = {};
+    (state.goals || []).concat(state.motivations || []).forEach(function(g) {
+      goalSel[_obNormalizeGoalLabel(g)] = true;
+    });
+    if (Object.keys(goalSel).length > 0) {
       document.querySelectorAll('#goalGroup .pill').forEach(function(p){
         p.classList.remove('selected');
-        if (state.goals.indexOf(p.textContent) !== -1) p.classList.add('selected');
+        if (goalSel[p.textContent]) p.classList.add('selected');
       });
     }
     // Pre-fill level
@@ -7764,13 +7982,6 @@
       document.querySelectorAll('#equipmentGroup .pill').forEach(function(p){
         p.classList.remove('selected');
         if (p.textContent === eqTarget || p.textContent === state.equipment) p.classList.add('selected');
-      });
-    }
-    // Pre-fill motivations + obstacle + baseline signals
-    if (state.motivations && state.motivations.length > 0) {
-      document.querySelectorAll('#motivationGroup .pill').forEach(function(p){
-        p.classList.remove('selected');
-        if (state.motivations.indexOf(p.textContent) !== -1) p.classList.add('selected');
       });
     }
     var obInp = document.getElementById('obstacleInput');
@@ -7875,6 +8086,9 @@
     localStorage.removeItem('wylde_program');
     localStorage.removeItem('wylde_program_date');
     try { localStorage.removeItem('wylde_before_photo'); } catch (_) {}
+    try { localStorage.removeItem('wylde_future_boards'); } catch (_) {}
+    _generatedImages = { '12weeks': null, '6months': null, '1year': null };
+    futurePhotoBase64 = null;
     showScreen('onboard');
     obGoTo(1);
   }
@@ -8204,15 +8418,22 @@
 
   function handlePhoto(file) {
     if (!file) return;
+    var apply = function(dataUrl) {
+      if (!dataUrl || dataUrl.indexOf('data:') !== 0) return;
+      futurePhotoBase64 = dataUrl;
+      if (typeof state !== 'undefined' && state) state.beforePhotoDataUrl = dataUrl;
+      try { localStorage.setItem('wylde_before_photo', dataUrl); } catch (_) {}
+      try { saveProfile(); } catch (_) {}
+      if (typeof syncFutureSelfScreen === 'function') syncFutureSelfScreen();
+    };
     var reader = new FileReader();
     reader.onload = function(e) {
-      futurePhotoBase64 = e.target.result;
-      var preview = document.getElementById('uploadPreview');
-      var placeholder = document.getElementById('uploadPlaceholder');
-      var zone = document.getElementById('uploadZone');
-      if (preview) { preview.src = e.target.result; preview.style.display = 'block'; }
-      if (placeholder) placeholder.style.display = 'none';
-      if (zone) { zone.style.padding = '0'; zone.style.border = '1.5px solid rgba(200,169,110,0.4)'; }
+      var raw = e.target.result;
+      if (typeof _obDataUrlToCompressedJpeg === 'function') {
+        _obDataUrlToCompressedJpeg(raw, 1400, 0.78, function(out) { apply(out || raw); });
+      } else {
+        apply(raw);
+      }
     };
     reader.readAsDataURL(file);
   }
@@ -8260,7 +8481,94 @@
   var _generatedImages = { '12weeks': null, '6months': null, '1year': null };
   var _activeTimeline = '12weeks';
   var _timelineLabels = { '12weeks': '12 Weeks', '6months': '6 Months', '1year': '1 Year' };
+  var _timelineBoardSubs = {
+    '12weeks': 'Foundation — vitality, ritual, and momentum',
+    '6months': 'Momentum — stronger body, calmer mind, upgraded life',
+    '1year': 'Embodied — health, ease, and who you became'
+  };
   var _blankPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+  var _FUTURE_BOARDS_KEY = 'wylde_future_boards';
+
+  function _getFuturePhotoDataUrl() {
+    if (typeof futurePhotoBase64 === 'string' && futurePhotoBase64.indexOf('data:') === 0) return futurePhotoBase64;
+    if (typeof state !== 'undefined' && state && state.beforePhotoDataUrl && state.beforePhotoDataUrl.indexOf('data:') === 0) {
+      return state.beforePhotoDataUrl;
+    }
+    try {
+      var ext = localStorage.getItem('wylde_before_photo');
+      if (ext && ext.indexOf('data:') === 0) return ext;
+    } catch (_) {}
+    return null;
+  }
+
+  function _loadPersistedFutureBoards() {
+    try {
+      var raw = localStorage.getItem(_FUTURE_BOARDS_KEY);
+      if (!raw) return;
+      var saved = JSON.parse(raw);
+      if (!saved || typeof saved !== 'object') return;
+      ['12weeks', '6months', '1year'].forEach(function(tl) {
+        if (saved[tl] && String(saved[tl]).indexOf('data:image') === 0) _generatedImages[tl] = saved[tl];
+      });
+    } catch (_) {}
+  }
+
+  function _persistFutureBoards() {
+    try {
+      localStorage.setItem(_FUTURE_BOARDS_KEY, JSON.stringify(_generatedImages));
+    } catch (e) {
+      console.warn('[FutureSelf] could not persist boards (quota):', e && e.message);
+    }
+  }
+
+  function _hydrateFutureUploadPreview(photo) {
+    var up = document.getElementById('uploadPreview');
+    var uph = document.getElementById('uploadPlaceholder');
+    var sil = document.getElementById('fsSilhouette');
+    var uz = document.getElementById('uploadZone');
+    if (!photo) return;
+    if (up) { up.src = photo; up.style.display = 'block'; }
+    if (uph) uph.style.display = 'none';
+    if (sil) sil.style.display = 'none';
+    if (uz) { uz.style.padding = '0'; uz.style.border = '1.5px solid rgba(200,169,110,0.4)'; }
+  }
+
+  function syncFutureSelfScreen() {
+    _loadPersistedFutureBoards();
+    var photo = _getFuturePhotoDataUrl();
+    if (photo) {
+      futurePhotoBase64 = photo;
+      if (typeof state !== 'undefined' && state) state.beforePhotoDataUrl = photo;
+      _hydrateFutureUploadPreview(photo);
+    }
+
+    var hasGenerated = !!( _generatedImages['12weeks'] || _generatedImages['6months'] || _generatedImages['1year'] );
+    var uploadWrap = document.getElementById('fsUploadWrap');
+    var result = document.getElementById('fsResult');
+
+    if (hasGenerated || photo) {
+      if (result) result.classList.add('active');
+      if (uploadWrap && hasGenerated) uploadWrap.style.display = 'none';
+      else if (uploadWrap && photo && !hasGenerated) {
+        uploadWrap.style.display = 'block';
+      }
+      ['12weeks', '6months', '1year'].forEach(function(tl) {
+        if (_generatedImages[tl]) {
+          var tab = document.querySelector('.fs-tab[data-timeline="' + tl + '"]');
+          if (tab) tab.classList.add('ready');
+        }
+      });
+      switchTimeline(_activeTimeline || '12weeks');
+    } else {
+      if (result) result.classList.remove('active');
+      if (uploadWrap) uploadWrap.style.display = 'block';
+      var loading = document.getElementById('fsLoading');
+      var displayImg = document.getElementById('fsDisplayImg');
+      if (loading) loading.classList.remove('is-loading');
+      if (displayImg) displayImg.style.display = 'none';
+    }
+  }
+  if (typeof window !== 'undefined') window.syncFutureSelfScreen = syncFutureSelfScreen;
 
   // Set silhouette image based on gender profile
   function updateFsSilhouette() {
@@ -8285,25 +8593,24 @@
     var loadingText = document.getElementById('loadingText');
     var label = document.getElementById('fsImageLabel');
     if (label) label.textContent = _timelineLabels[tl];
+    var cap = document.getElementById('fsBoardCaption');
+    if (cap) cap.textContent = _timelineBoardSubs[tl] || _timelineBoardSubs['12weeks'];
 
     var img = _generatedImages[tl];
+    var hold = (typeof _getFuturePhotoDataUrl === 'function') ? _getFuturePhotoDataUrl() : null;
     if (img) {
       if (displayImg) { displayImg.src = img; displayImg.style.display = 'block'; }
-      if (loading) loading.style.display = 'none';
+      if (loading) loading.classList.remove('is-loading');
+    } else if (hold) {
+      if (displayImg) { displayImg.src = hold; displayImg.style.display = 'block'; }
+      if (loading) loading.classList.remove('is-loading');
+      if (loadingText) loadingText.textContent = tl === '12weeks'
+        ? 'Your photo is set. Tap Generate to build your vision boards.'
+        : 'Generate vision boards to see this horizon.';
     } else {
-      var hold = null;
-      try {
-        if (typeof state !== 'undefined' && state && state.beforePhotoDataUrl) hold = state.beforePhotoDataUrl;
-      } catch (_) {}
-      if (hold && tl === '12weeks') {
-        if (displayImg) { displayImg.src = hold; displayImg.style.display = 'block'; }
-        if (loading) loading.style.display = 'none';
-        if (loadingText) loadingText.textContent = 'Your photo is locked in. Tap Generate to see timelines.';
-      } else {
-        if (displayImg) displayImg.style.display = 'none';
-        if (loading) loading.style.display = 'flex';
-        if (loadingText) loadingText.textContent = 'Building ' + _timelineLabels[tl] + '...';
-      }
+      if (displayImg) { displayImg.src = ''; displayImg.style.display = 'none'; }
+      if (loading) loading.classList.add('is-loading');
+      if (loadingText) loadingText.textContent = 'Upload a photo, then generate your ' + _timelineLabels[tl] + ' board.';
     }
     // Legacy compat
     var afterImg = document.getElementById('afterImg');
@@ -8315,9 +8622,20 @@
   function generateAllTimelines() {
     var profile = {};
     try { profile = JSON.parse(localStorage.getItem('wylde_profile') || '{}'); } catch(ex) {}
-    var userGoals = (profile.goals && profile.goals.length > 0) ? profile.goals : [profile.goal || 'Get lean & athletic'];
+    if (typeof state !== 'undefined' && state) {
+      if (state.goals && state.goals.length) profile.goals = state.goals;
+      if (state.goal) profile.goal = state.goal;
+      if (state.gender) profile.gender = state.gender;
+      if (state.futureVisionText) profile.futureVisionText = state.futureVisionText;
+      if (state.motivations) profile.motivations = state.motivations;
+      if (state.obstacle) profile.obstacle = state.obstacle;
+    }
+    var userGoals = (profile.goals && profile.goals.length > 0) ? profile.goals : [profile.goal || 'Get lean'];
     var userGoal = profile.goal || userGoals[0] || 'balanced';
     var gender = profile.gender || 'male';
+    var futureVisionText = profile.futureVisionText || '';
+    var motivations = profile.motivations || [];
+    var obstacle = profile.obstacle || '';
 
     // Reset stored images
     _generatedImages = { '12weeks': null, '6months': null, '1year': null };
@@ -8332,7 +8650,7 @@
 
     // Disable generate button
     var genBtn = document.getElementById('generateBtn');
-    if (genBtn) { genBtn.disabled = true; genBtn.textContent = 'Building your future self...'; }
+    if (genBtn) { genBtn.disabled = true; genBtn.textContent = 'Building your vision boards...'; }
 
     // IMPLODE the upload zone, then show result gallery
     var uploadWrap = document.getElementById('fsUploadWrap');
@@ -8352,7 +8670,17 @@
     // Fire all three in parallel
     var timelines = ['12weeks', '6months', '1year'];
     var promises = timelines.map(function(tl) {
-      var payload = { timeline: tl, goal: userGoal, userGoal: userGoal, goals: userGoals, gender: gender };
+      var payload = {
+        timeline: tl,
+        goal: userGoal,
+        userGoal: userGoal,
+        goals: userGoals,
+        gender: gender,
+        mode: 'vision_board',
+        futureVisionText: futureVisionText,
+        motivations: motivations,
+        obstacle: obstacle
+      };
       if (futurePhotoBase64) payload.image_base64 = futurePhotoBase64;
       if (window._protocolImageAddition) payload.protocolAddition = window._protocolImageAddition;
 
@@ -8372,7 +8700,8 @@
         if (!d.success || !d.image_base64) throw new Error(d.error || 'No image in response');
         if (d.image_base64.indexOf('data:image') !== 0) throw new Error('Invalid image data format');
         _generatedImages[tl] = d.image_base64;
-        if (tl === '12weeks') awardXP(50, 'Future Self generated');
+        _persistFutureBoards();
+        if (tl === '12weeks') awardXP(50, 'Vision board generated');
 
         // Mark tab ready
         var tab = document.querySelector('.fs-tab[data-timeline="' + tl + '"]');
@@ -8380,6 +8709,7 @@
 
         // If this is the active tab, show immediately
         if (_activeTimeline === tl) switchTimeline(tl);
+        if (typeof syncFutureSelfScreen === 'function') syncFutureSelfScreen();
 
         // Sync dashboard avatar with 1year image
         if (tl === '1year') {
@@ -8407,18 +8737,20 @@
     });
 
     Promise.allSettled(promises).then(function() {
-      if (genBtn) { genBtn.disabled = false; genBtn.textContent = 'Build My Future Self \u2192'; }
+      if (genBtn) { genBtn.disabled = false; genBtn.textContent = 'Generate My Vision Board \u2192'; }
     });
   }
 
   function resetFutureSelf() {
     _generatedImages = { '12weeks': null, '6months': null, '1year': null };
     _activeTimeline = '12weeks';
+    try { localStorage.removeItem(_FUTURE_BOARDS_KEY); } catch (_) {}
     var result = document.getElementById('fsResult');
     var uploadWrap = document.getElementById('fsUploadWrap');
     if (result) result.classList.remove('active');
     if (uploadWrap) uploadWrap.style.display = 'block';
     clearFuturePhoto(null);
+    if (typeof syncFutureSelfScreen === 'function') syncFutureSelfScreen();
   }
 
   // Aliases for compat
