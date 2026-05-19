@@ -656,6 +656,24 @@
       z-index: 2;
     }
     .future-upload-preview { display: none !important; }
+    /* Visible preview inside the upload zone (onboarding photo carries over here) */
+    .fs-zone-preview {
+      display: none;
+      width: 100%;
+      max-height: min(440px, 52vh);
+      object-fit: contain;
+      object-position: center;
+      border-radius: 14px;
+      position: relative;
+      z-index: 2;
+    }
+    #screen-future #uploadZone.has-photo .fs-zone-preview { display: block; }
+    #screen-future #uploadZone.has-photo #uploadPlaceholder,
+    #screen-future #uploadZone.has-photo .fs-silhouette { display: none; }
+    #screen-future #uploadZone.has-photo {
+      padding: 10px;
+      border-color: var(--fs-gold);
+    }
     #uploadPlaceholder {
       position: relative;
       z-index: 2;
@@ -801,17 +819,28 @@
       pointer-events: none;
       z-index: 1;
     }
-    /* Personal photos hidden in-card — JS hooks remain for generation state */
+    /* Personal photos hidden until a src is set (compare card + generation hooks) */
     .fs-compare-personal {
       position: absolute !important;
       inset: 0;
       width: 100% !important;
       height: 100% !important;
       min-height: 260px;
-      object-fit: cover;
+      object-fit: contain;
+      object-position: center;
       opacity: 0 !important;
       visibility: hidden !important;
       pointer-events: none !important;
+      z-index: 2;
+    }
+    #screen-future #beforeImg[src^="data"],
+    #screen-future #fsDisplayImg[src^="data"] {
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+    #screen-future #beforeImg[src^="data"] ~ .fs-week-chip,
+    #screen-future .fs-compare-half--before:has(#beforeImg[src^="data"]) .fs-compare-art {
+      opacity: 0.12;
     }
     .fs-compare-art {
       position: absolute;
@@ -5178,6 +5207,7 @@
     <div id="fsUploadWrap" class="future-upload-wrap">
       <div class="future-upload" id="uploadZone" onclick="document.getElementById('photoInput').click()">
         <img class="fs-silhouette" id="fsSilhouette" src="futureselfman.png" alt="" />
+        <img class="fs-zone-preview" id="fsZonePreview" src="" alt="Your photo" />
         <div id="uploadPlaceholder">
           <div class="future-upload-icon"><span>&#128247;</span></div>
           <p class="future-upload-label">Upload your photo</p>
@@ -5863,6 +5893,9 @@
 
   async function saveProfile() {
     try {
+      if (state.beforePhotoDataUrl && String(state.beforePhotoDataUrl).indexOf('data:') === 0) {
+        try { localStorage.setItem('wylde_before_photo', state.beforePhotoDataUrl); } catch (_) {}
+      }
       localStorage.setItem('wylde_profile', JSON.stringify(state));
     } catch (e) {
       if (e && (e.name === 'QuotaExceededError' || e.code === 22)) {
@@ -7807,6 +7840,7 @@
         try {
           if (state.beforePhotoDataUrl && String(state.beforePhotoDataUrl).indexOf('data:') === 0) {
             futurePhotoBase64 = state.beforePhotoDataUrl;
+            if (typeof _hydrateFutureUploadPreview === 'function') _hydrateFutureUploadPreview(state.beforePhotoDataUrl);
           }
         } catch (_) {}
         if (state.name) {
@@ -8262,7 +8296,7 @@
     reader.onload = function(e) {
       var raw = e.target.result;
       var apply = function(dataUrl) {
-        futurePhotoBase64 = dataUrl;
+        _persistFuturePhoto(dataUrl);
         try {
           var prev = document.getElementById('obUploadPreview');
           var ph = document.getElementById('obUploadPlaceholder');
@@ -8276,8 +8310,7 @@
           if (sil) sil.style.display = 'none';
           if (ph) ph.style.display = 'none';
           obClearFlowError();
-          var bimg = document.getElementById('beforeImg');
-          if (bimg) bimg.src = dataUrl;
+          if (typeof _hydrateFutureUploadPreview === 'function') _hydrateFutureUploadPreview(dataUrl);
         } catch (_) {}
       };
       // Always re-encode through canvas when possible — shrinks payload for
@@ -8599,13 +8632,8 @@
     state.beforePhotoDataUrl = (typeof futurePhotoBase64 === 'string' && futurePhotoBase64.indexOf('data:') === 0) ? futurePhotoBase64 : (state.beforePhotoDataUrl || '');
     try {
       if (state.beforePhotoDataUrl) {
-        futurePhotoBase64 = state.beforePhotoDataUrl;
-        var up = document.getElementById('uploadPreview');
-        var uph = document.getElementById('uploadPlaceholder');
-        var uz = document.getElementById('uploadZone');
-        if (up) { up.src = state.beforePhotoDataUrl; up.style.display = 'block'; }
-        if (uph) uph.style.display = 'none';
-        if (uz) { uz.style.padding = '0'; uz.style.border = '1.5px solid rgba(200,169,110,0.4)'; }
+        _persistFuturePhoto(state.beforePhotoDataUrl);
+        if (typeof _hydrateFutureUploadPreview === 'function') _hydrateFutureUploadPreview(state.beforePhotoDataUrl);
       }
     } catch (_) {}
     try { _userContextCache = null; } catch (_) {}
@@ -9052,6 +9080,7 @@
       }
       if (sil) sil.style.display = 'none';
       if (ph) ph.style.display = 'none';
+      if (typeof _hydrateFutureUploadPreview === 'function') _hydrateFutureUploadPreview(state.beforePhotoDataUrl);
     }
     if (state.gymAccess) {
       document.querySelectorAll('#gymGroup .pill').forEach(function(p){
@@ -9457,11 +9486,9 @@
   function handlePhoto(file) {
     if (!file) return;
     var apply = function(dataUrl) {
-      if (!dataUrl || dataUrl.indexOf('data:') !== 0) return;
-      futurePhotoBase64 = dataUrl;
-      if (typeof state !== 'undefined' && state) state.beforePhotoDataUrl = dataUrl;
-      try { localStorage.setItem('wylde_before_photo', dataUrl); } catch (_) {}
+      _persistFuturePhoto(dataUrl);
       try { saveProfile(); } catch (_) {}
+      if (typeof _hydrateFutureUploadPreview === 'function') _hydrateFutureUploadPreview(dataUrl);
       if (typeof syncFutureSelfScreen === 'function') syncFutureSelfScreen();
     };
     var reader = new FileReader();
@@ -9507,11 +9534,12 @@
   function clearFuturePhoto(e) {
     if (e) e.stopPropagation();
     futurePhotoBase64 = null;
-    var preview = document.getElementById('uploadPreview');
+    if (typeof state !== 'undefined') state.beforePhotoDataUrl = null;
+    try { localStorage.removeItem('wylde_before_photo'); } catch (_) {}
+    if (typeof _hydrateFutureUploadPreview === 'function') _hydrateFutureUploadPreview(null);
     var placeholder = document.getElementById('uploadPlaceholder');
-    var zone = document.getElementById('uploadZone');
-    if (preview) { preview.style.display = 'none'; preview.src = ''; }
     if (placeholder) placeholder.style.display = 'block';
+    var zone = document.getElementById('uploadZone');
     if (zone) { zone.style.padding = ''; zone.style.border = ''; }
   }
 
@@ -9559,16 +9587,43 @@
     }
   }
 
+  function _persistFuturePhoto(dataUrl) {
+    if (!dataUrl || String(dataUrl).indexOf('data:') !== 0) return;
+    futurePhotoBase64 = dataUrl;
+    if (typeof state !== 'undefined' && state) state.beforePhotoDataUrl = dataUrl;
+    try { localStorage.setItem('wylde_before_photo', dataUrl); } catch (_) {}
+  }
+
   function _hydrateFutureUploadPreview(photo) {
-    var up = document.getElementById('uploadPreview');
+    var before = document.getElementById('beforeImg');
+    var prev = document.getElementById('uploadPreview');
+    var zonePrev = document.getElementById('fsZonePreview');
     var uph = document.getElementById('uploadPlaceholder');
     var sil = document.getElementById('fsSilhouette');
     var uz = document.getElementById('uploadZone');
-    if (!photo) return;
-    if (up) { up.src = photo; up.style.display = 'block'; }
+    if (!photo || String(photo).indexOf('data:') !== 0) {
+      if (before) before.src = '';
+      if (prev) prev.src = '';
+      if (zonePrev) zonePrev.src = '';
+      if (uph) uph.style.display = '';
+      if (sil) sil.style.display = '';
+      if (uz) {
+        uz.classList.remove('has-photo');
+        uz.style.padding = '';
+        uz.style.border = '';
+      }
+      return;
+    }
+    if (before) before.src = photo;
+    if (prev) prev.src = photo;
+    if (zonePrev) zonePrev.src = photo;
     if (uph) uph.style.display = 'none';
     if (sil) sil.style.display = 'none';
-    if (uz) { uz.style.padding = '0'; uz.style.border = '1.5px solid rgba(200,169,110,0.4)'; }
+    if (uz) {
+      uz.classList.add('has-photo');
+      uz.style.padding = '10px';
+      uz.style.border = '1.5px solid var(--fs-surface-border)';
+    }
   }
 
   function syncFutureSelfScreen() {
