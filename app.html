@@ -128,6 +128,29 @@
       --muted:       #A6A29A;
       /* Mobile bottom-nav background (translucent, blurred) */
       --nav-bg-mobile: rgba(11,11,11,0.94);
+      /* ── Future Self / Onboarding cinematic palette (shared) ── */
+      --fs-bg-top: #37422F;
+      --fs-bg-mid: #222A20;
+      --fs-bg-bottom: #0E130E;
+      --fs-glow: rgba(222, 202, 150, 0.26);
+      --fs-gold: #C9A86A;
+      --fs-gold-bright: #E6C886;
+      --fs-gold-deep: #A6834A;
+      --fs-text: #F4F1E8;
+      --fs-text-muted: #9DA595;
+      --fs-text-dim: #879184;
+      --fs-ink: #16190F;
+      --fs-surface: rgba(248, 244, 232, 0.045);
+      --fs-surface-border: rgba(201, 168, 106, 0.18);
+      --fs-chip-bg: rgba(9, 13, 8, 0.72);
+      --fs-pad-x: 22px;
+      --fs-gap: 18px;
+      --fs-safe-b: env(safe-area-inset-bottom, 0px);
+      --fs-safe-t: env(safe-area-inset-top, 0px);
+      /* Fixed chrome — disclaimer banner + bottom tab bar */
+      --app-disclaimer-h: calc(28px + env(safe-area-inset-top, 0px));
+      --app-nav-h: calc(72px + env(safe-area-inset-bottom, 0px));
+      --app-fs-sticky-h: 82px;
       /* Floating menu button (top-left hamburger) — translucent surface */
       --menu-btn-bg: rgba(17,17,17,0.85);
       --menu-btn-border: rgba(255,255,255,0.10);
@@ -394,35 +417,23 @@
     .timeline-btn:hover { border-color:rgba(255,248,235,0.14); color:var(--text); }
     .timeline-btn.active { border-color:rgba(122,142,118,0.3); background:var(--sage-dim); color:var(--sage); }
 
-    /* ═══ FUTURE SELF — cinematic restyle (tokens scoped to #screen-future) ═══ */
+    /* ═══ FUTURE SELF — cinematic restyle (palette via :root --fs-*) ═══ */
     #screen-future {
-      --fs-bg-top: #37422F;
-      --fs-bg-mid: #222A20;
-      --fs-bg-bottom: #0E130E;
-      --fs-glow: rgba(222, 202, 150, 0.26);
-      --fs-gold: #C9A86A;
-      --fs-gold-bright: #E6C886;
-      --fs-gold-deep: #A6834A;
-      --fs-text: #F4F1E8;
-      --fs-text-muted: #9DA595;
-      --fs-text-dim: #6E7866;
-      --fs-ink: #16190F;
-      --fs-surface: rgba(248, 244, 232, 0.045);
-      --fs-surface-border: rgba(201, 168, 106, 0.18);
-      --fs-chip-bg: rgba(9, 13, 8, 0.72);
-      --fs-pad-x: 22px;
-      --fs-gap: 18px;
-      --fs-safe-b: env(safe-area-inset-bottom, 0px);
-      --fs-safe-t: env(safe-area-inset-top, 0px);
       font-family: var(--font-ui, var(--ff-body));
       color: var(--fs-text);
+      position: relative;
+      z-index: 0;
       min-height: 100vh;
       min-height: 100dvh;
-      padding: calc(12px + var(--fs-safe-t)) var(--fs-pad-x) calc(88px + var(--fs-safe-b));
+      padding:
+        calc(var(--app-disclaimer-h) + 12px)
+        var(--fs-pad-x)
+        calc(var(--app-nav-h) + var(--app-fs-sticky-h));
       background:
         radial-gradient(circle at 84% 7%, var(--fs-glow), transparent 55%),
         linear-gradient(180deg, var(--fs-bg-top) 0%, var(--fs-bg-mid) 42%, var(--fs-bg-bottom) 100%);
       box-sizing: border-box;
+      overflow-x: clip;
     }
     #screen-future * { box-sizing: border-box; }
 
@@ -443,6 +454,7 @@
       grid-template-columns: 1fr 38%;
       gap: 8px;
       align-items: start;
+      overflow: hidden;
     }
     .fs-header-text {
       text-align: left;
@@ -488,38 +500,47 @@
 
     .fs-hero {
       position: absolute;
-      top: -8px;
-      right: -6px;
-      width: 52%;
-      height: 200px;
+      top: 0;
+      right: -8px;
+      width: 48%;
+      height: 210px;
       pointer-events: none;
       z-index: 1;
+      overflow: hidden;
     }
     .fs-hero-glow {
       position: absolute;
-      inset: -20% -10% 0 10%;
-      background: radial-gradient(circle at 70% 20%, var(--fs-glow), transparent 62%);
+      inset: -8% -12% -8% 0;
+      background: radial-gradient(circle at 72% 18%, var(--fs-glow), transparent 58%);
     }
-    .fs-hero-figure {
+    .fs-hero-silhouette {
       position: absolute;
-      right: 0;
+      right: -4%;
       top: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       object-position: top right;
-      opacity: 0.92;
-      -webkit-mask-image: linear-gradient(to left, #000 45%, transparent), linear-gradient(to top, transparent 8%, #000 88%);
-      mask-image: linear-gradient(to left, #000 45%, transparent), linear-gradient(to top, transparent 8%, #000 88%);
+      opacity: 0.38;
+      filter: saturate(0.85);
+      -webkit-mask-image: linear-gradient(to left, #000 38%, transparent), linear-gradient(to top, transparent 6%, #000 90%);
+      mask-image: linear-gradient(to left, #000 38%, transparent), linear-gradient(to top, transparent 6%, #000 90%);
       -webkit-mask-composite: source-in;
       mask-composite: intersect;
+      pointer-events: none;
     }
-    .fs-hero-figure[src=""],
-    .fs-hero-figure:not([src]) { opacity: 0; }
+    .fs-hero-figure {
+      position: absolute;
+      width: 0;
+      height: 0;
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
     .fs-hero-mark {
       position: absolute;
-      top: 18%;
-      right: 18%;
+      top: 14%;
+      right: 12%;
       width: 52px;
       height: 52px;
       border-radius: 50%;
@@ -527,21 +548,28 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(9, 13, 8, 0.35);
+      background: rgba(9, 13, 8, 0.42);
       z-index: 2;
+      box-shadow: 0 0 24px rgba(201, 168, 106, 0.15);
+    }
+    .fs-hero-mark img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      opacity: 0.95;
     }
     .fs-hero-mark svg { width: 26px; height: 26px; color: var(--fs-gold); }
     .fs-hero-tagline {
       position: absolute;
       right: 0;
-      bottom: 4px;
-      max-width: 92%;
+      bottom: 0;
+      max-width: 100%;
       text-align: right;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.11em;
       text-transform: uppercase;
-      line-height: 1.45;
+      line-height: 1.55;
       color: var(--fs-gold);
       margin: 0;
     }
@@ -696,7 +724,7 @@
       color: var(--fs-gold);
     }
     .fs-tab.active .fs-tab-label { color: var(--fs-text); }
-    .fs-tab.active .fs-tab-sub { color: var(--fs-text-muted); }
+    .fs-tab.active .fs-tab-sub { color: var(--fs-gold); }
     .fs-tab.ready:not(.fs-tab-locked) .fs-tab-status::after { content: '✓'; }
     .fs-tab.fs-tab-locked { cursor: not-allowed; }
     .fs-tab.fs-tab-locked .fs-tab-label,
@@ -707,14 +735,7 @@
       background: transparent;
       box-shadow: none;
     }
-    .fs-unlock-hint {
-      margin: -6px 0 0;
-      font-size: 11px;
-      line-height: 1.45;
-      text-align: center;
-      color: var(--fs-text-dim);
-      letter-spacing: 0.02em;
-    }
+    .fs-unlock-hint { display: none; }
 
     /* Before / after comparison card */
     .fs-image-wrap {
@@ -734,46 +755,65 @@
     .fs-compare-half {
       flex: 1 1 50%;
       position: relative;
-      min-height: 240px;
+      min-height: 260px;
       overflow: hidden;
-      background: #0a0d09;
+      background: linear-gradient(165deg, rgba(28, 36, 26, 0.95) 0%, rgba(12, 16, 11, 0.98) 100%);
+    }
+    .fs-compare-half--before {
+      background: linear-gradient(155deg, rgba(32, 40, 30, 0.92) 0%, rgba(14, 18, 13, 1) 100%);
+    }
+    .fs-compare-half--after {
+      background: linear-gradient(200deg, rgba(22, 32, 22, 0.88) 0%, rgba(8, 12, 9, 1) 100%);
+    }
+    .fs-compare-half--after::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 35%, rgba(201, 168, 106, 0.14), transparent 55%);
+      pointer-events: none;
+      z-index: 0;
     }
     .fs-compare-half--after::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: rgba(40, 60, 40, 0.22);
+      background: rgba(40, 60, 40, 0.18);
       mix-blend-mode: multiply;
       pointer-events: none;
       z-index: 1;
     }
-    .fs-compare-img,
-    .fs-image {
-      width: 100%;
-      height: 100%;
-      min-height: 240px;
-      object-fit: cover;
-      display: block;
-    }
-    .fs-image[src=""],
-    .fs-image[style*="display: none"] { display: none !important; }
-    .future-upload-preview {
-      display: none;
-      width: 100%;
-      height: 100%;
-      min-height: 240px;
-      object-fit: cover;
-      position: absolute;
+    /* Personal photos hidden in-card — JS hooks remain for generation state */
+    .fs-compare-personal {
+      position: absolute !important;
       inset: 0;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 260px;
+      object-fit: cover;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+    .fs-compare-art {
+      position: absolute;
+      left: 50%;
+      bottom: -6%;
+      transform: translateX(-50%);
+      width: 88%;
+      max-height: 105%;
+      object-fit: contain;
+      object-position: center bottom;
+      pointer-events: none;
       z-index: 0;
     }
-    .future-upload-preview[style*="display: block"] { display: block !important; }
-    #beforeImg.fs-compare-img {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
+    .fs-compare-half--before .fs-compare-art {
+      opacity: 0.2;
+      filter: grayscale(0.4) brightness(0.85);
     }
-    #beforeImg[src=""] { display: none; }
+    .fs-compare-half--after .fs-compare-art {
+      opacity: 0.32;
+      filter: sepia(0.35) saturate(1.1) brightness(1.05);
+    }
     .fs-week-chip {
       position: absolute;
       top: 10px;
@@ -851,13 +891,32 @@
       font-size: 14px;
       font-weight: 400;
       color: var(--fs-text);
-      line-height: 1.35;
-      opacity: 0.92;
+      line-height: 1.4;
+      opacity: 0.88;
     }
+    .fs-compare-empty-hint {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      width: 88%;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--fs-text-muted);
+      margin: 0;
+      pointer-events: none;
+    }
+    .fs-result.active .fs-compare-empty-hint { display: none; }
+    #screen-future:has(#uploadPreview[src^="data"]) .fs-compare-empty-hint,
+    #screen-future:has(#beforeImg[src^="data"]) .fs-compare-empty-hint { display: none; }
     .fs-image-label { display: none; }
     .fs-loading-overlay {
       position: absolute;
       inset: 0;
+      left: 50%;
+      width: 50%;
       display: none;
       flex-direction: column;
       align-items: center;
@@ -1009,15 +1068,15 @@
     }
 
     /* Generate (JS hook) + legacy actions */
-    .fs-generate-wrap { margin-top: 2px; }
+    .fs-generate-wrap { margin-top: 4px; }
     .future-generate-btn {
       width: 100%;
-      min-height: 48px;
+      min-height: 50px;
       padding: 14px 18px;
-      border: 1px solid var(--fs-surface-border);
+      border: 1px solid rgba(201, 168, 106, 0.35);
       border-radius: 15px;
-      background: rgba(248, 244, 232, 0.06);
-      color: var(--fs-gold);
+      background: linear-gradient(180deg, rgba(248, 244, 232, 0.08), rgba(248, 244, 232, 0.03));
+      color: var(--fs-gold-bright);
       font-family: inherit;
       font-size: 13px;
       font-weight: 700;
@@ -1032,7 +1091,7 @@
       cursor: not-allowed;
     }
     .future-actions {
-      display: flex;
+      display: none;
       flex-direction: column;
       align-items: center;
       gap: 10px;
@@ -1048,14 +1107,14 @@
     .future-start-btn,
     .future-reset-btn { flex: none; width: 100%; }
 
-    /* Sticky primary photo CTA */
+    /* Sticky primary photo CTA — sits above bottom tab bar */
     .fs-sticky-cta {
       position: fixed;
       left: 0;
       right: 0;
-      bottom: 0;
+      bottom: var(--app-nav-h);
       z-index: 40;
-      padding: 12px var(--fs-pad-x) calc(12px + var(--fs-safe-b));
+      padding: 12px var(--fs-pad-x) 12px;
       background: linear-gradient(to top, rgba(14, 19, 14, 0.96) 55%, transparent);
       pointer-events: none;
     }
@@ -1099,10 +1158,15 @@
 
     /* Override global .screen padding for Future Self tab */
     #screen-future.screen {
-      padding: calc(12px + var(--fs-safe-t)) var(--fs-pad-x) calc(96px + var(--fs-safe-b)) !important;
+      padding:
+        calc(var(--app-disclaimer-h) + 12px)
+        var(--fs-pad-x)
+        calc(var(--app-nav-h) + var(--app-fs-sticky-h)) !important;
       padding-left: var(--fs-pad-x) !important;
       max-width: 100% !important;
       margin: 0 auto !important;
+      position: relative !important;
+      z-index: 0 !important;
     }
     #screen-future:has(#uploadPreview[src^="data"]) .fs-label-upload,
     #screen-future:has(#beforeImg[src^="data"]) .fs-label-upload { display: none; }
@@ -1113,6 +1177,307 @@
       .fs-top { min-height: 152px; grid-template-columns: 1fr 34%; }
       .fs-header-text { max-width: 66%; }
       .fs-hero { width: 46%; }
+    }
+
+    /* ═══ ONBOARDING — shared chrome + Step 1 (Future Self palette) ═══ */
+    body:has(#screen-onboard.active) nav,
+    body:has(#screen-onboard.active) #topMenuBtn {
+      display: none !important;
+    }
+
+    #screen-onboard {
+      font-family: var(--font-ui);
+      color: var(--fs-text);
+      min-height: 100vh;
+      min-height: 100dvh;
+      box-sizing: border-box;
+      background:
+        radial-gradient(circle at 84% 7%, var(--fs-glow), transparent 55%),
+        linear-gradient(180deg, var(--fs-bg-top) 0%, var(--fs-bg-mid) 42%, var(--fs-bg-bottom) 100%);
+    }
+    #screen-onboard * { box-sizing: border-box; }
+    #screen-onboard.screen {
+      padding: calc(12px + var(--fs-safe-t)) var(--fs-pad-x) calc(96px + var(--fs-safe-b)) !important;
+      max-width: 100% !important;
+      margin: 0 auto !important;
+    }
+    #screen-onboard .ob-container {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    /* Progress block */
+    #screen-onboard .ob-progress-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    #screen-onboard .ob-progress-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--fs-gold);
+      opacity: 0.72;
+      margin: 0;
+    }
+    #screen-onboard .ob-progress-time {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--fs-text-dim);
+      margin: 0;
+      white-space: nowrap;
+    }
+    #screen-onboard .ob-progress-bar-track {
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    #screen-onboard .ob-progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: var(--fs-gold);
+      transition: width 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    #screen-onboard .ob-progress {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+    #screen-onboard .ob-progress-dot {
+      width: 8px;
+      height: 8px;
+      flex: 0 0 8px;
+      border-radius: 50%;
+      background: var(--fs-text-dim);
+      opacity: 0.32;
+      transition: background 0.2s, opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    #screen-onboard .ob-progress-dot.ob-done {
+      background: var(--fs-gold);
+      opacity: 1;
+    }
+    #screen-onboard .ob-progress-dot.ob-current {
+      background: var(--fs-gold);
+      opacity: 1;
+      transform: scale(1.2);
+      box-shadow: 0 0 0 3px rgba(201, 168, 106, 0.22);
+    }
+
+    /* Inline flow error — above sticky CTA */
+    #screen-onboard #obFlowError {
+      display: none;
+      position: fixed;
+      left: var(--fs-pad-x);
+      right: var(--fs-pad-x);
+      bottom: calc(86px + var(--fs-safe-b));
+      z-index: 46;
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.45;
+      color: #F2DCC4;
+      background: rgba(160, 90, 50, 0.16);
+      border: 1px solid rgba(210, 140, 80, 0.38);
+    }
+    #screen-onboard #obFlowError.ob-flow-error-visible { display: block; }
+
+    /* Sticky CTA bar (all steps inherit) */
+    #screen-onboard .ob-step.ob-active .ob-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 45;
+      display: flex;
+      align-items: stretch;
+      gap: 12px;
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      padding: 12px var(--fs-pad-x) calc(12px + var(--fs-safe-b));
+      background: linear-gradient(to top, rgba(14, 19, 14, 0.96) 55%, transparent);
+    }
+    #screen-onboard .ob-nav .btn {
+      flex: 1;
+      min-height: 58px;
+      padding: 0 20px;
+      text-align: center;
+      border-radius: 15px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+    #screen-onboard .ob-nav:not(:has(.ob-back)) .ob-next {
+      flex: 0 1 100%;
+      max-width: 520px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    #screen-onboard .ob-next {
+      border: none !important;
+      background: linear-gradient(180deg, var(--fs-gold-bright), var(--fs-gold-deep)) !important;
+      color: var(--fs-ink) !important;
+      font-size: 15px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.12em !important;
+      text-transform: uppercase !important;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    }
+    #screen-onboard .ob-next:hover {
+      opacity: 1 !important;
+      color: var(--fs-ink) !important;
+      background: linear-gradient(180deg, var(--fs-gold-bright), var(--fs-gold-deep)) !important;
+    }
+    #screen-onboard .ob-next:active {
+      transform: scale(0.97);
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.28);
+    }
+    #screen-onboard .ob-back {
+      flex: 0 0 auto !important;
+      min-height: 58px;
+      background: transparent !important;
+      border: none !important;
+      color: var(--fs-text-muted) !important;
+      font-size: 15px !important;
+      font-weight: 500 !important;
+      letter-spacing: 0.02em !important;
+      text-transform: none !important;
+      box-shadow: none !important;
+    }
+    #screen-onboard .ob-back:active { transform: scale(0.97); }
+
+    /* Active step — room for sticky CTA (all steps) */
+    #screen-onboard .ob-step.ob-active {
+      padding-bottom: calc(100px + var(--fs-safe-b)) !important;
+    }
+    #screen-onboard .ob-step-title { color: var(--fs-text); }
+    #screen-onboard .ob-step-sub { color: var(--fs-text-muted); }
+
+    /* Step 1 — content */
+    #obStep1.ob-step.ob-active {
+      animation: obFadeIn 0.4s ease-out;
+    }
+    #obStep1 .ob-step-title {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+      color: var(--fs-text);
+      margin-bottom: 14px;
+    }
+    #obStep1 .ob-step-sub {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--fs-text-muted);
+      line-height: 1.55;
+      margin-bottom: 40px;
+    }
+    #obStep1 .ob-step-sub em { font-style: italic; color: var(--fs-text); }
+    #obStep1 .ob-field { margin-bottom: 32px; }
+    #obStep1 .form-group label,
+    #obStep1 fieldset legend {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--fs-text-muted);
+      margin-bottom: 10px;
+      padding: 0;
+    }
+    #obStep1 fieldset.ob-gender-field {
+      border: none;
+      padding: 0;
+      margin: 0 0 32px;
+      min-width: 0;
+    }
+    #obStep1 .ob-required {
+      color: var(--fs-gold);
+      font-weight: 600;
+      margin-left: 3px;
+    }
+    #obStep1 #userName {
+      background: var(--fs-surface);
+      border: 1px solid var(--fs-surface-border);
+      border-radius: 14px;
+      min-height: 54px;
+      padding: 0 18px;
+      font-family: inherit;
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--fs-text);
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      -webkit-appearance: none;
+    }
+    #obStep1 #userName::placeholder { color: var(--fs-text-dim); }
+    #obStep1 #userName:focus {
+      border-color: var(--fs-gold);
+      box-shadow: 0 0 0 3px rgba(201, 168, 106, 0.2);
+    }
+    #obStep1 #genderGroup {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    #obStep1 #genderGroup .pill {
+      min-height: 44px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--fs-surface-border);
+      background: var(--fs-surface);
+      color: var(--fs-text-muted);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0;
+      text-transform: none;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    #obStep1 #genderGroup .pill:hover {
+      border-color: rgba(201, 168, 106, 0.32);
+      color: var(--fs-text);
+    }
+    #obStep1 #genderGroup .pill.selected {
+      border: 1.5px solid var(--fs-gold);
+      background: rgba(201, 168, 106, 0.12);
+      color: var(--fs-text);
+      box-shadow: inset 0 0 0 1px rgba(201, 168, 106, 0.08);
+    }
+    #obStep1 #genderGroup .pill.selected::after {
+      content: '✓';
+      display: inline-block;
+      margin-left: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--fs-gold);
+    }
+    #obStep1 #genderGroup .pill:active { transform: scale(0.97); }
+
+    /* Step 1 — disabled Continue until name + gender */
+    #obStep1:not(:has(#userName:not(:placeholder-shown))) .ob-next,
+    #obStep1:not(:has(#genderGroup .selected)) .ob-next {
+      opacity: 0.42;
+      pointer-events: none;
+      cursor: not-allowed;
+      filter: saturate(0.65);
+    }
+
+    @media (max-width: 380px) {
+      #obStep1 #genderGroup { grid-template-columns: 1fr; }
+      #obStep1 .ob-step-title { font-size: 28px; }
     }
 
     /* Legacy upload zone compat */
@@ -2166,7 +2531,7 @@
   .reveal-wrap.visible { animation:slideIn 0.35s ease-out; }
 
   /* DISCLAIMER */
-  .disclaimer-banner { background: var(--bg); padding: 7px 24px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 199; max-width: 430px; margin: 0 auto; }
+  .disclaimer-banner { background: var(--bg); padding: 7px 24px; padding-top: calc(7px + env(safe-area-inset-top, 0px)); text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 600; max-width: 430px; margin: 0 auto; }
   .disclaimer-text { font-size: 10px; letter-spacing: 0.06em; color: var(--text3); opacity: 0.5; font-family: var(--font-ui); }
 
   /* ═══ AUTH SCREEN ═══ */
@@ -3152,18 +3517,18 @@
       <p class="ob-step-sub">This is your story. We&rsquo;ll shape everything around <em>you</em> — not a template.</p>
 
       <div class="form-group ob-field">
-        <label>First name</label>
-        <input class="input ob-input-lg" type="text" id="userName" placeholder="Your first name" autocomplete="given-name" />
+        <label for="userName">First name <span class="ob-required" aria-hidden="true">*</span></label>
+        <input class="input ob-input-lg" type="text" id="userName" placeholder="Your first name" autocomplete="given-name" required aria-required="true" />
       </div>
 
-      <div class="form-group">
-        <label>I identify as</label>
-        <div class="pill-group" id="genderGroup">
-          <button class="pill" onclick="selectPill(this,'genderGroup')">Male</button>
-          <button class="pill" onclick="selectPill(this,'genderGroup')">Female</button>
-          <button class="pill" onclick="selectPill(this,'genderGroup')">Non-binary</button>
+      <fieldset class="form-group ob-field ob-gender-field">
+        <legend id="genderLegend">I identify as <span class="ob-required" aria-hidden="true">*</span></legend>
+        <div class="pill-group" id="genderGroup" role="radiogroup" aria-labelledby="genderLegend">
+          <button type="button" class="pill" onclick="selectPill(this,'genderGroup')">Male</button>
+          <button type="button" class="pill" onclick="selectPill(this,'genderGroup')">Female</button>
+          <button type="button" class="pill" onclick="selectPill(this,'genderGroup')">Non-binary</button>
         </div>
-      </div>
+      </fieldset>
 
       <div class="ob-nav">
         <button type="button" class="btn ob-next" onclick="obNext(1)">Continue</button>
@@ -4707,22 +5072,17 @@
           <svg class="fs-sparkle" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l1.4 5.2L19 9l-5.6 1.8L12 16l-1.4-5.2L5 9l5.6-1.8L12 2zm0 14.5l.9 3.3 3.3.9-3.3.9-.9 3.3-.9-3.3-3.3-.9 3.3-.9.9-3.3z"/></svg>
           Future Self
         </p>
-        <h1 class="future-title">Your vision board.</h1>
-        <p class="future-sub">One image of the healthy, capable, abundant life you&rsquo;re building &mdash; body, mind, and how you live.</p>
-        <div class="fs-board-pills" aria-hidden="true">
-          <span class="fs-board-pill">Vitality</span>
-          <span class="fs-board-pill">Wealth &amp; ease</span>
-          <span class="fs-board-pill">Mind &amp; ritual</span>
-          <span class="fs-board-pill">Purpose</span>
-        </div>
+        <h1 class="future-title">This is you if you follow through.</h1>
+        <p class="future-sub">Upload a photo of yourself today. See the version of you that did the work.</p>
       </header>
-      <div>
+      <div class="fs-hero">
         <div class="fs-hero-glow"></div>
-        <img class="fs-hero-figure" id="afterImg" src="" alt="" />
+        <img class="fs-hero-silhouette" id="fsHeroSilhouette" src="futureselfman.png" alt="" aria-hidden="true" />
+        <img class="fs-hero-figure" id="afterImg" src="" alt="" aria-hidden="true" />
         <div class="fs-hero-mark">
-          <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="1.5"/><path fill="currentColor" d="M16 8v16M8 16h16" opacity="0.85"/></svg>
+          <img src="/logo-icon.png" width="28" height="28" alt="" aria-hidden="true" />
         </div>
-        <p class="fs-hero-tagline">Lean. Strong.<br>Unstoppable.</p>
+        <p class="fs-hero-tagline">You, transformed.<br>Discipline today.<br>Freedom forever.</p>
       </div>
     </div>
 
@@ -4752,12 +5112,12 @@
         </button>
         <button type="button" class="fs-tab fs-tab-locked" role="tab" data-timeline="6months" aria-selected="false" aria-disabled="true" tabindex="-1" title="Unlock by progressing through your current phase">
           <span class="fs-tab-label">6 Months</span>
-          <span class="fs-tab-sub">Momentum</span>
+          <span class="fs-tab-sub">Transformed</span>
           <span class="fs-tab-status" id="status-6months" aria-hidden="true"></span>
         </button>
         <button type="button" class="fs-tab fs-tab-locked" role="tab" data-timeline="1year" aria-selected="false" aria-disabled="true" tabindex="-1" title="Unlock by progressing through your current phase">
           <span class="fs-tab-label">1 Year</span>
-          <span class="fs-tab-sub">Embodied</span>
+          <span class="fs-tab-sub">Peak form</span>
           <span class="fs-tab-status" id="status-1year" aria-hidden="true"></span>
         </button>
       </div>
@@ -4766,15 +5126,17 @@
       <div class="fs-image-wrap" id="fsImageWrap">
         <div class="fs-compare-split">
           <div class="fs-compare-half fs-compare-half--before">
-            <img id="beforeImg" class="fs-compare-img" src="" alt="Today" />
-            <img class="future-upload-preview" id="uploadPreview" src="" alt="" />
+            <img class="fs-compare-art" id="fsCompareArtBefore" src="futureselfman.png" alt="" aria-hidden="true" />
+            <img id="beforeImg" class="fs-compare-personal" src="" alt="Today" />
+            <img class="future-upload-preview fs-compare-personal" id="uploadPreview" src="" alt="" />
             <div class="fs-week-chip">
               <span class="fs-week-chip-line">Week 0</span>
               <span class="fs-week-chip-sub">Today</span>
             </div>
           </div>
           <div class="fs-compare-half fs-compare-half--after">
-            <img class="fs-image fs-compare-img" id="fsDisplayImg" src="" alt="Your future self vision board" />
+            <img class="fs-compare-art" id="fsCompareArtAfter" src="futureselfman.png" alt="" aria-hidden="true" />
+            <img class="fs-image fs-compare-personal" id="fsDisplayImg" src="" alt="Your future self vision board" />
             <div class="fs-week-chip fs-week-chip--future">
               <span class="fs-week-chip-line">Week 12</span>
               <span class="fs-week-chip-sub">Your future</span>
@@ -4785,7 +5147,7 @@
             </div>
             <div class="fs-compare-copy">
               <p class="fs-compare-headline">Lean. Strong. Unstoppable.</p>
-              <p class="fs-compare-subtext">This is who you become when you follow through.</p>
+              <p class="fs-compare-subtext">This is the version of you that kept every promise.</p>
             </div>
           </div>
           <button type="button" class="fs-compare-seam" aria-hidden="true">&raquo;</button>
@@ -4807,7 +5169,7 @@
         </div>
         <div class="fs-vision-body">
           <span class="fs-vision-quote-mark" aria-hidden="true">&ldquo;</span>
-          <p class="fs-vision-text" id="fsVisionText">I am building a life with health, discipline, and freedom.</p>
+          <p class="fs-vision-text" id="fsVisionText">Strong, lean, confident, and full of energy. Leading my life with discipline and purpose.</p>
         </div>
       </section>
 
@@ -9139,18 +9501,53 @@
       if (loading) loading.classList.remove('is-loading');
       if (displayImg) displayImg.style.display = 'none';
     }
+
+    _syncFsProgressFromPhase();
   }
+
+  function _syncFsProgressFromPhase() {
+    var currentDay = 1;
+    var durationDays = 84;
+    try {
+      if (typeof ovPhase !== 'undefined' && ovPhase) {
+        if (ovPhase.currentDay > 0) currentDay = ovPhase.currentDay;
+        if (ovPhase.durationDays > 0) durationDays = ovPhase.durationDays;
+      } else {
+        var saved = localStorage.getItem('wylde_phase');
+        if (saved) {
+          var p = JSON.parse(saved);
+          if (p && p.currentDay > 0) currentDay = p.currentDay;
+          if (p && p.durationDays > 0) durationDays = p.durationDays;
+        }
+      }
+    } catch (_) {}
+    if (!durationDays || durationDays < 1) durationDays = 84;
+    if (!currentDay || currentDay < 1) currentDay = 1;
+    var pct = Math.round((currentDay / durationDays) * 100);
+    if (!isFinite(pct) || pct < 0) pct = 0;
+    if (pct > 100) pct = 100;
+    var pctEl = document.getElementById('fsProgressPct');
+    var fillEl = document.getElementById('fsProgressFill');
+    var dayStart = document.getElementById('fsDayStart');
+    var dayEnd = document.getElementById('fsDayEnd');
+    if (pctEl) pctEl.textContent = pct + '%';
+    if (fillEl) fillEl.style.width = pct + '%';
+    if (dayStart) dayStart.textContent = 'DAY 1';
+    if (dayEnd) dayEnd.textContent = 'DAY ' + durationDays;
+  }
+
   if (typeof window !== 'undefined') window.syncFutureSelfScreen = syncFutureSelfScreen;
 
   // Set silhouette image based on gender profile
   function updateFsSilhouette() {
-    var sil = document.getElementById('fsSilhouette');
-    if (!sil) return;
     var profile = {};
     try { profile = JSON.parse(localStorage.getItem('wylde_profile') || '{}'); } catch(e) {}
     var gender = (profile.gender || 'Male').toLowerCase();
-    if (gender === 'female') sil.src = 'futureselfwoman.png';
-    else sil.src = 'futureselfman.png';
+    var src = gender === 'female' ? 'futureselfwoman.png' : 'futureselfman.png';
+    ['fsSilhouette', 'fsHeroSilhouette', 'fsCompareArtBefore', 'fsCompareArtAfter'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.src = src;
+    });
   }
 
   function switchTimeline(tl) {
@@ -9191,7 +9588,50 @@
     if (afterLabel) afterLabel.textContent = _timelineLabels[tl];
   }
 
-  function generateAllTimelines() {
+  var _FS_LOCKED_TIMELINES = { '6months': true, '1year': true };
+
+  function _fsGenerationErrorMessage(err) {
+    var msg = (err && err.message) ? err.message : 'Generation failed';
+    if (msg.indexOf('safety') !== -1 || msg.indexOf('blocked') !== -1) {
+      return 'Your photo was blocked by safety filters. Try a different photo or tap Reset to generate without one.';
+    }
+    if (msg.indexOf('GEMINI') !== -1 || msg.indexOf('configured') !== -1) {
+      return 'Image generation is not configured. Please try again later.';
+    }
+    return 'Generation failed — ' + msg.substring(0, 60) + '. Tap Reset to try again.';
+  }
+
+  function _fetchFutureBoardOnce(payload) {
+    return fetch('/api/generate-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function(r) {
+      var ct = r.headers.get('content-type') || '';
+      if (!r.ok) throw new Error('API returned ' + r.status);
+      if (ct.indexOf('application/json') === -1) throw new Error('API returned non-JSON (got ' + ct + ')');
+      return r.json();
+    }).then(function(d) {
+      if (!d || !d.success || !d.image_base64) throw new Error((d && d.error) || 'No image in response');
+      if (d.image_base64.indexOf('data:image') !== 0) throw new Error('Invalid image data format');
+      return d;
+    });
+  }
+
+  function _fetchFutureBoardWithRetry(payload) {
+    return _fetchFutureBoardOnce(payload).catch(function(err) {
+      return new Promise(function(resolve, reject) {
+        setTimeout(function() {
+          _fetchFutureBoardOnce(payload).then(resolve).catch(reject);
+        }, 1500);
+      });
+    });
+  }
+
+  function generateActiveTimeline() {
+    var tl = _activeTimeline || '12weeks';
+    if (_FS_LOCKED_TIMELINES[tl]) return;
+
     var profile = {};
     try { profile = JSON.parse(localStorage.getItem('wylde_profile') || '{}'); } catch(ex) {}
     if (typeof state !== 'undefined' && state) {
@@ -9209,22 +9649,25 @@
     var motivations = profile.motivations || [];
     var obstacle = profile.obstacle || '';
 
-    // Reset stored images
-    _generatedImages = { '12weeks': null, '6months': null, '1year': null };
+    _generatedImages[tl] = null;
+    var statusEl = document.getElementById('status-' + tl);
+    if (statusEl) statusEl.innerHTML = '';
+    var tabEl = document.querySelector('.fs-tab[data-timeline="' + tl + '"]');
+    if (tabEl) tabEl.classList.remove('ready');
 
-    // Reset tab statuses
-    ['12weeks','6months','1year'].forEach(function(tl) {
-      var s = document.getElementById('status-' + tl);
-      if (s) s.innerHTML = '';
-      var tab = document.querySelector('.fs-tab[data-timeline="' + tl + '"]');
-      if (tab) tab.classList.remove('ready');
+    var genBtns = document.querySelectorAll('.future-generate-btn');
+    genBtns.forEach(function(btn) {
+      btn.disabled = true;
+      btn.textContent = 'Building your vision board...';
     });
 
-    // Disable generate button
-    var genBtn = document.getElementById('generateBtn');
-    if (genBtn) { genBtn.disabled = true; genBtn.textContent = 'Building your vision boards...'; }
+    var loading = document.getElementById('fsLoading');
+    var loadingText = document.getElementById('loadingText');
+    if (loading) loading.classList.add('is-loading');
+    if (loadingText) {
+      loadingText.textContent = 'Generating your ' + (_timelineLabels[tl] || tl) + ' self\u2026';
+    }
 
-    // IMPLODE the upload zone, then show result gallery
     var uploadWrap = document.getElementById('fsUploadWrap');
     var uploadZone = document.getElementById('uploadZone');
     var result = document.getElementById('fsResult');
@@ -9234,57 +9677,36 @@
     setTimeout(function() {
       if (uploadWrap) uploadWrap.style.display = 'none';
       if (uploadZone) uploadZone.classList.remove('imploding');
-      // EXPLODE in the result gallery
-      if (result) { result.classList.add('active'); }
-      switchTimeline('12weeks');
+      if (result) result.classList.add('active');
+      switchTimeline(tl);
     }, 650);
 
-    // Fire all three in parallel
-    var timelines = ['12weeks', '6months', '1year'];
-    var promises = timelines.map(function(tl) {
-      var payload = {
-        timeline: tl,
-        goal: userGoal,
-        userGoal: userGoal,
-        goals: userGoals,
-        gender: gender,
-        mode: 'vision_board',
-        futureVisionText: futureVisionText,
-        motivations: motivations,
-        obstacle: obstacle
-      };
-      if (futurePhotoBase64) payload.image_base64 = futurePhotoBase64;
-      if (window._protocolImageAddition) payload.protocolAddition = window._protocolImageAddition;
+    var payload = {
+      timeline: tl,
+      goal: userGoal,
+      userGoal: userGoal,
+      goals: userGoals,
+      gender: gender,
+      mode: 'vision_board',
+      futureVisionText: futureVisionText,
+      motivations: motivations,
+      obstacle: obstacle
+    };
+    if (futurePhotoBase64) payload.image_base64 = futurePhotoBase64;
+    if (window._protocolImageAddition) payload.protocolAddition = window._protocolImageAddition;
 
-      return fetch('/api/generate-image', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-      .then(function(r) {
-        var ct = r.headers.get('content-type') || '';
-        if (!r.ok) throw new Error('API returned ' + r.status);
-        if (ct.indexOf('application/json') === -1) throw new Error('API returned non-JSON (got ' + ct + ')');
-        return r.json();
-      })
+    _fetchFutureBoardWithRetry(payload)
       .then(function(d) {
         console.log('[FutureSelf] ' + tl + ' raw response:', d);
-        if (!d.success || !d.image_base64) throw new Error(d.error || 'No image in response');
-        if (d.image_base64.indexOf('data:image') !== 0) throw new Error('Invalid image data format');
         _generatedImages[tl] = d.image_base64;
         _persistFutureBoards();
         if (tl === '12weeks') awardXP(50, 'Vision board generated');
 
-        // Mark tab ready
-        var tab = document.querySelector('.fs-tab[data-timeline="' + tl + '"]');
-        if (tab) tab.classList.add('ready');
-
-        // If this is the active tab, show immediately
-        if (_activeTimeline === tl) switchTimeline(tl);
+        if (tabEl) tabEl.classList.add('ready');
+        switchTimeline(tl);
         if (typeof syncFutureSelfScreen === 'function') syncFutureSelfScreen();
 
-        // Sync dashboard avatar with 1year image
-        if (tl === '1year') {
+        if (typeof state !== 'undefined' && state) {
           state.avatarUrl = d.image_base64;
           var da = document.getElementById('dashAvatar');
           if (da) da.src = d.image_base64;
@@ -9292,25 +9714,21 @@
       })
       .catch(function(err) {
         console.error(tl + ' failed:', err.message);
-        var s = document.getElementById('status-' + tl);
-        if (s) s.innerHTML = '<span style="color:rgba(220,80,80,0.8);font-size:10px;">!</span>';
-        if (_activeTimeline === tl) {
-          var lt = document.getElementById('loadingText');
-          var msg = err.message || 'Generation failed';
-          if (msg.indexOf('safety') !== -1 || msg.indexOf('blocked') !== -1) {
-            if (lt) lt.textContent = 'Your photo was blocked by safety filters. Try a different photo or tap Reset to generate without one.';
-          } else if (msg.indexOf('GEMINI') !== -1 || msg.indexOf('configured') !== -1) {
-            if (lt) lt.textContent = 'Image generation is not configured. Please try again later.';
-          } else {
-            if (lt) lt.textContent = 'Generation failed — ' + msg.substring(0, 60) + '. Tap Reset to try again.';
-          }
-        }
+        if (statusEl) statusEl.innerHTML = '<span style="color:rgba(220,80,80,0.8);font-size:10px;">!</span>';
+        if (loading) loading.classList.add('is-loading');
+        if (loadingText) loadingText.textContent = _fsGenerationErrorMessage(err);
+        switchTimeline(tl);
+      })
+      .finally(function() {
+        genBtns.forEach(function(btn) {
+          btn.disabled = false;
+          btn.textContent = 'Generate My Vision Board \u2192';
+        });
       });
-    });
+  }
 
-    Promise.allSettled(promises).then(function() {
-      if (genBtn) { genBtn.disabled = false; genBtn.textContent = 'Generate My Vision Board \u2192'; }
-    });
+  function generateAllTimelines() {
+    generateActiveTimeline();
   }
 
   function resetFutureSelf() {
@@ -9326,7 +9744,7 @@
   }
 
   // Aliases for compat
-  function generateFutureSelf() { generateAllTimelines(); }
+  function generateFutureSelf() { generateActiveTimeline(); }
   function revealFutureSelf() {}
   function resetPhoto() { resetFutureSelf(); }
 

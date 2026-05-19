@@ -39,25 +39,26 @@ function rateLimit(ip, limit, windowMs) {
   return { ok: true };
 }
 
-function buildPrompt(timeline, goals, gender, hasImage) {
-  const g = gender || 'male';
-
-  // Normalize goals
+function normalizeGoals(goals, userGoal, goal) {
   let goalList = [];
-  if (Array.isArray(goals)) goalList = goals;
+  if (Array.isArray(goals)) goalList = goals.filter(Boolean);
   else if (typeof goals === 'string' && goals) goalList = [goals];
+  if (goalList.length === 0 && userGoal) goalList = [userGoal];
+  if (goalList.length === 0 && goal) goalList = [goal];
   if (goalList.length === 0) goalList = ['Get lean & athletic'];
-  const goalKey = goalList.map(s => s.toLowerCase()).join(' + ');
+  return goalList;
+}
 
-  // Detect emphasis — but EVERY transformation always includes muscle + fat loss
-  const wantsBulk   = goalKey.match(/muscle|bulk|build|mass|size|strong/);
-  const wantsCut    = goalKey.match(/burn|fat|los|weight|slim|lean|tone|defin|cut|shred/);
+/** Legacy physique-only transformation prompt (mode=physique). */
+function buildPhysiquePrompt(timeline, goalList, gender, hasImage) {
+  const g = gender || 'male';
+  const goalKey = goalList.map(s => s.toLowerCase()).join(' + ');
+  const wantsBulk = goalKey.match(/muscle|bulk|build|mass|size|strong/);
+  const wantsCut = goalKey.match(/burn|fat|los|weight|slim|lean|tone|defin|cut|shred/);
   const emphasis = wantsBulk && wantsCut ? 'body recomposition'
     : wantsBulk ? 'maximum muscle gain'
-    : wantsCut  ? 'lean and shredded'
+    : wantsCut ? 'lean and shredded'
     : 'lean athletic muscle';
-
-  // Short, punchy style note based on goals
   const styleNote = wantsBulk && !wantsCut
     ? 'Prioritize muscle SIZE — bigger arms, wider shoulders, thicker chest. Some body fat is fine.'
     : wantsCut && !wantsBulk
@@ -70,30 +71,83 @@ function buildPrompt(timeline, goals, gender, hasImage) {
 
   const timelines = {
     '12weeks': `12-WEEK TRANSFORMATION. This person trained hard 4x/week for 3 months straight.
-Show: noticeably more muscular shoulders, arms, and chest. Tighter waist, leaner face. Visible arm definition. Abs starting to show. V-taper forming. Clear muscle tone in every body part.
-Think: Instagram before/after that makes people say "what program is that?" This is NOT subtle — the change is obvious at first glance.
+Show: noticeably more muscular shoulders, arms, and chest. Tighter waist, leaner face. Visible arm definition. Abs starting to show. V-taper forming.
 ${styleNote}`,
-
-    '6months': `6-MONTH TRANSFORMATION. This person trained 5x/week for half a year with zero breaks.
-Show: DRAMATIC muscle gain — thick arms with bicep peak, capped round shoulders, full squared chest, visible lats. Body fat 12-15%. Defined 4-6 pack abs. Veins on forearms and biceps. Sharp jawline. V-taper is dramatic.
-Think: Men's Health cover. The kind of transformation people call "insane." The body looks COMPLETELY DIFFERENT.
+    '6months': `6-MONTH TRANSFORMATION. Dramatic muscle gain, defined abs, sharp jawline, competition-adjacent natural physique.
 ${styleNote}`,
-
-    '1year': `1-YEAR PEAK TRANSFORMATION. 365 days of disciplined training, strict nutrition, full dedication.
-Show: ELITE natural physique. Thick vascular arms, striated cannonball shoulders, full chest with visible striations, wide lat spread, carved 6-pack with obliques, V-lines. Veins everywhere — forearms, biceps, delts. Every muscle group shows separation. Quads have visible heads. This body is COMPETITION READY.
-Think: natural bodybuilder or fitness model at peak condition. Magazine cover physique. Unrecognizable from the original.
+    '1year': `1-YEAR PEAK. Elite natural physique — vascular, striated, magazine-cover condition.
 ${styleNote}`,
   };
 
   const t = timelines[timeline] || timelines['12weeks'];
+  return `${identity}\n\n${t}\n\nGoal: ${emphasis} — ${goalList.join(', ')}.\n\nRules: Photorealistic. No text/watermarks. Dramatic but believable transformation.`;
+}
 
-  return `${identity}
+/**
+ * Vision board: one editorial collage — health, vitality, intentional wealth/ease,
+ * mindset, and life in motion — not physique-only.
+ */
+function buildVisionBoardPrompt(timeline, goalList, gender, hasImage, ctx) {
+  const g = (gender || 'male').toLowerCase();
+  const futureVisionText = (ctx && ctx.futureVisionText) ? String(ctx.futureVisionText).trim().slice(0, 400) : '';
+  const obstacle = (ctx && ctx.obstacle) ? String(ctx.obstacle).trim().slice(0, 200) : '';
+  const motivations = Array.isArray(ctx && ctx.motivations) ? ctx.motivations.filter(Boolean).slice(0, 8) : [];
 
-${t}
+  const identity = hasImage
+    ? 'The person in the reference photo MUST appear as the recognizable hero in the largest panel (same face, skin tone, hair, age). Do not replace them with a model.'
+    : `Feature one recognizable photorealistic ${g === 'female' ? 'woman' : g === 'non-binary' ? 'person' : 'man'} as the hero across the board.`;
 
-Goal: ${emphasis} — ${goalList.join(', ')}.
+  const horizons = {
+    '12weeks': `12-WEEK HORIZON — early momentum: disciplined routines forming, visible vitality returning, life feeling more intentional. Energy is rising; results are starting to show.`,
+    '6months': `6-MONTH HORIZON — clear transformation: strong body, calmer mind, lifestyle upgrades that feel earned. Confidence is obvious.`,
+    '1year': `1-YEAR HORIZON — embodied future self: peak health, financial ease, composed presence, a life that matches who they decided to become.`,
+  };
+  const horizon = horizons[timeline] || horizons['12weeks'];
 
-Rules: Photorealistic. No text/watermarks. EXAGGERATE the transformation — make it dramatic and motivating. Err on the side of MORE muscle, MORE definition, LESS body fat. Do NOT be conservative.`;
+  const wealthNote = goalList.some(g => /confidence|health|energy|lifestyle/i.test(g))
+    ? 'Wealth shown as ease and quality of life — not excess.'
+    : 'Wealth shown as intentional abundance: calm premium spaces, purposeful work, freedom of time — never gaudy.';
+
+  const lines = [
+    'Create ONE single high-end editorial VISION BOARD image — a cohesive photorealistic collage (soft grid or cinematic mosaic).',
+    'This is NOT a before/after body shot alone. It is a life visualization: healthy, wealthy-in-spirit, composed, capable.',
+    '',
+    identity,
+    '',
+    horizon,
+    '',
+    'In ONE image, include 5–6 vignettes that read as one aspirational life:',
+    '1. BODY & VITALITY — athletic health, energy, strength (same person if reference provided)',
+    '2. WEALTH & EASE — ' + wealthNote + ' NO cash piles, lottery, lamborghinis, or cliché "rich" tropes.',
+    '3. MIND & RITUAL — morning light, focus, stillness, journaling or meditation atmosphere',
+    '4. PURPOSE & WORK — meaningful craft, creation, or leadership energy (subtle, not corporate stock)',
+    '5. LIFE IN MOTION — training, nature, travel, or movement aligned with their goals',
+    '6. CONNECTION (optional) — warmth, partnership, or community suggested tastefully — no cheesy romance stock',
+    '',
+    'Training goals: ' + goalList.join(', ') + '.',
+  ];
+
+  if (motivations.length) lines.push('Core motivations: ' + motivations.join(', ') + '.');
+  if (futureVisionText) lines.push('In their words: "' + futureVisionText + '" — reflect this visually.');
+  if (obstacle) lines.push('They named friction: "' + obstacle + '" — the board should imply they overcome it through consistency, not fantasy shortcuts.');
+
+  lines.push(
+    '',
+    'Aesthetic: Equinox / Whoop / Aesop — warm neutrals, sage green and soft gold accents, cinematic natural light, magazine-quality. Premium, grounded, believable.',
+    '',
+    'Rules: Photorealistic photography only. NO text, logos, watermarks, or words in the image. NO cartoon or illustration. Single output image. Avoid cluttered Pinterest scrapbook chaos — elegant editorial layout.',
+  );
+
+  return lines.join('\n');
+}
+
+function buildPrompt(timeline, goals, gender, hasImage, options) {
+  const mode = (options && options.mode) || 'vision_board';
+  const goalList = normalizeGoals(goals, options && options.userGoal, options && options.goal);
+  if (mode === 'physique') {
+    return buildPhysiquePrompt(timeline, goalList, gender, hasImage);
+  }
+  return buildVisionBoardPrompt(timeline, goalList, gender, hasImage, options);
 }
 
 module.exports = async function handler(req, res) {
@@ -112,7 +166,6 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
-  // Rate limit: image gen is expensive — 5/min per IP
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
   const rl = rateLimit(ip, 5, 60_000);
   if (!rl.ok) {
@@ -124,16 +177,32 @@ module.exports = async function handler(req, res) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error('GEMINI_API_KEY not configured');
 
-    const { image_base64, timeline, goal, userGoal, goals, gender } = req.body || {};
+    const body = req.body || {};
+    const {
+      image_base64,
+      timeline,
+      goal,
+      userGoal,
+      goals,
+      gender,
+      mode,
+      futureVisionText,
+      motivations,
+      obstacle,
+    } = body;
 
-    // goals array takes precedence, then userGoal, then legacy goal field
-    const effectiveGoals = (Array.isArray(goals) && goals.length > 0)
-      ? goals
-      : (userGoal || goal || 'lean and athletic');
+    const effectiveGoals = normalizeGoals(goals, userGoal, goal);
     const effectiveTimeline = timeline || '12weeks';
 
-    const prompt = buildPrompt(effectiveTimeline, effectiveGoals, gender, !!image_base64);
-    console.log(`[generate-image] Timeline: ${effectiveTimeline}, Goals: ${JSON.stringify(effectiveGoals)}, Prompt length: ${prompt.length}`);
+    const prompt = buildPrompt(effectiveTimeline, effectiveGoals, gender, !!image_base64, {
+      mode: mode || 'vision_board',
+      userGoal,
+      goal,
+      futureVisionText,
+      motivations,
+      obstacle,
+    });
+    console.log(`[generate-image] mode=${mode || 'vision_board'} timeline=${effectiveTimeline} goals=${JSON.stringify(effectiveGoals)} promptLen=${prompt.length}`);
 
     let contents;
 
@@ -158,18 +227,13 @@ module.exports = async function handler(req, res) {
       ];
     }
 
-    // Try models in order — names change often, first success wins.
-    // All entries must support the :generateContent endpoint with
-    // responseModalities: ['TEXT', 'IMAGE']. Imagen models use a
-    // different :predict shape and are intentionally excluded.
     const models = [
-      'gemini-3.1-flash-image-preview', // Nano Banana 2 — high-efficiency native image gen (preview)
-      'gemini-3-pro-image-preview',     // Nano Banana Pro — pro-tier native image gen (preview)
-      'gemini-2.5-flash-image',         // Nano Banana — GA fallback
-      'gemini-2.0-flash-exp',           // legacy fallback
+      'gemini-3.1-flash-image-preview',
+      'gemini-3-pro-image-preview',
+      'gemini-2.5-flash-image',
+      'gemini-2.0-flash-exp',
     ];
 
-    // Helper: attempt generation with given contents
     async function tryGenerate(reqContents) {
       const reqBody = JSON.stringify({
         contents: reqContents,
@@ -197,7 +261,6 @@ module.exports = async function handler(req, res) {
 
       console.log(`[generate-image] Final model: ${usedModel}, status: ${response.status}`);
 
-      // Check for safety block (candidates blocked or finishReason SAFETY)
       const candidate = data?.candidates?.[0];
       const finishReason = candidate?.finishReason || '';
       const blocked = data?.promptFeedback?.blockReason || '';
@@ -224,10 +287,8 @@ module.exports = async function handler(req, res) {
       return { success: true, imagePart };
     }
 
-    // Attempt 1: with user's photo (if provided)
     let result = await tryGenerate(contents);
 
-    // If safety-blocked and we had a photo, retry WITHOUT the photo
     if ((result.blocked || result.error) && image_base64) {
       console.log('[generate-image] Retrying WITHOUT user photo (safety fallback)...');
       const textOnlyContents = [
@@ -250,7 +311,11 @@ module.exports = async function handler(req, res) {
     }
 
     const { mimeType, data: imgData } = result.imagePart.inlineData;
-    return res.status(200).json({ success: true, image_base64: `data:${mimeType};base64,${imgData}` });
+    return res.status(200).json({
+      success: true,
+      image_base64: `data:${mimeType};base64,${imgData}`,
+      mode: mode || 'vision_board',
+    });
 
   } catch (err) {
     console.error('generate-image error:', err.message);
