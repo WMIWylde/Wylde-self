@@ -1180,7 +1180,7 @@
     .fs-sticky-cta .fs-primary-btn { pointer-events: auto; }
     .fs-primary-btn {
       width: 100%;
-      max-width: 520px;
+      max-width: 430px;
       margin: 0 auto;
       display: flex;
       align-items: center;
@@ -1249,6 +1249,8 @@
       color: var(--fs-text);
       min-height: 100vh;
       min-height: 100dvh;
+      max-width: 430px;
+      margin: 0 auto;
       box-sizing: border-box;
       background:
         radial-gradient(circle at 84% 7%, var(--fs-glow), transparent 55%),
@@ -1256,14 +1258,40 @@
     }
     #screen-onboard * { box-sizing: border-box; }
     #screen-onboard.screen {
-      padding: calc(12px + var(--fs-safe-t)) var(--fs-pad-x) calc(96px + var(--fs-safe-b)) !important;
-      max-width: 100% !important;
+      padding: calc(var(--app-disclaimer-h) + 12px) var(--fs-pad-x) calc(96px + var(--fs-safe-b)) !important;
+      max-width: 430px !important;
       margin: 0 auto !important;
     }
     #screen-onboard .ob-container {
-      max-width: 520px;
+      max-width: 430px;
       margin: 0 auto;
       padding: 0;
+    }
+
+    /* Step 2 — photo upload: show full image, no crop */
+    #screen-onboard .ob-upload-zone.ob-has-photo {
+      padding: 10px;
+    }
+    #screen-onboard .ob-upload-zone.ob-has-photo .ob-silhouette {
+      display: none;
+    }
+    #screen-onboard .ob-upload-preview {
+      width: 100%;
+      max-height: min(440px, 52vh);
+      height: auto;
+      object-fit: contain;
+      object-position: center;
+      border-radius: 12px;
+      display: none;
+      position: relative;
+      z-index: 2;
+      background: rgba(9, 13, 8, 0.28);
+    }
+    #screen-onboard .ob-upload-zone.ob-has-photo .ob-upload-preview {
+      display: block;
+    }
+    #screen-onboard .ob-upload-zone.ob-has-photo #obUploadPlaceholder {
+      display: none;
     }
 
     /* Progress block */
@@ -1339,7 +1367,7 @@
       right: var(--fs-pad-x);
       bottom: calc(86px + var(--fs-safe-b));
       z-index: 46;
-      max-width: 520px;
+      max-width: 430px;
       margin: 0 auto;
       padding: 12px 14px;
       border-radius: 12px;
@@ -1378,7 +1406,7 @@
     }
     #screen-onboard .ob-nav:not(:has(.ob-back)) .ob-next {
       flex: 0 1 100%;
-      max-width: 520px;
+      max-width: 430px;
       width: 100%;
       margin: 0 auto;
     }
@@ -8239,9 +8267,14 @@
           var prev = document.getElementById('obUploadPreview');
           var ph = document.getElementById('obUploadPlaceholder');
           var zone = document.getElementById('obUploadZone');
-          if (prev) { prev.src = dataUrl; prev.style.display = 'block'; }
+          var sil = document.getElementById('obSilhouette');
+          if (prev) prev.src = dataUrl;
+          if (zone) {
+            zone.classList.remove('ob-upload-error');
+            zone.classList.add('ob-has-photo');
+          }
+          if (sil) sil.style.display = 'none';
           if (ph) ph.style.display = 'none';
-          if (zone) zone.classList.remove('ob-upload-error');
           obClearFlowError();
           var bimg = document.getElementById('beforeImg');
           if (bimg) bimg.src = dataUrl;
@@ -9011,9 +9044,14 @@
       var prev = document.getElementById('obUploadPreview');
       var ph = document.getElementById('obUploadPlaceholder');
       var zone = document.getElementById('obUploadZone');
-      if (prev) { prev.src = state.beforePhotoDataUrl; prev.style.display = 'block'; }
+      var sil = document.getElementById('obSilhouette');
+      if (prev) prev.src = state.beforePhotoDataUrl;
+      if (zone) {
+        zone.classList.remove('ob-upload-error');
+        zone.classList.add('ob-has-photo');
+      }
+      if (sil) sil.style.display = 'none';
       if (ph) ph.style.display = 'none';
-      if (zone) zone.classList.remove('ob-upload-error');
     }
     if (state.gymAccess) {
       document.querySelectorAll('#gymGroup .pill').forEach(function(p){
