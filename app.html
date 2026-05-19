@@ -2347,9 +2347,12 @@
   .ov-stack-row:active { background: rgba(0,0,0,0.03); }
   .ov-stack-row + .ov-stack-row { border-top: 1px solid rgba(0,0,0,0.05); }
   .ov-stack-icon { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
-  .ov-stack-icon.workout { background: rgba(110,127,102,0.12); color: var(--sage); }
+  .ov-stack-icon img { width: 28px; height: 28px; object-fit: contain; display: block; }
+  .ov-stack-icon.workout { background: rgba(200,169,110,0.10); }
+  .ov-stack-icon.walk { background: rgba(125,146,117,0.10); }
   .ov-stack-icon.protein { background: rgba(139,90,43,0.10); color: #8B5A2B; }
-  .ov-stack-icon.water { background: rgba(66,133,244,0.10); color: #4285F4; }
+  .ov-stack-icon.water { background: rgba(125,146,117,0.10); }
+  .mp-header-icon { width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; display: block; }
   .ov-stack-left { flex: 1; min-width: 0; }
   .ov-stack-name { font-size: 16px; font-weight: 600; color: var(--text); }
   .ov-stack-meta { font-size: 13px; color: var(--text3); margin-top: 2px; }
@@ -3317,19 +3320,19 @@
   <a href="/" class="nav-logo">W<span>S</span></a>
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showScreen('overview')">
-      <img class="nav-icon" src="/icons/nav-icon-today.png" width="30" height="30" alt="" aria-hidden="true" />
+      <img class="nav-icon" src="/icons/nav/nav-icon-today.png" width="30" height="30" alt="" aria-hidden="true" />
       <span>Today</span>
     </button>
     <button class="nav-tab" onclick="showScreen('future')">
-      <img class="nav-icon" src="/icons/nav-icon-future.png" width="30" height="30" alt="" aria-hidden="true" />
+      <img class="nav-icon" src="/icons/nav/nav-icon-future.png" width="30" height="30" alt="" aria-hidden="true" />
       <span>Future</span>
     </button>
     <button class="nav-tab" onclick="showScreen('coach')">
-      <img class="nav-icon" src="/icons/nav-icon-coach.png" width="30" height="30" alt="" aria-hidden="true" />
+      <img class="nav-icon" src="/icons/nav/nav-icon-coach.png" width="30" height="30" alt="" aria-hidden="true" />
       <span>Coach</span>
     </button>
     <button class="nav-tab" onclick="showScreen('progress')">
-      <img class="nav-icon" src="/icons/nav-icon-progress.png" width="30" height="30" alt="" aria-hidden="true" />
+      <img class="nav-icon" src="/icons/nav/nav-icon-progress.png" width="30" height="30" alt="" aria-hidden="true" />
       <span>Progress</span>
     </button>
     <!-- Library + Settings moved out of bottom nav. Library opens inside
@@ -3998,6 +4001,7 @@
          "Your Standard" (which felt like brand-speak per user feedback) -->
     <div class="mp-collapse-header" onclick="toggleMPCollapse()" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0;cursor:pointer;">
       <div style="display:flex;align-items:center;gap:10px;">
+        <img class="mp-header-icon" src="/icons/path/path-icon-morning.png" width="28" height="28" alt="" aria-hidden="true" />
         <span style="font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);">Morning Routine</span>
         <span class="mp-day-count" id="mpDayCountHeader" style="font-size:11px;color:var(--text3);"></span>
       </div>
@@ -4108,8 +4112,8 @@
     <p class="ov-stack-label">Today's Path</p>
     <div class="ov-stack-card">
       <div class="ov-stack-row" id="ov-w-program" onclick="showScreen('program')">
-        <div class="ov-stack-icon workout" style="display:flex;align-items:center;justify-content:center;color:var(--gold);background:rgba(200,169,110,0.10);">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="11" width="14" height="2"/></svg>
+        <div class="ov-stack-icon workout">
+          <img src="/icons/path/path-icon-training.png" alt="" aria-hidden="true" />
         </div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Today's Training</p>
@@ -4122,8 +4126,8 @@
       </div>
       <!-- Walk — daily mid-day movement, separate from training -->
       <div class="ov-stack-row" id="ov-w-walk" onclick="toggleDailyWalk()">
-        <div class="ov-stack-icon walk" style="display:flex;align-items:center;justify-content:center;color:var(--sage);background:rgba(125,146,117,0.10);">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M15 22l-3-7-3 7"/><path d="M9 13l-3-2 3-6 4 1 3 4"/></svg>
+        <div class="ov-stack-icon walk">
+          <img src="/icons/path/path-icon-walk.png" alt="" aria-hidden="true" />
         </div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Walk</p>
@@ -4136,8 +4140,8 @@
       </div>
       <!-- Water row stays in the stack -->
       <div class="ov-stack-row" id="ov-w-water">
-        <div class="ov-stack-icon water" style="display:flex;align-items:center;justify-content:center;color:var(--sage);background:rgba(125,146,117,0.10);">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+        <div class="ov-stack-icon water">
+          <img src="/icons/path/path-icon-water.png" alt="" aria-hidden="true" />
         </div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Water</p>
