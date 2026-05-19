@@ -841,7 +841,6 @@
       opacity: 1 !important;
       visibility: visible !important;
     }
-    #screen-future #beforeImg[src^="data"] ~ .fs-week-chip,
     #screen-future .fs-compare-half--before:has(#beforeImg[src^="data"]) .fs-compare-art {
       opacity: 0.12;
     }
@@ -865,40 +864,54 @@
       opacity: 0.32;
       filter: sepia(0.35) saturate(1.1) brightness(1.05);
     }
-    .fs-week-chip {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 4;
-      padding: 6px 10px;
-      border-radius: 9px;
-      background: var(--fs-chip-bg);
-      pointer-events: none;
+    /* Captions live below the image — never overlaid on photos */
+    .fs-compare-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 16px;
+      padding: 14px 12px 4px;
+      border-top: 1px solid var(--fs-surface-border);
+      background: rgba(9, 13, 8, 0.35);
     }
-    .fs-week-chip-line {
-      display: block;
+    .fs-compare-caption {
+      min-width: 0;
+    }
+    .fs-compare-caption--after {
+      text-align: right;
+    }
+    .fs-caption-primary {
+      margin: 0;
       font-size: 13px;
       font-weight: 700;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
       color: var(--fs-text);
-      line-height: 1.1;
+      line-height: 1.2;
     }
-    .fs-week-chip-sub {
-      display: block;
-      font-size: 9px;
+    .fs-compare-caption--after .fs-caption-primary { color: var(--fs-gold); }
+    .fs-caption-secondary {
+      margin: 3px 0 0;
+      font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.10em;
       text-transform: uppercase;
       color: var(--fs-text-muted);
-      margin-top: 2px;
+      line-height: 1.2;
     }
-    .fs-week-chip--future {
-      left: auto;
-      right: 10px;
-      text-align: right;
+    .fs-compare-headline {
+      margin: 10px 0 0;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--fs-gold);
+      line-height: 1.25;
     }
-    .fs-week-chip--future .fs-week-chip-line { color: var(--fs-gold); }
+    .fs-compare-subtext {
+      margin: 4px 0 0;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--fs-text-muted);
+      line-height: 1.45;
+    }
     .fs-compare-seam {
       position: absolute;
       left: 50%;
@@ -920,31 +933,6 @@
       cursor: default;
       pointer-events: none;
     }
-    .fs-compare-copy {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 3;
-      padding: 42px 12px 12px;
-      background: linear-gradient(to top, rgba(9, 13, 8, 0.88) 0%, transparent 100%);
-      pointer-events: none;
-    }
-    .fs-compare-headline {
-      margin: 0;
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--fs-gold);
-      line-height: 1.2;
-    }
-    .fs-compare-subtext {
-      margin: 4px 0 0;
-      font-size: 14px;
-      font-weight: 400;
-      color: var(--fs-text);
-      line-height: 1.4;
-      opacity: 0.88;
-    }
     .fs-compare-empty-hint {
       position: absolute;
       left: 50%;
@@ -963,38 +951,40 @@
     #screen-future:has(#uploadPreview[src^="data"]) .fs-compare-empty-hint,
     #screen-future:has(#beforeImg[src^="data"]) .fs-compare-empty-hint { display: none; }
     .fs-image-label { display: none; }
-    .fs-loading-overlay {
-      position: absolute;
-      inset: 0;
-      left: 50%;
-      width: 50%;
+    .fs-loading-status {
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: rgba(9, 13, 8, 0.72);
-      z-index: 6;
-      padding: 16px;
+      gap: 10px;
+      padding: 14px 16px 6px;
+      text-align: center;
     }
-    .fs-loading-overlay.is-loading { display: flex; }
-    .fs-loading-overlay .loading-ring {
-      width: 44px;
-      height: 44px;
+    .fs-loading-status.is-loading { display: flex; }
+    .fs-loading-status .loading-ring {
+      width: 36px;
+      height: 36px;
       border: 2px solid rgba(255, 255, 255, 0.12);
       border-top-color: var(--fs-gold);
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
     .fs-loading-text {
-      margin-top: 12px;
+      margin: 0;
       font-size: 13px;
       line-height: 1.45;
       text-align: center;
       color: var(--fs-text-muted);
-      max-width: 18em;
+      max-width: 22em;
     }
-    .fs-board-caption { display: none; }
+    .fs-board-caption {
+      margin: 10px 0 0;
+      padding: 0 4px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--fs-text-muted);
+      text-align: center;
+    }
 
     /* Panels: vision + progress */
     .fs-panel {
@@ -1244,7 +1234,7 @@
     @media (prefers-reduced-motion: reduce) {
       .fs-result.active,
       .future-upload.imploding { animation: none; }
-      .fs-loading-overlay .loading-ring { animation: none; }
+      .fs-loading-status .loading-ring { animation: none; }
     }
 
     /* Override global .screen padding for Future Self tab */
@@ -2408,7 +2398,8 @@
   .ov-future-strip { display: flex; align-items: center; gap: 16px; padding: 18px 20px; background: linear-gradient(135deg, #FFFFFF 60%, rgba(110,127,102,0.08) 100%); border: none; border-radius: 20px; cursor: pointer; transition: all 0.25s; box-shadow: 0 4px 20px rgba(0,0,0,0.05); animation: ovFadeUp 0.8s ease 0.5s both; }
   .ov-future-strip:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
   .ov-future-img-placeholder { width: 72px; height: 72px; border-radius: 16px; background: rgba(110,127,102,0.08); flex-shrink: 0; overflow: hidden; position: relative; }
-  .ov-future-img-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+  .ov-future-img-placeholder.has-photo { background: #0E120E; }
+  .ov-future-img-placeholder img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .ov-future-badge { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); background: rgba(110,127,102,0.85); color: #fff; font-size: 8px; font-weight: 700; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 6px; white-space: nowrap; text-transform: uppercase; }
   .ov-future-text { flex: 1; min-width: 0; }
   .ov-future-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sage); margin-bottom: 3px; }
@@ -4565,29 +4556,54 @@
     if (hBar) hBar.style.width = Math.min(Math.round(ovWOz / ovWGoal * 100), 100) + '%';
   };
 
-  // Sync hero image with future-self generated photo
+  // Sync Today card Future You thumbnail with uploaded / generated photo
   function ovSyncHeroImage() {
-    var heroImg = document.getElementById('ov-hero-img');
+    try {
+      if (typeof _loadPersistedFutureBoards === 'function') _loadPersistedFutureBoards();
+    } catch (_) {}
+
     var src = null;
-    if (typeof _generatedImages !== 'undefined' && _generatedImages && _generatedImages['12weeks']) {
-      src = _generatedImages['12weeks'];
-    } else if (typeof state !== 'undefined' && state && state.beforePhotoDataUrl) {
-      src = state.beforePhotoDataUrl;
-    }
-    if (heroImg && src) heroImg.src = src;
-    var thumb = document.getElementById('ov-future-thumb');
-    if (thumb && src) {
-      var existing = thumb.querySelector('img');
-      if (!existing) {
-        var img = document.createElement('img');
-        img.src = src;
-        img.alt = 'Your future self';
-        thumb.insertBefore(img, thumb.firstChild);
-      } else {
-        existing.src = src;
+    try {
+      if (typeof _generatedImages !== 'undefined' && _generatedImages && _generatedImages['12weeks']) {
+        src = _generatedImages['12weeks'];
       }
+    } catch (_) {}
+    if (!src && typeof _getFuturePhotoDataUrl === 'function') {
+      try { src = _getFuturePhotoDataUrl(); } catch (_) {}
     }
+    if (!src) {
+      try {
+        if (typeof futurePhotoBase64 === 'string' && futurePhotoBase64.indexOf('data:') === 0) src = futurePhotoBase64;
+        else if (typeof state !== 'undefined' && state && state.beforePhotoDataUrl && String(state.beforePhotoDataUrl).indexOf('data:') === 0) {
+          src = state.beforePhotoDataUrl;
+        } else {
+          var ext = localStorage.getItem('wylde_before_photo');
+          if (ext && ext.indexOf('data:') === 0) src = ext;
+        }
+      } catch (_) {}
+    }
+
+    var heroImg = document.getElementById('ov-hero-img');
+    if (heroImg && src) heroImg.src = src;
+
+    var thumb = document.getElementById('ov-future-thumb');
+    if (!thumb) return;
+    if (!src) {
+      thumb.classList.remove('has-photo');
+      var stale = thumb.querySelector('img');
+      if (stale) stale.remove();
+      return;
+    }
+    thumb.classList.add('has-photo');
+    var existing = thumb.querySelector('img');
+    if (!existing) {
+      existing = document.createElement('img');
+      existing.alt = 'Your future self';
+      thumb.insertBefore(existing, thumb.firstChild);
+    }
+    if (existing.src !== src) existing.src = src;
   }
+  if (typeof window !== 'undefined') window.ovSyncHeroImage = ovSyncHeroImage;
 
   // ═══ MORNING PROTOCOL LOGIC ═══
   // Three core practices, fixed. The point isn't variety — it's a stable
@@ -5253,32 +5269,32 @@
             <img class="fs-compare-art" id="fsCompareArtBefore" src="futureselfman.png" alt="" aria-hidden="true" />
             <img id="beforeImg" class="fs-compare-personal" src="" alt="Today" />
             <img class="future-upload-preview fs-compare-personal" id="uploadPreview" src="" alt="" />
-            <div class="fs-week-chip">
-              <span class="fs-week-chip-line">Week 0</span>
-              <span class="fs-week-chip-sub">Today</span>
-            </div>
           </div>
           <div class="fs-compare-half fs-compare-half--after">
             <img class="fs-compare-art" id="fsCompareArtAfter" src="futureselfman.png" alt="" aria-hidden="true" />
             <img class="fs-image fs-compare-personal" id="fsDisplayImg" src="" alt="Your future self vision board" />
-            <div class="fs-week-chip fs-week-chip--future">
-              <span class="fs-week-chip-line">Week 12</span>
-              <span class="fs-week-chip-sub">Your future</span>
-            </div>
-            <div class="fs-loading-overlay" id="fsLoading">
-              <div class="loading-ring" aria-hidden="true"></div>
-              <p class="fs-loading-text" id="loadingText">Generating your 12-week self&hellip;</p>
-            </div>
-            <div class="fs-compare-copy">
-              <p class="fs-compare-headline">Lean. Strong. Unstoppable.</p>
-              <p class="fs-compare-subtext">This is the version of you that kept every promise.</p>
-            </div>
           </div>
           <button type="button" class="fs-compare-seam" aria-label="Drag to compare">&raquo;</button>
         </div>
+        <div class="fs-compare-meta">
+          <div class="fs-compare-caption fs-compare-caption--before">
+            <p class="fs-caption-primary">Today</p>
+            <p class="fs-caption-secondary">Week 0</p>
+          </div>
+          <div class="fs-compare-caption fs-compare-caption--after">
+            <p class="fs-caption-primary" id="fsAfterCaptionPrimary">Your future</p>
+            <p class="fs-caption-secondary" id="fsAfterCaptionSecondary">12 Weeks</p>
+            <p class="fs-compare-headline" id="fsCompareHeadline">Lean. Strong. Unstoppable.</p>
+            <p class="fs-compare-subtext" id="fsCompareSubtext">This is the version of you that kept every promise.</p>
+          </div>
+        </div>
+        <div class="fs-loading-status" id="fsLoading" aria-live="polite">
+          <div class="loading-ring" aria-hidden="true"></div>
+          <p class="fs-loading-text" id="loadingText">Generating your 12-week self&hellip;</p>
+        </div>
         <span class="fs-image-label" id="fsImageLabel">12 Weeks</span>
       </div>
-      <p class="fs-board-caption" id="fsBoardCaption">Health, wealth &amp; ease, ritual, and purpose &mdash; one board per horizon.</p>
+      <p class="fs-board-caption" id="fsBoardCaption">Foundation &mdash; vitality, ritual, and momentum</p>
 
       <section class="fs-panel fs-panel-vision" aria-labelledby="fsVisionHeading">
         <div class="fs-panel-head">
@@ -7848,6 +7864,9 @@
             if (typeof _hydrateFutureUploadPreview === 'function') _hydrateFutureUploadPreview(state.beforePhotoDataUrl);
           }
         } catch (_) {}
+        setTimeout(function() {
+          if (typeof ovSyncHeroImage === 'function') ovSyncHeroImage();
+        }, 50);
         if (state.name) {
           document.getElementById('navUserName').textContent = state.name.toUpperCase();
           document.querySelectorAll('.nav-tab.locked').forEach(function(t){ t.classList.remove('locked'); });
@@ -9557,6 +9576,20 @@
     '6months': 'Momentum — stronger body, calmer mind, upgraded life',
     '1year': 'Embodied — health, ease, and who you became'
   };
+  var _timelineCompareCopy = {
+    '12weeks': {
+      headline: 'Lean. Strong. Unstoppable.',
+      subtext: 'This is the version of you that kept every promise.'
+    },
+    '6months': {
+      headline: 'Clear. Capable. Composed.',
+      subtext: 'Six months of showing up — life starts matching the vision.'
+    },
+    '1year': {
+      headline: 'Embodied. At ease. Unmistakable.',
+      subtext: 'The person you decided to become — visible in how you live.'
+    }
+  };
   var _blankPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
   var _FUTURE_BOARDS_KEY = 'wylde_future_boards';
 
@@ -9629,6 +9662,7 @@
       uz.style.padding = '10px';
       uz.style.border = '1.5px solid var(--fs-surface-border)';
     }
+    if (typeof ovSyncHeroImage === 'function') ovSyncHeroImage();
   }
 
   function syncFutureSelfScreen() {
@@ -9667,6 +9701,7 @@
     }
 
     _syncFsProgressFromPhase();
+    if (typeof ovSyncHeroImage === 'function') ovSyncHeroImage();
   }
 
   function _syncFsProgressFromPhase() {
@@ -9728,6 +9763,15 @@
     if (label) label.textContent = _timelineLabels[tl];
     var cap = document.getElementById('fsBoardCaption');
     if (cap) cap.textContent = _timelineBoardSubs[tl] || _timelineBoardSubs['12weeks'];
+    var afterCapPrimary = document.getElementById('fsAfterCaptionPrimary');
+    var afterCapSecondary = document.getElementById('fsAfterCaptionSecondary');
+    if (afterCapPrimary) afterCapPrimary.textContent = 'Your future';
+    if (afterCapSecondary) afterCapSecondary.textContent = _timelineLabels[tl] || _timelineLabels['12weeks'];
+    var cmpHead = document.getElementById('fsCompareHeadline');
+    var cmpSub = document.getElementById('fsCompareSubtext');
+    var copy = _timelineCompareCopy[tl] || _timelineCompareCopy['12weeks'];
+    if (cmpHead) cmpHead.textContent = copy.headline;
+    if (cmpSub) cmpSub.textContent = copy.subtext;
 
     var img = _generatedImages[tl];
     var hold = (typeof _getFuturePhotoDataUrl === 'function') ? _getFuturePhotoDataUrl() : null;

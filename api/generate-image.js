@@ -135,7 +135,7 @@ function buildVisionBoardPrompt(timeline, goalList, gender, hasImage, ctx) {
     '',
     'Aesthetic: Equinox / Whoop / Aesop — warm neutrals, sage green and soft gold accents, cinematic natural light, magazine-quality. Premium, grounded, believable.',
     '',
-    'Rules: Photorealistic photography only. NO text, logos, watermarks, or words in the image. NO cartoon or illustration. Single output image. Avoid cluttered Pinterest scrapbook chaos — elegant editorial layout.',
+    'Rules: Photorealistic photography only. CRITICAL — absolutely no text, typography, letters, numbers, words, captions, labels, logos, or watermarks anywhere in the image. NO cartoon or illustration. Single output image. Avoid cluttered Pinterest scrapbook chaos — elegant editorial layout.',
   );
 
   return lines.join('\n');
