@@ -425,6 +425,8 @@
       z-index: 0;
       min-height: 100vh;
       min-height: 100dvh;
+      max-width: 430px;
+      margin: 0 auto;
       padding:
         calc(var(--app-disclaimer-h) + 12px)
         var(--fs-pad-x)
@@ -434,6 +436,17 @@
         linear-gradient(180deg, var(--fs-bg-top) 0%, var(--fs-bg-mid) 42%, var(--fs-bg-bottom) 100%);
       box-sizing: border-box;
       overflow-x: clip;
+    }
+    @media (min-width: 701px) {
+      #screen-future {
+        padding-bottom: calc(var(--app-fs-sticky-h) + 40px);
+      }
+      #screen-future .fs-sticky-cta {
+        bottom: 0 !important;
+      }
+      #screen-future .fs-flow-error {
+        bottom: calc(var(--app-fs-sticky-h) + 8px);
+      }
     }
     #screen-future * { box-sizing: border-box; }
 
@@ -579,6 +592,7 @@
       padding: 0;
       margin: 0;
     }
+    .future-upload-wrap.is-hidden { display: none !important; }
     .future-upload {
       position: relative;
       overflow: hidden;
@@ -725,11 +739,16 @@
     }
     .fs-tab.active .fs-tab-label { color: var(--fs-text); }
     .fs-tab.active .fs-tab-sub { color: var(--fs-gold); }
-    .fs-tab.ready:not(.fs-tab-locked) .fs-tab-status::after { content: '✓'; }
+    .fs-tab.ready:not(.fs-tab-locked):not(.fs-tab-error) .fs-tab-status::after { content: '✓'; }
+    .fs-tab.fs-tab-locked .fs-tab-status::after { content: '🔒'; font-size: 10px; }
+    .fs-tab.fs-tab-error:not(.fs-tab-locked) .fs-tab-status::after {
+      content: '!';
+      color: rgba(232, 140, 100, 0.95);
+      font-size: 11px;
+    }
     .fs-tab.fs-tab-locked { cursor: not-allowed; }
     .fs-tab.fs-tab-locked .fs-tab-label,
     .fs-tab.fs-tab-locked .fs-tab-sub { color: var(--fs-text-dim); }
-    .fs-tab.fs-tab-locked .fs-tab-status::after { content: '🔒'; font-size: 10px; }
     .fs-tab.fs-tab-locked.active {
       border-color: transparent;
       background: transparent;
@@ -1112,12 +1131,52 @@
       position: fixed;
       left: 0;
       right: 0;
-      bottom: var(--app-nav-h);
+      bottom: var(--app-nav-h) !important;
       z-index: 40;
+      max-width: 430px;
+      margin: 0 auto;
       padding: 12px var(--fs-pad-x) 12px;
       background: linear-gradient(to top, rgba(14, 19, 14, 0.96) 55%, transparent);
       pointer-events: none;
     }
+    /* User-facing generation error — above sticky CTA, below nav */
+    .fs-flow-error {
+      display: none;
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: calc(var(--app-nav-h) + var(--app-fs-sticky-h) + 8px);
+      z-index: 41;
+      width: calc(100% - 44px);
+      max-width: 430px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.45;
+      color: #F2DCC4;
+      background: rgba(160, 90, 50, 0.16);
+      border: 1px solid rgba(210, 140, 80, 0.38);
+    }
+    .fs-flow-error.fs-flow-error-visible { display: block; }
+    .fs-flow-error-retry {
+      display: block;
+      margin-top: 10px;
+      width: 100%;
+      min-height: 44px;
+      padding: 0 16px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(180deg, var(--fs-gold-bright), var(--fs-gold-deep));
+      color: var(--fs-ink);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .fs-flow-error-retry:active { transform: scale(0.97); }
     .fs-sticky-cta .fs-primary-btn { pointer-events: auto; }
     .fs-primary-btn {
       width: 100%;
@@ -1163,7 +1222,7 @@
         var(--fs-pad-x)
         calc(var(--app-nav-h) + var(--app-fs-sticky-h)) !important;
       padding-left: var(--fs-pad-x) !important;
-      max-width: 100% !important;
+      max-width: 430px !important;
       margin: 0 auto !important;
       position: relative !important;
       z-index: 0 !important;
@@ -2851,7 +2910,8 @@
     color: var(--sage) !important;
   }
 
-  /* ═══ NAV — BOTTOM TAB BAR ═══ */
+  /* ═══ NAV — BOTTOM TAB BAR (mobile / phone width only) ═══ */
+  @media (max-width: 700px) {
   nav {
     position: fixed !important; top: auto !important; bottom: 0 !important;
     left: 0 !important; right: 0 !important; width: 100% !important;
@@ -2902,6 +2962,7 @@
     padding-left: 0 !important; padding-top: 16px !important;
     padding-bottom: 140px !important; max-width: 430px !important;
     margin: 0 auto !important;
+  }
   }
 
   /* ── HEARTBEAT — hide ── */
@@ -5150,7 +5211,7 @@
               <p class="fs-compare-subtext">This is the version of you that kept every promise.</p>
             </div>
           </div>
-          <button type="button" class="fs-compare-seam" aria-hidden="true">&raquo;</button>
+          <button type="button" class="fs-compare-seam" aria-label="Drag to compare">&raquo;</button>
         </div>
         <span class="fs-image-label" id="fsImageLabel">12 Weeks</span>
       </div>
@@ -5198,6 +5259,11 @@
         <button type="button" class="btn ob-next future-start-btn" onclick="showScreen('program')">Start My Program &rarr;</button>
         <button type="button" class="btn future-reset-btn" onclick="resetFutureSelf()">Reset</button>
       </div>
+    </div>
+
+    <div class="fs-flow-error" id="fsFlowError" role="alert" aria-live="polite" aria-atomic="true">
+      <p id="fsFlowErrorText"></p>
+      <button type="button" class="fs-flow-error-retry" onclick="generateActiveTimeline()">Tap to retry</button>
     </div>
 
     <div class="fs-sticky-cta">
@@ -9482,9 +9548,9 @@
 
     if (hasGenerated || photo) {
       if (result) result.classList.add('active');
-      if (uploadWrap && hasGenerated) uploadWrap.style.display = 'none';
+      if (uploadWrap && hasGenerated) uploadWrap.classList.add('is-hidden');
       else if (uploadWrap && photo && !hasGenerated) {
-        uploadWrap.style.display = 'block';
+        uploadWrap.classList.remove('is-hidden');
       }
       ['12weeks', '6months', '1year'].forEach(function(tl) {
         if (_generatedImages[tl]) {
@@ -9495,7 +9561,7 @@
       switchTimeline(_activeTimeline || '12weeks');
     } else {
       if (result) result.classList.remove('active');
-      if (uploadWrap) uploadWrap.style.display = 'block';
+      if (uploadWrap) uploadWrap.classList.remove('is-hidden');
       var loading = document.getElementById('fsLoading');
       var displayImg = document.getElementById('fsDisplayImg');
       if (loading) loading.classList.remove('is-loading');
@@ -9592,13 +9658,28 @@
 
   function _fsGenerationErrorMessage(err) {
     var msg = (err && err.message) ? err.message : 'Generation failed';
+    if (msg.indexOf('504') !== -1 || msg.indexOf('timeout') !== -1) {
+      return 'Generation timed out. Tap below to retry.';
+    }
     if (msg.indexOf('safety') !== -1 || msg.indexOf('blocked') !== -1) {
       return 'Your photo was blocked by safety filters. Try a different photo or tap Reset to generate without one.';
     }
     if (msg.indexOf('GEMINI') !== -1 || msg.indexOf('configured') !== -1) {
       return 'Image generation is not configured. Please try again later.';
     }
-    return 'Generation failed — ' + msg.substring(0, 60) + '. Tap Reset to try again.';
+    return 'Generation failed. Tap below to retry.';
+  }
+
+  function _fsShowFlowError(message) {
+    var el = document.getElementById('fsFlowError');
+    var text = document.getElementById('fsFlowErrorText');
+    if (text) text.textContent = message || 'Generation failed. Tap below to retry.';
+    if (el) el.classList.add('fs-flow-error-visible');
+  }
+
+  function _fsHideFlowError() {
+    var el = document.getElementById('fsFlowError');
+    if (el) el.classList.remove('fs-flow-error-visible');
   }
 
   function _fetchFutureBoardOnce(payload) {
@@ -9651,9 +9732,10 @@
 
     _generatedImages[tl] = null;
     var statusEl = document.getElementById('status-' + tl);
-    if (statusEl) statusEl.innerHTML = '';
+    if (statusEl) statusEl.textContent = '';
     var tabEl = document.querySelector('.fs-tab[data-timeline="' + tl + '"]');
-    if (tabEl) tabEl.classList.remove('ready');
+    if (tabEl) { tabEl.classList.remove('ready', 'fs-tab-error'); }
+    _fsHideFlowError();
 
     var genBtns = document.querySelectorAll('.future-generate-btn');
     genBtns.forEach(function(btn) {
@@ -9675,7 +9757,7 @@
     if (uploadZone) uploadZone.classList.add('imploding');
 
     setTimeout(function() {
-      if (uploadWrap) uploadWrap.style.display = 'none';
+      if (uploadWrap) uploadWrap.classList.add('is-hidden');
       if (uploadZone) uploadZone.classList.remove('imploding');
       if (result) result.classList.add('active');
       switchTimeline(tl);
@@ -9703,6 +9785,7 @@
         if (tl === '12weeks') awardXP(50, 'Vision board generated');
 
         if (tabEl) tabEl.classList.add('ready');
+        _fsHideFlowError();
         switchTimeline(tl);
         if (typeof syncFutureSelfScreen === 'function') syncFutureSelfScreen();
 
@@ -9714,7 +9797,10 @@
       })
       .catch(function(err) {
         console.error(tl + ' failed:', err.message);
-        if (statusEl) statusEl.innerHTML = '<span style="color:rgba(220,80,80,0.8);font-size:10px;">!</span>';
+        if (!_FS_LOCKED_TIMELINES[tl] && tabEl && !tabEl.classList.contains('fs-tab-locked')) {
+          tabEl.classList.add('fs-tab-error');
+        }
+        _fsShowFlowError(_fsGenerationErrorMessage(err));
         if (loading) loading.classList.add('is-loading');
         if (loadingText) loadingText.textContent = _fsGenerationErrorMessage(err);
         switchTimeline(tl);
@@ -9738,8 +9824,10 @@
     var result = document.getElementById('fsResult');
     var uploadWrap = document.getElementById('fsUploadWrap');
     if (result) result.classList.remove('active');
-    if (uploadWrap) uploadWrap.style.display = 'block';
+    if (uploadWrap) uploadWrap.classList.remove('is-hidden');
     clearFuturePhoto(null);
+    _fsHideFlowError();
+    document.querySelectorAll('.fs-tab.fs-tab-error').forEach(function(t) { t.classList.remove('fs-tab-error'); });
     if (typeof syncFutureSelfScreen === 'function') syncFutureSelfScreen();
   }
 
