@@ -242,6 +242,36 @@
       --menu-btn-icon: #2A2724;
       /* Lighter scrim so the cream theme isn't dimmed to dark gray */
       --scrim: rgba(60,50,30,0.32);
+      /* Icon wells — opaque tiles so cinematic PNGs read clean on cream */
+      --icon-well-workout: #F2EADC;
+      --icon-well-sage:    #E6EDE2;
+      --icon-well-border:  rgba(60,50,30,0.08);
+    }
+
+    html[data-theme="light"] .ov-stack-icon {
+      border: 1px solid var(--icon-well-border);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+    }
+    html[data-theme="light"] .ov-stack-icon.workout { background: var(--icon-well-workout); }
+    html[data-theme="light"] .ov-stack-icon.walk,
+    html[data-theme="light"] .ov-stack-icon.water { background: var(--icon-well-sage); }
+    html[data-theme="light"] .mp-header-icon {
+      padding: 5px;
+      border-radius: 11px;
+      background: var(--icon-well-workout);
+      border: 1px solid var(--icon-well-border);
+      box-sizing: content-box;
+    }
+    html[data-theme="light"] .nav-tab .nav-icon {
+      padding: 5px;
+      border-radius: 11px;
+      background: var(--bg-soft);
+      box-sizing: content-box;
+      opacity: 0.78 !important;
+    }
+    html[data-theme="light"] .nav-tab.active .nav-icon {
+      background: var(--icon-well-sage);
+      opacity: 1 !important;
     }
 
     /* Body background follows the theme. !important prevents any
@@ -3320,19 +3350,19 @@
   <a href="/" class="nav-logo">W<span>S</span></a>
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showScreen('overview')">
-      <img class="nav-icon" src="/icons/nav/nav-icon-today.png" width="30" height="30" alt="" aria-hidden="true" />
+      <img class="nav-icon theme-icon" data-theme-icon="nav/nav-icon-today.png" src="/icons/nav/nav-icon-today.png" width="30" height="30" alt="" aria-hidden="true" />
       <span>Today</span>
     </button>
     <button class="nav-tab" onclick="showScreen('future')">
-      <img class="nav-icon" src="/icons/nav/nav-icon-future.png" width="30" height="30" alt="" aria-hidden="true" />
+      <img class="nav-icon theme-icon" data-theme-icon="nav/nav-icon-future.png" src="/icons/nav/nav-icon-future.png" width="30" height="30" alt="" aria-hidden="true" />
       <span>Future</span>
     </button>
     <button class="nav-tab" onclick="showScreen('coach')">
-      <img class="nav-icon" src="/icons/nav/nav-icon-coach.png" width="30" height="30" alt="" aria-hidden="true" />
+      <img class="nav-icon theme-icon" data-theme-icon="nav/nav-icon-coach.png" src="/icons/nav/nav-icon-coach.png" width="30" height="30" alt="" aria-hidden="true" />
       <span>Coach</span>
     </button>
     <button class="nav-tab" onclick="showScreen('progress')">
-      <img class="nav-icon" src="/icons/nav/nav-icon-progress.png" width="30" height="30" alt="" aria-hidden="true" />
+      <img class="nav-icon theme-icon" data-theme-icon="nav/nav-icon-progress.png" src="/icons/nav/nav-icon-progress.png" width="30" height="30" alt="" aria-hidden="true" />
       <span>Progress</span>
     </button>
     <!-- Library + Settings moved out of bottom nav. Library opens inside
@@ -4001,7 +4031,7 @@
          "Your Standard" (which felt like brand-speak per user feedback) -->
     <div class="mp-collapse-header" onclick="toggleMPCollapse()" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0;cursor:pointer;">
       <div style="display:flex;align-items:center;gap:10px;">
-        <img class="mp-header-icon" src="/icons/path/path-icon-morning.png" width="28" height="28" alt="" aria-hidden="true" />
+        <img class="mp-header-icon theme-icon" data-theme-icon="path/path-icon-morning.png" src="/icons/path/path-icon-morning.png" width="28" height="28" alt="" aria-hidden="true" />
         <span style="font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);">Morning Routine</span>
         <span class="mp-day-count" id="mpDayCountHeader" style="font-size:11px;color:var(--text3);"></span>
       </div>
@@ -4113,7 +4143,7 @@
     <div class="ov-stack-card">
       <div class="ov-stack-row" id="ov-w-program" onclick="showScreen('program')">
         <div class="ov-stack-icon workout">
-          <img src="/icons/path/path-icon-training.png" alt="" aria-hidden="true" />
+          <img class="theme-icon" data-theme-icon="path/path-icon-training.png" src="/icons/path/path-icon-training.png" alt="" aria-hidden="true" />
         </div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Today's Training</p>
@@ -4127,7 +4157,7 @@
       <!-- Walk — daily mid-day movement, separate from training -->
       <div class="ov-stack-row" id="ov-w-walk" onclick="toggleDailyWalk()">
         <div class="ov-stack-icon walk">
-          <img src="/icons/path/path-icon-walk.png" alt="" aria-hidden="true" />
+          <img class="theme-icon" data-theme-icon="path/path-icon-walk.png" src="/icons/path/path-icon-walk.png" alt="" aria-hidden="true" />
         </div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Walk</p>
@@ -4141,7 +4171,7 @@
       <!-- Water row stays in the stack -->
       <div class="ov-stack-row" id="ov-w-water">
         <div class="ov-stack-icon water">
-          <img src="/icons/path/path-icon-water.png" alt="" aria-hidden="true" />
+          <img class="theme-icon" data-theme-icon="path/path-icon-water.png" src="/icons/path/path-icon-water.png" alt="" aria-hidden="true" />
         </div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Water</p>
@@ -6236,10 +6266,24 @@
     }
   }
 
+  function syncThemeIcons() {
+    var light = getActiveTheme() === 'light';
+    document.querySelectorAll('img.theme-icon[data-theme-icon]').forEach(function(img) {
+      var rel = img.getAttribute('data-theme-icon');
+      if (!rel) return;
+      var slash = rel.indexOf('/');
+      if (slash < 0) return;
+      var folder = rel.slice(0, slash);
+      var file = rel.slice(slash + 1);
+      img.src = '/icons/' + (light ? folder + '-light' : folder) + '/' + file;
+    });
+  }
+
   function setWyldeTheme(name) {
     if (!WYLDE_THEMES[name]) return false;
     var html = document.documentElement;
     html.setAttribute('data-theme', name);
+    syncThemeIcons();
     // Update the meta theme-color so iOS Safari address bar tint follows
     var meta = document.getElementById('metaThemeColor');
     if (meta) meta.setAttribute('content', WYLDE_THEMES[name].bgForMeta);
@@ -6306,9 +6350,15 @@
     window.addEventListener('storage', function(e) {
       if (e.key === WYLDE_THEME_KEY && e.newValue) {
         document.documentElement.setAttribute('data-theme', e.newValue);
+        syncThemeIcons();
         renderThemeToggle();
       }
     });
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', syncThemeIcons);
+    } else {
+      syncThemeIcons();
+    }
   }
 
   var WYLDE_PHASES = [
