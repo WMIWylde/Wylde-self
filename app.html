@@ -58,6 +58,7 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/css/start-today-flow.css"/>
+  <script src="/js/phosphor-icons.js" defer></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -157,6 +158,10 @@
       --menu-btn-icon: #F4F1E8;
       /* Drawer scrim/backdrop dim */
       --scrim: rgba(7,7,7,0.7);
+      /* Unified Phosphor icon system */
+      --ui-icon: #D4A373;
+      --ui-icon-well: rgba(255,255,255,0.06);
+      --icon-well-border: rgba(255,255,255,0.06);
       --ff-hero:     'Inter', system-ui, sans-serif;
       --ff-serif:    'Inter', system-ui, sans-serif;
       --ff-body:     'Inter', system-ui, sans-serif;
@@ -242,36 +247,54 @@
       --menu-btn-icon: #2A2724;
       /* Lighter scrim so the cream theme isn't dimmed to dark gray */
       --scrim: rgba(60,50,30,0.32);
-      /* Icon wells — opaque tiles so cinematic PNGs read clean on cream */
-      --icon-well-workout: #F2EADC;
-      --icon-well-sage:    #E6EDE2;
-      --icon-well-border:  rgba(60,50,30,0.08);
+      --ui-icon-well: #F5F5F5;
+      --icon-well-border: rgba(60,50,30,0.08);
     }
 
-    html[data-theme="light"] .ov-stack-icon {
+    .ph-icon-slot { display: flex; align-items: center; justify-content: center; line-height: 0; flex-shrink: 0; }
+    .ph-icon { display: block; flex-shrink: 0; }
+    .ui-icon-well,
+    .ov-stack-icon,
+    .ov-sec-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--ui-icon-well);
       border: 1px solid var(--icon-well-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .mp-header-icon-wrap {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--ui-icon-well);
+      border: 1px solid var(--icon-well-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    html[data-theme="light"] .ui-icon-well,
+    html[data-theme="light"] .ov-stack-icon,
+    html[data-theme="light"] .ov-sec-icon-wrap,
+    html[data-theme="light"] .mp-header-icon-wrap {
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
     }
-    html[data-theme="light"] .ov-stack-icon.workout { background: var(--icon-well-workout); }
-    html[data-theme="light"] .ov-stack-icon.walk,
-    html[data-theme="light"] .ov-stack-icon.water { background: var(--icon-well-sage); }
-    html[data-theme="light"] .mp-header-icon {
-      padding: 5px;
-      border-radius: 11px;
-      background: var(--icon-well-workout);
-      border: 1px solid var(--icon-well-border);
-      box-sizing: content-box;
-    }
+    html[data-theme="dark"] .nav-tab .nav-icon,
     html[data-theme="light"] .nav-tab .nav-icon {
       padding: 5px;
       border-radius: 11px;
-      background: var(--bg-soft);
+      background: var(--ui-icon-well);
       box-sizing: content-box;
-      opacity: 0.78 !important;
     }
+    html[data-theme="light"] .nav-tab .nav-icon { opacity: 0.78 !important; }
+    html[data-theme="dark"] .nav-tab.active .nav-icon,
     html[data-theme="light"] .nav-tab.active .nav-icon {
-      background: var(--icon-well-sage);
       opacity: 1 !important;
+      background: rgba(212,163,115,0.14);
     }
 
     /* Body background follows the theme. !important prevents any
@@ -2345,8 +2368,9 @@
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     display: flex; align-items: center; justify-content: center;
-    width: 26px; height: 26px;
-    background: rgba(15,15,15,0.6);
+    width: 28px; height: 28px;
+    background: var(--ui-icon-well);
+    border: 1px solid var(--icon-well-border);
     border-radius: 50%;
   }
   .ov-nut-meta {
@@ -2376,13 +2400,7 @@
   .ov-stack-row:hover { background: rgba(0,0,0,0.015); }
   .ov-stack-row:active { background: rgba(0,0,0,0.03); }
   .ov-stack-row + .ov-stack-row { border-top: 1px solid rgba(0,0,0,0.05); }
-  .ov-stack-icon { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
-  .ov-stack-icon img { width: 28px; height: 28px; object-fit: contain; display: block; }
-  .ov-stack-icon.workout { background: rgba(200,169,110,0.10); }
-  .ov-stack-icon.walk { background: rgba(125,146,117,0.10); }
-  .ov-stack-icon.protein { background: rgba(139,90,43,0.10); color: #8B5A2B; }
-  .ov-stack-icon.water { background: rgba(125,146,117,0.10); }
-  .mp-header-icon { width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; display: block; }
+  .ov-stack-icon.protein { background: var(--ui-icon-well); color: var(--ui-icon); }
   .ov-stack-left { flex: 1; min-width: 0; }
   .ov-stack-name { font-size: 16px; font-weight: 600; color: var(--text); }
   .ov-stack-meta { font-size: 13px; color: var(--text3); margin-top: 2px; }
@@ -2410,9 +2428,8 @@
   .ov-sec-row:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.07); transform: translateY(-1px); }
   .ov-sec-row:active { transform: scale(0.98); }
   .ov-sec-top { display: flex; align-items: center; gap: 12px; margin-bottom: 2px; }
-  .ov-sec-icon-wrap { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; }
-  .ov-sec-icon-wrap.coach { background: rgba(128,90,213,0.10); color: #805AD5; }
-  .ov-sec-icon-wrap.meal { background: rgba(184,155,94,0.10); color: #B89B5E; }
+  .ov-sec-icon-wrap.coach,
+  .ov-sec-icon-wrap.meal { background: var(--ui-icon-well); color: var(--ui-icon); }
   .ov-sec-icon { display: none; }
   .ov-sec-title { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.3; }
   .ov-sec-subtitle { font-size: 12px; color: var(--text3); margin-top: 2px; padding-left: 52px; }
@@ -4031,7 +4048,9 @@
          "Your Standard" (which felt like brand-speak per user feedback) -->
     <div class="mp-collapse-header" onclick="toggleMPCollapse()" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0;cursor:pointer;">
       <div style="display:flex;align-items:center;gap:10px;">
-        <img class="mp-header-icon theme-icon" data-theme-icon="path/path-icon-morning.png" src="/icons/path/path-icon-morning.png" width="28" height="28" alt="" aria-hidden="true" />
+        <span class="mp-header-icon-wrap">
+          <span data-ph-icon="sun-horizon" data-ph-size="20" data-ph-color="#D4A373" data-ph-label="Morning routine"></span>
+        </span>
         <span style="font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);">Morning Routine</span>
         <span class="mp-day-count" id="mpDayCountHeader" style="font-size:11px;color:var(--text3);"></span>
       </div>
@@ -4142,8 +4161,8 @@
     <p class="ov-stack-label">Today's Path</p>
     <div class="ov-stack-card">
       <div class="ov-stack-row" id="ov-w-program" onclick="showScreen('program')">
-        <div class="ov-stack-icon workout">
-          <img class="theme-icon" data-theme-icon="path/path-icon-training.png" src="/icons/path/path-icon-training.png" alt="" aria-hidden="true" />
+        <div class="ov-stack-icon workout ui-icon-well">
+          <span data-ph-icon="barbell" data-ph-size="24" data-ph-color="#D4A373" data-ph-label="Training"></span>
         </div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Today's Training</p>
@@ -4156,8 +4175,8 @@
       </div>
       <!-- Walk — daily mid-day movement, separate from training -->
       <div class="ov-stack-row" id="ov-w-walk" onclick="toggleDailyWalk()">
-        <div class="ov-stack-icon walk">
-          <img class="theme-icon" data-theme-icon="path/path-icon-walk.png" src="/icons/path/path-icon-walk.png" alt="" aria-hidden="true" />
+        <div class="ov-stack-icon walk ui-icon-well">
+          <span data-ph-icon="person-simple-walk" data-ph-size="24" data-ph-color="#D4A373" data-ph-label="Walk"></span>
         </div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Walk</p>
@@ -4170,8 +4189,8 @@
       </div>
       <!-- Water row stays in the stack -->
       <div class="ov-stack-row" id="ov-w-water">
-        <div class="ov-stack-icon water">
-          <img class="theme-icon" data-theme-icon="path/path-icon-water.png" src="/icons/path/path-icon-water.png" alt="" aria-hidden="true" />
+        <div class="ov-stack-icon water ui-icon-well">
+          <span data-ph-icon="drop" data-ph-size="24" data-ph-color="#D4A373" data-ph-label="Water"></span>
         </div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Water</p>
@@ -4207,8 +4226,8 @@
             <circle class="ov-nut-fill" id="ov-ring-calories" cx="30" cy="30" r="26"
                     stroke="var(--gold)" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
           </svg>
-          <div class="ov-nut-icon" style="color:var(--gold);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+          <div class="ov-nut-icon">
+            <span data-ph-icon="flame" data-ph-size="20" data-ph-color="#D4A373" data-ph-label="Calories"></span>
           </div>
         </div>
         <div class="ov-nut-meta">
@@ -4224,8 +4243,8 @@
             <circle class="ov-nut-fill" id="ov-ring-protein" cx="30" cy="30" r="26"
                     stroke="var(--sage)" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
           </svg>
-          <div class="ov-nut-icon" style="color:var(--sage);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14c0-2.5 2-4.5 4.5-4.5h3c2.5 0 4.5 2 4.5 4.5v0c0 2.5-2 4.5-4.5 4.5h-3C8 18.5 6 16.5 6 14v0z"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="6" r="2"/></svg>
+          <div class="ov-nut-icon">
+            <span data-ph-icon="egg" data-ph-size="20" data-ph-color="#D4A373" data-ph-label="Protein"></span>
           </div>
         </div>
         <div class="ov-nut-meta">
@@ -4241,8 +4260,8 @@
             <circle class="ov-nut-fill" id="ov-ring-carbs" cx="30" cy="30" r="26"
                     stroke="#B89B5E" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
           </svg>
-          <div class="ov-nut-icon" style="color:#B89B5E;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 12.5c-1.5 0-3-.5-4-1.5-2 1-3 3-2 5 1 1 2 2 3 2 .5 1 1.5 2 3 2 1 0 2-.5 3-1.5 1 .5 2 1 3 1 1 0 2-1 2-2 0-1.5-.5-2.5-1.5-3.5C18 12 18 11 17 10c0-1.5-1-2.5-2.5-2.5C13 7 12 7.5 11 8.5 10 7 8.5 6 7 6.5"/></svg>
+          <div class="ov-nut-icon">
+            <span data-ph-icon="leaf" data-ph-size="20" data-ph-color="#D4A373" data-ph-label="Carbs"></span>
           </div>
         </div>
         <div class="ov-nut-meta">
@@ -4257,8 +4276,8 @@
   <div class="ov-secondary">
     <div class="ov-sec-row" onclick="showScreen('coach')">
       <div class="ov-sec-top">
-        <div class="ov-sec-icon-wrap coach" style="display:flex;align-items:center;justify-content:center;color:var(--gold);">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <div class="ov-sec-icon-wrap coach ui-icon-well">
+          <span data-ph-icon="chat-circle" data-ph-size="24" data-ph-color="#D4A373" data-ph-label="Coach"></span>
         </div>
         <span class="ov-sec-title" id="ov-coach-prompt">Talk to your future self</span>
       </div>
@@ -4267,8 +4286,8 @@
     </div>
     <div class="ov-sec-row" onclick="showScreen('nutrition')">
       <div class="ov-sec-top">
-        <div class="ov-sec-icon-wrap meal" style="display:flex;align-items:center;justify-content:center;color:var(--sage);">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+        <div class="ov-sec-icon-wrap meal ui-icon-well">
+          <span data-ph-icon="fork-knife" data-ph-size="24" data-ph-color="#D4A373" data-ph-label="Nutrition"></span>
         </div>
         <span class="ov-sec-title">Eat for who you&rsquo;re becoming</span>
       </div>
@@ -5522,28 +5541,28 @@
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:28px;">
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-          <span style="color:var(--gold);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><rect x="5" y="11" width="14" height="2"/></svg></span>
+          <span style="color:var(--ui-icon);"><span data-ph-icon="barbell" data-ph-size="16" data-ph-color="#D4A373" data-ph-label="Sessions"></span></span>
           <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);font-weight:500;">Sessions</span>
         </div>
         <div id="sessionCount" style="font-size:28px;font-weight:700;color:var(--text);line-height:1;">0</div>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-          <span style="color:var(--sage);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
+          <span style="color:var(--ui-icon);"><span data-ph-icon="flame" data-ph-size="16" data-ph-color="#D4A373" data-ph-label="Day streak"></span></span>
           <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);font-weight:500;">Day Streak</span>
         </div>
         <div id="streakCount" style="font-size:28px;font-weight:700;color:var(--sage);line-height:1;">0</div>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-          <span style="color:var(--gold);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg></span>
+          <span style="color:var(--ui-icon);"><span data-ph-icon="sun-horizon" data-ph-size="16" data-ph-color="#D4A373" data-ph-label="Mornings"></span></span>
           <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);font-weight:500;">Mornings</span>
         </div>
         <div id="prgMorningsCount" style="font-size:28px;font-weight:700;color:var(--text);line-height:1;">0</div>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-          <span style="color:var(--sage);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M15 22l-3-7-3 7"/><path d="M9 13l-3-2 3-6 4 1 3 4"/></svg></span>
+          <span style="color:var(--ui-icon);"><span data-ph-icon="person-simple-walk" data-ph-size="16" data-ph-color="#D4A373" data-ph-label="Walks"></span></span>
           <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);font-weight:500;">Walks</span>
         </div>
         <div id="prgWalksCount" style="font-size:28px;font-weight:700;color:var(--text);line-height:1;">0</div>
@@ -5724,7 +5743,7 @@
 
     <!-- Search bar -->
     <div style="display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:14px;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;color:var(--muted);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span data-ph-icon="magnifying-glass" data-ph-size="16" data-ph-color="#9B9489" aria-hidden="true"></span>
       <input id="libSearchInput" type="text" placeholder="Search exercises\u2026" oninput="renderLibrary()" style="flex:1;border:none;background:transparent;outline:none;font-family:var(--ff-body);font-size:14px;color:var(--text);min-width:0;" />
       <button id="libClearBtn" onclick="document.getElementById('libSearchInput').value='';renderLibrary();" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0;display:none;">\u00d7</button>
     </div>
@@ -6267,7 +6286,11 @@
   }
 
   function syncThemeIcons() {
-    var light = getActiveTheme() === 'light';
+    var theme = document.documentElement.getAttribute('data-theme');
+    if (theme !== 'light' && theme !== 'dark') {
+      theme = getActiveTheme();
+    }
+    var light = theme === 'light';
     document.querySelectorAll('img.theme-icon[data-theme-icon]').forEach(function(img) {
       var rel = img.getAttribute('data-theme-icon');
       if (!rel) return;
@@ -6275,7 +6298,8 @@
       if (slash < 0) return;
       var folder = rel.slice(0, slash);
       var file = rel.slice(slash + 1);
-      img.src = '/icons/' + (light ? folder + '-light' : folder) + '/' + file;
+      var nextSrc = '/icons/' + (light ? folder + '-light' : folder) + '/' + file;
+      if (img.getAttribute('src') !== nextSrc) img.setAttribute('src', nextSrc);
     });
   }
 
@@ -6346,6 +6370,7 @@
   if (typeof window !== 'undefined') {
     window.renderThemeToggle = renderThemeToggle;
     window.addEventListener('wylde:themechange', renderThemeToggle);
+    window.addEventListener('wylde:themechange', syncThemeIcons);
     // localStorage 'storage' event fires when ANOTHER tab changes the theme
     window.addEventListener('storage', function(e) {
       if (e.key === WYLDE_THEME_KEY && e.newValue) {
@@ -6503,8 +6528,15 @@
     'arrow-right':'<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>'
   };
 
-  // Inflate an icon. Returns an SVG string sized to `size` (default 18).
+  // Unified Phosphor icon renderer — used by badges, toasts, and dynamic UI.
   function svgIcon(name, size, color) {
+    if (typeof phIcon === 'function') {
+      return phIcon(name, {
+        size: size || 18,
+        color: color || '#D4A373',
+        decorative: true
+      });
+    }
     var inner = SVG_ICONS[name] || SVG_ICONS['circle'];
     var s = size || 18;
     var stroke = color || 'currentColor';
@@ -7171,7 +7203,7 @@
       return '<div onclick="openLibDetail(\'' + (ex.id || '').replace(/'/g, '\\\'') + '\')" style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform 0.15s;">' +
         (imgFull
           ? '<div style="aspect-ratio:1.2;background:#0a0a0a url(\'' + imgFull + '\') center/cover no-repeat;"></div>'
-          : '<div style="aspect-ratio:1.2;background:linear-gradient(135deg,rgba(110,127,102,0.10),rgba(184,155,94,0.06));display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:24px;">\uD83C\uDFCB</div>') +
+          : '<div style="aspect-ratio:1.2;background:var(--ui-icon-well);display:flex;align-items:center;justify-content:center;">' + (typeof phIcon === 'function' ? phIcon('barbell', { size: 28, color: '#D4A373', decorative: true }) : '') + '</div>') +
         '<div style="padding:10px 12px;">' +
           '<p style="margin:0;font-size:12px;font-weight:600;color:var(--text);line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">' + (ex.name || '') + '</p>' +
           (primary ? '<p style="margin:4px 0 0;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;">' + primary + '</p>' : '') +
@@ -8033,6 +8065,7 @@
           }
         }
       }
+      if (typeof syncThemeIcons === 'function') syncThemeIcons();
     } catch(_) {}
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
