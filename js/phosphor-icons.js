@@ -133,6 +133,21 @@
   ],
   "minus": [
     "M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128Z"
+  ],
+  "house": [
+    "M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V160h32v56a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H160V152a8,8,0,0,0-8-8H104a8,8,0,0,0-8,8v56H48V120l80-80,80,80Z"
+  ],
+  "user-circle": [
+    "M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM74.08,197.5a64,64,0,0,1,107.84,0,87.83,87.83,0,0,1-107.84,0ZM96,120a32,32,0,1,1,32,32A32,32,0,0,1,96,120Zm97.76,66.41a79.66,79.66,0,0,0-36.06-28.75,48,48,0,1,0-59.4,0,79.66,79.66,0,0,0-36.06,28.75,88,88,0,1,1,131.52,0Z"
+  ],
+  "book": [
+    "M208,24H72A32,32,0,0,0,40,56V224a8,8,0,0,0,8,8H192a8,8,0,0,0,0-16H56a16,16,0,0,1,16-16H208a8,8,0,0,0,8-8V32A8,8,0,0,0,208,24Zm-8,160H72a31.82,31.82,0,0,0-16,4.29V56A16,16,0,0,1,72,40H200Z"
+  ],
+  "notebook": [
+    "M184,112a8,8,0,0,1-8,8H112a8,8,0,0,1,0-16h64A8,8,0,0,1,184,112Zm-8,24H112a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Zm48-88V208a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32H208A16,16,0,0,1,224,48ZM48,208H72V48H48Zm160,0V48H88V208H208Z"
+  ],
+  "check-circle": [
+    "M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"
   ]
 };
 
@@ -177,15 +192,16 @@
     var icon = resolveIcon(name);
     var paths = PHOSPHOR_ICONS[icon] || PHOSPHOR_ICONS.circle;
     var size = opts.size || 24;
-    var color = opts.color || BRAND_GOLD;
+    var color = opts.color != null ? opts.color : BRAND_GOLD;
     var label = opts.label || opts['aria-label'] || '';
     var hidden = opts.decorative === true || (!label && opts.decorative !== false);
     var cls = 'ph-icon' + (opts.className ? ' ' + opts.className : '');
     var aria = hidden ? ' aria-hidden="true"' : (' role="img" aria-label="' + String(label).replace(/"/g, '&quot;') + '"');
+    var style = color === 'inherit' ? '' : (' style="color:' + color + '"');
     var inner = paths.map(function (d) {
       return '<path d="' + d + '"/>';
     }).join('');
-    return '<svg class="' + cls + '" width="' + size + '" height="' + size + '" viewBox="0 0 256 256" fill="' + color + '"' + aria + '>' + inner + '</svg>';
+    return '<svg class="' + cls + '" width="' + size + '" height="' + size + '" viewBox="0 0 256 256" fill="currentColor"' + style + aria + '>' + inner + '</svg>';
   }
 
   function mountPhIcons(scope) {
@@ -193,7 +209,9 @@
     rootEl.querySelectorAll('[data-ph-icon]').forEach(function (el) {
       var icon = el.getAttribute('data-ph-icon');
       var size = parseInt(el.getAttribute('data-ph-size') || '24', 10);
-      var color = el.getAttribute('data-ph-color') || BRAND_GOLD;
+      var colorAttr = el.getAttribute('data-ph-color');
+      var box = el.closest('.icon-container');
+      var color = colorAttr || (box ? 'inherit' : BRAND_GOLD);
       var label = el.getAttribute('data-ph-label') || el.getAttribute('aria-label') || '';
       el.innerHTML = phIcon(icon, { size: size, color: color, label: label, decorative: !label });
       el.classList.add('ph-icon-slot');

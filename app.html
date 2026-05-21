@@ -252,49 +252,60 @@
     }
 
     .ph-icon-slot { display: flex; align-items: center; justify-content: center; line-height: 0; flex-shrink: 0; }
-    .ph-icon { display: block; flex-shrink: 0; }
-    .ui-icon-well,
-    .ov-stack-icon,
-    .ov-sec-icon-wrap {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      background: var(--ui-icon-well);
-      border: 1px solid var(--icon-well-border);
-      display: flex;
+    .ph-icon { display: block; flex-shrink: 0; color: inherit; }
+
+    /* ── Unified icon container system ── */
+    .icon-container {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-    }
-    .mp-header-icon-wrap {
-      width: 36px;
-      height: 36px;
       border-radius: 10px;
-      background: var(--ui-icon-well);
-      border: 1px solid var(--icon-well-border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      background: var(--ic-bg, var(--ui-icon-well));
+      color: var(--ic-fg, var(--ui-icon, #D4A373));
+      border: 1px solid var(--ic-border, var(--icon-well-border));
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
     }
-    html[data-theme="light"] .ui-icon-well,
-    html[data-theme="light"] .ov-stack-icon,
-    html[data-theme="light"] .ov-sec-icon-wrap,
-    html[data-theme="light"] .mp-header-icon-wrap {
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+    .icon-container .ph-icon-slot { width: 100%; height: 100%; }
+    .icon-container--small  { width: 32px; height: 32px; border-radius: 8px; }
+    .icon-container--medium { width: 48px; height: 48px; border-radius: 10px; }
+    .icon-container--large  { width: 56px; height: 56px; border-radius: 12px; }
+    .icon-container--xlarge { width: 80px; height: 80px; border-radius: 14px; }
+
+    .icon-container--training { --ic-bg: #D4A373; --ic-fg: #FFFFFF; --ic-border: transparent; }
+    .icon-container--walk     { --ic-bg: #7BA882; --ic-fg: #FFFFFF; --ic-border: transparent; }
+    .icon-container--water    { --ic-bg: #4A90E2; --ic-fg: #FFFFFF; --ic-border: transparent; }
+    .icon-container--gold     { --ic-bg: rgba(212,163,115,0.14); --ic-fg: #D4A373; --ic-border: rgba(212,163,115,0.22); }
+    .icon-container--habit    { --ic-bg: #D4C4B4; --ic-fg: #9B8B7B; --ic-border: transparent; }
+    .icon-container--nav-today,
+    .icon-container--nav-future { --ic-bg: #C9B89A; --ic-fg: #8B7355; --ic-border: transparent; }
+    .icon-container--nav-coach,
+    .icon-container--nav-progress { --ic-bg: #D4C4B4; --ic-fg: #9B8B7B; --ic-border: transparent; }
+
+    html[data-theme="light"] .icon-container--training { --ic-bg: #D4A373; }
+    html[data-theme="light"] .icon-container--walk     { --ic-bg: #7BA882; }
+    html[data-theme="light"] .icon-container--water    { --ic-bg: #4A90E2; }
+    html[data-theme="light"] .icon-container--habit,
+    html[data-theme="light"] .icon-container--nav-coach,
+    html[data-theme="light"] .icon-container--nav-progress { --ic-bg: #E8DDD4; --ic-fg: #8B7355; }
+    html[data-theme="light"] .icon-container--nav-today,
+    html[data-theme="light"] .icon-container--nav-future { --ic-bg: #E0D4C4; --ic-fg: #8B7355; }
+    html[data-theme="light"] .icon-container--gold { --ic-bg: rgba(212,163,115,0.12); }
+
+    .nav-tab .icon-container { margin: 0; }
+    .nav-tab.active .icon-container {
+      --ic-bg: #D4A373;
+      --ic-fg: #FFFFFF;
+      --ic-border: #D4A373;
+      background: #D4A373;
+      color: #FFFFFF;
     }
-    html[data-theme="dark"] .nav-tab .nav-icon,
-    html[data-theme="light"] .nav-tab .nav-icon {
-      padding: 5px;
-      border-radius: 11px;
-      background: var(--ui-icon-well);
-      box-sizing: content-box;
-    }
-    html[data-theme="light"] .nav-tab .nav-icon { opacity: 0.78 !important; }
-    html[data-theme="dark"] .nav-tab.active .nav-icon,
-    html[data-theme="light"] .nav-tab.active .nav-icon {
-      opacity: 1 !important;
-      background: rgba(212,163,115,0.14);
+    .nav-tab.active .icon-container svg { color: #FFFFFF; }
+
+    .ov-stack-row:hover .icon-container,
+    .ov-sec-row:hover .icon-container {
+      transform: scale(1.03);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
     /* Body background follows the theme. !important prevents any
@@ -341,6 +352,7 @@
     .nav-tabs { display: flex; flex-direction: column; flex: 1; padding: 12px 0; overflow-y: auto; }
     .nav-tab { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 12px 20px; display: flex; align-items: center; gap: 10px; border-left: 2px solid transparent; cursor: pointer; transition: all 0.2s; background: none; border-top: none; border-bottom: none; border-right: none; font-family: var(--ff-body); text-align: left; width: 100%; }
     .nav-icon { width: 30px; height: 30px; flex-shrink: 0; object-fit: contain; display: block; opacity: 0.62; transition: opacity 0.2s ease; background: transparent; border-radius: 0; }
+    .nav-tab .icon-container { opacity: 1; }
     .nav-tab.active .nav-icon { opacity: 1; }
     .nav-tab:hover .nav-icon { opacity: 0.85; }
     .nav-tab { font-family: var(--font-ui); }
@@ -1813,7 +1825,7 @@
 
       /* Stack rows — tighter padding, ensure tap targets */
       .ov-stack-row { padding: 16px 16px !important; gap: 12px !important; min-height: 64px; }
-      .ov-stack-icon { flex-shrink: 0; }
+      .icon-container { flex-shrink: 0; }
       .ov-stack-name { font-size: 14px !important; }
       .ov-stack-meta { font-size: 12px !important; }
 
@@ -1838,12 +1850,10 @@
         min-height: 56px !important;
         padding: 10px 4px !important;
       }
-      .nav-tab span:not(.nav-icon) {
+      .nav-tab span:not(.icon-container):not(.ph-icon-slot):not(.ph-icon) {
         font-size: 9px !important;
         letter-spacing: 0.06em !important;
       }
-      .nav-icon { width: 26px !important; height: 26px !important; opacity: 0.55 !important; }
-      .nav-tab.active .nav-icon { opacity: 1 !important; }
 
       /* All buttons — minimum 44pt tap target (iOS HIG) */
       button:not(.set-log-btn):not(.stepper-btn):not(.food-feel-btn):not(.feel-btn):not(.tile-radio):not(.ov-sb) {
@@ -2369,9 +2379,10 @@
     transform: translate(-50%, -50%);
     display: flex; align-items: center; justify-content: center;
     width: 28px; height: 28px;
-    background: var(--ui-icon-well);
-    border: 1px solid var(--icon-well-border);
+    background: transparent;
+    border: none;
     border-radius: 50%;
+    color: #D4A373;
   }
   .ov-nut-meta {
     text-align: center; line-height: 1.3;
@@ -2400,7 +2411,6 @@
   .ov-stack-row:hover { background: rgba(0,0,0,0.015); }
   .ov-stack-row:active { background: rgba(0,0,0,0.03); }
   .ov-stack-row + .ov-stack-row { border-top: 1px solid rgba(0,0,0,0.05); }
-  .ov-stack-icon.protein { background: var(--ui-icon-well); color: var(--ui-icon); }
   .ov-stack-left { flex: 1; min-width: 0; }
   .ov-stack-name { font-size: 16px; font-weight: 600; color: var(--text); }
   .ov-stack-meta { font-size: 13px; color: var(--text3); margin-top: 2px; }
@@ -2428,8 +2438,7 @@
   .ov-sec-row:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.07); transform: translateY(-1px); }
   .ov-sec-row:active { transform: scale(0.98); }
   .ov-sec-top { display: flex; align-items: center; gap: 12px; margin-bottom: 2px; }
-  .ov-sec-icon-wrap.coach,
-  .ov-sec-icon-wrap.meal { background: var(--ui-icon-well); color: var(--ui-icon); }
+  .ov-sec-icon-wrap { flex-shrink: 0; }
   .ov-sec-icon { display: none; }
   .ov-sec-title { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.3; }
   .ov-sec-subtitle { font-size: 12px; color: var(--text3); margin-top: 2px; padding-left: 52px; }
@@ -3028,11 +3037,26 @@
   }
   .nav-logo { display: none !important; }
   .nav-footer { display: none !important; }
-  .nav-icon {
-    width: 26px; height: 26px;
-    object-fit: contain; flex-shrink: 0;
-    opacity: 0.55; transition: opacity 0.2s ease;
+  .nav-tab .icon-container {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 12px !important;
+    --ic-bg: #5A7A63;
+    --ic-fg: #B8B8B8;
+    background: #5A7A63 !important;
+    color: #B8B8B8 !important;
+    opacity: 0.6;
+    border: none !important;
   }
+  .nav-tab.active .icon-container {
+    --ic-bg: #7BA882;
+    --ic-fg: #D4A373;
+    background: #7BA882 !important;
+    color: #D4A373 !important;
+    opacity: 1;
+    border: none !important;
+  }
+  .nav-tab.active .icon-container svg { color: #D4A373 !important; }
   .nav-tabs {
     flex-direction: row !important; flex: 1 !important; padding: 0 !important;
     overflow: visible !important; justify-content: space-around !important;
@@ -3051,7 +3075,7 @@
   }
   .nav-tab:hover { background: transparent !important; color: var(--text) !important; }
   .nav-tab.active { color: var(--sage) !important; background: transparent !important; border-left: none !important; font-weight: 600 !important; }
-  .nav-tab.active .nav-icon { opacity: 1; }
+  .nav-tab.active .icon-container { opacity: 1; }
   .nav-tab.active::after {
     content: '' !important; display: block !important;
     position: absolute !important; top: 0 !important; left: 50% !important;
@@ -3367,19 +3391,27 @@
   <a href="/" class="nav-logo">W<span>S</span></a>
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showScreen('overview')">
-      <img class="nav-icon theme-icon" data-theme-icon="nav/nav-icon-today.png" src="/icons/nav/nav-icon-today.png" width="30" height="30" alt="" aria-hidden="true" />
+      <span class="icon-container icon-container--large icon-container--nav-today">
+        <span data-ph-icon="house" data-ph-size="24" data-ph-label="Today"></span>
+      </span>
       <span>Today</span>
     </button>
     <button class="nav-tab" onclick="showScreen('future')">
-      <img class="nav-icon theme-icon" data-theme-icon="nav/nav-icon-future.png" src="/icons/nav/nav-icon-future.png" width="30" height="30" alt="" aria-hidden="true" />
+      <span class="icon-container icon-container--large icon-container--nav-future">
+        <span data-ph-icon="mountains" data-ph-size="24" data-ph-label="Future"></span>
+      </span>
       <span>Future</span>
     </button>
     <button class="nav-tab" onclick="showScreen('coach')">
-      <img class="nav-icon theme-icon" data-theme-icon="nav/nav-icon-coach.png" src="/icons/nav/nav-icon-coach.png" width="30" height="30" alt="" aria-hidden="true" />
+      <span class="icon-container icon-container--large icon-container--nav-coach">
+        <span data-ph-icon="chat-circle" data-ph-size="24" data-ph-label="Coach"></span>
+      </span>
       <span>Coach</span>
     </button>
     <button class="nav-tab" onclick="showScreen('progress')">
-      <img class="nav-icon theme-icon" data-theme-icon="nav/nav-icon-progress.png" src="/icons/nav/nav-icon-progress.png" width="30" height="30" alt="" aria-hidden="true" />
+      <span class="icon-container icon-container--large icon-container--nav-progress">
+        <span data-ph-icon="target" data-ph-size="24" data-ph-label="Progress"></span>
+      </span>
       <span>Progress</span>
     </button>
     <!-- Library + Settings moved out of bottom nav. Library opens inside
@@ -4048,8 +4080,8 @@
          "Your Standard" (which felt like brand-speak per user feedback) -->
     <div class="mp-collapse-header" onclick="toggleMPCollapse()" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0;cursor:pointer;">
       <div style="display:flex;align-items:center;gap:10px;">
-        <span class="mp-header-icon-wrap">
-          <span data-ph-icon="sun-horizon" data-ph-size="20" data-ph-color="#D4A373" data-ph-label="Morning routine"></span>
+        <span class="icon-container icon-container--small icon-container--habit">
+          <span data-ph-icon="sun-horizon" data-ph-size="18" data-ph-label="Morning routine"></span>
         </span>
         <span style="font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);">Morning Routine</span>
         <span class="mp-day-count" id="mpDayCountHeader" style="font-size:11px;color:var(--text3);"></span>
@@ -4161,8 +4193,8 @@
     <p class="ov-stack-label">Today's Path</p>
     <div class="ov-stack-card">
       <div class="ov-stack-row" id="ov-w-program" onclick="showScreen('program')">
-        <div class="ov-stack-icon workout ui-icon-well">
-          <span data-ph-icon="barbell" data-ph-size="24" data-ph-color="#D4A373" data-ph-label="Training"></span>
+        <div class="icon-container icon-container--medium icon-container--training">
+          <span data-ph-icon="barbell" data-ph-size="20" data-ph-label="Training"></span>
         </div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Today's Training</p>
@@ -4175,8 +4207,8 @@
       </div>
       <!-- Walk — daily mid-day movement, separate from training -->
       <div class="ov-stack-row" id="ov-w-walk" onclick="toggleDailyWalk()">
-        <div class="ov-stack-icon walk ui-icon-well">
-          <span data-ph-icon="person-simple-walk" data-ph-size="24" data-ph-color="#D4A373" data-ph-label="Walk"></span>
+        <div class="icon-container icon-container--medium icon-container--walk">
+          <span data-ph-icon="person-simple-walk" data-ph-size="20" data-ph-label="Walk"></span>
         </div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Walk</p>
@@ -4189,8 +4221,8 @@
       </div>
       <!-- Water row stays in the stack -->
       <div class="ov-stack-row" id="ov-w-water">
-        <div class="ov-stack-icon water ui-icon-well">
-          <span data-ph-icon="drop" data-ph-size="24" data-ph-color="#D4A373" data-ph-label="Water"></span>
+        <div class="icon-container icon-container--medium icon-container--water">
+          <span data-ph-icon="drop" data-ph-size="20" data-ph-label="Water"></span>
         </div>
         <div class="ov-stack-left">
           <p class="ov-stack-name">Water</p>
@@ -4276,8 +4308,10 @@
   <div class="ov-secondary">
     <div class="ov-sec-row" onclick="showScreen('coach')">
       <div class="ov-sec-top">
-        <div class="ov-sec-icon-wrap coach ui-icon-well">
-          <span data-ph-icon="chat-circle" data-ph-size="24" data-ph-color="#D4A373" data-ph-label="Coach"></span>
+        <div class="ov-sec-icon-wrap coach">
+          <span class="icon-container icon-container--medium icon-container--habit">
+            <span data-ph-icon="chat-circle" data-ph-size="20" data-ph-label="Coach"></span>
+          </span>
         </div>
         <span class="ov-sec-title" id="ov-coach-prompt">Talk to your future self</span>
       </div>
@@ -4286,8 +4320,10 @@
     </div>
     <div class="ov-sec-row" onclick="showScreen('nutrition')">
       <div class="ov-sec-top">
-        <div class="ov-sec-icon-wrap meal ui-icon-well">
-          <span data-ph-icon="fork-knife" data-ph-size="24" data-ph-color="#D4A373" data-ph-label="Nutrition"></span>
+        <div class="ov-sec-icon-wrap meal">
+          <span class="icon-container icon-container--medium icon-container--habit">
+            <span data-ph-icon="fork-knife" data-ph-size="20" data-ph-label="Nutrition"></span>
+          </span>
         </div>
         <span class="ov-sec-title">Eat for who you&rsquo;re becoming</span>
       </div>
@@ -5541,28 +5577,28 @@
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:28px;">
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-          <span style="color:var(--ui-icon);"><span data-ph-icon="barbell" data-ph-size="16" data-ph-color="#D4A373" data-ph-label="Sessions"></span></span>
+          <span class="icon-container icon-container--small icon-container--gold"><span data-ph-icon="barbell" data-ph-size="16" data-ph-label="Sessions"></span></span>
           <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);font-weight:500;">Sessions</span>
         </div>
         <div id="sessionCount" style="font-size:28px;font-weight:700;color:var(--text);line-height:1;">0</div>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-          <span style="color:var(--ui-icon);"><span data-ph-icon="flame" data-ph-size="16" data-ph-color="#D4A373" data-ph-label="Day streak"></span></span>
+          <span class="icon-container icon-container--small icon-container--gold"><span data-ph-icon="flame" data-ph-size="16" data-ph-label="Day streak"></span></span>
           <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);font-weight:500;">Day Streak</span>
         </div>
         <div id="streakCount" style="font-size:28px;font-weight:700;color:var(--sage);line-height:1;">0</div>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-          <span style="color:var(--ui-icon);"><span data-ph-icon="sun-horizon" data-ph-size="16" data-ph-color="#D4A373" data-ph-label="Mornings"></span></span>
+          <span class="icon-container icon-container--small icon-container--gold"><span data-ph-icon="sun-horizon" data-ph-size="16" data-ph-label="Mornings"></span></span>
           <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);font-weight:500;">Mornings</span>
         </div>
         <div id="prgMorningsCount" style="font-size:28px;font-weight:700;color:var(--text);line-height:1;">0</div>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-          <span style="color:var(--ui-icon);"><span data-ph-icon="person-simple-walk" data-ph-size="16" data-ph-color="#D4A373" data-ph-label="Walks"></span></span>
+          <span class="icon-container icon-container--small icon-container--gold"><span data-ph-icon="person-simple-walk" data-ph-size="16" data-ph-label="Walks"></span></span>
           <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);font-weight:500;">Walks</span>
         </div>
         <div id="prgWalksCount" style="font-size:28px;font-weight:700;color:var(--text);line-height:1;">0</div>
@@ -6286,21 +6322,7 @@
   }
 
   function syncThemeIcons() {
-    var theme = document.documentElement.getAttribute('data-theme');
-    if (theme !== 'light' && theme !== 'dark') {
-      theme = getActiveTheme();
-    }
-    var light = theme === 'light';
-    document.querySelectorAll('img.theme-icon[data-theme-icon]').forEach(function(img) {
-      var rel = img.getAttribute('data-theme-icon');
-      if (!rel) return;
-      var slash = rel.indexOf('/');
-      if (slash < 0) return;
-      var folder = rel.slice(0, slash);
-      var file = rel.slice(slash + 1);
-      var nextSrc = '/icons/' + (light ? folder + '-light' : folder) + '/' + file;
-      if (img.getAttribute('src') !== nextSrc) img.setAttribute('src', nextSrc);
-    });
+    /* Nav uses Phosphor icon containers — no PNG theme swap needed. */
   }
 
   function setWyldeTheme(name) {
