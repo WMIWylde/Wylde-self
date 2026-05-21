@@ -1450,13 +1450,15 @@
     #screen-onboard #obFlowError {
       display: none;
       position: fixed;
-      left: var(--fs-pad-x);
-      right: var(--fs-pad-x);
+      left: 50%;
+      transform: translateX(-50%);
       bottom: calc(86px + var(--fs-safe-b));
       z-index: 46;
+      width: min(430px, 100%);
       max-width: 430px;
-      margin: 0 auto;
+      margin: 0;
       padding: 12px 14px;
+      box-sizing: border-box;
       border-radius: 12px;
       font-size: 13px;
       font-weight: 500;
@@ -1467,21 +1469,22 @@
     }
     #screen-onboard #obFlowError.ob-flow-error-visible { display: block; }
 
-    /* Sticky CTA bar (all steps inherit) */
+    /* Sticky CTA bar — constrained to onboarding card width */
     #screen-onboard .ob-step.ob-active .ob-nav {
       position: fixed;
-      left: 0;
-      right: 0;
+      left: 50%;
       bottom: 0;
+      transform: translateX(-50%);
       z-index: 45;
       display: flex;
       align-items: stretch;
       gap: 12px;
-      width: 100%;
-      max-width: none;
+      width: min(430px, 100%);
+      max-width: 430px;
       margin: 0;
       padding: 12px var(--fs-pad-x) calc(12px + var(--fs-safe-b));
       background: linear-gradient(to top, rgba(14, 19, 14, 0.96) 55%, transparent);
+      box-sizing: border-box;
     }
     #screen-onboard .ob-nav .btn {
       flex: 1;
@@ -1492,10 +1495,10 @@
       transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease, border-color 0.15s ease, background 0.15s ease;
     }
     #screen-onboard .ob-nav:not(:has(.ob-back)) .ob-next {
-      flex: 0 1 100%;
-      max-width: 430px;
-      width: 100%;
-      margin: 0 auto;
+      flex: 1 1 auto;
+      max-width: none;
+      width: auto;
+      margin: 0;
     }
     #screen-onboard .ob-next {
       border: none !important;
