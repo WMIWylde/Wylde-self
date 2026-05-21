@@ -8376,6 +8376,34 @@
     });
   }
 
+  function _obResolveOnboardPhoto() {
+    if (typeof futurePhotoBase64 === 'string' && futurePhotoBase64.indexOf('data:') === 0) return futurePhotoBase64;
+    if (state && state.beforePhotoDataUrl && String(state.beforePhotoDataUrl).indexOf('data:') === 0) {
+      futurePhotoBase64 = state.beforePhotoDataUrl;
+      return futurePhotoBase64;
+    }
+    try {
+      var stored = localStorage.getItem('wylde_before_photo');
+      if (stored && stored.indexOf('data:') === 0) {
+        futurePhotoBase64 = stored;
+        state.beforePhotoDataUrl = stored;
+        return stored;
+      }
+    } catch (_) {}
+    var preview = document.getElementById('obUploadPreview');
+    if (preview && preview.src && preview.src.indexOf('data:') === 0) {
+      futurePhotoBase64 = preview.src;
+      state.beforePhotoDataUrl = preview.src;
+      return preview.src;
+    }
+    return '';
+  }
+
+  function _obVal(el, fallback) {
+    if (!el || el.value == null) return fallback || '';
+    return String(el.value).trim();
+  }
+
   function _obDataUrlToCompressedJpeg(dataUrl, maxDim, quality, cb) {
     try {
       var img = new Image();
@@ -8556,7 +8584,7 @@
       }
     }
     if (fromStep === 2) {
-      if (!futurePhotoBase64 || futurePhotoBase64.indexOf('data:') !== 0) {
+      if (!_obResolveOnboardPhoto()) {
         var z = document.getElementById('obUploadZone');
         if (z) z.classList.add('ob-upload-error');
         obShowFlowError('Upload a photo — it\'s the anchor for your Future Self and Today card.');
@@ -8589,10 +8617,8 @@
     var name = (document.getElementById('userName') && document.getElementById('userName').value || '').trim();
     if (!name) { obGoTo(1); obShowFlowError('Add your first name to continue.'); return false; }
     if (!document.querySelector('#genderGroup .selected')) { obGoTo(1); obShowFlowError('Select how you identify.'); return false; }
-    var photoOk = (typeof futurePhotoBase64 === 'string' && futurePhotoBase64.indexOf('data:') === 0)
-      || (state.beforePhotoDataUrl && String(state.beforePhotoDataUrl).indexOf('data:') === 0);
+    var photoOk = !!_obResolveOnboardPhoto();
     if (!photoOk) { obGoTo(2); obShowFlowError('Upload your photo — it anchors your Future Self and Today card.'); return false; }
-    if (!futurePhotoBase64 && state.beforePhotoDataUrl) futurePhotoBase64 = state.beforePhotoDataUrl;
     var goals = document.querySelectorAll('#goalGroup .selected');
     if (!goals.length) { obGoTo(3); obShowFlowError('Pick at least one focus for your mission.'); return false; }
     if (!document.querySelector('#levelGroup .selected')) { obGoTo(3); obShowFlowError('Select your fitness level.'); return false; }
@@ -8651,12 +8677,10 @@
 
   function _playOnboardingMilestoneCinematic(onDone) {
     onDone = onDone || function() {};
-    if (_isCoarseMobileDevice()) {
-      try { localStorage.setItem('wylde_intro_seen', '1'); } catch (_) {}
-      playGeoTransition(onDone);
-      return;
-    }
-    playIntro(onDone);
+    try { localStorage.setItem('wylde_intro_seen', '1'); } catch (_) {}
+    // Brief geometric welcome only — intro video autoplay often stalls on desktop
+    // and left users stuck on the final onboarding step.
+    playGeoTransition(onDone);
   }
 
   function _showIntroOverlay(show) {
@@ -8685,126 +8709,139 @@
 
   // ONBOARDING
   function completeOnboard() {
+    var finishBtn = document.querySelector('#obStep6 .ob-finish');
+    if (finishBtn && finishBtn.disabled) return;
     if (!_obValidateCompleteness()) return;
-    var name = document.getElementById('userName').value.trim();
-    if (!name) { document.getElementById('userName').style.borderColor='rgba(220,80,80,0.6)'; return; }
-    var gender  = document.querySelector('#genderGroup .selected');
-    var age     = document.querySelector('#ageGroup .selected');
-    var goals   = _obCollectGoalsFromDom();
-    var motivations = goals.slice();
-    var obstacle = (document.getElementById('obstacleInput') && document.getElementById('obstacleInput').value.trim()) || '';
-    var level   = document.querySelector('#levelGroup .selected');
-    var days    = document.querySelector('#daysGroup .selected');
-    var height  = document.querySelector('#heightGroup .selected');
-    var weight  = document.getElementById('weightInput').value.trim();
-    var wUnit   = document.querySelector('#weightUnitGroup .selected');
-    var equipment = document.querySelector('#equipmentGroup .selected');
-    var gym     = document.querySelector('#gymGroup .selected');
-    var classes = Array.from(document.querySelectorAll('#classGroup .selected')).map(function(p){ return p.textContent; });
-    var health  = Array.from(document.querySelectorAll('#healthGroup .selected')).map(function(p){ return p.textContent; });
-    var notes   = document.getElementById('healthNotes').value.trim();
-    var sleepEl = document.querySelector('#sleepGroup .selected');
-    var stressEl = document.querySelector('#stressGroup .selected');
-    var energyEl = document.querySelector('#energyGroup .selected');
-    var visionTxt = (document.getElementById('obVisionText') && document.getElementById('obVisionText').value.trim()) || '';
 
-    state.name             = name;
-    state.gender           = gender    ? gender.textContent    : 'Male';
-    state.age              = age       ? age.textContent        : '';
-    state.height           = height    ? height.textContent     : '';
-    state.weight           = weight    || '';
-    state.weightUnit       = wUnit     ? wUnit.textContent      : 'lbs';
-    state.goals            = goals.length > 0 ? goals : ['Get lean'];
-    state.motivations      = motivations;
-    state.obstacle         = obstacle;
-    state.sleepPerNight    = sleepEl   ? sleepEl.textContent    : '';
-    state.stressLevel      = stressEl  ? stressEl.textContent   : '';
-    state.energyBaseline   = energyEl  ? energyEl.textContent   : '';
-    state.futureVisionText = visionTxt;
-    state.level            = level     ? level.textContent      : 'Intermediate';
-    state.days             = days      ? days.textContent       : '4 days';
-    var equipRaw = equipment ? equipment.textContent.trim() : '';
-    if (equipRaw === 'Full setup') state.equipment = 'Yes — full setup';
-    else if (equipRaw === 'Some basics') state.equipment = 'Some basics';
-    else if (equipRaw === 'None') state.equipment = 'No equipment';
-    else state.equipment = equipRaw;
-    state.gymAccess        = gym       ? gym.textContent        : '';
-    state.gymName          = document.getElementById('gymNameInput').value.trim();
-    // Gym type drives equipment inference for the AI program builder.
-    // Replaces the old gymEquipment[] picker (too much tapping).
-    var gymTypeEl = document.querySelector('#gymTypeGroup .selected');
-    state.gymType = gymTypeEl ? gymTypeEl.textContent.trim() : '';
-    // Back-compat: derive a coarse gymEquipment[] list from the type so
-    // the existing meal/workout prompt logic keeps working unchanged.
-    var typeToEquip = {
-      'Commercial gym (full equipment)':       ['Dumbbells', 'Barbells & Rack', 'Cable Machine', 'Smith Machine', 'Leg Press', 'Pull-up Bar', 'Bench (flat/incline)', 'Cardio Machines', 'Kettlebells'],
-      'Garage / home gym (some equipment)':    ['Dumbbells', 'Pull-up Bar', 'Bench (flat/incline)', 'Resistance Bands', 'Kettlebells'],
-      'Bodyweight / minimal':                  ['Resistance Bands']
-    };
-    state.gymEquipment = typeToEquip[state.gymType] || [];
-    state.classPreferences = classes.filter(function(c){ return c !== 'Not interested'; });
-    var diet   = Array.from(document.querySelectorAll('#dietGroup .selected')).map(function(p){ return p.textContent; });
-    var dNotes = document.getElementById('dietNotes').value.trim();
-    state.health      = health;
-    state.healthNotes = notes;
-    state.diet        = diet;
-    state.dietNotes   = dNotes;
-
-    // Backward compat: keep goal as primary for display
-    state.goal = state.goals[0] || 'Get lean';
-
-    document.getElementById('programName').textContent = name;
-    document.getElementById('programSub').textContent  = 'A ' + state.days + ' program built around your goals.';
-
-    // Unlock all nav tabs
-    document.querySelectorAll('.nav-tab.locked').forEach(function(t){ t.classList.remove('locked'); });
-
-    // Update nav user display
-    document.getElementById('navUserName').textContent = state.name.toUpperCase();
-
-    // Set joined date on first profile creation
-    if (!state.joinedDate) state.joinedDate = new Date().toISOString();
-
-    state.beforePhotoDataUrl = (typeof futurePhotoBase64 === 'string' && futurePhotoBase64.indexOf('data:') === 0) ? futurePhotoBase64 : (state.beforePhotoDataUrl || '');
-    try {
-      if (state.beforePhotoDataUrl) {
-        _persistFuturePhoto(state.beforePhotoDataUrl);
-        if (typeof _hydrateFutureUploadPreview === 'function') _hydrateFutureUploadPreview(state.beforePhotoDataUrl);
-      }
-    } catch (_) {}
-    try { _userContextCache = null; } catch (_) {}
-
-    // Persist profile (localStorage + Supabase)
-    saveProfile();
-    awardXP(100, 'Profile created');
-
-    // Set after image based on gender
-    setAfterImage();
-
-    // Auto-generate workout program after profile completion
-    setTimeout(function() { generateProgram(); }, 500);
-
-    // Animated entry: intro video (first onboard only) → geo transition → Today.
-    // Reset _introSkipped so the chain's callback fires even on re-onboard in
-    // the same session — leaving it stale was the previous bug that prevented
-    // the Today screen from appearing.
-    window._onboardingFinalized = false;
-    window._introSkipped = false;
-    if (window._obEmergencyTimer) {
-      try { clearTimeout(window._obEmergencyTimer); } catch (_) {}
-      window._obEmergencyTimer = null;
+    if (finishBtn) {
+      finishBtn.disabled = true;
+      finishBtn.textContent = 'Building you…';
     }
-    _hideOnboardingForCinematic();
-    // Enter Today immediately — do not block the app on intro video / geo (mobile
-    // autoplay often never fires onended). Milestone animation runs as overlay.
-    _finalizeOnboardingToOverview();
-    window._introSkipped = false;
-    _playOnboardingMilestoneCinematic(_dismissOnboardingCinematicOverlays);
-    window._obEmergencyTimer = setTimeout(
-      _dismissOnboardingCinematicOverlays,
-      _isCoarseMobileDevice() ? 7000 : 22000
-    );
+
+    try {
+      var name = _obVal(document.getElementById('userName'));
+      if (!name) {
+        obGoTo(1);
+        obShowFlowError('Add your first name to continue.');
+        if (finishBtn) {
+          finishBtn.disabled = false;
+          finishBtn.textContent = 'Let\u2019s Build You \u2192';
+        }
+        return;
+      }
+      var gender  = document.querySelector('#genderGroup .selected');
+      var age     = document.querySelector('#ageGroup .selected');
+      var goals   = _obCollectGoalsFromDom();
+      var motivations = goals.slice();
+      var obstacle = _obVal(document.getElementById('obstacleInput'));
+      var level   = document.querySelector('#levelGroup .selected');
+      var days    = document.querySelector('#daysGroup .selected');
+      var height  = document.querySelector('#heightGroup .selected');
+      var weight  = _obVal(document.getElementById('weightInput'));
+      var wUnit   = document.querySelector('#weightUnitGroup .selected');
+      var equipment = document.querySelector('#equipmentGroup .selected');
+      var gym     = document.querySelector('#gymGroup .selected');
+      var classes = Array.from(document.querySelectorAll('#classGroup .selected')).map(function(p){ return p.textContent; });
+      var health  = Array.from(document.querySelectorAll('#healthGroup .selected')).map(function(p){ return p.textContent; });
+      var notes   = _obVal(document.getElementById('healthNotes'));
+      var sleepEl = document.querySelector('#sleepGroup .selected');
+      var stressEl = document.querySelector('#stressGroup .selected');
+      var energyEl = document.querySelector('#energyGroup .selected');
+      var visionTxt = _obVal(document.getElementById('obVisionText'));
+
+      state.name             = name;
+      state.gender           = gender    ? gender.textContent    : 'Male';
+      state.age              = age       ? age.textContent        : '';
+      state.height           = height    ? height.textContent     : '';
+      state.weight           = weight    || '';
+      state.weightUnit       = wUnit     ? wUnit.textContent      : 'lbs';
+      state.goals            = goals.length > 0 ? goals : ['Get lean'];
+      state.motivations      = motivations;
+      state.obstacle         = obstacle;
+      state.sleepPerNight    = sleepEl   ? sleepEl.textContent    : '';
+      state.stressLevel      = stressEl  ? stressEl.textContent   : '';
+      state.energyBaseline   = energyEl  ? energyEl.textContent   : '';
+      state.futureVisionText = visionTxt;
+      state.level            = level     ? level.textContent      : 'Intermediate';
+      state.days             = days      ? days.textContent       : '4 days';
+      var equipRaw = equipment ? equipment.textContent.trim() : '';
+      if (equipRaw === 'Full setup') state.equipment = 'Yes — full setup';
+      else if (equipRaw === 'Some basics') state.equipment = 'Some basics';
+      else if (equipRaw === 'None') state.equipment = 'No equipment';
+      else state.equipment = equipRaw;
+      state.gymAccess        = gym       ? gym.textContent        : '';
+      state.gymName          = _obVal(document.getElementById('gymNameInput'));
+      var gymTypeEl = document.querySelector('#gymTypeGroup .selected');
+      state.gymType = gymTypeEl ? gymTypeEl.textContent.trim() : '';
+      var typeToEquip = {
+        'Commercial gym (full equipment)':       ['Dumbbells', 'Barbells & Rack', 'Cable Machine', 'Smith Machine', 'Leg Press', 'Pull-up Bar', 'Bench (flat/incline)', 'Cardio Machines', 'Kettlebells'],
+        'Garage / home gym (some equipment)':    ['Dumbbells', 'Pull-up Bar', 'Bench (flat/incline)', 'Resistance Bands', 'Kettlebells'],
+        'Bodyweight / minimal':                  ['Resistance Bands']
+      };
+      state.gymEquipment = typeToEquip[state.gymType] || [];
+      state.classPreferences = classes.filter(function(c){ return c !== 'Not interested'; });
+      var diet   = Array.from(document.querySelectorAll('#dietGroup .selected')).map(function(p){ return p.textContent; });
+      var dNotes = _obVal(document.getElementById('dietNotes'));
+      state.health      = health;
+      state.healthNotes = notes;
+      state.diet        = diet;
+      state.dietNotes   = dNotes;
+
+      state.goal = state.goals[0] || 'Get lean';
+
+      var programName = document.getElementById('programName');
+      var programSub = document.getElementById('programSub');
+      if (programName) programName.textContent = name;
+      if (programSub) programSub.textContent  = 'A ' + state.days + ' program built around your goals.';
+
+      document.querySelectorAll('.nav-tab.locked').forEach(function(t){ t.classList.remove('locked'); });
+
+      var navUserName = document.getElementById('navUserName');
+      if (navUserName) navUserName.textContent = state.name.toUpperCase();
+
+      if (!state.joinedDate) state.joinedDate = new Date().toISOString();
+
+      var resolvedPhoto = _obResolveOnboardPhoto();
+      state.beforePhotoDataUrl = resolvedPhoto || (state.beforePhotoDataUrl || '');
+      try {
+        if (state.beforePhotoDataUrl) {
+          _persistFuturePhoto(state.beforePhotoDataUrl);
+          if (typeof _hydrateFutureUploadPreview === 'function') _hydrateFutureUploadPreview(state.beforePhotoDataUrl);
+        }
+      } catch (_) {}
+      try { _userContextCache = null; } catch (_) {}
+
+      saveProfile();
+      awardXP(100, 'Profile created');
+      setAfterImage();
+      setTimeout(function() { generateProgram(); }, 500);
+
+      window._onboardingFinalized = false;
+      window._introSkipped = false;
+      if (window._obEmergencyTimer) {
+        try { clearTimeout(window._obEmergencyTimer); } catch (_) {}
+        window._obEmergencyTimer = null;
+      }
+
+      for (var si = 1; si <= _obTotal; si++) {
+        var stepEl = document.getElementById('obStep' + si);
+        if (stepEl) stepEl.classList.remove('ob-active');
+      }
+
+      _hideOnboardingForCinematic();
+      _finalizeOnboardingToOverview();
+      _playOnboardingMilestoneCinematic(_dismissOnboardingCinematicOverlays);
+      window._obEmergencyTimer = setTimeout(_dismissOnboardingCinematicOverlays, 6000);
+    } catch (err) {
+      console.error('[onboard] completeOnboard failed:', err);
+      obShowFlowError('Something went wrong finishing setup. Tap Let\u2019s Build You again.');
+      if (finishBtn) {
+        finishBtn.disabled = false;
+        finishBtn.textContent = 'Let\u2019s Build You \u2192';
+      }
+    }
   }
+  if (typeof window !== 'undefined') window.completeOnboard = completeOnboard;
 
   function resumeIntroPlay() {
     var tap = document.getElementById('introTapPlay');
