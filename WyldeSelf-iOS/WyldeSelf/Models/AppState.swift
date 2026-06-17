@@ -22,6 +22,20 @@ class AppState: ObservableObject {
     @Published var gender: String = ""                              { didSet { defaults.set(gender, forKey: "wylde_gender") } }
     @Published var goals: [String] = []                             { didSet { defaults.set(goals, forKey: "wylde_goals") } }
     @Published var gymName: String = ""                             { didSet { defaults.set(gymName, forKey: "wylde_gym") } }
+    @Published var onboardingComplete: Bool = false                  { didSet { defaults.set(onboardingComplete, forKey: "wylde_onboarded") } }
+    @Published var ageRange: String = ""                             { didSet { defaults.set(ageRange, forKey: "wylde_age") } }
+    @Published var fitnessLevel: String = ""                         { didSet { defaults.set(fitnessLevel, forKey: "wylde_level") } }
+    @Published var trainingDays: String = ""                         { didSet { defaults.set(trainingDays, forKey: "wylde_days") } }
+    @Published var equipment: String = ""                            { didSet { defaults.set(equipment, forKey: "wylde_equipment") } }
+    @Published var gymAccess: String = ""                            { didSet { defaults.set(gymAccess, forKey: "wylde_gym_access") } }
+    @Published var heightRange: String = ""                          { didSet { defaults.set(heightRange, forKey: "wylde_height") } }
+    @Published var weight: String = ""                               { didSet { defaults.set(weight, forKey: "wylde_weight") } }
+    @Published var weightUnit: String = "lbs"                        { didSet { defaults.set(weightUnit, forKey: "wylde_weight_unit") } }
+    @Published var healthConcerns: [String] = []                     { didSet { defaults.set(healthConcerns, forKey: "wylde_health") } }
+    @Published var healthNotes: String = ""                          { didSet { defaults.set(healthNotes, forKey: "wylde_health_notes") } }
+    @Published var dietaryPrefs: [String] = []                       { didSet { defaults.set(dietaryPrefs, forKey: "wylde_diet") } }
+    @Published var dietNotes: String = ""                            { didSet { defaults.set(dietNotes, forKey: "wylde_diet_notes") } }
+    @Published var classPreferences: [String] = []                   { didSet { defaults.set(classPreferences, forKey: "wylde_classes") } }
 
     // Pro entitlement — cached locally for instant UI, refreshed from
     // RevenueCat on launch + when the SDK posts an entitlement change.
@@ -63,17 +77,20 @@ class AppState: ObservableObject {
     @Published var caloriesGoal: Int = 2400                         { didSet { defaults.set(caloriesGoal, forKey: "wylde_calories_goal") } }
 
     enum Tab: String, CaseIterable {
-        case today = "Today"
+        // Display labels chosen for brand alignment per CLAUDE.md target IA.
+        // Enum case `.settings` retained internally to avoid touching every
+        // routing reference; raw value renders as "You" in the bottom bar.
+        case today     = "Today"
         case exercises = "Library"
-        case future = "Future"
-        case settings = "Settings"
+        case future    = "Future"
+        case settings  = "You"
 
         var icon: String {
             switch self {
-            case .today: return "house.fill"
-            case .exercises: return "figure.strengthtraining.traditional"
-            case .future: return "person.fill"
-            case .settings: return "gearshape.fill"
+            case .today:     return "sun.horizon.fill"
+            case .exercises: return "book.closed.fill"
+            case .future:    return "figure.walk.motion"
+            case .settings:  return "person.crop.circle.fill"
             }
         }
     }
@@ -146,6 +163,20 @@ class AppState: ObservableObject {
         gender = defaults.string(forKey: "wylde_gender") ?? ""
         goals = defaults.stringArray(forKey: "wylde_goals") ?? []
         gymName = defaults.string(forKey: "wylde_gym") ?? ""
+        onboardingComplete = defaults.bool(forKey: "wylde_onboarded")
+        ageRange = defaults.string(forKey: "wylde_age") ?? ""
+        fitnessLevel = defaults.string(forKey: "wylde_level") ?? ""
+        trainingDays = defaults.string(forKey: "wylde_days") ?? ""
+        equipment = defaults.string(forKey: "wylde_equipment") ?? ""
+        gymAccess = defaults.string(forKey: "wylde_gym_access") ?? ""
+        heightRange = defaults.string(forKey: "wylde_height") ?? ""
+        weight = defaults.string(forKey: "wylde_weight") ?? ""
+        weightUnit = defaults.string(forKey: "wylde_weight_unit") ?? "lbs"
+        healthConcerns = defaults.stringArray(forKey: "wylde_health") ?? []
+        healthNotes = defaults.string(forKey: "wylde_health_notes") ?? ""
+        dietaryPrefs = defaults.stringArray(forKey: "wylde_diet") ?? []
+        dietNotes = defaults.string(forKey: "wylde_diet_notes") ?? ""
+        classPreferences = defaults.stringArray(forKey: "wylde_classes") ?? []
 
         // Pro entitlement — cached locally for instant UI on launch.
         // Source of truth is RevenueCat / Supabase; this is just the
@@ -198,7 +229,10 @@ class AppState: ObservableObject {
     func resetAllData() {
         let keys = [
             "wylde_authed", "wylde_name", "wylde_day", "wylde_streak", "wylde_xp",
-            "wylde_gender", "wylde_goals", "wylde_gym",
+            "wylde_gender", "wylde_goals", "wylde_gym", "wylde_onboarded",
+            "wylde_age", "wylde_level", "wylde_days", "wylde_equipment",
+            "wylde_gym_access", "wylde_height", "wylde_weight", "wylde_weight_unit",
+            "wylde_health", "wylde_health_notes", "wylde_diet", "wylde_diet_notes", "wylde_classes",
             "wylde_morning_actions", "wylde_morning_done",
             "wylde_protein_goal", "wylde_calories_goal"
         ]

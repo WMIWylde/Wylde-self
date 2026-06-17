@@ -208,15 +208,68 @@ function buildVisionBoardPrompt(timeline, goalList, gender, hasImage, ctx) {
 }
 
 /**
+ * Future vision: one cinematic photograph per life category.
+ * NOT a collage — a single scene that embodies the user's vision for that area of life.
+ */
+function buildFutureVisionPrompt(category, reflectionText, gender) {
+  const g = (gender || 'male').toLowerCase();
+  const pronoun = g === 'female' ? 'woman' : g === 'non-binary' ? 'person' : 'man';
+
+  const categoryScenes = {
+    'health_body': `A ${pronoun} in peak physical condition — training outdoors at dawn, radiating strength and vitality. Athletic, lean, powerful posture. The light catches their form in a way that feels aspirational but real.`,
+    'relationships': `A ${pronoun} surrounded by close friends or a partner — an intimate dinner, rooftop sunset, or quiet moment of genuine connection. Warm lighting, laughter frozen in time. The feeling of being deeply known.`,
+    'family': `A ${pronoun} present with family — playing with children in a beautiful garden, a family dinner in a warm home, or a quiet generational moment. Love visible in body language. Premium, grounded, real.`,
+    'wealth': `A ${pronoun} in a scene of calm abundance — a beautiful workspace with floor-to-ceiling windows, a composed morning in a premium home, or sitting peacefully in a space that radiates earned success. No flashiness — quiet wealth.`,
+    'business': `A ${pronoun} in a purpose-driven work environment — leading a team in a modern space, deep in creative flow, or presenting to a room that's engaged. The energy is leadership, not corporate stock.`,
+    'home': `The interior of a dream living space — warm natural materials, intentional design, morning light pouring through large windows. Plants, books, clean surfaces. A space that reflects someone who has their life together.`,
+    'adventure': `A ${pronoun} in an extraordinary setting — a mountain summit, a Mediterranean coastline, a jungle trail, or an iconic cityscape. The feeling of freedom, exploration, and a life fully lived.`,
+    'spirituality': `A ${pronoun} in a moment of deep stillness — meditating at sunrise, walking through a forest, or sitting by water in contemplation. The light is golden, the scene is vast and peaceful.`,
+    'impact': `A ${pronoun} making visible impact — teaching, building, serving a community, or mentoring. People around them are affected by their presence. The scene radiates purpose and contribution.`,
+    'lifestyle': `A ${pronoun} moving through an intentional day — a calm morning ritual, a focused work session, an evening walk. Every detail suggests discipline, taste, and presence. The kind of life people aspire to.`,
+  };
+
+  const scene = categoryScenes[category] || `A ${pronoun} living their best life in the ${category} domain. Cinematic, aspirational, grounded.`;
+
+  const lines = [
+    `Generate ONE photorealistic cinematic photograph.`,
+    '',
+    scene,
+    '',
+  ];
+
+  if (reflectionText) {
+    lines.push(`The person described their vision: "${reflectionText.slice(0, 600)}"`);
+    lines.push('Incorporate the emotional tone and specific details from their words into the scene.');
+    lines.push('');
+  }
+
+  lines.push(
+    'Aesthetic: Tracksmith × Aesop × Apple — warm tones, cinematic natural light, shallow depth of field. Magazine-quality. Premium and grounded.',
+    '',
+    'CRITICAL: ONE single photograph. NOT a collage, grid, mood board, or multiple images. No text, labels, watermarks, borders, or frames. Photorealistic only — no illustration or cartoon.',
+  );
+
+  return lines.join('\n');
+}
+
+/**
  * Route to the right prompt builder based on mode.
  * Default is 'physique' — the Future Self transformation photo.
- * Pass mode='vision_board' explicitly for the life collage.
+ * Pass mode='vision_board' for the life collage.
+ * Pass mode='future_vision' for per-category cinematic scenes.
  */
 function buildPrompt(timeline, goals, gender, hasImage, options) {
   const mode = (options && options.mode) || 'physique';
   const goalList = normalizeGoals(goals, options && options.userGoal, options && options.goal);
   if (mode === 'vision_board') {
     return buildVisionBoardPrompt(timeline, goalList, gender, hasImage, options);
+  }
+  if (mode === 'future_vision') {
+    return buildFutureVisionPrompt(
+      options && options.category,
+      options && options.reflectionText,
+      gender
+    );
   }
   return buildPhysiquePrompt(timeline, goalList, gender, hasImage);
 }
@@ -260,6 +313,8 @@ module.exports = async function handler(req, res) {
       futureVisionText,
       motivations,
       obstacle,
+      category,
+      reflectionText,
     } = body;
 
     const effectiveGoals = normalizeGoals(goals, userGoal, goal);
@@ -272,6 +327,8 @@ module.exports = async function handler(req, res) {
       futureVisionText,
       motivations,
       obstacle,
+      category,
+      reflectionText,
     });
     console.log(`[generate-image] mode=${mode || 'physique'} timeline=${effectiveTimeline} goals=${JSON.stringify(effectiveGoals)} promptLen=${prompt.length}`);
 

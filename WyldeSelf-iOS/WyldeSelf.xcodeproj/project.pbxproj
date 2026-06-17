@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		18A966E3AE3C65C025FD7A33 /* ConsumerModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C62374029D5DB6ADFC8027 /* ConsumerModels.swift */; };
+		497DB2330828280086695940 /* CheckinSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED05833A5593DE8DE9080106 /* CheckinSync.swift */; };
+		49E9488F2FE1C51C007FD50D /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 49E9488E2FE1C51C007FD50D /* Supabase */; };
+		4B100DC73EEAC2641D5878FF /* CareTeamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCDBF19CEB09C8382410A612 /* CareTeamView.swift */; };
+		54ACB79B98CF6A41D49A035F /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF420548325F72C353160DF2 /* AuthService.swift */; };
+		5BC247E261A81C158532BC3D /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352956980DD2811651EE9D0A /* SignInView.swift */; };
+		8F10BCBC638BDED70C47FA03 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F126C93E921C9F6B9698D5 /* SplashView.swift */; };
 		A10001 /* WyldeSelfApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001 /* WyldeSelfApp.swift */; };
 		A10002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10002 /* ContentView.swift */; };
 		A10003 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10003 /* AppDelegate.swift */; };
@@ -34,9 +41,20 @@
 		A10026 /* JourneyPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10026 /* JourneyPhase.swift */; };
 		A10027 /* CoachLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10027 /* CoachLine.swift */; };
 		A10028 /* WyldeStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10028 /* WyldeStyles.swift */; };
+		A8CB2D23D6EB86B182C431ED /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91180521F9514686E9160EBF /* OnboardingView.swift */; };
+		ACA54FDA9CB2728ADED95C59 /* YouView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36DC41DE8014E1FAD7AF5F91 /* YouView.swift */; };
+		B91C567B73439B06B53242B4 /* ClinicalAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 266BF07DED1AA40E9CE5A9FF /* ClinicalAPI.swift */; };
+		C67910E979584C833D7A4BFF /* SupabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF1630ABE8FEBBA81A03240 /* SupabaseClient.swift */; };
+		F6F60DD2FAF8EF8AA596BF42 /* ImageLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F09EC6B89EAABB04C9E946F /* ImageLibrary.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		266BF07DED1AA40E9CE5A9FF /* ClinicalAPI.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClinicalAPI.swift; sourceTree = "<group>"; };
+		2F09EC6B89EAABB04C9E946F /* ImageLibrary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ImageLibrary.swift; sourceTree = "<group>"; };
+		352956980DD2811651EE9D0A /* SignInView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
+		36DC41DE8014E1FAD7AF5F91 /* YouView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = YouView.swift; sourceTree = "<group>"; };
+		44C62374029D5DB6ADFC8027 /* ConsumerModels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConsumerModels.swift; sourceTree = "<group>"; };
+		91180521F9514686E9160EBF /* OnboardingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		B10001 /* WyldeSelfApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WyldeSelfApp.swift; sourceTree = "<group>"; };
 		B10002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B10003 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -66,6 +84,11 @@
 		B10027 /* CoachLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachLine.swift; sourceTree = "<group>"; };
 		B10028 /* WyldeStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WyldeStyles.swift; sourceTree = "<group>"; };
 		B99999 /* WyldeSelf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WyldeSelf.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFF1630ABE8FEBBA81A03240 /* SupabaseClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SupabaseClient.swift; sourceTree = "<group>"; };
+		E0F126C93E921C9F6B9698D5 /* SplashView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		ED05833A5593DE8DE9080106 /* CheckinSync.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CheckinSync.swift; sourceTree = "<group>"; };
+		FCDBF19CEB09C8382410A612 /* CareTeamView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CareTeamView.swift; sourceTree = "<group>"; };
+		FF420548325F72C353160DF2 /* AuthService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +96,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49E9488F2FE1C51C007FD50D /* Supabase in Frameworks */,
 				A10014 /* HealthKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -112,6 +136,7 @@
 				B10004 /* AppState.swift */,
 				B10016 /* Exercise.swift */,
 				B10019 /* IdentityProfile.swift */,
+				44C62374029D5DB6ADFC8027 /* ConsumerModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -127,6 +152,11 @@
 				B10021 /* SettingsDrawer.swift */,
 				B10022 /* IdentityImportView.swift */,
 				B10023 /* StartTodayFlow.swift */,
+				36DC41DE8014E1FAD7AF5F91 /* YouView.swift */,
+				352956980DD2811651EE9D0A /* SignInView.swift */,
+				FCDBF19CEB09C8382410A612 /* CareTeamView.swift */,
+				E0F126C93E921C9F6B9698D5 /* SplashView.swift */,
+				91180521F9514686E9160EBF /* OnboardingView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -140,6 +170,10 @@
 				B10012 /* CameraManager.swift */,
 				B10024 /* PurchaseManager.swift */,
 				B10025 /* IdentityAnalysisService.swift */,
+				CFF1630ABE8FEBBA81A03240 /* SupabaseClient.swift */,
+				FF420548325F72C353160DF2 /* AuthService.swift */,
+				266BF07DED1AA40E9CE5A9FF /* ClinicalAPI.swift */,
+				ED05833A5593DE8DE9080106 /* CheckinSync.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -151,6 +185,7 @@
 				B10026 /* JourneyPhase.swift */,
 				B10027 /* CoachLine.swift */,
 				B10028 /* WyldeStyles.swift */,
+				2F09EC6B89EAABB04C9E946F /* ImageLibrary.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -199,7 +234,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1540;
-				LastUpgradeCheck = 2640;
+				LastUpgradeCheck = 1540;
 				TargetAttributes = {
 					E10001 = {
 						CreatedOnToolsVersion = 15.4;
@@ -215,6 +250,9 @@
 				Base,
 			);
 			mainGroup = D10001;
+			packageReferences = (
+				4945466D2FE1C3B000AB1CE4 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			productRefGroup = D10099 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -265,6 +303,17 @@
 				A10026 /* JourneyPhase.swift in Sources */,
 				A10027 /* CoachLine.swift in Sources */,
 				A10028 /* WyldeStyles.swift in Sources */,
+				C67910E979584C833D7A4BFF /* SupabaseClient.swift in Sources */,
+				54ACB79B98CF6A41D49A035F /* AuthService.swift in Sources */,
+				B91C567B73439B06B53242B4 /* ClinicalAPI.swift in Sources */,
+				497DB2330828280086695940 /* CheckinSync.swift in Sources */,
+				18A966E3AE3C65C025FD7A33 /* ConsumerModels.swift in Sources */,
+				F6F60DD2FAF8EF8AA596BF42 /* ImageLibrary.swift in Sources */,
+				ACA54FDA9CB2728ADED95C59 /* YouView.swift in Sources */,
+				5BC247E261A81C158532BC3D /* SignInView.swift in Sources */,
+				4B100DC73EEAC2641D5878FF /* CareTeamView.swift in Sources */,
+				8F10BCBC638BDED70C47FA03 /* SplashView.swift in Sources */,
+				A8CB2D23D6EB86B182C431ED /* OnboardingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -290,7 +339,6 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -300,13 +348,10 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = L5869XDHF7;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -326,7 +371,6 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -351,7 +395,6 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -361,13 +404,10 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = L5869XDHF7;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -380,7 +420,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -394,6 +433,7 @@
 				CODE_SIGN_ENTITLEMENTS = WyldeSelf/WyldeSelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WyldeSelf/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Wylde Self";
@@ -424,6 +464,7 @@
 				CODE_SIGN_ENTITLEMENTS = WyldeSelf/WyldeSelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WyldeSelf/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Wylde Self";
@@ -468,6 +509,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4945466D2FE1C3B000AB1CE4 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		49E9488E2FE1C51C007FD50D /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4945466D2FE1C3B000AB1CE4 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = P10001 /* Project object */;
 }

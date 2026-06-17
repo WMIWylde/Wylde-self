@@ -4,7 +4,15 @@ struct ContentView: View {
     @EnvironmentObject var appState: AppState
 
     var body: some View {
-        MainTabView()
+        Group {
+            if !appState.isAuthenticated {
+                SignInView()
+            } else if !appState.onboardingComplete {
+                OnboardingView()
+            } else {
+                MainTabView()
+            }
+        }
             .onReceive(NotificationCenter.default.publisher(for: .navigateToScreen)) { notification in
                 if let screen = notification.userInfo?["screen"] as? String {
                     switch screen {

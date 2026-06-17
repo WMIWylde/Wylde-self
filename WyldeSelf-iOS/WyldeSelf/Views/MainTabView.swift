@@ -14,7 +14,9 @@ struct MainTabView: View {
                 tabContent(.today) { TodayView() }
                 tabContent(.exercises) { ExercisesView() }
                 tabContent(.future) { WebViewScreen(path: "#future") }
-                tabContent(.settings) { WebViewScreen(path: "#progress") }
+                // Was WebViewScreen("#progress") — replaced with native
+                // YouView which hosts identity, care team, and settings.
+                tabContent(.settings) { YouView() }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
