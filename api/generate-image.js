@@ -49,38 +49,104 @@ function normalizeGoals(goals, userGoal, goal) {
   return goalList;
 }
 
-/** Legacy physique-only transformation prompt (mode=physique). */
+/** Physique transformation prompt — gender-aware, goal-aware. */
 function buildPhysiquePrompt(timeline, goalList, gender, hasImage) {
   const g = gender || 'male';
+  const isFemale = g.toLowerCase() === 'female';
   const goalKey = goalList.map(s => s.toLowerCase()).join(' + ');
-  const wantsBulk = goalKey.match(/muscle|bulk|build|mass|size|strong/);
-  const wantsCut = goalKey.match(/burn|fat|los|weight|slim|lean|tone|defin|cut|shred/);
-  const emphasis = wantsBulk && wantsCut ? 'body recomposition'
-    : wantsBulk ? 'maximum muscle gain'
-    : wantsCut ? 'lean and shredded'
-    : 'lean athletic muscle';
-  const styleNote = wantsBulk && !wantsCut
-    ? 'Prioritize muscle SIZE — bigger arms, wider shoulders, thicker chest. Some body fat is fine.'
-    : wantsCut && !wantsBulk
-    ? 'Prioritize being SHREDDED — very low body fat, every muscle visible, veins showing.'
-    : 'Balance muscle gain and fat loss — bigger AND leaner.';
+
+  // Detect goal categories
+  const wantsBulk       = goalKey.match(/muscle|bulk|build|mass|size|strong/);
+  const wantsCut        = goalKey.match(/burn|fat|los|weight|slim|lean|tone|defin|cut|shred/);
+  const wantsEndurance  = goalKey.match(/endurance|cardio|stamina|run|marathon/);
+  const wantsFlexibility = goalKey.match(/flex|mobil|yoga|stretch/);
+
+  // Build emphasis that reflects all goals
+  let emphasis;
+  if (wantsBulk && wantsCut) emphasis = 'body recomposition — lean muscle with visible definition';
+  else if (wantsBulk) emphasis = 'athletic muscle gain';
+  else if (wantsCut) emphasis = 'lean and toned';
+  else if (wantsEndurance) emphasis = 'athletic endurance physique';
+  else if (wantsFlexibility) emphasis = 'flexible, toned, and balanced';
+  else emphasis = 'lean athletic physique';
+
+  // Goal-aware style note — different for male and female
+  let styleNote;
+  if (isFemale) {
+    if (wantsBulk && !wantsCut)
+      styleNote = 'Show athletic muscle — defined shoulders, sculpted arms, strong glutes and legs. Fit and powerful, not bulky.';
+    else if (wantsCut && !wantsBulk)
+      styleNote = 'Show a lean toned physique — visible muscle definition, flat stomach, sculpted arms and legs. Think fitness model.';
+    else if (wantsEndurance)
+      styleNote = 'Show a lean runner/athlete build — long toned muscles, low body fat, effortless athleticism. Think Olympic athlete.';
+    else if (wantsFlexibility)
+      styleNote = 'Show a lithe, toned body — lean muscle, graceful posture, dancer/yogi build. Balanced and strong.';
+    else
+      styleNote = 'Show a strong, toned, confident physique — visible definition in arms, shoulders, core, and legs. Healthy and athletic.';
+  } else {
+    if (wantsBulk && !wantsCut)
+      styleNote = 'Prioritize muscle SIZE — bigger arms, wider shoulders, thicker chest. Some body fat is fine.';
+    else if (wantsCut && !wantsBulk)
+      styleNote = 'Prioritize being SHREDDED — very low body fat, every muscle visible, veins showing.';
+    else if (wantsEndurance)
+      styleNote = 'Show an endurance athlete build — lean, wiry muscle, low body fat, strong legs and core. Think triathlete or distance runner.';
+    else if (wantsFlexibility)
+      styleNote = 'Show a balanced, flexible physique — lean muscle, excellent posture, functional strength. Think martial artist or gymnast.';
+    else
+      styleNote = 'Balance muscle gain and fat loss — bigger AND leaner.';
+  }
 
   const identity = hasImage
     ? 'Transform this person\'s body. Keep their FACE, skin tone, hair, and tattoos identical. Same person — rebuilt body.'
     : `Generate a photorealistic image of a ${g} with a dramatically transformed athletic physique.`;
 
-  const timelines = {
+  // Gender-aware timeline descriptions
+  const maleTimelines = {
     '12weeks': `12-WEEK TRANSFORMATION. This person trained hard 4x/week for 3 months straight.
-Show: noticeably more muscular shoulders, arms, and chest. Tighter waist, leaner face. Visible arm definition. Abs starting to show. V-taper forming.
+Show: noticeably more muscular shoulders, arms, and chest. Tighter waist, leaner face. Visible arm definition. Abs starting to show. V-taper forming. Clear muscle tone in every body part.
+Think: Instagram before/after that makes people say "what program is that?" This is NOT subtle — the change is obvious at first glance.
 ${styleNote}`,
-    '6months': `6-MONTH TRANSFORMATION. Dramatic muscle gain, defined abs, sharp jawline, competition-adjacent natural physique.
+
+    '6months': `6-MONTH TRANSFORMATION. This person trained 5x/week for half a year with zero breaks.
+Show: DRAMATIC muscle gain — thick arms with bicep peak, capped round shoulders, full squared chest, visible lats. Body fat 12-15%. Defined 4-6 pack abs. Veins on forearms and biceps. Sharp jawline. V-taper is dramatic.
+Think: Men's Health cover. The kind of transformation people call "insane." The body looks COMPLETELY DIFFERENT.
 ${styleNote}`,
-    '1year': `1-YEAR PEAK. Elite natural physique — vascular, striated, magazine-cover condition.
+
+    '1year': `1-YEAR PEAK TRANSFORMATION. 365 days of disciplined training, strict nutrition, full dedication.
+Show: ELITE natural physique. Thick vascular arms, striated cannonball shoulders, full chest with visible striations, wide lat spread, carved 6-pack with obliques, V-lines. Veins everywhere — forearms, biceps, delts. Every muscle group shows separation. This body is COMPETITION READY.
+Think: natural bodybuilder or fitness model at peak condition. Magazine cover physique. Unrecognizable from the original.
 ${styleNote}`,
   };
 
+  const femaleTimelines = {
+    '12weeks': `12-WEEK TRANSFORMATION. This person trained hard 4x/week for 3 months straight.
+Show: noticeably more toned shoulders and arms. Tighter waist, more defined legs and glutes. Visible muscle definition starting to emerge. Posture is confident and strong. Skin looks healthier, face is leaner.
+Think: that friend who started working out 3 months ago and you can clearly tell. The change is real and visible.
+${styleNote}`,
+
+    '6months': `6-MONTH TRANSFORMATION. This person trained 5x/week for half a year with zero breaks.
+Show: DRAMATIC body transformation — sculpted arms and shoulders, defined abs, strong toned legs, lifted round glutes. Waist is tight, body fat is low. Every outfit fits differently. Posture radiates strength.
+Think: Women's Health cover. The kind of transformation that inspires everyone around her.
+${styleNote}`,
+
+    '1year': `1-YEAR PEAK TRANSFORMATION. 365 days of disciplined training, strict nutrition, full dedication.
+Show: PEAK athletic physique. Sculpted shoulders with visible caps, defined arms, visible abs with oblique lines, strong back, powerful legs with quad definition, round lifted glutes. Every muscle group shows tone and separation. This body moves with power and grace.
+Think: elite fitness athlete or bikini competitor at peak condition. Magazine cover physique. Unrecognizable from the original.
+${styleNote}`,
+  };
+
+  const timelines = isFemale ? femaleTimelines : maleTimelines;
   const t = timelines[timeline] || timelines['12weeks'];
-  return `${identity}\n\n${t}\n\nGoal: ${emphasis} — ${goalList.join(', ')}.\n\nRules: Photorealistic. No text/watermarks. Dramatic but believable transformation.`;
+
+  return `${identity}
+
+${t}
+
+Goal: ${emphasis} — ${goalList.join(', ')}.
+
+CRITICAL: Generate ONE SINGLE full-body photograph. Do NOT create a collage, mood board, vision board, grid, split image, or multiple images. One continuous photorealistic image of one person standing or posing. No text, no labels, no watermarks, no borders, no frames.
+
+Make the transformation dramatic and motivating. This should inspire the person to keep going.`;
 }
 
 /**
@@ -141,13 +207,18 @@ function buildVisionBoardPrompt(timeline, goalList, gender, hasImage, ctx) {
   return lines.join('\n');
 }
 
+/**
+ * Route to the right prompt builder based on mode.
+ * Default is 'physique' — the Future Self transformation photo.
+ * Pass mode='vision_board' explicitly for the life collage.
+ */
 function buildPrompt(timeline, goals, gender, hasImage, options) {
-  const mode = (options && options.mode) || 'vision_board';
+  const mode = (options && options.mode) || 'physique';
   const goalList = normalizeGoals(goals, options && options.userGoal, options && options.goal);
-  if (mode === 'physique') {
-    return buildPhysiquePrompt(timeline, goalList, gender, hasImage);
+  if (mode === 'vision_board') {
+    return buildVisionBoardPrompt(timeline, goalList, gender, hasImage, options);
   }
-  return buildVisionBoardPrompt(timeline, goalList, gender, hasImage, options);
+  return buildPhysiquePrompt(timeline, goalList, gender, hasImage);
 }
 
 module.exports = async function handler(req, res) {
@@ -195,14 +266,14 @@ module.exports = async function handler(req, res) {
     const effectiveTimeline = timeline || '12weeks';
 
     const prompt = buildPrompt(effectiveTimeline, effectiveGoals, gender, !!image_base64, {
-      mode: mode || 'vision_board',
+      mode: mode || 'physique',
       userGoal,
       goal,
       futureVisionText,
       motivations,
       obstacle,
     });
-    console.log(`[generate-image] mode=${mode || 'vision_board'} timeline=${effectiveTimeline} goals=${JSON.stringify(effectiveGoals)} promptLen=${prompt.length}`);
+    console.log(`[generate-image] mode=${mode || 'physique'} timeline=${effectiveTimeline} goals=${JSON.stringify(effectiveGoals)} promptLen=${prompt.length}`);
 
     let contents;
 
@@ -314,7 +385,7 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({
       success: true,
       image_base64: `data:${mimeType};base64,${imgData}`,
-      mode: mode || 'vision_board',
+      mode: mode || 'physique',
     });
 
   } catch (err) {
