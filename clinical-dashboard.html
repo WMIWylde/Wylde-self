@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en" style="background:#F7F5F0;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wylde Clinical · Dashboard</title>
+  <link rel="icon" href="/logo-icon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper: '#F7F5F0', cream: '#FAF8F3', warmgray: '#F0EDE6',
+            line: 'rgba(45,42,38,0.08)', line2: 'rgba(45,42,38,0.14)',
+            ink: '#2A2823', ink2: '#6B675F', ink3: '#9A958B',
+            sage: '#6E8A7C', sageDeep: '#5C7A6C', sageDim: 'rgba(110,138,124,0.10)',
+            success: '#5C9678', successbg: 'rgba(92,150,120,0.10)',
+            warn: '#C7965E', warnbg: 'rgba(199,150,94,0.10)',
+            crit: '#B86570', critbg: 'rgba(184,101,112,0.10)',
+          },
+          fontFamily: { sans: ['Inter','sans-serif'], serif: ['Fraunces','serif'] },
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .nav-item { transition: all 0.15s; }
+    .nav-item:hover, .nav-item.active { background: rgba(110,138,124,0.10); color: #5C7A6C; }
+    .stat-card { transition: transform 0.15s; }
+    .stat-card:hover { transform: translateY(-1px); }
+    .protocol-dot { width: 8px; height: 8px; border-radius: 50%; }
+    input:focus { outline: none; border-color: #6E8A7C; }
+  </style>
+</head>
+<body class="bg-paper text-ink min-h-screen">
+
+<!-- Auth Screen -->
+<div id="authScreen" class="min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-sm p-8">
+    <div class="text-center mb-8">
+      <img src="/logo-icon.png" alt="Wylde" class="w-12 h-12 rounded-xl mx-auto mb-4" />
+      <h1 class="font-serif text-2xl text-ink">Wylde Clinical</h1>
+      <p class="text-ink3 text-sm mt-2">Sign in to your clinician account</p>
+    </div>
+    <div class="space-y-4">
+      <input id="authEmail" type="email" placeholder="Email" class="w-full px-4 py-3 rounded-xl border border-line2 bg-white text-sm" />
+      <input id="authPassword" type="password" placeholder="Password" class="w-full px-4 py-3 rounded-xl border border-line2 bg-white text-sm" />
+      <button onclick="signIn()" class="w-full py-3 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">Sign In</button>
+      <p id="authError" class="text-crit text-xs text-center hidden"></p>
+    </div>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboardScreen" class="hidden min-h-screen flex">
+
+  <!-- Sidebar -->
+  <aside class="w-56 bg-white border-r border-line flex flex-col h-screen sticky top-0">
+    <div class="p-5 border-b border-line">
+      <div class="flex items-center gap-2">
+        <img src="/logo-icon.png" alt="Wylde" class="w-8 h-8 rounded-lg" />
+        <div>
+          <div class="text-xs font-semibold tracking-wide text-ink">WYLDE</div>
+          <div class="text-[10px] text-ink3 tracking-widest">CLINICAL</div>
+        </div>
+      </div>
+    </div>
+    <nav class="flex-1 p-3 space-y-1">
+      <div class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium cursor-pointer" onclick="showSection('dashboard')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ink2 cursor-pointer" onclick="showSection('patients')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Patients
+      </div>
+      <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ink2 cursor-pointer" onclick="showSection('protocols')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Protocols
+      </div>
+      <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ink2 cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        Insights
+      </div>
+      <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ink2 cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        Messaging
+      </div>
+      <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ink2 cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+        Settings
+      </div>
+    </nav>
+    <div class="p-4 border-t border-line">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-sageDim flex items-center justify-center text-sage text-xs font-semibold" id="sidebarAvatar">DR</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-xs font-medium text-ink truncate" id="sidebarName">Clinician</div>
+          <button onclick="signOut()" class="text-[10px] text-ink3 hover:text-crit">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto">
+
+    <!-- Top Bar -->
+    <div class="sticky top-0 bg-paper/90 backdrop-blur-md border-b border-line z-10 px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <span class="text-ink3 text-sm">Patients</span>
+        <span class="text-ink3 text-sm">›</span>
+        <span class="text-ink text-sm font-medium" id="topBarTitle">Overview</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <input id="acceptCodeInput" type="text" placeholder="Enter patient code..." class="px-3 py-1.5 rounded-lg border border-line2 bg-white text-xs w-40" />
+        <button onclick="acceptPatientCode()" class="px-3 py-1.5 bg-sage text-white rounded-lg text-xs font-semibold hover:bg-sageDeep transition">Link Patient</button>
+      </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="sectionDashboard" class="p-6">
+      <!-- Stats Row -->
+      <div class="grid grid-cols-4 gap-4 mb-6">
+        <div class="stat-card bg-white rounded-xl p-4 border border-line">
+          <div class="text-ink3 text-xs mb-1">Active Patients</div>
+          <div class="text-2xl font-semibold text-ink" id="statPatients">0</div>
+        </div>
+        <div class="stat-card bg-white rounded-xl p-4 border border-line">
+          <div class="text-ink3 text-xs mb-1">Avg Adherence</div>
+          <div class="text-2xl font-semibold text-success" id="statAdherence">—</div>
+        </div>
+        <div class="stat-card bg-white rounded-xl p-4 border border-line">
+          <div class="text-ink3 text-xs mb-1">Check-ins Today</div>
+          <div class="text-2xl font-semibold text-ink" id="statCheckins">0</div>
+        </div>
+        <div class="stat-card bg-white rounded-xl p-4 border border-line">
+          <div class="text-ink3 text-xs mb-1">Pending Codes</div>
+          <div class="text-2xl font-semibold text-warn" id="statPending">0</div>
+        </div>
+      </div>
+
+      <!-- Patient List -->
+      <div class="bg-white rounded-xl border border-line">
+        <div class="px-5 py-4 border-b border-line flex items-center justify-between">
+          <h2 class="text-sm font-semibold text-ink">Your Patients</h2>
+        </div>
+        <div id="patientList" class="divide-y divide-line">
+          <div class="px-5 py-8 text-center text-ink3 text-sm">Loading patients...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Patient Detail Section -->
+    <div id="sectionPatientDetail" class="p-6 hidden">
+      <div id="patientDetailContent"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  Wylde Clinical Dashboard — Live Supabase Integration
+// ═══════════════════════════════════════════════════════════════
+
+const SUPABASE_URL = 'https://huclolzxzpitdpyogolu.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1Y2xvbHp4enBpdGRweW9nb2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2MDI2MzMsImV4cCI6MjA2MTE3ODYzM30.YOUR_ANON_KEY';
+
+// Try to get the real anon key from a meta tag or fallback
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY.includes('YOUR_')
+  ? 'sb_publishable_VFZOYd0PhqAh3AgZF1TcXQ_cX4ElGkl'
+  : SUPABASE_ANON_KEY);
+
+let currentUser = null;
+let patients = [];
+
+// ─── Auth ───
+
+async function signIn() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const errEl = document.getElementById('authError');
+  errEl.classList.add('hidden');
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) {
+    errEl.textContent = error.message;
+    errEl.classList.remove('hidden');
+    return;
+  }
+  currentUser = data.user;
+  showDashboard();
+}
+
+async function signOut() {
+  await sb.auth.signOut();
+  currentUser = null;
+  document.getElementById('authScreen').classList.remove('hidden');
+  document.getElementById('dashboardScreen').classList.add('hidden');
+}
+
+async function checkAuth() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (user) {
+    currentUser = user;
+    showDashboard();
+  }
+}
+
+function showDashboard() {
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('dashboardScreen').classList.remove('hidden');
+  const name = currentUser.email.split('@')[0];
+  document.getElementById('sidebarName').textContent = name;
+  document.getElementById('sidebarAvatar').textContent = name.substring(0,2).toUpperCase();
+  loadPatients();
+}
+
+// ─── Navigation ───
+
+function showSection(section) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('sectionDashboard').classList.add('hidden');
+  document.getElementById('sectionPatientDetail').classList.add('hidden');
+  if (section === 'dashboard' || section === 'patients') {
+    document.getElementById('sectionDashboard').classList.remove('hidden');
+    document.getElementById('topBarTitle').textContent = 'Overview';
+  }
+}
+
+// ─── Load Patients ───
+
+async function loadPatients() {
+  // Get care relationships where current user is the clinician
+  const { data: rels, error } = await sb
+    .from('care_relationships')
+    .select('patient_id, clinic_name, linked_at, status')
+    .eq('clinician_id', currentUser.id)
+    .eq('status', 'active');
+
+  if (error || !rels || rels.length === 0) {
+    document.getElementById('patientList').innerHTML = `
+      <div class="px-5 py-12 text-center">
+        <div class="text-ink3 text-sm mb-2">No patients linked yet</div>
+        <div class="text-ink3 text-xs">Have patients share their code from the Wylde Self app, then enter it above.</div>
+      </div>`;
+    document.getElementById('statPatients').textContent = '0';
+    return;
+  }
+
+  patients = [];
+  const today = new Date().toISOString().split('T')[0];
+  let todayCheckins = 0;
+
+  for (const rel of rels) {
+    // Get patient profile
+    const { data: profile } = await sb
+      .from('profiles')
+      .select('id, email, profile_data')
+      .eq('id', rel.patient_id)
+      .single();
+
+    // Get recent check-ins
+    const { data: checkins } = await sb
+      .from('patient_checkins')
+      .select('*')
+      .eq('user_id', rel.patient_id)
+      .order('date', { ascending: false })
+      .limit(30);
+
+    const todayCheckin = (checkins || []).find(c => c.date === today);
+    if (todayCheckin) todayCheckins++;
+
+    // Compute adherence (last 7 days)
+    const last7 = (checkins || []).slice(0, 7);
+    const adherence = last7.length > 0
+      ? Math.round(last7.reduce((sum, c) => sum + (c.doses > 0 ? 1 : 0), 0) / last7.length * 100)
+      : null;
+
+    // Get active protocols
+    const { data: protocols } = await sb
+      .from('patient_protocols')
+      .select('id, name, phase, status, started_at')
+      .eq('user_id', rel.patient_id)
+      .eq('status', 'active');
+
+    const profileData = profile?.profile_data || {};
+    patients.push({
+      id: rel.patient_id,
+      name: profileData.name || profile?.email?.split('@')[0] || 'Patient',
+      email: profile?.email || '',
+      linkedAt: rel.linked_at,
+      adherence,
+      todayCheckin,
+      checkins: checkins || [],
+      protocols: protocols || [],
+    });
+  }
+
+  // Update stats
+  document.getElementById('statPatients').textContent = patients.length;
+  document.getElementById('statCheckins').textContent = todayCheckins;
+
+  const avgAdherence = patients.filter(p => p.adherence != null);
+  document.getElementById('statAdherence').textContent = avgAdherence.length > 0
+    ? Math.round(avgAdherence.reduce((s, p) => s + p.adherence, 0) / avgAdherence.length) + '%'
+    : '—';
+
+  // Render patient list
+  renderPatientList();
+}
+
+function renderPatientList() {
+  const container = document.getElementById('patientList');
+  if (patients.length === 0) {
+    container.innerHTML = '<div class="px-5 py-8 text-center text-ink3 text-sm">No patients yet</div>';
+    return;
+  }
+
+  container.innerHTML = patients.map(p => `
+    <div class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-cream transition" onclick="showPatient('${p.id}')">
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 rounded-full bg-sageDim flex items-center justify-center text-sage text-sm font-semibold">
+          ${p.name.substring(0,2).toUpperCase()}
+        </div>
+        <div>
+          <div class="text-sm font-medium text-ink">${p.name}</div>
+          <div class="text-xs text-ink3">${p.protocols.length > 0 ? p.protocols[0].name : 'No active protocol'}</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-6">
+        <div class="text-right">
+          <div class="text-xs text-ink3">Adherence</div>
+          <div class="text-sm font-semibold ${p.adherence >= 80 ? 'text-success' : p.adherence >= 50 ? 'text-warn' : 'text-crit'}">${p.adherence != null ? p.adherence + '%' : '—'}</div>
+        </div>
+        <div class="text-right">
+          <div class="text-xs text-ink3">Today</div>
+          <div class="text-sm ${p.todayCheckin ? 'text-success' : 'text-ink3'}">${p.todayCheckin ? '✓' : '—'}</div>
+        </div>
+        <svg class="w-4 h-4 text-ink3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── Patient Detail ───
+
+function showPatient(patientId) {
+  const patient = patients.find(p => p.id === patientId);
+  if (!patient) return;
+
+  document.getElementById('sectionDashboard').classList.add('hidden');
+  document.getElementById('sectionPatientDetail').classList.remove('hidden');
+  document.getElementById('topBarTitle').textContent = patient.name;
+
+  const last7 = patient.checkins.slice(0, 7);
+  const adherenceData = last7.map(c => ({
+    date: c.date,
+    doses: c.doses,
+    workout: c.workout,
+    nutrition: c.nutrition,
+    mood: c.mood,
+  }));
+
+  document.getElementById('patientDetailContent').innerHTML = `
+    <!-- Patient Header -->
+    <div class="bg-white rounded-xl border border-line p-6 mb-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-5">
+          <div class="w-16 h-16 rounded-full bg-sageDim flex items-center justify-center text-sage text-xl font-semibold">
+            ${patient.name.substring(0,2).toUpperCase()}
+          </div>
+          <div>
+            <h2 class="text-xl font-semibold text-ink">${patient.name}</h2>
+            <p class="text-sm text-ink3">${patient.email}</p>
+            <p class="text-xs text-ink3 mt-1">Linked ${new Date(patient.linkedAt).toLocaleDateString()}</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <div class="stat-card bg-cream rounded-xl p-4 text-center min-w-[100px]">
+            <div class="text-2xl font-semibold ${patient.adherence >= 80 ? 'text-success' : 'text-warn'}">${patient.adherence ?? '—'}%</div>
+            <div class="text-xs text-ink3 mt-1">Adherence</div>
+          </div>
+          <div class="stat-card bg-cream rounded-xl p-4 text-center min-w-[100px]">
+            <div class="text-2xl font-semibold text-ink">${patient.checkins.length}</div>
+            <div class="text-xs text-ink3 mt-1">Check-ins</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-6">
+      <!-- Check-in History -->
+      <div class="col-span-2 bg-white rounded-xl border border-line">
+        <div class="px-5 py-4 border-b border-line">
+          <h3 class="text-sm font-semibold text-ink">Recent Check-ins</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-ink3 text-xs border-b border-line">
+                <th class="px-5 py-3 text-left font-medium">Date</th>
+                <th class="px-3 py-3 text-center font-medium">Doses</th>
+                <th class="px-3 py-3 text-center font-medium">Workout</th>
+                <th class="px-3 py-3 text-center font-medium">Nutrition</th>
+                <th class="px-3 py-3 text-center font-medium">Mood</th>
+                <th class="px-3 py-3 text-center font-medium">Weight</th>
+                <th class="px-3 py-3 text-left font-medium">Notes</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-line">
+              ${patient.checkins.slice(0, 14).map(c => `
+                <tr class="hover:bg-cream transition">
+                  <td class="px-5 py-3 text-ink">${formatDate(c.date)}</td>
+                  <td class="px-3 py-3 text-center">${scoreIcon(c.doses)}</td>
+                  <td class="px-3 py-3 text-center">${scoreIcon(c.workout)}</td>
+                  <td class="px-3 py-3 text-center">${scoreIcon(c.nutrition)}</td>
+                  <td class="px-3 py-3 text-center">${c.mood != null ? moodIcon(c.mood) : '<span class="text-ink3">—</span>'}</td>
+                  <td class="px-3 py-3 text-center text-ink2">${c.weight ? c.weight + ' lb' : '—'}</td>
+                  <td class="px-3 py-3 text-ink3 text-xs max-w-[200px] truncate">${c.notes || '—'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="space-y-6">
+        <!-- Active Protocols -->
+        <div class="bg-white rounded-xl border border-line">
+          <div class="px-5 py-4 border-b border-line">
+            <h3 class="text-sm font-semibold text-ink">Active Protocols</h3>
+          </div>
+          <div class="p-5 space-y-3">
+            ${patient.protocols.length > 0 ? patient.protocols.map(p => `
+              <div class="flex items-center gap-3">
+                <div class="protocol-dot bg-success"></div>
+                <div>
+                  <div class="text-sm font-medium text-ink">${p.name}</div>
+                  <div class="text-xs text-ink3">${p.phase || 'Active'} · Started ${new Date(p.started_at).toLocaleDateString()}</div>
+                </div>
+              </div>
+            `).join('') : '<div class="text-sm text-ink3">No active protocols</div>'}
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-xl border border-line">
+          <div class="px-5 py-4 border-b border-line">
+            <h3 class="text-sm font-semibold text-ink">Recent Activity</h3>
+          </div>
+          <div class="p-5 space-y-3">
+            ${patient.checkins.slice(0, 5).map(c => `
+              <div class="flex items-start gap-3">
+                <div class="w-1.5 h-1.5 rounded-full bg-sage mt-2"></div>
+                <div>
+                  <div class="text-xs text-ink">${c.workout > 0 ? 'Workout completed' : c.doses > 0 ? 'Check-in logged' : 'Partial check-in'}</div>
+                  <div class="text-[10px] text-ink3">${formatDate(c.date)}</div>
+                </div>
+              </div>
+            `).join('') || '<div class="text-sm text-ink3">No recent activity</div>'}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button onclick="backToList()" class="mt-6 px-4 py-2 text-sm text-ink3 hover:text-ink transition">← Back to patients</button>
+  `;
+}
+
+function backToList() {
+  document.getElementById('sectionDashboard').classList.remove('hidden');
+  document.getElementById('sectionPatientDetail').classList.add('hidden');
+  document.getElementById('topBarTitle').textContent = 'Overview';
+}
+
+// ─── Accept Patient Code ───
+
+async function acceptPatientCode() {
+  const input = document.getElementById('acceptCodeInput');
+  const code = input.value.trim();
+  if (!code) return;
+
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  if (!token) { alert('Not authenticated'); return; }
+
+  const resp = await fetch('https://www.wyldeself.com/api/consumer/care/accept', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ code }),
+  });
+
+  const data = await resp.json();
+  if (data.linked) {
+    input.value = '';
+    alert('Patient linked successfully!');
+    loadPatients();
+  } else {
+    alert(data.error || 'Failed to link patient');
+  }
+}
+
+// ─── Helpers ───
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function scoreIcon(score) {
+  if (score >= 3) return '<span class="inline-block w-5 h-5 rounded-full bg-successbg text-success text-xs leading-5 text-center">✓</span>';
+  if (score > 0) return '<span class="inline-block w-5 h-5 rounded-full bg-warnbg text-warn text-xs leading-5 text-center">~</span>';
+  return '<span class="inline-block w-5 h-5 rounded-full bg-line text-ink3 text-xs leading-5 text-center">—</span>';
+}
+
+function moodIcon(mood) {
+  if (mood >= 4) return '<span class="text-success">●</span>';
+  if (mood >= 2) return '<span class="text-warn">●</span>';
+  return '<span class="text-crit">●</span>';
+}
+
+// ─── Init ───
+checkAuth();
+</script>
+</body>
+</html>
