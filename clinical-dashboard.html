@@ -50,6 +50,7 @@
       <input id="authEmail" type="email" placeholder="Email" class="w-full px-4 py-3 rounded-xl border border-line2 bg-white text-sm" />
       <input id="authPassword" type="password" placeholder="Password" class="w-full px-4 py-3 rounded-xl border border-line2 bg-white text-sm" />
       <button onclick="signIn()" class="w-full py-3 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">Sign In</button>
+      <button onclick="signUp()" class="w-full py-2.5 bg-white border border-line2 text-ink2 rounded-xl text-sm font-medium hover:bg-cream transition">Create Clinician Account</button>
       <p id="authError" class="text-crit text-xs text-center hidden"></p>
     </div>
   </div>
@@ -195,6 +196,28 @@ async function signIn() {
   }
   currentUser = data.user;
   showDashboard();
+}
+
+async function signUp() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const errEl = document.getElementById('authError');
+  errEl.classList.add('hidden');
+
+  if (!email || !password) { errEl.textContent = 'Email and password required'; errEl.classList.remove('hidden'); return; }
+  if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters'; errEl.classList.remove('hidden'); return; }
+
+  const { data, error } = await sb.auth.signUp({ email, password });
+  if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
+
+  if (data.user) {
+    currentUser = data.user;
+    showDashboard();
+  } else {
+    errEl.textContent = 'Check your email to confirm your account.';
+    errEl.classList.remove('hidden');
+    errEl.style.color = '#5C9678';
+  }
 }
 
 async function signOut() {
