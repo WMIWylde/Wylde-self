@@ -75,6 +75,7 @@
       <div class="nav-item" data-section="patients" onclick="navTo('patients')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Patients</div>
       <div class="nav-item" data-section="protocols" onclick="navTo('protocols')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Protocols</div>
       <div class="nav-item" data-section="library" onclick="navTo('library')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>Product Library</div>
+      <div class="nav-item" data-section="insights" onclick="navTo('insights')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>Insights</div>
       <div class="nav-item" data-section="reorders" onclick="navTo('reorders')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>Reorders</div>
       <div class="nav-item" data-section="messages" onclick="navTo('messages')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>Messages</div>
       <div class="nav-item" data-section="billing" onclick="navTo('billing')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>Billing</div>
@@ -169,6 +170,7 @@ function render() {
     case 'patients': renderPatients(c); break;
     case 'protocols': renderProtocols(c); break;
     case 'library': renderLibrary(c); break;
+    case 'insights': renderInsightsPage(c); break;
     case 'messages': renderMessages(c); break;
     case 'reorders': renderReorders(c); break;
     case 'billing': c.innerHTML = comingSoon('Billing & Orders'); break;
@@ -313,6 +315,7 @@ function renderPatientDetail(c) {
       </div>
       <div class="flex gap-2 mt-4">
         <button onclick="showAssignProtocol('${p.id}')" class="px-4 py-2 bg-sage text-white rounded-lg text-xs font-semibold hover:bg-sageDeep transition">Assign Protocol</button>
+        <button onclick="generateInsights('${p.id}')" class="px-4 py-2 bg-sky text-white rounded-lg text-xs font-semibold hover:opacity-90 transition" id="insightBtn">Generate Insights</button>
         <button onclick="showAddNote('${p.id}')" class="px-4 py-2 bg-white border border-line2 text-ink2 rounded-lg text-xs font-medium hover:bg-cream transition">Add Note</button>
       </div>
     </div>
@@ -373,6 +376,17 @@ function renderPatientDetail(c) {
           </div>
         </div>
 
+        <!-- AI Insights -->
+        <div class="bg-white rounded-xl border border-line shadow-soft">
+          <div class="px-5 py-4 border-b border-line flex justify-between items-center">
+            <h3 class="text-sm font-semibold">AI Insights</h3>
+            <button onclick="generateInsights('${p.id}')" class="text-xs text-sky font-medium hover:text-ink">Generate</button>
+          </div>
+          <div class="p-5 space-y-3" id="patientInsights">
+            <div class="text-xs text-ink3">Click "Generate Insights" to analyze patient data.</div>
+          </div>
+        </div>
+
         <!-- Protocol Adherence -->
         ${p.adherenceLogs.length > 0 ? `
         <div class="bg-white rounded-xl border border-line shadow-soft">
@@ -418,6 +432,7 @@ function renderPatientDetail(c) {
 
   loadPatientNotes(p.id);
   if (p.relationshipId) loadPatientMessages(p.id, p.relationshipId);
+  loadInsights(p.id);
 }
 
 async function loadPatientNotes(patientId) {
@@ -767,6 +782,105 @@ async function updateReorder(id, status) {
     body: JSON.stringify({ id, status }),
   });
   renderReorders(el('content'));
+}
+
+// ─── Insights ───
+
+async function generateInsights(patientId) {
+  const btn = el('insightBtn');
+  if (btn) { btn.textContent = 'Analyzing...'; btn.disabled = true; }
+
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/insights', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ patient_id: patientId }),
+  });
+
+  if (btn) { btn.textContent = 'Generate Insights'; btn.disabled = false; }
+
+  if (resp.ok) {
+    const { insights } = await resp.json();
+    renderInsightsPanel(insights);
+  } else {
+    const err = await resp.json();
+    alert(err.error || 'Insight generation failed');
+  }
+}
+
+async function loadInsights(patientId) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/insights?patient_id=' + patientId, {
+    headers: { 'Authorization': 'Bearer ' + token }
+  });
+  if (resp.ok) {
+    const { insights } = await resp.json();
+    renderInsightsPanel(insights);
+  }
+}
+
+function renderInsightsPanel(insights) {
+  const container = el('patientInsights');
+  if (!container) return;
+  if (!insights || insights.length === 0) {
+    container.innerHTML = '<div class="text-xs text-ink3">No insights yet.</div>';
+    return;
+  }
+  const sevColors = { high: 'crit', medium: 'warn', low: 'success' };
+  container.innerHTML = insights.map(i => `
+    <div class="border-l-2 border-${sevColors[i.severity] || 'ink3'} pl-3 py-2">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-${sevColors[i.severity] || 'ink3'}bg text-${sevColors[i.severity] || 'ink3'}">${i.severity}</span>
+        <span class="text-sm font-medium text-ink">${i.title}</span>
+      </div>
+      <p class="text-xs text-ink2 leading-relaxed">${i.summary}</p>
+      <p class="text-xs text-sage mt-1 font-medium">→ ${i.recommended_action}</p>
+      ${i.status !== 'new' ? `<span class="text-[9px] text-ink3 mt-1 inline-block">${i.status}</span>` : ''}
+    </div>`).join('');
+}
+
+function renderInsightsPage(c) {
+  c.innerHTML = `
+    <div class="mb-6"><h2 class="text-lg font-semibold">Clinical Insights</h2><p class="text-sm text-ink3">AI-generated signals across your patients</p></div>
+    <div class="grid grid-cols-1 gap-4">
+      ${patients.map(p => `
+        <div class="bg-white rounded-xl border border-line shadow-soft p-5">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-sageDim flex items-center justify-center text-sage text-xs font-semibold">${p.name.substring(0,2).toUpperCase()}</div>
+              <div><div class="text-sm font-medium">${p.name}</div><div class="text-xs text-ink3">${p.protocols.length > 0 ? p.protocols[0].name : '—'}</div></div>
+            </div>
+            <button onclick="generateInsightsFromPage('${p.id}', this)" class="px-3 py-1.5 bg-skybg text-sky rounded-lg text-xs font-semibold hover:bg-sky hover:text-white transition">Analyze</button>
+          </div>
+          <div id="insights_${p.id}" class="text-xs text-ink3">Click Analyze to generate insights</div>
+        </div>`).join('') || '<div class="text-center py-12 text-ink3">No patients</div>'}
+    </div>`;
+}
+
+async function generateInsightsFromPage(patientId, btn) {
+  btn.textContent = 'Analyzing...'; btn.disabled = true;
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/insights', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ patient_id: patientId }),
+  });
+  btn.textContent = 'Analyze'; btn.disabled = false;
+  if (resp.ok) {
+    const { insights } = await resp.json();
+    const container = document.getElementById('insights_' + patientId);
+    if (container && insights.length > 0) {
+      const sevColors = { high: 'crit', medium: 'warn', low: 'success' };
+      container.innerHTML = insights.slice(0, 5).map(i => `
+        <div class="border-l-2 border-${sevColors[i.severity] || 'ink3'} pl-3 py-1.5 mt-2">
+          <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-${sevColors[i.severity] || 'ink3'}bg text-${sevColors[i.severity] || 'ink3'}">${i.severity}</span>
+          <span class="text-xs font-medium text-ink ml-1">${i.title}</span>
+          <p class="text-xs text-ink2 mt-0.5">${i.summary}</p>
+        </div>`).join('');
+    } else {
+      container.textContent = 'No signals detected — patient is on track.';
+    }
+  }
 }
 
 // ─── Init ───
