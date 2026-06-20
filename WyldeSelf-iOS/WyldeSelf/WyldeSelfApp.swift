@@ -25,7 +25,7 @@ struct WyldeSelfApp: App {
                         }
                 }
             }
-                .preferredColorScheme(.light)
+                .preferredColorScheme(appState.preferredColorScheme)
                 .onAppear {
                     configureAppearance()
                     scheduleDailyReminders()
@@ -35,7 +35,15 @@ struct WyldeSelfApp: App {
                     Task { await PurchaseManager.shared.fetchProducts() }
                     // Restore Supabase session if one exists, so returning users
                     // skip the sign-in screen.
-                    Task { await AuthService.shared.restore() }
+                    Task {
+                        await AuthService.shared.restore()
+                        if await AuthService.shared.hasValidSession {
+                            // Sync profile to Supabase on restore
+                            await AuthService.shared.syncProfile(appState: appState)
+                        } else {
+                            appState.isAuthenticated = false
+                        }
+                    }
                     // Start background CheckinSync — observes AppState daily
                     // toggles and posts to /api/consumer/checkin (debounced).
                     CheckinSync.shared.start(appState: appState)

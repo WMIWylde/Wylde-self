@@ -5,7 +5,7 @@ struct ContentView: View {
 
     var body: some View {
         Group {
-            if !appState.isAuthenticated {
+            if !appState.isAuthenticated || !AuthService.shared.isSignedIn {
                 SignInView()
             } else if !appState.onboardingComplete {
                 OnboardingView()
