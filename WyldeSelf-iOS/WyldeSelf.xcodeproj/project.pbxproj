@@ -78,6 +78,7 @@
 		C60C7CC6C017D714F0C8F352 /* GuidedMeditationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC61017E88572D0AF4662A7C /* GuidedMeditationView.swift */; };
 		C67910E979584C833D7A4BFF /* SupabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF1630ABE8FEBBA81A03240 /* SupabaseClient.swift */; };
 		D2421988CEDCAD47A494339A /* ProgramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75AB4CA4640E38AE003A94AB /* ProgramView.swift */; };
+		E19B9D461B3AB1C2EE60070C /* CareMessagingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF7FBABC90464C1050C45FA /* CareMessagingView.swift */; };
 		F01C427D255E073C74CC7611 /* FutureVision.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07F46ED130E8FA952F7BE9A /* FutureVision.swift */; };
 		F6F60DD2FAF8EF8AA596BF42 /* ImageLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F09EC6B89EAABB04C9E946F /* ImageLibrary.swift */; };
 		F70AA43BF26D80A2976420EB /* ProtocolTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADAB00E2228BCBC88233AD1C /* ProtocolTrackerView.swift */; };
@@ -149,6 +150,7 @@
 		CC61017E88572D0AF4662A7C /* GuidedMeditationView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GuidedMeditationView.swift; sourceTree = "<group>"; };
 		CF64D03B1398C1C46DFCCB8C /* CinematicEffects.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CinematicEffects.swift; sourceTree = "<group>"; };
 		CFF1630ABE8FEBBA81A03240 /* SupabaseClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SupabaseClient.swift; sourceTree = "<group>"; };
+		DFF7FBABC90464C1050C45FA /* CareMessagingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CareMessagingView.swift; sourceTree = "<group>"; };
 		E07F46ED130E8FA952F7BE9A /* FutureVision.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FutureVision.swift; sourceTree = "<group>"; };
 		E0F126C93E921C9F6B9698D5 /* SplashView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		E18F936666895C871BB1E34F /* MealPlanService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MealPlanService.swift; sourceTree = "<group>"; };
@@ -253,6 +255,7 @@
 				A83B41DA2B4C49B1FE789CCD /* MealPlanView.swift */,
 				A8D83A4483E5DB70EE0AE39B /* WyldeScoreCard.swift */,
 				ADAB00E2228BCBC88233AD1C /* ProtocolTrackerView.swift */,
+				DFF7FBABC90464C1050C45FA /* CareMessagingView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -472,6 +475,7 @@
 				6059D435113646AA939D0277 /* ProtocolTrackerService.swift in Sources */,
 				85C0CA21BE351B3D2BEFA09E /* WyldeScoreCard.swift in Sources */,
 				F70AA43BF26D80A2976420EB /* ProtocolTrackerView.swift in Sources */,
+				E19B9D461B3AB1C2EE60070C /* CareMessagingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

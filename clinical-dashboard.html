@@ -75,6 +75,7 @@
       <div class="nav-item" data-section="patients" onclick="navTo('patients')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Patients</div>
       <div class="nav-item" data-section="protocols" onclick="navTo('protocols')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Protocols</div>
       <div class="nav-item" data-section="library" onclick="navTo('library')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>Product Library</div>
+      <div class="nav-item" data-section="messages" onclick="navTo('messages')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>Messages</div>
       <div class="nav-item" data-section="billing" onclick="navTo('billing')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>Billing</div>
       <div class="nav-item" data-section="settings" onclick="navTo('settings')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>Settings</div>
     </nav>
@@ -167,6 +168,7 @@ function render() {
     case 'patients': renderPatients(c); break;
     case 'protocols': renderProtocols(c); break;
     case 'library': renderLibrary(c); break;
+    case 'messages': renderMessages(c); break;
     case 'billing': c.innerHTML = comingSoon('Billing & Orders'); break;
     case 'settings': c.innerHTML = comingSoon('Settings'); break;
     case 'patientDetail': renderPatientDetail(c); break;
@@ -189,11 +191,21 @@ async function loadPatients() {
     const last7 = (checkins || []).slice(0, 7);
     const adherence = last7.length > 0 ? Math.round(last7.reduce((s, c) => s + (c.doses > 0 ? 1 : 0), 0) / last7.length * 100) : null;
     const pd = profile?.profile_data || {};
+    // Wylde Score
+    const { data: scoreData } = await sb.from('wylde_scores').select('*').eq('user_id', rel.patient_id).eq('date', today).single();
+    // Adherence logs (last 14 days)
+    const fourteenAgo = new Date(Date.now() - 14 * 86400000).toISOString();
+    const { data: adherenceLogs } = await sb.from('protocol_adherence_logs').select('*').eq('user_id', rel.patient_id).gte('created_at', fourteenAgo).order('created_at', { ascending: false });
+    // Unread messages
+    const { data: unreadMsgs } = await sb.from('care_messages').select('id').eq('recipient_id', currentUser.id).is('read_at', null);
+
     patients.push({
       id: rel.patient_id, name: pd.name || profile?.email?.split('@')[0] || 'Patient',
       email: profile?.email || '', linkedAt: rel.linked_at, adherence,
       todayCheckin: (checkins || []).find(c => c.date === today),
       checkins: checkins || [], protocols: protocols || [], prescriptions: rxs || [],
+      wyldeScore: scoreData, adherenceLogs: adherenceLogs || [], unreadMessages: (unreadMsgs || []).length,
+      relationshipId: rel.id,
     });
   }
   render();
@@ -284,6 +296,10 @@ function renderPatientDetail(c) {
         </div>
         <div class="flex gap-3">
           <div class="bg-cream rounded-xl p-4 text-center min-w-[90px]">
+            <div class="text-2xl font-semibold ${p.wyldeScore && p.wyldeScore.total_score >= 75 ? 'text-success' : p.wyldeScore && p.wyldeScore.total_score >= 50 ? 'text-warn' : 'text-ink2'}">${p.wyldeScore ? p.wyldeScore.total_score : '—'}</div>
+            <div class="text-xs text-ink3 mt-1">Wylde Score</div>
+          </div>
+          <div class="bg-cream rounded-xl p-4 text-center min-w-[90px]">
             <div class="text-2xl font-semibold ${p.adherence >= 80 ? 'text-success' : 'text-warn'}">${p.adherence ?? '—'}%</div>
             <div class="text-xs text-ink3 mt-1">Adherence</div>
           </div>
@@ -355,6 +371,35 @@ function renderPatientDetail(c) {
           </div>
         </div>
 
+        <!-- Protocol Adherence -->
+        ${p.adherenceLogs.length > 0 ? `
+        <div class="bg-white rounded-xl border border-line shadow-soft">
+          <div class="px-5 py-4 border-b border-line"><h3 class="text-sm font-semibold">Protocol Adherence</h3></div>
+          <div class="p-5 space-y-2">
+            ${p.adherenceLogs.slice(0, 10).map(l => `
+              <div class="flex items-center gap-3 py-1">
+                <span class="w-5 h-5 rounded-full ${l.status === 'taken' ? 'bg-successbg text-success' : 'bg-critbg text-crit'} text-xs flex items-center justify-center">${l.status === 'taken' ? '✓' : '✗'}</span>
+                <div class="flex-1"><div class="text-xs text-ink">${l.dose || 'Dose'}</div><div class="text-[10px] text-ink3">${fmtDate(l.created_at)}</div></div>
+                ${l.side_effects ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-warnbg text-warn">Side effect</span>' : ''}
+              </div>`).join('')}
+          </div>
+        </div>` : ''}
+
+        <!-- Messages -->
+        <div class="bg-white rounded-xl border border-line shadow-soft">
+          <div class="px-5 py-4 border-b border-line flex justify-between items-center">
+            <h3 class="text-sm font-semibold">Messages</h3>
+            ${p.unreadMessages > 0 ? '<span class="w-2 h-2 rounded-full bg-crit"></span>' : ''}
+          </div>
+          <div class="p-4" id="patientMessages" style="max-height:300px;overflow-y:auto;">
+            <div class="text-xs text-ink3">Loading...</div>
+          </div>
+          <div class="px-4 pb-4 flex gap-2">
+            <input id="msgInput" type="text" placeholder="Send a message..." class="flex-1 px-3 py-2 rounded-lg border border-line2 text-sm" onkeydown="if(event.key==='Enter')sendPatientMsg('${p.id}','${p.relationshipId}')" />
+            <button onclick="sendPatientMsg('${p.id}','${p.relationshipId}')" class="px-3 py-2 bg-sage text-white rounded-lg text-xs font-semibold hover:bg-sageDeep">Send</button>
+          </div>
+        </div>
+
         <!-- Notes -->
         <div class="bg-white rounded-xl border border-line shadow-soft">
           <div class="px-5 py-4 border-b border-line flex justify-between items-center">
@@ -370,6 +415,7 @@ function renderPatientDetail(c) {
     <button onclick="navTo('dashboard')" class="mt-6 text-sm text-ink3 hover:text-ink">← Back</button>`;
 
   loadPatientNotes(p.id);
+  if (p.relationshipId) loadPatientMessages(p.id, p.relationshipId);
 }
 
 async function loadPatientNotes(patientId) {
@@ -583,8 +629,82 @@ function fmtDate(d) { if (!d) return '—'; const dt = new Date(d.includes('T') 
 function scoreIcon(s) { return s >= 3 ? '<span class="inline-flex w-5 h-5 rounded-full bg-successbg text-success text-xs items-center justify-center">✓</span>' : s > 0 ? '<span class="inline-flex w-5 h-5 rounded-full bg-warnbg text-warn text-xs items-center justify-center">~</span>' : '<span class="inline-flex w-5 h-5 rounded-full bg-warmgray text-ink3 text-xs items-center justify-center">—</span>'; }
 function moodDot(m) { return m >= 4 ? '<span class="text-success">●</span>' : m >= 2 ? '<span class="text-warn">●</span>' : '<span class="text-crit">●</span>'; }
 function statCard(label, value, color) { return `<div class="stat-card bg-white rounded-xl p-4 border border-line shadow-soft"><div class="text-ink3 text-xs mb-1">${label}</div><div class="text-2xl font-semibold text-${color}">${value}</div></div>`; }
-function patientRow(p) { return `<div class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-cream transition" onclick="showPatient('${p.id}')"><div class="flex items-center gap-4"><div class="w-10 h-10 rounded-full bg-sageDim flex items-center justify-center text-sage text-sm font-semibold">${p.name.substring(0,2).toUpperCase()}</div><div><div class="text-sm font-medium">${p.name}</div><div class="text-xs text-ink3">${p.protocols.length > 0 ? p.protocols[0].name : 'No protocol'}</div></div></div><div class="flex items-center gap-6"><div class="text-right"><div class="text-xs text-ink3">Adherence</div><div class="text-sm font-semibold ${p.adherence >= 80 ? 'text-success' : p.adherence >= 50 ? 'text-warn' : 'text-crit'}">${p.adherence != null ? p.adherence + '%' : '—'}</div></div><div class="text-right"><div class="text-xs text-ink3">Today</div><div class="text-sm ${p.todayCheckin ? 'text-success' : 'text-ink3'}">${p.todayCheckin ? '✓' : '—'}</div></div><svg class="w-4 h-4 text-ink3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg></div></div>`; }
+function patientRow(p) {
+  const ws = p.wyldeScore;
+  return `<div class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-cream transition" onclick="showPatient('${p.id}')">
+    <div class="flex items-center gap-4">
+      <div class="w-10 h-10 rounded-full bg-sageDim flex items-center justify-center text-sage text-sm font-semibold">${p.name.substring(0,2).toUpperCase()}</div>
+      <div><div class="text-sm font-medium">${p.name}</div><div class="text-xs text-ink3">${p.protocols.length > 0 ? p.protocols[0].name : 'No protocol'}</div></div>
+    </div>
+    <div class="flex items-center gap-5">
+      <div class="text-right"><div class="text-xs text-ink3">Wylde Score</div><div class="text-sm font-semibold ${ws && ws.total_score >= 75 ? 'text-success' : ws && ws.total_score >= 50 ? 'text-warn' : 'text-ink2'}">${ws ? ws.total_score : '—'}</div></div>
+      <div class="text-right"><div class="text-xs text-ink3">Adherence</div><div class="text-sm font-semibold ${p.adherence >= 80 ? 'text-success' : p.adherence >= 50 ? 'text-warn' : 'text-crit'}">${p.adherence != null ? p.adherence + '%' : '—'}</div></div>
+      <div class="text-right"><div class="text-xs text-ink3">Today</div><div class="text-sm ${p.todayCheckin ? 'text-success' : 'text-ink3'}">${p.todayCheckin ? '✓' : '—'}</div></div>
+      ${p.unreadMessages > 0 ? '<span class="w-2 h-2 rounded-full bg-crit"></span>' : ''}
+      <svg class="w-4 h-4 text-ink3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+    </div>
+  </div>`;
+}
 function comingSoon(title) { return `<div class="flex items-center justify-center h-64"><div class="text-center"><div class="text-ink3 text-lg font-serif mb-2">${title}</div><div class="text-ink3 text-sm">Coming soon</div></div></div>`; }
+
+// ─── Messages ───
+
+async function loadPatientMessages(patientId, relationshipId) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  if (!token || !relationshipId) return;
+  const resp = await fetch(API + '/api/consumer/messages?relationship_id=' + relationshipId, {
+    headers: { 'Authorization': 'Bearer ' + token }
+  });
+  const msgEl = el('patientMessages');
+  if (resp.ok) {
+    const { messages } = await resp.json();
+    msgEl.innerHTML = messages.length ? messages.map(m => {
+      const isMe = m.sender_id === currentUser.id;
+      return `<div class="flex ${isMe ? 'justify-end' : 'justify-start'} mb-2">
+        <div class="max-w-[80%] px-3 py-2 rounded-xl text-sm ${isMe ? 'bg-sageDim text-ink' : 'bg-warmgray text-ink'}">
+          ${m.body}
+          <div class="text-[9px] text-ink3 mt-1">${fmtDate(m.created_at)}</div>
+        </div>
+      </div>`;
+    }).join('') : '<div class="text-xs text-ink3 text-center py-4">No messages yet</div>';
+    msgEl.scrollTop = msgEl.scrollHeight;
+  }
+}
+
+async function sendPatientMsg(patientId, relationshipId) {
+  const input = el('msgInput');
+  const body = input.value.trim();
+  if (!body) return;
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/consumer/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ body, relationship_id: relationshipId }),
+  });
+  if (resp.ok) {
+    input.value = '';
+    loadPatientMessages(patientId, relationshipId);
+  }
+}
+
+function renderMessages(c) {
+  const allUnread = patients.reduce((s, p) => s + (p.unreadMessages || 0), 0);
+  c.innerHTML = `
+    <div class="mb-6"><h2 class="text-lg font-semibold">Messages</h2><p class="text-sm text-ink3">${allUnread} unread</p></div>
+    <div class="bg-white rounded-xl border border-line shadow-soft divide-y divide-line">
+      ${patients.map(p => `
+        <div class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-cream transition" onclick="showPatient('${p.id}')">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full bg-sageDim flex items-center justify-center text-sage text-sm font-semibold">${p.name.substring(0,2).toUpperCase()}</div>
+            <div><div class="text-sm font-medium">${p.name}</div><div class="text-xs text-ink3">${p.protocols.length > 0 ? p.protocols[0].name : '—'}</div></div>
+          </div>
+          <div class="flex items-center gap-3">
+            ${p.unreadMessages > 0 ? `<span class="px-2 py-0.5 rounded-full bg-critbg text-crit text-xs font-semibold">${p.unreadMessages}</span>` : '<span class="text-xs text-ink3">—</span>'}
+            <svg class="w-4 h-4 text-ink3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+          </div>
+        </div>`).join('') || '<div class="px-5 py-12 text-center text-ink3 text-sm">No patients</div>'}
+    </div>`;
+}
 
 // ─── Init ───
 checkAuth();

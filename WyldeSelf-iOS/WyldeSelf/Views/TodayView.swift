@@ -78,7 +78,8 @@ struct TodayView: View {
                     .offset(y: didAppear ? 0 : 12)
                     .animation(.easeOut(duration: 0.6).delay(0.25), value: didAppear)
 
-                // Protocol Tracker
+                // Protocol Tracker — only shows when connected to a clinic
+                if CheckinSync.shared.hasActiveCareRelationship {
                 Button { showProtocolTracker = true } label: {
                     HStack(spacing: 14) {
                         Image(systemName: "pills.fill")
@@ -110,6 +111,7 @@ struct TodayView: View {
                 .opacity(didAppear ? 1 : 0)
                 .offset(y: didAppear ? 0 : 12)
                 .animation(.easeOut(duration: 0.6).delay(0.28), value: didAppear)
+                } // if hasActiveCareRelationship
 
                 // Coach — talk to your future self
                 coachCard
