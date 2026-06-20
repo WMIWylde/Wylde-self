@@ -20,25 +20,28 @@
             success: '#5C9678', successbg: 'rgba(92,150,120,0.10)',
             warn: '#C7965E', warnbg: 'rgba(199,150,94,0.10)',
             crit: '#B86570', critbg: 'rgba(184,101,112,0.10)',
+            sky: '#6B89A8', skybg: 'rgba(107,137,168,0.08)',
           },
           fontFamily: { sans: ['Inter','sans-serif'], serif: ['Fraunces','serif'] },
+          boxShadow: { soft: '0 1px 2px rgba(45,42,38,0.04), 0 4px 16px rgba(45,42,38,0.04)', card: '0 2px 4px rgba(45,42,38,0.04), 0 8px 24px rgba(45,42,38,0.05)' },
         }
       }
     };
   </script>
   <style>
     body { font-family: 'Inter', sans-serif; }
-    .nav-item { transition: all 0.15s; }
+    .nav-item { transition: all 0.15s; cursor: pointer; }
     .nav-item:hover, .nav-item.active { background: rgba(110,138,124,0.10); color: #5C7A6C; }
-    .stat-card { transition: transform 0.15s; }
-    .stat-card:hover { transform: translateY(-1px); }
-    .protocol-dot { width: 8px; height: 8px; border-radius: 50%; }
-    input:focus { outline: none; border-color: #6E8A7C; }
+    .stat-card:hover { transform: translateY(-1px); transition: transform 0.15s; }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: #6E8A7C; }
+    .modal-overlay { background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); }
+    .tab-btn { transition: all 0.15s; }
+    .tab-btn.active { color: #5C7A6C; border-bottom: 2px solid #6E8A7C; }
   </style>
 </head>
 <body class="bg-paper text-ink min-h-screen">
 
-<!-- Auth Screen -->
+<!-- ═══ AUTH ═══ -->
 <div id="authScreen" class="min-h-screen flex items-center justify-center">
   <div class="w-full max-w-sm p-8">
     <div class="text-center mb-8">
@@ -46,7 +49,7 @@
       <h1 class="font-serif text-2xl text-ink">Wylde Clinical</h1>
       <p class="text-ink3 text-sm mt-2">Sign in to your clinician account</p>
     </div>
-    <div class="space-y-4">
+    <div class="space-y-3">
       <input id="authEmail" type="email" placeholder="Email" class="w-full px-4 py-3 rounded-xl border border-line2 bg-white text-sm" />
       <input id="authPassword" type="password" placeholder="Password" class="w-full px-4 py-3 rounded-xl border border-line2 bg-white text-sm" />
       <button onclick="signIn()" class="w-full py-3 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">Sign In</button>
@@ -56,498 +59,532 @@
   </div>
 </div>
 
-<!-- Dashboard -->
+<!-- ═══ DASHBOARD ═══ -->
 <div id="dashboardScreen" class="hidden min-h-screen flex">
 
   <!-- Sidebar -->
-  <aside class="w-56 bg-white border-r border-line flex flex-col h-screen sticky top-0">
+  <aside class="w-56 bg-white border-r border-line flex flex-col h-screen sticky top-0 shrink-0">
     <div class="p-5 border-b border-line">
       <div class="flex items-center gap-2">
-        <img src="/logo-icon.png" alt="Wylde" class="w-8 h-8 rounded-lg" />
-        <div>
-          <div class="text-xs font-semibold tracking-wide text-ink">WYLDE</div>
-          <div class="text-[10px] text-ink3 tracking-widest">CLINICAL</div>
-        </div>
+        <img src="/logo-icon.png" alt="" class="w-8 h-8 rounded-lg" />
+        <div><div class="text-xs font-semibold tracking-wide text-ink">WYLDE</div><div class="text-[10px] text-ink3 tracking-widest">CLINICAL</div></div>
       </div>
     </div>
-    <nav class="flex-1 p-3 space-y-1">
-      <div class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium cursor-pointer" onclick="showSection('dashboard')">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4"/></svg>
-        Dashboard
-      </div>
-      <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ink2 cursor-pointer" onclick="showSection('patients')">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-        Patients
-      </div>
-      <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ink2 cursor-pointer" onclick="showSection('protocols')">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-        Protocols
-      </div>
-      <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ink2 cursor-pointer">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-        Insights
-      </div>
-      <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ink2 cursor-pointer">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-        Messaging
-      </div>
-      <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ink2 cursor-pointer">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
-        Settings
-      </div>
+    <nav class="flex-1 p-3 space-y-1" id="sidebarNav">
+      <div class="nav-item active" data-section="dashboard" onclick="navTo('dashboard')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4"/></svg>Dashboard</div>
+      <div class="nav-item" data-section="patients" onclick="navTo('patients')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Patients</div>
+      <div class="nav-item" data-section="protocols" onclick="navTo('protocols')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Protocols</div>
+      <div class="nav-item" data-section="library" onclick="navTo('library')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>Product Library</div>
+      <div class="nav-item" data-section="billing" onclick="navTo('billing')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>Billing</div>
+      <div class="nav-item" data-section="settings" onclick="navTo('settings')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>Settings</div>
     </nav>
     <div class="p-4 border-t border-line">
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded-full bg-sageDim flex items-center justify-center text-sage text-xs font-semibold" id="sidebarAvatar">DR</div>
-        <div class="flex-1 min-w-0">
-          <div class="text-xs font-medium text-ink truncate" id="sidebarName">Clinician</div>
-          <button onclick="signOut()" class="text-[10px] text-ink3 hover:text-crit">Sign out</button>
-        </div>
+        <div class="flex-1 min-w-0"><div class="text-xs font-medium text-ink truncate" id="sidebarName">Clinician</div><button onclick="signOut()" class="text-[10px] text-ink3 hover:text-crit">Sign out</button></div>
       </div>
     </div>
   </aside>
 
-  <!-- Main Content -->
-  <main class="flex-1 overflow-y-auto">
-
+  <!-- Main -->
+  <main class="flex-1 overflow-y-auto min-h-screen">
     <!-- Top Bar -->
     <div class="sticky top-0 bg-paper/90 backdrop-blur-md border-b border-line z-10 px-6 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <span class="text-ink3 text-sm">Patients</span>
-        <span class="text-ink3 text-sm">›</span>
-        <span class="text-ink text-sm font-medium" id="topBarTitle">Overview</span>
-      </div>
+      <div id="breadcrumb" class="text-sm"><span class="text-ink3">Dashboard</span></div>
       <div class="flex items-center gap-3">
-        <input id="acceptCodeInput" type="text" placeholder="Enter patient code..." class="px-3 py-1.5 rounded-lg border border-line2 bg-white text-xs w-40" />
-        <button onclick="acceptPatientCode()" class="px-3 py-1.5 bg-sage text-white rounded-lg text-xs font-semibold hover:bg-sageDeep transition">Link Patient</button>
+        <input id="acceptCodeInput" type="text" placeholder="Enter patient code..." class="px-3 py-1.5 rounded-lg border border-line2 bg-white text-xs w-44" />
+        <button onclick="acceptCode()" class="px-3 py-1.5 bg-sage text-white rounded-lg text-xs font-semibold hover:bg-sageDeep transition">Link Patient</button>
       </div>
     </div>
 
-    <!-- Dashboard Section -->
-    <div id="sectionDashboard" class="p-6">
-      <!-- Stats Row -->
-      <div class="grid grid-cols-4 gap-4 mb-6">
-        <div class="stat-card bg-white rounded-xl p-4 border border-line">
-          <div class="text-ink3 text-xs mb-1">Active Patients</div>
-          <div class="text-2xl font-semibold text-ink" id="statPatients">0</div>
-        </div>
-        <div class="stat-card bg-white rounded-xl p-4 border border-line">
-          <div class="text-ink3 text-xs mb-1">Avg Adherence</div>
-          <div class="text-2xl font-semibold text-success" id="statAdherence">—</div>
-        </div>
-        <div class="stat-card bg-white rounded-xl p-4 border border-line">
-          <div class="text-ink3 text-xs mb-1">Check-ins Today</div>
-          <div class="text-2xl font-semibold text-ink" id="statCheckins">0</div>
-        </div>
-        <div class="stat-card bg-white rounded-xl p-4 border border-line">
-          <div class="text-ink3 text-xs mb-1">Pending Codes</div>
-          <div class="text-2xl font-semibold text-warn" id="statPending">0</div>
-        </div>
-      </div>
-
-      <!-- Patient List -->
-      <div class="bg-white rounded-xl border border-line">
-        <div class="px-5 py-4 border-b border-line flex items-center justify-between">
-          <h2 class="text-sm font-semibold text-ink">Your Patients</h2>
-        </div>
-        <div id="patientList" class="divide-y divide-line">
-          <div class="px-5 py-8 text-center text-ink3 text-sm">Loading patients...</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Patient Detail Section -->
-    <div id="sectionPatientDetail" class="p-6 hidden">
-      <div id="patientDetailContent"></div>
-    </div>
-
+    <!-- Sections -->
+    <div id="content" class="p-6"></div>
   </main>
+</div>
+
+<!-- ═══ MODALS ═══ -->
+<div id="modalOverlay" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center">
+  <div id="modalContent" class="bg-white rounded-2xl shadow-card max-w-lg w-full mx-4 max-h-[85vh] overflow-y-auto"></div>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════
-//  Wylde Clinical Dashboard — Live Supabase Integration
-// ═══════════════════════════════════════════════════════════════
-
-const SUPABASE_URL = 'https://huclolzxzpitdpyogolu.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1Y2xvbHp4enBpdGRweW9nb2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2MDI2MzMsImV4cCI6MjA2MTE3ODYzM30.YOUR_ANON_KEY';
-
-// Try to get the real anon key from a meta tag or fallback
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY.includes('YOUR_')
-  ? 'sb_publishable_VFZOYd0PhqAh3AgZF1TcXQ_cX4ElGkl'
-  : SUPABASE_ANON_KEY);
-
+const API = 'https://www.wyldeself.com';
+const sb = supabase.createClient(
+  'https://huclolzxzpitdpyogolu.supabase.co',
+  'sb_publishable_VFZOYd0PhqAh3AgZF1TcXQ_cX4ElGkl'
+);
 let currentUser = null;
 let patients = [];
+let products = [];
+let currentSection = 'dashboard';
+let selectedPatient = null;
 
 // ─── Auth ───
-
 async function signIn() {
-  const email = document.getElementById('authEmail').value.trim();
-  const password = document.getElementById('authPassword').value;
-  const errEl = document.getElementById('authError');
-  errEl.classList.add('hidden');
-
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) {
-    errEl.textContent = error.message;
-    errEl.classList.remove('hidden');
-    return;
-  }
-  currentUser = data.user;
-  showDashboard();
-}
-
-async function signUp() {
-  const email = document.getElementById('authEmail').value.trim();
-  const password = document.getElementById('authPassword').value;
-  const errEl = document.getElementById('authError');
-  errEl.classList.add('hidden');
-
-  if (!email || !password) { errEl.textContent = 'Email and password required'; errEl.classList.remove('hidden'); return; }
-  if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters'; errEl.classList.remove('hidden'); return; }
-
-  const { data, error } = await sb.auth.signUp({ email, password });
+  const email = el('authEmail').value.trim(), pw = el('authPassword').value;
+  const errEl = el('authError'); errEl.classList.add('hidden');
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
   if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
-
-  if (data.user) {
-    currentUser = data.user;
-    showDashboard();
-  } else {
-    errEl.textContent = 'Check your email to confirm your account.';
-    errEl.classList.remove('hidden');
-    errEl.style.color = '#5C9678';
-  }
+  currentUser = data.user; initDashboard();
 }
-
-async function signOut() {
-  await sb.auth.signOut();
-  currentUser = null;
-  document.getElementById('authScreen').classList.remove('hidden');
-  document.getElementById('dashboardScreen').classList.add('hidden');
+async function signUp() {
+  const email = el('authEmail').value.trim(), pw = el('authPassword').value;
+  const errEl = el('authError'); errEl.classList.add('hidden');
+  if (!email || pw.length < 6) { errEl.textContent = 'Email and password (6+ chars) required'; errEl.classList.remove('hidden'); return; }
+  const { data, error } = await sb.auth.signUp({ email, password: pw });
+  if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
+  if (data.user) { currentUser = data.user; initDashboard(); }
 }
-
+async function signOut() { await sb.auth.signOut(); location.reload(); }
 async function checkAuth() {
   const { data: { user } } = await sb.auth.getUser();
-  if (user) {
-    currentUser = user;
-    showDashboard();
-  }
+  if (user) { currentUser = user; initDashboard(); }
 }
 
-function showDashboard() {
-  document.getElementById('authScreen').classList.add('hidden');
-  document.getElementById('dashboardScreen').classList.remove('hidden');
+function initDashboard() {
+  el('authScreen').classList.add('hidden');
+  el('dashboardScreen').classList.remove('hidden');
   const name = currentUser.email.split('@')[0];
-  document.getElementById('sidebarName').textContent = name;
-  document.getElementById('sidebarAvatar').textContent = name.substring(0,2).toUpperCase();
+  el('sidebarName').textContent = name;
+  el('sidebarAvatar').textContent = name.substring(0,2).toUpperCase();
   loadPatients();
+  loadProducts();
 }
 
 // ─── Navigation ───
-
-function showSection(section) {
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-  document.getElementById('sectionDashboard').classList.add('hidden');
-  document.getElementById('sectionPatientDetail').classList.add('hidden');
-  if (section === 'dashboard' || section === 'patients') {
-    document.getElementById('sectionDashboard').classList.remove('hidden');
-    document.getElementById('topBarTitle').textContent = 'Overview';
-  }
+function navTo(section) {
+  currentSection = section;
+  selectedPatient = null;
+  document.querySelectorAll('.nav-item').forEach(n => { n.classList.toggle('active', n.dataset.section === section); });
+  render();
 }
 
-// ─── Load Patients ───
-
-async function loadPatients() {
-  // Get care relationships where current user is the clinician
-  const { data: rels, error } = await sb
-    .from('care_relationships')
-    .select('patient_id, clinic_name, linked_at, status')
-    .eq('clinician_id', currentUser.id)
-    .eq('status', 'active');
-
-  if (error || !rels || rels.length === 0) {
-    document.getElementById('patientList').innerHTML = `
-      <div class="px-5 py-12 text-center">
-        <div class="text-ink3 text-sm mb-2">No patients linked yet</div>
-        <div class="text-ink3 text-xs">Have patients share their code from the Wylde Self app, then enter it above.</div>
-      </div>`;
-    document.getElementById('statPatients').textContent = '0';
-    return;
+function render() {
+  const c = el('content');
+  switch (currentSection) {
+    case 'dashboard': renderDashboard(c); break;
+    case 'patients': renderPatients(c); break;
+    case 'protocols': renderProtocols(c); break;
+    case 'library': renderLibrary(c); break;
+    case 'billing': c.innerHTML = comingSoon('Billing & Orders'); break;
+    case 'settings': c.innerHTML = comingSoon('Settings'); break;
+    case 'patientDetail': renderPatientDetail(c); break;
   }
+  el('breadcrumb').innerHTML = currentSection === 'patientDetail' && selectedPatient
+    ? `<span class="text-ink3 cursor-pointer hover:text-ink" onclick="navTo('patients')">Patients</span> <span class="text-ink3 mx-1">›</span> <span class="text-ink font-medium">${selectedPatient.name}</span>`
+    : `<span class="text-ink3">${currentSection.charAt(0).toUpperCase() + currentSection.slice(1)}</span>`;
+}
 
+// ─── Load Data ───
+async function loadPatients() {
+  const { data: rels } = await sb.from('care_relationships').select('patient_id, clinic_name, linked_at').eq('clinician_id', currentUser.id).eq('status', 'active');
   patients = [];
   const today = new Date().toISOString().split('T')[0];
-  let todayCheckins = 0;
-
-  for (const rel of rels) {
-    // Get patient profile
-    const { data: profile } = await sb
-      .from('profiles')
-      .select('id, email, profile_data')
-      .eq('id', rel.patient_id)
-      .single();
-
-    // Get recent check-ins
-    const { data: checkins } = await sb
-      .from('patient_checkins')
-      .select('*')
-      .eq('user_id', rel.patient_id)
-      .order('date', { ascending: false })
-      .limit(30);
-
-    const todayCheckin = (checkins || []).find(c => c.date === today);
-    if (todayCheckin) todayCheckins++;
-
-    // Compute adherence (last 7 days)
+  for (const rel of (rels || [])) {
+    const { data: profile } = await sb.from('profiles').select('id, email, profile_data').eq('id', rel.patient_id).single();
+    const { data: checkins } = await sb.from('patient_checkins').select('*').eq('user_id', rel.patient_id).order('date', { ascending: false }).limit(30);
+    const { data: protocols } = await sb.from('patient_protocols').select('*').eq('user_id', rel.patient_id).eq('status', 'active');
+    const { data: rxs } = await sb.from('patient_prescriptions').select('*').eq('user_id', rel.patient_id).eq('status', 'active');
     const last7 = (checkins || []).slice(0, 7);
-    const adherence = last7.length > 0
-      ? Math.round(last7.reduce((sum, c) => sum + (c.doses > 0 ? 1 : 0), 0) / last7.length * 100)
-      : null;
-
-    // Get active protocols
-    const { data: protocols } = await sb
-      .from('patient_protocols')
-      .select('id, name, phase, status, started_at')
-      .eq('user_id', rel.patient_id)
-      .eq('status', 'active');
-
-    const profileData = profile?.profile_data || {};
+    const adherence = last7.length > 0 ? Math.round(last7.reduce((s, c) => s + (c.doses > 0 ? 1 : 0), 0) / last7.length * 100) : null;
+    const pd = profile?.profile_data || {};
     patients.push({
-      id: rel.patient_id,
-      name: profileData.name || profile?.email?.split('@')[0] || 'Patient',
-      email: profile?.email || '',
-      linkedAt: rel.linked_at,
-      adherence,
-      todayCheckin,
-      checkins: checkins || [],
-      protocols: protocols || [],
+      id: rel.patient_id, name: pd.name || profile?.email?.split('@')[0] || 'Patient',
+      email: profile?.email || '', linkedAt: rel.linked_at, adherence,
+      todayCheckin: (checkins || []).find(c => c.date === today),
+      checkins: checkins || [], protocols: protocols || [], prescriptions: rxs || [],
     });
   }
-
-  // Update stats
-  document.getElementById('statPatients').textContent = patients.length;
-  document.getElementById('statCheckins').textContent = todayCheckins;
-
-  const avgAdherence = patients.filter(p => p.adherence != null);
-  document.getElementById('statAdherence').textContent = avgAdherence.length > 0
-    ? Math.round(avgAdherence.reduce((s, p) => s + p.adherence, 0) / avgAdherence.length) + '%'
-    : '—';
-
-  // Render patient list
-  renderPatientList();
+  render();
 }
 
-function renderPatientList() {
-  const container = document.getElementById('patientList');
-  if (patients.length === 0) {
-    container.innerHTML = '<div class="px-5 py-8 text-center text-ink3 text-sm">No patients yet</div>';
-    return;
-  }
+async function loadProducts() {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  if (!token) return;
+  const resp = await fetch(API + '/api/clinic/products', { headers: { 'Authorization': 'Bearer ' + token } });
+  if (resp.ok) { const d = await resp.json(); products = d.products || []; }
+}
 
-  container.innerHTML = patients.map(p => `
-    <div class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-cream transition" onclick="showPatient('${p.id}')">
-      <div class="flex items-center gap-4">
-        <div class="w-10 h-10 rounded-full bg-sageDim flex items-center justify-center text-sage text-sm font-semibold">
-          ${p.name.substring(0,2).toUpperCase()}
-        </div>
-        <div>
-          <div class="text-sm font-medium text-ink">${p.name}</div>
-          <div class="text-xs text-ink3">${p.protocols.length > 0 ? p.protocols[0].name : 'No active protocol'}</div>
-        </div>
-      </div>
-      <div class="flex items-center gap-6">
-        <div class="text-right">
-          <div class="text-xs text-ink3">Adherence</div>
-          <div class="text-sm font-semibold ${p.adherence >= 80 ? 'text-success' : p.adherence >= 50 ? 'text-warn' : 'text-crit'}">${p.adherence != null ? p.adherence + '%' : '—'}</div>
-        </div>
-        <div class="text-right">
-          <div class="text-xs text-ink3">Today</div>
-          <div class="text-sm ${p.todayCheckin ? 'text-success' : 'text-ink3'}">${p.todayCheckin ? '✓' : '—'}</div>
-        </div>
-        <svg class="w-4 h-4 text-ink3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
-      </div>
+// ─── Accept Code ───
+async function acceptCode() {
+  const code = el('acceptCodeInput').value.trim();
+  if (!code) return;
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/consumer/care/accept', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ code }),
+  });
+  const data = await resp.json();
+  if (data.linked) { el('acceptCodeInput').value = ''; alert('Patient linked!'); loadPatients(); }
+  else { alert(data.error || 'Failed to link'); }
+}
+
+// ─── Dashboard View ───
+function renderDashboard(c) {
+  const todayCount = patients.filter(p => p.todayCheckin).length;
+  const avgAdh = patients.filter(p => p.adherence != null);
+  const avg = avgAdh.length > 0 ? Math.round(avgAdh.reduce((s, p) => s + p.adherence, 0) / avgAdh.length) : 0;
+  c.innerHTML = `
+    <div class="grid grid-cols-4 gap-4 mb-6">
+      ${statCard('Active Patients', patients.length, 'ink')}
+      ${statCard('Avg Adherence', avg + '%', avg >= 80 ? 'success' : 'warn')}
+      ${statCard('Check-ins Today', todayCount + '/' + patients.length, 'ink')}
+      ${statCard('Total Protocols', patients.reduce((s,p) => s + p.protocols.length, 0), 'sage')}
     </div>
-  `).join('');
+    <div class="grid grid-cols-3 gap-6">
+      <div class="col-span-2">
+        <div class="bg-white rounded-xl border border-line shadow-soft">
+          <div class="px-5 py-4 border-b border-line flex justify-between items-center">
+            <h2 class="text-sm font-semibold">Your Patients</h2>
+            <span class="text-xs text-ink3">${patients.length} active</span>
+          </div>
+          <div class="divide-y divide-line">${patients.length ? patients.map(p => patientRow(p)).join('') : '<div class="px-5 py-12 text-center text-ink3 text-sm">No patients linked yet. Have them share a code from the Wylde Self app.</div>'}</div>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div class="bg-white rounded-xl border border-line shadow-soft p-5">
+          <h3 class="text-xs font-semibold text-ink3 uppercase tracking-wide mb-3">Recent Activity</h3>
+          ${patients.flatMap(p => p.checkins.slice(0,2).map(c => `<div class="flex items-start gap-2 py-2"><div class="w-1.5 h-1.5 rounded-full bg-sage mt-1.5 shrink-0"></div><div><div class="text-xs text-ink">${p.name} — ${c.workout > 0 ? 'Workout' : 'Check-in'}</div><div class="text-[10px] text-ink3">${fmtDate(c.date)}</div></div></div>`)).slice(0,8).join('') || '<div class="text-xs text-ink3">No recent activity</div>'}
+        </div>
+        <div class="bg-white rounded-xl border border-line shadow-soft p-5">
+          <h3 class="text-xs font-semibold text-ink3 uppercase tracking-wide mb-3">Product Library</h3>
+          <div class="text-xs text-ink2 mb-2">${products.length} products</div>
+          <button onclick="navTo('library')" class="text-xs text-sage font-medium hover:text-sageDeep">Manage products →</button>
+        </div>
+      </div>
+    </div>`;
 }
+
+// ─── Patients List ───
+function renderPatients(c) { renderDashboard(c); }
 
 // ─── Patient Detail ───
+function showPatient(id) {
+  selectedPatient = patients.find(p => p.id === id);
+  if (!selectedPatient) return;
+  currentSection = 'patientDetail';
+  render();
+}
 
-function showPatient(patientId) {
-  const patient = patients.find(p => p.id === patientId);
-  if (!patient) return;
-
-  document.getElementById('sectionDashboard').classList.add('hidden');
-  document.getElementById('sectionPatientDetail').classList.remove('hidden');
-  document.getElementById('topBarTitle').textContent = patient.name;
-
-  const last7 = patient.checkins.slice(0, 7);
-  const adherenceData = last7.map(c => ({
-    date: c.date,
-    doses: c.doses,
-    workout: c.workout,
-    nutrition: c.nutrition,
-    mood: c.mood,
-  }));
-
-  document.getElementById('patientDetailContent').innerHTML = `
-    <!-- Patient Header -->
-    <div class="bg-white rounded-xl border border-line p-6 mb-6">
+function renderPatientDetail(c) {
+  const p = selectedPatient;
+  if (!p) return;
+  c.innerHTML = `
+    <!-- Header -->
+    <div class="bg-white rounded-xl border border-line shadow-soft p-6 mb-6">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-5">
-          <div class="w-16 h-16 rounded-full bg-sageDim flex items-center justify-center text-sage text-xl font-semibold">
-            ${patient.name.substring(0,2).toUpperCase()}
-          </div>
+          <div class="w-16 h-16 rounded-full bg-sageDim flex items-center justify-center text-sage text-xl font-semibold">${p.name.substring(0,2).toUpperCase()}</div>
           <div>
-            <h2 class="text-xl font-semibold text-ink">${patient.name}</h2>
-            <p class="text-sm text-ink3">${patient.email}</p>
-            <p class="text-xs text-ink3 mt-1">Linked ${new Date(patient.linkedAt).toLocaleDateString()}</p>
+            <h2 class="text-xl font-semibold">${p.name}</h2>
+            <p class="text-sm text-ink3">${p.email}</p>
+            <p class="text-xs text-ink3 mt-1">Linked ${fmtDate(p.linkedAt)}</p>
           </div>
         </div>
-        <div class="flex gap-4">
-          <div class="stat-card bg-cream rounded-xl p-4 text-center min-w-[100px]">
-            <div class="text-2xl font-semibold ${patient.adherence >= 80 ? 'text-success' : 'text-warn'}">${patient.adherence ?? '—'}%</div>
+        <div class="flex gap-3">
+          <div class="bg-cream rounded-xl p-4 text-center min-w-[90px]">
+            <div class="text-2xl font-semibold ${p.adherence >= 80 ? 'text-success' : 'text-warn'}">${p.adherence ?? '—'}%</div>
             <div class="text-xs text-ink3 mt-1">Adherence</div>
           </div>
-          <div class="stat-card bg-cream rounded-xl p-4 text-center min-w-[100px]">
-            <div class="text-2xl font-semibold text-ink">${patient.checkins.length}</div>
+          <div class="bg-cream rounded-xl p-4 text-center min-w-[90px]">
+            <div class="text-2xl font-semibold text-ink">${p.checkins.length}</div>
             <div class="text-xs text-ink3 mt-1">Check-ins</div>
           </div>
         </div>
+      </div>
+      <div class="flex gap-2 mt-4">
+        <button onclick="showAssignProtocol('${p.id}')" class="px-4 py-2 bg-sage text-white rounded-lg text-xs font-semibold hover:bg-sageDeep transition">Assign Protocol</button>
+        <button onclick="showAddNote('${p.id}')" class="px-4 py-2 bg-white border border-line2 text-ink2 rounded-lg text-xs font-medium hover:bg-cream transition">Add Note</button>
       </div>
     </div>
 
     <div class="grid grid-cols-3 gap-6">
       <!-- Check-in History -->
-      <div class="col-span-2 bg-white rounded-xl border border-line">
-        <div class="px-5 py-4 border-b border-line">
-          <h3 class="text-sm font-semibold text-ink">Recent Check-ins</h3>
-        </div>
+      <div class="col-span-2 bg-white rounded-xl border border-line shadow-soft">
+        <div class="px-5 py-4 border-b border-line"><h3 class="text-sm font-semibold">Check-in History</h3></div>
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
-            <thead>
-              <tr class="text-ink3 text-xs border-b border-line">
-                <th class="px-5 py-3 text-left font-medium">Date</th>
-                <th class="px-3 py-3 text-center font-medium">Doses</th>
-                <th class="px-3 py-3 text-center font-medium">Workout</th>
-                <th class="px-3 py-3 text-center font-medium">Nutrition</th>
-                <th class="px-3 py-3 text-center font-medium">Mood</th>
-                <th class="px-3 py-3 text-center font-medium">Weight</th>
-                <th class="px-3 py-3 text-left font-medium">Notes</th>
-              </tr>
-            </thead>
+            <thead><tr class="text-ink3 text-xs border-b border-line">
+              <th class="px-5 py-3 text-left font-medium">Date</th>
+              <th class="px-3 py-3 text-center font-medium">Doses</th>
+              <th class="px-3 py-3 text-center font-medium">Workout</th>
+              <th class="px-3 py-3 text-center font-medium">Nutrition</th>
+              <th class="px-3 py-3 text-center font-medium">Mood</th>
+              <th class="px-3 py-3 text-center font-medium">Weight</th>
+              <th class="px-3 py-3 text-left font-medium">Notes</th>
+            </tr></thead>
             <tbody class="divide-y divide-line">
-              ${patient.checkins.slice(0, 14).map(c => `
-                <tr class="hover:bg-cream transition">
-                  <td class="px-5 py-3 text-ink">${formatDate(c.date)}</td>
-                  <td class="px-3 py-3 text-center">${scoreIcon(c.doses)}</td>
-                  <td class="px-3 py-3 text-center">${scoreIcon(c.workout)}</td>
-                  <td class="px-3 py-3 text-center">${scoreIcon(c.nutrition)}</td>
-                  <td class="px-3 py-3 text-center">${c.mood != null ? moodIcon(c.mood) : '<span class="text-ink3">—</span>'}</td>
-                  <td class="px-3 py-3 text-center text-ink2">${c.weight ? c.weight + ' lb' : '—'}</td>
-                  <td class="px-3 py-3 text-ink3 text-xs max-w-[200px] truncate">${c.notes || '—'}</td>
-                </tr>
-              `).join('')}
+              ${p.checkins.slice(0,21).map(ch => `<tr class="hover:bg-cream transition">
+                <td class="px-5 py-3">${fmtDate(ch.date)}</td>
+                <td class="px-3 py-3 text-center">${scoreIcon(ch.doses)}</td>
+                <td class="px-3 py-3 text-center">${scoreIcon(ch.workout)}</td>
+                <td class="px-3 py-3 text-center">${scoreIcon(ch.nutrition)}</td>
+                <td class="px-3 py-3 text-center">${ch.mood != null ? moodDot(ch.mood) : '<span class="text-ink3">—</span>'}</td>
+                <td class="px-3 py-3 text-center text-ink2">${ch.weight ? ch.weight + 'lb' : '—'}</td>
+                <td class="px-3 py-3 text-ink3 text-xs max-w-[160px] truncate">${ch.notes || '—'}</td>
+              </tr>`).join('')}
             </tbody>
           </table>
         </div>
       </div>
 
       <!-- Right Column -->
-      <div class="space-y-6">
-        <!-- Active Protocols -->
-        <div class="bg-white rounded-xl border border-line">
-          <div class="px-5 py-4 border-b border-line">
-            <h3 class="text-sm font-semibold text-ink">Active Protocols</h3>
-          </div>
+      <div class="space-y-4">
+        <!-- Current Protocols -->
+        <div class="bg-white rounded-xl border border-line shadow-soft">
+          <div class="px-5 py-4 border-b border-line"><h3 class="text-sm font-semibold">Current Protocols</h3></div>
           <div class="p-5 space-y-3">
-            ${patient.protocols.length > 0 ? patient.protocols.map(p => `
+            ${p.protocols.length ? p.protocols.map(pr => `
               <div class="flex items-center gap-3">
-                <div class="protocol-dot bg-success"></div>
-                <div>
-                  <div class="text-sm font-medium text-ink">${p.name}</div>
-                  <div class="text-xs text-ink3">${p.phase || 'Active'} · Started ${new Date(p.started_at).toLocaleDateString()}</div>
-                </div>
-              </div>
-            `).join('') : '<div class="text-sm text-ink3">No active protocols</div>'}
+                <div class="w-2 h-2 rounded-full bg-success"></div>
+                <div><div class="text-sm font-medium">${pr.name}</div><div class="text-xs text-ink3">${pr.phase || 'Active'} · Started ${fmtDate(pr.started_at)}</div></div>
+              </div>`).join('') : '<div class="text-sm text-ink3">No active protocols</div>'}
           </div>
         </div>
 
-        <!-- Recent Activity -->
-        <div class="bg-white rounded-xl border border-line">
-          <div class="px-5 py-4 border-b border-line">
-            <h3 class="text-sm font-semibold text-ink">Recent Activity</h3>
+        <!-- Prescriptions -->
+        <div class="bg-white rounded-xl border border-line shadow-soft">
+          <div class="px-5 py-4 border-b border-line"><h3 class="text-sm font-semibold">Active Prescriptions</h3></div>
+          <div class="p-5 space-y-2">
+            ${p.prescriptions.length ? p.prescriptions.map(rx => `
+              <div class="flex justify-between items-center py-1">
+                <div><div class="text-sm font-medium">${rx.drug}</div><div class="text-xs text-ink3">${rx.dose} · ${rx.frequency}</div></div>
+                <span class="text-[10px] px-2 py-0.5 rounded-full ${rx.status === 'active' ? 'bg-successbg text-success' : 'bg-warnbg text-warn'}">${rx.status}</span>
+              </div>`).join('') : '<div class="text-sm text-ink3">No prescriptions</div>'}
           </div>
-          <div class="p-5 space-y-3">
-            ${patient.checkins.slice(0, 5).map(c => `
-              <div class="flex items-start gap-3">
-                <div class="w-1.5 h-1.5 rounded-full bg-sage mt-2"></div>
-                <div>
-                  <div class="text-xs text-ink">${c.workout > 0 ? 'Workout completed' : c.doses > 0 ? 'Check-in logged' : 'Partial check-in'}</div>
-                  <div class="text-[10px] text-ink3">${formatDate(c.date)}</div>
-                </div>
-              </div>
-            `).join('') || '<div class="text-sm text-ink3">No recent activity</div>'}
+        </div>
+
+        <!-- Notes -->
+        <div class="bg-white rounded-xl border border-line shadow-soft">
+          <div class="px-5 py-4 border-b border-line flex justify-between items-center">
+            <h3 class="text-sm font-semibold">Notes</h3>
+            <button onclick="showAddNote('${p.id}')" class="text-xs text-sage font-medium">+ Add</button>
+          </div>
+          <div class="p-5" id="patientNotes">
+            <div class="text-xs text-ink3">Loading...</div>
           </div>
         </div>
       </div>
     </div>
+    <button onclick="navTo('dashboard')" class="mt-6 text-sm text-ink3 hover:text-ink">← Back</button>`;
 
-    <button onclick="backToList()" class="mt-6 px-4 py-2 text-sm text-ink3 hover:text-ink transition">← Back to patients</button>
-  `;
+  loadPatientNotes(p.id);
 }
 
-function backToList() {
-  document.getElementById('sectionDashboard').classList.remove('hidden');
-  document.getElementById('sectionPatientDetail').classList.add('hidden');
-  document.getElementById('topBarTitle').textContent = 'Overview';
-}
-
-// ─── Accept Patient Code ───
-
-async function acceptPatientCode() {
-  const input = document.getElementById('acceptCodeInput');
-  const code = input.value.trim();
-  if (!code) return;
-
+async function loadPatientNotes(patientId) {
   const token = (await sb.auth.getSession()).data?.session?.access_token;
-  if (!token) { alert('Not authenticated'); return; }
-
-  const resp = await fetch('https://www.wyldeself.com/api/consumer/care/accept', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ code }),
-  });
-
-  const data = await resp.json();
-  if (data.linked) {
-    input.value = '';
-    alert('Patient linked successfully!');
-    loadPatients();
-  } else {
-    alert(data.error || 'Failed to link patient');
+  const resp = await fetch(API + '/api/clinic/notes?patient_id=' + patientId, { headers: { 'Authorization': 'Bearer ' + token } });
+  const notesEl = el('patientNotes');
+  if (resp.ok) {
+    const { notes } = await resp.json();
+    notesEl.innerHTML = notes.length ? notes.map(n => `<div class="py-2 border-b border-line last:border-0"><div class="text-sm text-ink">${n.content}</div><div class="text-[10px] text-ink3 mt-1">${fmtDate(n.created_at)} · ${n.note_type}</div></div>`).join('') : '<div class="text-xs text-ink3">No notes yet</div>';
   }
 }
 
+// ─── Library View ───
+function renderLibrary(c) {
+  const cats = { peptide: '💉', supplement: '💊', medication: '💊', service: '🩺', lab_test: '🧪' };
+  c.innerHTML = `
+    <div class="flex justify-between items-center mb-6">
+      <div><h2 class="text-lg font-semibold">Product Library</h2><p class="text-sm text-ink3">Peptides, supplements, medications, and services</p></div>
+      <button onclick="showAddProduct()" class="px-4 py-2 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep transition">+ Add Product</button>
+    </div>
+    <div class="grid grid-cols-3 gap-4">
+      ${products.map(p => `
+        <div class="bg-white rounded-xl border border-line shadow-soft p-5 hover:shadow-card transition cursor-pointer" onclick="showEditProduct('${p.id}')">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-lg">${cats[p.category] || '📦'}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full ${p.in_stock ? 'bg-successbg text-success' : 'bg-critbg text-crit'}">${p.in_stock ? 'In Stock' : 'Out'}</span>
+          </div>
+          <h3 class="text-sm font-semibold mb-1">${p.name}</h3>
+          <p class="text-xs text-ink3 mb-2">${p.category} · ${p.method || '—'}</p>
+          <div class="flex justify-between items-end">
+            <div><div class="text-xs text-ink3">Dose</div><div class="text-sm font-medium">${p.typical_dose || '—'}</div></div>
+            <div class="text-right"><div class="text-xs text-ink3">Price</div><div class="text-sm font-semibold text-sage">$${p.price ? Number(p.price).toFixed(2) : '—'}</div></div>
+          </div>
+        </div>`).join('') || '<div class="col-span-3 text-center py-12 text-ink3">No products yet. Add your first peptide, supplement, or service.</div>'}
+    </div>`;
+}
+
+// ─── Protocols View ───
+function renderProtocols(c) {
+  const allProtocols = patients.flatMap(p => p.protocols.map(pr => ({ ...pr, patientName: p.name, patientId: p.id })));
+  c.innerHTML = `
+    <div class="flex justify-between items-center mb-6">
+      <div><h2 class="text-lg font-semibold">Active Protocols</h2><p class="text-sm text-ink3">All patient protocols</p></div>
+    </div>
+    <div class="bg-white rounded-xl border border-line shadow-soft">
+      <div class="divide-y divide-line">
+        ${allProtocols.length ? allProtocols.map(pr => `
+          <div class="px-5 py-4 flex items-center justify-between hover:bg-cream transition cursor-pointer" onclick="showPatient('${pr.patientId}')">
+            <div class="flex items-center gap-4">
+              <div class="w-2 h-2 rounded-full bg-success"></div>
+              <div><div class="text-sm font-medium">${pr.name}</div><div class="text-xs text-ink3">${pr.patientName} · ${pr.phase || 'Active'}</div></div>
+            </div>
+            <div class="text-xs text-ink3">Started ${fmtDate(pr.started_at)}</div>
+          </div>`).join('') : '<div class="px-5 py-12 text-center text-ink3 text-sm">No active protocols. Assign one from a patient\'s detail page.</div>'}
+      </div>
+    </div>`;
+}
+
+// ─── Modals ───
+function openModal(html) { el('modalContent').innerHTML = html; el('modalOverlay').classList.remove('hidden'); }
+function closeModal() { el('modalOverlay').classList.add('hidden'); }
+el('modalOverlay').addEventListener('click', e => { if (e.target === el('modalOverlay')) closeModal(); });
+
+function showAddProduct() {
+  openModal(`
+    <div class="p-6">
+      <h2 class="text-lg font-semibold mb-4">Add Product</h2>
+      <div class="space-y-3">
+        <input id="pName" placeholder="Product name" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
+        <select id="pCategory" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm bg-white">
+          <option value="peptide">Peptide</option><option value="supplement">Supplement</option><option value="medication">Medication</option><option value="service">Service</option><option value="lab_test">Lab Test</option>
+        </select>
+        <textarea id="pDesc" placeholder="Description" rows="2" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm"></textarea>
+        <div class="grid grid-cols-2 gap-3">
+          <input id="pDose" placeholder="Typical dose" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
+          <input id="pFreq" placeholder="Frequency" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <select id="pMethod" class="px-3 py-2 rounded-lg border border-line2 text-sm bg-white">
+            <option value="">Method...</option><option>Injection</option><option>Oral</option><option>Topical</option><option>Sublingual</option><option>IV</option><option>Nasal</option>
+          </select>
+          <input id="pCycle" placeholder="Cycle length" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <input id="pPrice" type="number" step="0.01" placeholder="Price" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
+          <select id="pPriceUnit" class="px-3 py-2 rounded-lg border border-line2 text-sm bg-white">
+            <option value="per unit">Per Unit</option><option value="per month">Per Month</option><option value="per cycle">Per Cycle</option><option value="per session">Per Session</option>
+          </select>
+        </div>
+        <textarea id="pMech" placeholder="Mechanism of action" rows="2" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm"></textarea>
+        <div class="flex gap-2 pt-2">
+          <button onclick="saveProduct()" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Save Product</button>
+          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+async function saveProduct() {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const body = {
+    name: el('pName').value, category: el('pCategory').value, description: el('pDesc').value,
+    typical_dose: el('pDose').value, frequency: el('pFreq').value, method: el('pMethod').value,
+    cycle_length: el('pCycle').value, price: parseFloat(el('pPrice').value) || null,
+    price_unit: el('pPriceUnit').value, mechanism: el('pMech').value,
+  };
+  const resp = await fetch(API + '/api/clinic/products', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify(body),
+  });
+  if (resp.ok) { closeModal(); await loadProducts(); render(); }
+  else { alert('Failed to save'); }
+}
+
+function showEditProduct(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  openModal(`
+    <div class="p-6">
+      <h2 class="text-lg font-semibold mb-2">${p.name}</h2>
+      <p class="text-xs text-ink3 mb-4">${p.category} · ${p.method || '—'}</p>
+      <div class="space-y-3 text-sm">
+        <div><span class="text-ink3">Description:</span> <span class="text-ink">${p.description || '—'}</span></div>
+        <div><span class="text-ink3">Mechanism:</span> <span class="text-ink">${p.mechanism || '—'}</span></div>
+        <div><span class="text-ink3">Dose:</span> <span class="text-ink">${p.typical_dose || '—'}</span></div>
+        <div><span class="text-ink3">Frequency:</span> <span class="text-ink">${p.frequency || '—'}</span></div>
+        <div><span class="text-ink3">Cycle:</span> <span class="text-ink">${p.cycle_length || '—'}</span></div>
+        <div><span class="text-ink3">Price:</span> <span class="text-ink font-semibold text-sage">$${p.price ? Number(p.price).toFixed(2) : '—'} ${p.price_unit}</span></div>
+        <div class="flex gap-2 pt-3">
+          <button onclick="deleteProduct('${p.id}')" class="px-4 py-2 bg-critbg text-crit rounded-lg text-xs font-medium">Remove</button>
+          <button onclick="closeModal()" class="px-4 py-2 border border-line2 rounded-lg text-xs text-ink2">Close</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+async function deleteProduct(id) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  await fetch(API + '/api/clinic/products', {
+    method: 'DELETE', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ id }),
+  });
+  closeModal(); await loadProducts(); render();
+}
+
+function showAssignProtocol(patientId) {
+  openModal(`
+    <div class="p-6">
+      <h2 class="text-lg font-semibold mb-4">Assign Protocol</h2>
+      <div class="space-y-3">
+        <input id="protoName" placeholder="Protocol name (e.g. Hormone Balance)" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
+        <input id="protoPhase" placeholder="Phase (e.g. Loading, Maintenance)" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
+        <div class="border border-line rounded-lg p-3">
+          <div class="text-xs font-medium text-ink3 mb-2">Select products to include:</div>
+          ${products.map(p => `
+            <label class="flex items-center gap-2 py-1.5 cursor-pointer">
+              <input type="checkbox" class="proto-rx" value="${p.id}" data-name="${p.name}" data-dose="${p.typical_dose || ''}" data-freq="${p.frequency || 'daily'}" data-method="${p.method || ''}" />
+              <span class="text-sm">${p.name}</span>
+              <span class="text-xs text-ink3 ml-auto">${p.typical_dose || ''}</span>
+            </label>`).join('') || '<div class="text-xs text-ink3">No products in library. Add some first.</div>'}
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button onclick="assignProtocol('${patientId}')" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Assign</button>
+          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+async function assignProtocol(patientId) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const checked = document.querySelectorAll('.proto-rx:checked');
+  const prescriptions = Array.from(checked).map(cb => ({
+    name: cb.dataset.name, dose: cb.dataset.dose, frequency: cb.dataset.freq, method: cb.dataset.method,
+  }));
+  const resp = await fetch(API + '/api/clinic/assign-protocol', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ patient_id: patientId, protocol_name: el('protoName').value, phase: el('protoPhase').value, prescriptions }),
+  });
+  if (resp.ok) { closeModal(); await loadPatients(); currentSection = 'patientDetail'; render(); }
+  else { const d = await resp.json(); alert(d.error || 'Failed'); }
+}
+
+function showAddNote(patientId) {
+  openModal(`
+    <div class="p-6">
+      <h2 class="text-lg font-semibold mb-4">Add Note</h2>
+      <textarea id="noteContent" rows="4" placeholder="Write your note..." class="w-full px-3 py-2 rounded-lg border border-line2 text-sm mb-3"></textarea>
+      <select id="noteType" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm bg-white mb-3">
+        <option value="general">General</option><option value="protocol">Protocol</option><option value="lab">Lab Result</option><option value="follow_up">Follow-up</option>
+      </select>
+      <div class="flex gap-2">
+        <button onclick="saveNote('${patientId}')" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Save Note</button>
+        <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+      </div>
+    </div>`);
+}
+
+async function saveNote(patientId) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/notes', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ patient_id: patientId, content: el('noteContent').value, note_type: el('noteType').value }),
+  });
+  if (resp.ok) { closeModal(); loadPatientNotes(patientId); }
+}
+
 // ─── Helpers ───
-
-function formatDate(dateStr) {
-  const d = new Date(dateStr + 'T00:00:00');
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-
-function scoreIcon(score) {
-  if (score >= 3) return '<span class="inline-block w-5 h-5 rounded-full bg-successbg text-success text-xs leading-5 text-center">✓</span>';
-  if (score > 0) return '<span class="inline-block w-5 h-5 rounded-full bg-warnbg text-warn text-xs leading-5 text-center">~</span>';
-  return '<span class="inline-block w-5 h-5 rounded-full bg-line text-ink3 text-xs leading-5 text-center">—</span>';
-}
-
-function moodIcon(mood) {
-  if (mood >= 4) return '<span class="text-success">●</span>';
-  if (mood >= 2) return '<span class="text-warn">●</span>';
-  return '<span class="text-crit">●</span>';
-}
+function el(id) { return document.getElementById(id); }
+function fmtDate(d) { if (!d) return '—'; const dt = new Date(d.includes('T') ? d : d + 'T00:00:00'); return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
+function scoreIcon(s) { return s >= 3 ? '<span class="inline-flex w-5 h-5 rounded-full bg-successbg text-success text-xs items-center justify-center">✓</span>' : s > 0 ? '<span class="inline-flex w-5 h-5 rounded-full bg-warnbg text-warn text-xs items-center justify-center">~</span>' : '<span class="inline-flex w-5 h-5 rounded-full bg-warmgray text-ink3 text-xs items-center justify-center">—</span>'; }
+function moodDot(m) { return m >= 4 ? '<span class="text-success">●</span>' : m >= 2 ? '<span class="text-warn">●</span>' : '<span class="text-crit">●</span>'; }
+function statCard(label, value, color) { return `<div class="stat-card bg-white rounded-xl p-4 border border-line shadow-soft"><div class="text-ink3 text-xs mb-1">${label}</div><div class="text-2xl font-semibold text-${color}">${value}</div></div>`; }
+function patientRow(p) { return `<div class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-cream transition" onclick="showPatient('${p.id}')"><div class="flex items-center gap-4"><div class="w-10 h-10 rounded-full bg-sageDim flex items-center justify-center text-sage text-sm font-semibold">${p.name.substring(0,2).toUpperCase()}</div><div><div class="text-sm font-medium">${p.name}</div><div class="text-xs text-ink3">${p.protocols.length > 0 ? p.protocols[0].name : 'No protocol'}</div></div></div><div class="flex items-center gap-6"><div class="text-right"><div class="text-xs text-ink3">Adherence</div><div class="text-sm font-semibold ${p.adherence >= 80 ? 'text-success' : p.adherence >= 50 ? 'text-warn' : 'text-crit'}">${p.adherence != null ? p.adherence + '%' : '—'}</div></div><div class="text-right"><div class="text-xs text-ink3">Today</div><div class="text-sm ${p.todayCheckin ? 'text-success' : 'text-ink3'}">${p.todayCheckin ? '✓' : '—'}</div></div><svg class="w-4 h-4 text-ink3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg></div></div>`; }
+function comingSoon(title) { return `<div class="flex items-center justify-center h-64"><div class="text-center"><div class="text-ink3 text-lg font-serif mb-2">${title}</div><div class="text-ink3 text-sm">Coming soon</div></div></div>`; }
 
 // ─── Init ───
 checkAuth();

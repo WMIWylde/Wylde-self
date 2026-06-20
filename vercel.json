@@ -22,7 +22,10 @@
     "api/consumer/progress.js": { "maxDuration": 10 },
     "api/consumer/care/invite.js": { "maxDuration": 10 },
     "api/consumer/care/accept.js": { "maxDuration": 10 },
-    "api/consumer/care/relationships.js": { "maxDuration": 10 }
+    "api/consumer/care/relationships.js": { "maxDuration": 10 },
+    "api/clinic/products.js": { "maxDuration": 10 },
+    "api/clinic/notes.js": { "maxDuration": 10 },
+    "api/clinic/assign-protocol.js": { "maxDuration": 10 }
   },
   "crons": [
     {
