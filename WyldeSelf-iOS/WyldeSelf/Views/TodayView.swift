@@ -7,6 +7,15 @@ struct TodayView: View {
     @State private var healthCalories: Int = 0
     @State private var showPaywall = false
     @State private var showStartToday = false
+    @State private var showWorkout = false
+    @State private var showQiGong = false
+    @State private var showMeditation = false
+    @State private var showCoach = false
+    @State private var showFoodScanner = false
+    @State private var showMealPlan = false
+    @State private var showProtocolTracker = false
+    @StateObject private var scoreService = WyldeScoreService.shared
+    @State private var ritualExpanded = true
 
     @State private var didAppear = false
 
@@ -33,10 +42,22 @@ struct TodayView: View {
                 // Health. Reduces cognitive load so the user knows what
                 // to do next, not everything at once.
 
-                workoutCard
+                // Wylde Score
+                WyldeScoreCard(score: scoreService.todayScore)
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 12)
+                    .animation(.easeOut(duration: 0.6).delay(0.08), value: didAppear)
+
+                // Morning Ritual — first thing in the day
+                morningProtocolCard
                     .opacity(didAppear ? 1 : 0)
                     .offset(y: didAppear ? 0 : 12)
                     .animation(.easeOut(duration: 0.6).delay(0.10), value: didAppear)
+
+                workoutCard
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 12)
+                    .animation(.easeOut(duration: 0.6).delay(0.15), value: didAppear)
 
                 walkCard
                     .opacity(didAppear ? 1 : 0)
@@ -57,19 +78,44 @@ struct TodayView: View {
                     .offset(y: didAppear ? 0 : 12)
                     .animation(.easeOut(duration: 0.6).delay(0.25), value: didAppear)
 
-                // Morning Protocol — moved lower since users can also run
-                // it inside the StartTodayFlow now. Stays here for
-                // direct check-off when they don't want the guided flow.
-                if !appState.morningProtocolCompleted {
-                    morningProtocolCard
-                        .transition(.asymmetric(
-                            insertion: .opacity.combined(with: .move(edge: .top)),
-                            removal:   .opacity.combined(with: .scale(scale: 0.95))
-                        ))
-                        .opacity(didAppear ? 1 : 0)
-                        .offset(y: didAppear ? 0 : 12)
-                        .animation(.easeOut(duration: 0.6).delay(0.30), value: didAppear)
+                // Protocol Tracker
+                Button { showProtocolTracker = true } label: {
+                    HStack(spacing: 14) {
+                        Image(systemName: "pills.fill")
+                            .font(.system(size: 18))
+                            .foregroundColor(Color(hex: "B68BFF"))
+                            .frame(width: 44, height: 44)
+                            .background(Color(hex: "B68BFF").opacity(0.10))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("PROTOCOL TRACKER")
+                                .font(.system(size: 10, weight: .bold))
+                                .tracking(1.6)
+                                .foregroundColor(Color(hex: "B68BFF"))
+                            Text("View prescriptions and log doses")
+                                .font(.system(size: 13))
+                                .foregroundColor(Color(hex: "A6A29A"))
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12))
+                            .foregroundColor(Color(hex: "6E6B65"))
+                    }
+                    .padding(16)
+                    .background(Color(hex: "111111"))
+                    .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color(hex: "B68BFF").opacity(0.15), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
+                .buttonStyle(.plain)
+                .opacity(didAppear ? 1 : 0)
+                .offset(y: didAppear ? 0 : 12)
+                .animation(.easeOut(duration: 0.6).delay(0.28), value: didAppear)
+
+                // Coach — talk to your future self
+                coachCard
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 12)
+                    .animation(.easeOut(duration: 0.6).delay(0.30), value: didAppear)
 
                 healthCard
                     .opacity(didAppear ? 1 : 0)
@@ -90,16 +136,49 @@ struct TodayView: View {
             .padding(.horizontal, Theme.screenPadding)
             .padding(.top, 60)
         }
-        .background(Theme.background)
+        .background(
+            ZStack {
+                Theme.background
+                AmbientBackground(
+                    glowColor: Color(hex: "C9A86A"),
+                    secondaryGlow: Color(hex: "7A8771")
+                ).opacity(0.6)
+            }
+            .clipped()
+        )
         .onAppear {
             loadHealthData()
-            // First-time-on-screen staggered fade up. Once shown, stays visible.
-            if !didAppear {
-                didAppear = true
-            }
+            if !didAppear { didAppear = true }
+            Task { await scoreService.updateScore(appState: appState) }
         }
         .sheet(isPresented: $showPaywall) {
             PaywallView().environmentObject(appState)
+        }
+        .fullScreenCover(isPresented: $showProtocolTracker) {
+            ProtocolTrackerView()
+                .environmentObject(appState)
+        }
+        .fullScreenCover(isPresented: $showFoodScanner) {
+            FoodScannerView()
+                .environmentObject(appState)
+        }
+        .fullScreenCover(isPresented: $showMealPlan) {
+            MealPlanView()
+                .environmentObject(appState)
+        }
+        .fullScreenCover(isPresented: $showCoach) {
+            CoachChatView()
+                .environmentObject(appState)
+        }
+        .fullScreenCover(isPresented: $showQiGong) {
+            QiGongFlowView()
+        }
+        .fullScreenCover(isPresented: $showMeditation) {
+            GuidedMeditationView()
+        }
+        .fullScreenCover(isPresented: $showWorkout) {
+            workoutDestination
+                .environmentObject(appState)
         }
         .sheet(isPresented: $showStartToday) {
             StartTodayFlow(isPresented: $showStartToday)
@@ -193,93 +272,218 @@ struct TodayView: View {
     // MARK: - Hero Card
 
     private var heroCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("DAY \(appState.currentDay)")
-                .font(.system(size: 32, weight: .bold))
-                .foregroundColor(Theme.text)
-            Text("of becoming who you said you'd be")
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(Theme.muted)
-
-            // Primary CTA — opens the StartTodayFlow guided 6-step flow.
-            // Native equivalent of the web "Start Today" button.
-            Button {
-                HapticManager.shared.impact(.medium)
-                showStartToday = true
-            } label: {
-                HStack(spacing: 8) {
-                    Text("Start Today")
-                        .font(.system(size: 14, weight: .bold))
-                        .tracking(1.0)
-                    Image(systemName: "arrow.right")
-                        .font(.system(size: 12, weight: .bold))
-                }
-                .foregroundColor(Color(hex: "0B0B0B"))
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(
-                    RoundedRectangle(cornerRadius: 12).fill(Theme.gold)
-                )
+        ZStack(alignment: .bottomLeading) {
+            // Hero background image
+            GeometryReader { geo in
+                Image("HeroBackground")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .clipped()
             }
-            .buttonStyle(.plain)
-            .padding(.top, 6)
+
+            // Gradient overlays matching web's .ov-hero::before
+            LinearGradient(
+                colors: [
+                    Color(hex: "20241C").opacity(0.52),
+                    Color(hex: "20241C").opacity(0.25),
+                    Color(hex: "20241C").opacity(0.08),
+                    Color(hex: "20241C").opacity(0.02)
+                ],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+
+            LinearGradient(
+                colors: [.clear, .clear, Color(hex: "20241C").opacity(0.50)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+
+            // Content
+            VStack(alignment: .leading, spacing: 8) {
+                Spacer()
+
+                Text("DAY \(appState.currentDay)")
+                    .font(.system(size: 38, weight: .bold))
+                    .foregroundColor(.white)
+
+                Text("of becoming who you said you'd be")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.white.opacity(0.7))
+
+                // Primary CTA
+                Button {
+                    HapticManager.shared.impact(.medium)
+                    showStartToday = true
+                } label: {
+                    HStack(spacing: 8) {
+                        Text("Start Today")
+                            .font(.system(size: 14, weight: .bold))
+                            .tracking(1.0)
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 12, weight: .bold))
+                    }
+                    .foregroundColor(Color(hex: "1A1816"))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(
+                        LinearGradient(
+                            colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                    .shadow(color: .black.opacity(0.35), radius: 10, x: 0, y: 6)
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 6)
+            }
+            .padding(24)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(Theme.cardPadding)
-        .background(Theme.surface)
-        .cornerRadius(Theme.cardRadius)
-        .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
+        .frame(height: 340)
+        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .shadow(color: .black.opacity(0.3), radius: 16, x: 0, y: 8)
     }
 
     // MARK: - Morning Protocol
 
     private var morningProtocolCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack {
-                Image(systemName: "sunrise.fill")
-                    .foregroundColor(Theme.gold)
-                Text("Morning Protocol")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(Theme.text)
-                Spacer()
-                Text("\(completedActionsCount)/\(appState.morningProtocolActions.count)")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(Theme.muted)
-            }
-
-            ForEach(Array(appState.morningProtocolActions.enumerated()), id: \.element.id) { index, action in
-                HStack(spacing: 14) {
-                    Image(systemName: action.completed ? "checkmark.circle.fill" : "circle")
-                        .foregroundColor(action.completed ? Theme.sage : Theme.muted)
-                        .font(.system(size: 22))
-                        .onTapGesture {
-                            toggleMorningAction(index)
-                        }
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(action.name)
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(action.completed ? Theme.muted : Theme.text)
-                            .strikethrough(action.completed, color: Theme.muted)
-                        Text(action.desc)
-                            .font(.system(size: 12))
-                            .foregroundColor(Theme.muted)
-                            .lineLimit(2)
-                    }
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) { ritualExpanded.toggle() }
+            } label: {
+                HStack {
+                    Image(systemName: "sunrise.fill")
+                        .foregroundColor(Theme.gold)
+                    Text("Morning Ritual")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(Theme.text)
                     Spacer()
-                    Text("\(action.dur)m")
-                        .font(.system(size: 11, weight: .medium))
+                    Text("\(completedActionsCount)/\(appState.morningProtocolActions.count)")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(Theme.muted)
+                    Image(systemName: ritualExpanded ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 12, weight: .medium))
                         .foregroundColor(Theme.muted)
                 }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    toggleMorningAction(index)
+            }
+            .buttonStyle(.plain)
+
+            if ritualExpanded {
+            ForEach(Array(appState.morningProtocolActions.enumerated()), id: \.element.id) { index, action in
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(spacing: 14) {
+                        Image(systemName: action.completed ? "checkmark.circle.fill" : "circle")
+                            .foregroundColor(action.completed ? Theme.sage : Theme.muted)
+                            .font(.system(size: 22))
+                            .onTapGesture {
+                                toggleMorningAction(index)
+                            }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(action.name)
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundColor(action.completed ? Theme.muted : Theme.text)
+                                .strikethrough(action.completed, color: Theme.muted)
+                            Text(action.desc)
+                                .font(.system(size: 12))
+                                .foregroundColor(Theme.muted)
+                                .lineLimit(3)
+                        }
+                        Spacer()
+                        Text("\(action.dur)m")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(Theme.muted)
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        if action.id == "qigong" && !action.completed {
+                            showQiGong = true
+                            toggleMorningAction(index)
+                        } else if action.id == "meditation" && !action.completed {
+                            showMeditation = true
+                            toggleMorningAction(index)
+                        } else {
+                            toggleMorningAction(index)
+                        }
+                    }
+
+                    // Reading tracker — shows under the reading action
+                    if action.id == "reading" {
+                        readingTracker
+                            .padding(.leading, 36)
+                            .padding(.top, 8)
+                    }
                 }
             }
+            } // if ritualExpanded
         }
         .padding(Theme.cardPadding)
         .background(Theme.surface)
         .cornerRadius(Theme.cardRadius)
         .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
+    }
+
+    private var readingTracker: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            // Current book
+            if appState.currentBook.isEmpty {
+                HStack(spacing: 6) {
+                    Image(systemName: "book.fill")
+                        .font(.system(size: 11))
+                        .foregroundColor(Theme.gold)
+                    TextField("What are you reading?", text: $appState.currentBook)
+                        .font(.system(size: 13))
+                        .foregroundColor(Theme.text)
+                }
+            } else {
+                HStack(spacing: 6) {
+                    Image(systemName: "book.fill")
+                        .font(.system(size: 11))
+                        .foregroundColor(Theme.gold)
+                    Text(appState.currentBook)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(Theme.text)
+                        .lineLimit(1)
+                    Spacer()
+                    Button {
+                        appState.currentBook = ""
+                    } label: {
+                        Image(systemName: "pencil")
+                            .font(.system(size: 10))
+                            .foregroundColor(Theme.muted)
+                    }
+                }
+
+                // Pages read
+                HStack(spacing: 8) {
+                    Text("Pages today:")
+                        .font(.system(size: 11))
+                        .foregroundColor(Theme.muted)
+                    Button { if appState.pagesReadToday > 0 { appState.pagesReadToday -= 5 } } label: {
+                        Text("−")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(Theme.muted)
+                            .frame(width: 24, height: 24)
+                            .background(Theme.surface)
+                            .clipShape(Circle())
+                    }
+                    Text("\(appState.pagesReadToday)")
+                        .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                        .foregroundColor(Theme.text)
+                        .frame(width: 32)
+                    Button { appState.pagesReadToday += 5 } label: {
+                        Text("+")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(Theme.muted)
+                            .frame(width: 24, height: 24)
+                            .background(Theme.surface)
+                            .clipShape(Circle())
+                    }
+                }
+            }
+        }
     }
 
     private var completedActionsCount: Int {
@@ -289,10 +493,13 @@ struct TodayView: View {
     // MARK: - Workout
 
     private var workoutCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        let service = WorkoutService.shared
+        let todayDay = service.todaysWorkout(day: appState.currentDay)
+
+        return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "flame.fill")
-                    .foregroundColor(Theme.sage)
+                    .foregroundColor(Theme.gold)
                 Text("Today's Workout")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(Theme.text)
@@ -307,19 +514,56 @@ struct TodayView: View {
                 Text("Workout complete. Nice work.")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(Theme.muted)
-            } else {
-                Button(action: startWorkout) {
-                    HStack {
+            } else if let day = todayDay {
+                // Show today's focus
+                Text(day.focus)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(Theme.text)
+                Text("\(day.exercises.count) exercises")
+                    .font(.system(size: 12))
+                    .foregroundColor(Theme.muted)
+
+                Button { showWorkout = true } label: {
+                    HStack(spacing: 8) {
                         Text("Start Workout")
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.system(size: 14, weight: .bold))
+                            .tracking(0.5)
                         Image(systemName: "arrow.right")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.system(size: 12, weight: .bold))
                     }
-                    .foregroundColor(.white)
+                    .foregroundColor(Color(hex: "1A1816"))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Theme.sage)
-                    .cornerRadius(12)
+                    .background(
+                        LinearGradient(
+                            colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                            startPoint: .top, endPoint: .bottom
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)
+                }
+            } else {
+                // No program yet
+                Button { showWorkout = true } label: {
+                    HStack(spacing: 8) {
+                        Text("Generate Program")
+                            .font(.system(size: 14, weight: .bold))
+                            .tracking(0.5)
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 12, weight: .bold))
+                    }
+                    .foregroundColor(Color(hex: "1A1816"))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(
+                        LinearGradient(
+                            colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                            startPoint: .top, endPoint: .bottom
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)
                 }
             }
         }
@@ -368,7 +612,8 @@ struct TodayView: View {
     // MARK: - Nutrition
 
     private var nutritionCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        let tracker = MacroTrackerService.shared
+        return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "leaf.fill")
                     .foregroundColor(Theme.sage)
@@ -376,11 +621,68 @@ struct TodayView: View {
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(Theme.text)
                 Spacer()
+                HStack(spacing: 8) {
+                    Button { showMealPlan = true } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "calendar")
+                                .font(.system(size: 11))
+                            Text("Plan")
+                                .font(.system(size: 12, weight: .semibold))
+                        }
+                        .foregroundColor(Color(hex: "A6A29A"))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color(hex: "1A1A1A"))
+                        .clipShape(Capsule())
+                    }
+                    Button { showFoodScanner = true } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "camera.fill")
+                                .font(.system(size: 11))
+                            Text("Log")
+                                .font(.system(size: 12, weight: .semibold))
+                        }
+                        .foregroundColor(Color(hex: "C8A96E"))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color(hex: "C8A96E").opacity(0.10))
+                        .clipShape(Capsule())
+                    }
+                }
             }
 
-            HStack(spacing: 20) {
+            // Macro bars
+            HStack(spacing: 16) {
                 macroColumn(label: "Protein", current: appState.proteinLogged, goal: appState.proteinGoal, unit: "g")
                 macroColumn(label: "Calories", current: appState.caloriesLogged, goal: appState.caloriesGoal, unit: "")
+            }
+
+            // Today's logged meals
+            if !tracker.todaysMeals.isEmpty {
+                VStack(spacing: 0) {
+                    ForEach(tracker.todaysMeals) { meal in
+                        HStack(spacing: 10) {
+                            Image(systemName: meal.logged ? "checkmark.circle.fill" : "circle")
+                                .foregroundColor(meal.logged ? Theme.sage : Theme.muted)
+                                .font(.system(size: 16))
+                                .onTapGesture { tracker.toggleMealLogged(meal.id) }
+
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text("\(meal.mealType.rawValue) — \(meal.name)")
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundColor(meal.logged ? Theme.text : Theme.muted)
+                                    .strikethrough(!meal.logged, color: Theme.muted)
+                                    .lineLimit(1)
+                                Text("\(meal.calories) cal · \(meal.protein)g P · \(meal.carbs)g C · \(meal.fat)g F")
+                                    .font(.system(size: 10, design: .monospaced))
+                                    .foregroundColor(Theme.muted)
+                            }
+                            Spacer()
+                        }
+                        .padding(.vertical, 6)
+                    }
+                }
+                .padding(.top, 4)
             }
         }
         .padding(Theme.cardPadding)
@@ -424,43 +726,67 @@ struct TodayView: View {
     private var futureYouCard: some View {
         let week = max(1, Int(ceil(Double(appState.currentDay) / 7.0)))
         let weeksLeft = max(1, 12 - (week - 1))
+        let silhouette = appState.gender.lowercased() == "female" ? "FutureSelfWoman" : "FutureSelfMan"
         return Button {
             HapticManager.shared.impact(.light)
             appState.selectedTab = .future
         } label: {
-            HStack(spacing: 14) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Theme.sage.opacity(0.08))
-                    Text("\(weeksLeft)w")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(Theme.sage)
-                }
-                .frame(width: 56, height: 56)
+            ZStack(alignment: .bottomLeading) {
+                // Dark forest background
+                LinearGradient(
+                    colors: [Color(hex: "0E130E"), Color(hex: "222A20"), Color(hex: "0E130E")],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
 
-                VStack(alignment: .leading, spacing: 3) {
+                // Silhouette on the right
+                HStack {
+                    Spacer()
+                    Image(silhouette)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 140)
+                        .opacity(0.3)
+                        .offset(x: 10, y: -5)
+                }
+
+                // Radial glow
+                RadialGlowOverlay(color: Color(hex: "C9A86A"), opacity: 0.12, position: .init(x: 0.85, y: 0.2), radius: 120)
+
+                // Content
+                VStack(alignment: .leading, spacing: 6) {
                     Text("FUTURE YOU")
                         .font(.system(size: 10, weight: .bold))
                         .tracking(1.6)
-                        .foregroundColor(Theme.gold)
+                        .foregroundColor(Color(hex: "C8A96E"))
                     Text("This is you in \(weeksLeft) week\(weeksLeft == 1 ? "" : "s").")
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(Theme.text)
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(Color(hex: "F4F1E8"))
                     Text(FutureYouCopy.forWeek(week))
                         .font(.system(size: 12))
-                        .foregroundColor(Theme.muted)
+                        .foregroundColor(Color(hex: "A6A29A"))
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
+
+                    HStack(spacing: 6) {
+                        Text("See your transformation")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(Color(hex: "C8A96E"))
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundColor(Color(hex: "C8A96E"))
+                    }
+                    .padding(.top, 4)
                 }
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(Theme.muted)
+                .padding(20)
             }
-            .padding(Theme.cardPadding)
-            .background(Theme.surface)
-            .cornerRadius(Theme.cardRadius)
-            .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
+            .frame(height: 160)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .stroke(Color(hex: "C9A86A").opacity(0.15), lineWidth: 1)
+            )
+            .shadow(color: .black.opacity(0.3), radius: 12, x: 0, y: 6)
         }
         .buttonStyle(.plain)
     }
@@ -548,14 +874,56 @@ struct TodayView: View {
         }
     }
 
+    // MARK: - Coach Card
+
+    private var coachCard: some View {
+        let name = appState.userName.isEmpty ? "Future Self" : "Future \(appState.userName)"
+        return Button {
+            showCoach = true
+        } label: {
+            HStack(spacing: 14) {
+                Circle()
+                    .fill(Color(hex: "C8A96E").opacity(0.12))
+                    .frame(width: 44, height: 44)
+                    .overlay(
+                        Image(systemName: "person.fill")
+                            .font(.system(size: 18))
+                            .foregroundColor(Color(hex: "C8A96E"))
+                    )
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("TALK TO \(name.uppercased())")
+                        .font(.system(size: 10, weight: .bold))
+                        .tracking(1.6)
+                        .foregroundColor(Color(hex: "C8A96E"))
+                    Text("The version of you that already did it.")
+                        .font(.system(size: 13))
+                        .foregroundColor(Color(hex: "A6A29A"))
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12))
+                    .foregroundColor(Color(hex: "6E6B65"))
+            }
+            .padding(16)
+            .background(Color(hex: "111111"))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(Color(hex: "C8A96E").opacity(0.15), lineWidth: 1)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private var workoutDestination: some View {
+        WorkoutContainerView()
+    }
+
     private func startWorkout() {
         HapticManager.shared.impact(.medium)
-        // Navigate to workout in web view
-        NotificationCenter.default.post(
-            name: .navigateToScreen,
-            object: nil,
-            userInfo: ["screen": "today"]
-        )
+        showWorkout = true
     }
 
     private func syncHealth() {

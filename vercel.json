@@ -25,7 +25,10 @@
     "api/consumer/care/relationships.js": { "maxDuration": 10 },
     "api/clinic/products.js": { "maxDuration": 10 },
     "api/clinic/notes.js": { "maxDuration": 10 },
-    "api/clinic/assign-protocol.js": { "maxDuration": 10 }
+    "api/clinic/assign-protocol.js": { "maxDuration": 10 },
+    "api/consumer/wylde-score.js": { "maxDuration": 10 },
+    "api/consumer/protocols.js": { "maxDuration": 10 },
+    "api/consumer/messages.js": { "maxDuration": 10 }
   },
   "crons": [
     {
