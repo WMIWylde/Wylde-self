@@ -2,7 +2,7 @@ const { applyCors } = require('../../lib/security');
 const { getSupabaseAdmin, getUserFromRequest } = require('../../lib/supabase-admin');
 const Stripe = require('stripe');
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 
 module.exports = async function handler(req, res) {
   if (applyCors(req, res, { methods: 'GET, POST, OPTIONS' })) return;
@@ -55,7 +55,7 @@ module.exports = async function handler(req, res) {
 
     // Create Stripe Checkout Session
     let checkoutSession = null;
-    if (amountCents > 0) {
+    if (amountCents > 0 && stripe) {
       try {
         checkoutSession = await stripe.checkout.sessions.create({
           mode: 'payment',
