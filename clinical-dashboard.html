@@ -75,6 +75,7 @@
       <div class="nav-item" data-section="patients" onclick="navTo('patients')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Patients</div>
       <div class="nav-item" data-section="protocols" onclick="navTo('protocols')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Protocols</div>
       <div class="nav-item" data-section="library" onclick="navTo('library')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>Product Library</div>
+      <div class="nav-item" data-section="reorders" onclick="navTo('reorders')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>Reorders</div>
       <div class="nav-item" data-section="messages" onclick="navTo('messages')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>Messages</div>
       <div class="nav-item" data-section="billing" onclick="navTo('billing')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>Billing</div>
       <div class="nav-item" data-section="settings" onclick="navTo('settings')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>Settings</div>
@@ -169,6 +170,7 @@ function render() {
     case 'protocols': renderProtocols(c); break;
     case 'library': renderLibrary(c); break;
     case 'messages': renderMessages(c); break;
+    case 'reorders': renderReorders(c); break;
     case 'billing': c.innerHTML = comingSoon('Billing & Orders'); break;
     case 'settings': c.innerHTML = comingSoon('Settings'); break;
     case 'patientDetail': renderPatientDetail(c); break;
@@ -704,6 +706,67 @@ function renderMessages(c) {
           </div>
         </div>`).join('') || '<div class="px-5 py-12 text-center text-ink3 text-sm">No patients</div>'}
     </div>`;
+}
+
+// ─── Reorders ───
+
+let reordersList = [];
+
+async function loadReorders() {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  if (!token) return;
+  const resp = await fetch(API + '/api/clinic/reorders', { headers: { 'Authorization': 'Bearer ' + token } });
+  if (resp.ok) { const d = await resp.json(); reordersList = d.orders || []; }
+}
+
+function renderReorders(c) {
+  loadReorders().then(() => {
+    const statusColors = { requested: 'warn', approved: 'sage', rejected: 'crit', fulfilled: 'success', cancelled: 'ink3' };
+    c.innerHTML = `
+      <div class="mb-6"><h2 class="text-lg font-semibold">Reorder Requests</h2><p class="text-sm text-ink3">${reordersList.filter(o => o.status === 'requested').length} pending</p></div>
+      <div class="bg-white rounded-xl border border-line shadow-soft">
+        <table class="w-full text-sm">
+          <thead><tr class="text-ink3 text-xs border-b border-line">
+            <th class="px-5 py-3 text-left font-medium">Patient</th>
+            <th class="px-3 py-3 text-left font-medium">Product</th>
+            <th class="px-3 py-3 text-center font-medium">Qty</th>
+            <th class="px-3 py-3 text-center font-medium">Amount</th>
+            <th class="px-3 py-3 text-center font-medium">Status</th>
+            <th class="px-3 py-3 text-left font-medium">Date</th>
+            <th class="px-3 py-3 text-center font-medium">Actions</th>
+          </tr></thead>
+          <tbody class="divide-y divide-line">
+            ${reordersList.length ? reordersList.map(o => `
+              <tr class="hover:bg-cream transition">
+                <td class="px-5 py-3 font-medium">${o.patient_name || 'Patient'}</td>
+                <td class="px-3 py-3">${o.clinic_products?.name || '—'}</td>
+                <td class="px-3 py-3 text-center">${o.quantity}</td>
+                <td class="px-3 py-3 text-center">$${o.amount_cents ? (o.amount_cents / 100).toFixed(2) : '—'}</td>
+                <td class="px-3 py-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-${statusColors[o.status] || 'ink3'}bg text-${statusColors[o.status] || 'ink3'}">${o.status}</span></td>
+                <td class="px-3 py-3 text-ink3">${fmtDate(o.created_at)}</td>
+                <td class="px-3 py-3 text-center">
+                  ${o.status === 'requested' ? `
+                    <button onclick="updateReorder('${o.id}','approved')" class="px-2 py-1 bg-successbg text-success rounded text-[10px] font-semibold mr-1">Approve</button>
+                    <button onclick="updateReorder('${o.id}','rejected')" class="px-2 py-1 bg-critbg text-crit rounded text-[10px] font-semibold">Reject</button>
+                  ` : o.status === 'approved' ? `
+                    <button onclick="updateReorder('${o.id}','fulfilled')" class="px-2 py-1 bg-successbg text-success rounded text-[10px] font-semibold">Mark Fulfilled</button>
+                  ` : '—'}
+                </td>
+              </tr>`).join('') : '<tr><td colspan="7" class="px-5 py-12 text-center text-ink3">No reorder requests</td></tr>'}
+          </tbody>
+        </table>
+      </div>`;
+  });
+}
+
+async function updateReorder(id, status) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  await fetch(API + '/api/clinic/reorders', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ id, status }),
+  });
+  renderReorders(el('content'));
 }
 
 // ─── Init ───

@@ -28,7 +28,9 @@
     "api/clinic/assign-protocol.js": { "maxDuration": 10 },
     "api/consumer/wylde-score.js": { "maxDuration": 10 },
     "api/consumer/protocols.js": { "maxDuration": 10 },
-    "api/consumer/messages.js": { "maxDuration": 10 }
+    "api/consumer/messages.js": { "maxDuration": 10 },
+    "api/consumer/reorder.js": { "maxDuration": 30 },
+    "api/clinic/reorders.js": { "maxDuration": 10 }
   },
   "crons": [
     {
