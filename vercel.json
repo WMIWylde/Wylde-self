@@ -35,7 +35,10 @@
     "api/library/therapies.js": { "maxDuration": 10 },
     "api/library/protocols.js": { "maxDuration": 10 },
     "api/clinic/onboard.js": { "maxDuration": 60 },
-    "api/clinic/settings.js": { "maxDuration": 10 }
+    "api/clinic/settings.js": { "maxDuration": 10 },
+    "api/clinic/team.js": { "maxDuration": 10 },
+    "api/clinic/features.js": { "maxDuration": 10 },
+    "api/clinic/templates.js": { "maxDuration": 10 }
   },
   "crons": [
     {

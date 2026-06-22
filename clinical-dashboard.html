@@ -193,7 +193,7 @@ function render() {
     case 'reorders': renderReorders(c); break;
     case 'billing': c.innerHTML = comingSoon('Billing & Orders'); break;
     case 'onboard': renderOnboard(c); break;
-    case 'settings': c.innerHTML = comingSoon('Settings'); break;
+    case 'settings': renderSettings(c); break;
     case 'patientDetail': renderPatientDetail(c); break;
   }
   el('breadcrumb').innerHTML = currentSection === 'patientDetail' && selectedPatient
@@ -1177,6 +1177,358 @@ async function processOnboard() {
     const err = await resp.json();
     alert(err.error || 'Processing failed');
   }
+}
+
+// ─── Settings ───
+
+let settingsTab = 'profile';
+let teamMembers = [];
+let featureToggles = {};
+let msgTemplates = [];
+
+function renderSettings(c) {
+  const tabs = [
+    { id: 'profile', label: 'Clinic Profile', icon: '🏥' },
+    { id: 'team', label: 'Team & Permissions', icon: '👥' },
+    { id: 'products', label: 'Products', icon: '📦' },
+    { id: 'features', label: 'Patient Experience', icon: '✨' },
+    { id: 'comms', label: 'Communications', icon: '💬' },
+  ];
+
+  c.innerHTML = `
+    <div class="flex gap-6">
+      <!-- Settings Sidebar -->
+      <div class="w-48 shrink-0">
+        <h2 class="text-lg font-semibold mb-4">Settings</h2>
+        <div class="space-y-1">
+          ${tabs.map(t => `
+            <button onclick="settingsTab='${t.id}'; renderSettingsContent()" class="settings-tab w-full text-left px-3 py-2 rounded-lg text-sm ${settingsTab === t.id ? 'bg-sageDim text-sageDeep font-medium' : 'text-ink2 hover:bg-cream'} transition" data-tab="${t.id}">
+              ${t.icon} ${t.label}
+            </button>`).join('')}
+        </div>
+      </div>
+      <!-- Settings Content -->
+      <div class="flex-1" id="settingsContent"></div>
+    </div>`;
+
+  renderSettingsContent();
+}
+
+async function renderSettingsContent() {
+  const c = el('settingsContent');
+  document.querySelectorAll('.settings-tab').forEach(t => {
+    t.classList.toggle('bg-sageDim', t.dataset.tab === settingsTab);
+    t.classList.toggle('text-sageDeep', t.dataset.tab === settingsTab);
+    t.classList.toggle('font-medium', t.dataset.tab === settingsTab);
+  });
+
+  switch (settingsTab) {
+    case 'profile': await renderProfileSettings(c); break;
+    case 'team': await renderTeamSettings(c); break;
+    case 'products': renderLibrary(c); break; // reuse existing
+    case 'features': await renderFeatureSettings(c); break;
+    case 'comms': await renderCommsSettings(c); break;
+  }
+}
+
+// ─── Profile Settings ───
+async function renderProfileSettings(c) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/settings', { headers: { 'Authorization': 'Bearer ' + token } });
+  const s = resp.ok ? (await resp.json()).settings : {};
+
+  c.innerHTML = `
+    <div class="max-w-2xl">
+      <h3 class="text-lg font-semibold mb-1">Clinic Profile</h3>
+      <p class="text-sm text-ink3 mb-6">Your clinic's public information and branding.</p>
+
+      <div class="bg-white rounded-xl border border-line shadow-soft p-6 space-y-4 mb-6">
+        <h4 class="text-xs font-bold text-ink3 uppercase tracking-wide">General Information</h4>
+        ${settingsInput('sp_clinic_name', 'Clinic Name', s.clinic_name)}
+        ${settingsInput('sp_clinic_type', 'Clinic Type', s.clinic_type)}
+        <div class="grid grid-cols-2 gap-3">
+          ${settingsInput('sp_phone', 'Phone', s.phone)}
+          ${settingsInput('sp_email', 'Email', s.email)}
+        </div>
+        ${settingsInput('sp_website', 'Website', s.website)}
+        <div><label class="text-xs font-medium text-ink3 block mb-1">Description</label><textarea id="sp_description" rows="3" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm">${s.description || ''}</textarea></div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-line shadow-soft p-6 space-y-4 mb-6">
+        <h4 class="text-xs font-bold text-ink3 uppercase tracking-wide">Address</h4>
+        ${settingsInput('sp_address_line1', 'Address', s.address_line1)}
+        <div class="grid grid-cols-3 gap-3">
+          ${settingsInput('sp_city', 'City', s.city)}
+          ${settingsInput('sp_state', 'State', s.state)}
+          ${settingsInput('sp_zip', 'ZIP', s.zip)}
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-line shadow-soft p-6 space-y-4 mb-6">
+        <h4 class="text-xs font-bold text-ink3 uppercase tracking-wide">Branding</h4>
+        ${settingsInput('sp_tagline', 'Tagline', s.tagline)}
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="text-xs font-medium text-ink3 block mb-1">Primary Color</label><input type="color" id="sp_brand_color_primary" value="${s.brand_color_primary || '#6E8A7C'}" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>
+          <div><label class="text-xs font-medium text-ink3 block mb-1">Secondary Color</label><input type="color" id="sp_brand_color_secondary" value="${s.brand_color_secondary || '#C8A96E'}" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>
+        </div>
+        <div><label class="text-xs font-medium text-ink3 block mb-1">Patient Welcome Message</label><textarea id="sp_patient_welcome_message" rows="2" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm">${s.patient_welcome_message || ''}</textarea></div>
+      </div>
+
+      <button onclick="saveProfileSettings()" class="px-6 py-2.5 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">Save Changes</button>
+    </div>`;
+}
+
+function settingsInput(id, label, value) {
+  return `<div><label class="text-xs font-medium text-ink3 block mb-1">${label}</label><input id="${id}" value="${value || ''}" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" /></div>`;
+}
+
+async function saveProfileSettings() {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const body = {};
+  ['clinic_name','clinic_type','phone','email','website','description','address_line1','city','state','zip','tagline','brand_color_primary','brand_color_secondary','patient_welcome_message'].forEach(k => {
+    const input = document.getElementById('sp_' + k);
+    if (input) body[k] = input.type === 'color' ? input.value : input.value;
+  });
+
+  const resp = await fetch(API + '/api/clinic/settings', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify(body),
+  });
+  if (resp.ok) alert('Settings saved!');
+  else alert('Failed to save');
+}
+
+// ─── Team Settings ───
+async function renderTeamSettings(c) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/team', { headers: { 'Authorization': 'Bearer ' + token } });
+  teamMembers = resp.ok ? (await resp.json()).team : [];
+
+  const roles = ['physician','nurse_practitioner','nurse','health_coach','trainer','nutrition_coach','front_desk','billing','admin','staff'];
+
+  c.innerHTML = `
+    <div>
+      <div class="flex justify-between items-center mb-6">
+        <div><h3 class="text-lg font-semibold">Team & Permissions</h3><p class="text-sm text-ink3">Manage who has access to your clinic dashboard.</p></div>
+        <button onclick="showInviteTeamMember()" class="px-4 py-2 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep transition">+ Invite Member</button>
+      </div>
+
+      <div class="bg-white rounded-xl border border-line shadow-soft">
+        <table class="w-full text-sm">
+          <thead><tr class="text-ink3 text-xs border-b border-line">
+            <th class="px-5 py-3 text-left font-medium">Member</th>
+            <th class="px-3 py-3 text-left font-medium">Role</th>
+            <th class="px-3 py-3 text-center font-medium">Status</th>
+            <th class="px-3 py-3 text-center font-medium">Actions</th>
+          </tr></thead>
+          <tbody class="divide-y divide-line">
+            ${teamMembers.length ? teamMembers.map(m => `
+              <tr class="hover:bg-cream transition">
+                <td class="px-5 py-3"><div class="font-medium">${m.name || m.email.split('@')[0]}</div><div class="text-xs text-ink3">${m.email}</div></td>
+                <td class="px-3 py-3"><select onchange="updateTeamRole('${m.id}', this.value)" class="text-xs px-2 py-1 rounded border border-line2 bg-white">${roles.map(r => `<option value="${r}" ${m.role === r ? 'selected' : ''}>${r.replace(/_/g,' ')}</option>`).join('')}</select></td>
+                <td class="px-3 py-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold ${m.status === 'active' ? 'bg-successbg text-success' : m.status === 'disabled' ? 'bg-critbg text-crit' : 'bg-warnbg text-warn'}">${m.status}</span></td>
+                <td class="px-3 py-3 text-center"><button onclick="removeTeamMember('${m.id}')" class="text-xs text-crit hover:text-ink">Remove</button></td>
+              </tr>`).join('') : '<tr><td colspan="4" class="px-5 py-12 text-center text-ink3">No team members yet</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function showInviteTeamMember() {
+  openModal(`
+    <div class="p-6">
+      <h2 class="text-lg font-semibold mb-4">Invite Team Member</h2>
+      <div class="space-y-3">
+        <input id="tm_email" placeholder="Email address" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
+        <input id="tm_name" placeholder="Name (optional)" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
+        <select id="tm_role" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm bg-white">
+          <option value="staff">Staff</option><option value="physician">Physician</option><option value="nurse_practitioner">Nurse Practitioner</option><option value="nurse">Nurse</option><option value="health_coach">Health Coach</option><option value="trainer">Trainer</option><option value="nutrition_coach">Nutrition Coach</option><option value="front_desk">Front Desk</option><option value="billing">Billing</option><option value="admin">Admin</option>
+        </select>
+        <div class="flex gap-2 pt-2">
+          <button onclick="inviteTeamMember()" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Send Invite</button>
+          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+async function inviteTeamMember() {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/team', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ email: el('tm_email').value, name: el('tm_name').value, role: el('tm_role').value }),
+  });
+  if (resp.ok) { closeModal(); renderSettingsContent(); }
+  else alert('Failed to invite');
+}
+
+async function updateTeamRole(id, role) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  await fetch(API + '/api/clinic/team', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ id, role }),
+  });
+}
+
+async function removeTeamMember(id) {
+  if (!confirm('Remove this team member?')) return;
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  await fetch(API + '/api/clinic/team', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ id }),
+  });
+  renderSettingsContent();
+}
+
+// ─── Feature Toggles ───
+async function renderFeatureSettings(c) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/features', { headers: { 'Authorization': 'Bearer ' + token } });
+  featureToggles = resp.ok ? (await resp.json()).features : {};
+
+  const features = [
+    { key: 'ai_coach', label: 'AI Coach', desc: 'Conversational AI that speaks as the patient\'s future self' },
+    { key: 'workouts', label: 'Workouts', desc: 'AI-generated training programs with guided warmups' },
+    { key: 'nutrition', label: 'Nutrition Tracking', desc: 'Photo macro tracking and weekly meal plans' },
+    { key: 'meal_tracking', label: 'Meal Planning', desc: 'AI-generated 7-day meal plans with recipes' },
+    { key: 'protocol_tracking', label: 'Protocol Tracker', desc: 'Dose logging and adherence tracking' },
+    { key: 'wylde_score', label: 'Wylde Score', desc: 'Daily composite health score (0-100)' },
+    { key: 'future_self', label: 'Future Self', desc: 'AI transformation image generation' },
+    { key: 'vision_board', label: 'Future Vision', desc: 'Life vision creation across 10 categories' },
+    { key: 'meditation', label: 'Meditation', desc: 'Guided visualization meditation with audio' },
+    { key: 'journaling', label: 'Journaling', desc: 'Daily journaling as part of morning ritual' },
+    { key: 'habits', label: 'Daily Habits', desc: 'Morning ritual tracking (Qi Gong, reading, etc.)' },
+    { key: 'messaging', label: 'Patient Messaging', desc: 'Direct messaging between patient and clinic' },
+  ];
+
+  c.innerHTML = `
+    <div class="max-w-2xl">
+      <h3 class="text-lg font-semibold mb-1">Patient Experience</h3>
+      <p class="text-sm text-ink3 mb-6">Control which Wylde features are available to your patients.</p>
+
+      <div class="bg-white rounded-xl border border-line shadow-soft divide-y divide-line">
+        ${features.map(f => `
+          <div class="px-6 py-4 flex items-center justify-between">
+            <div>
+              <div class="text-sm font-medium text-ink">${f.label}</div>
+              <div class="text-xs text-ink3">${f.desc}</div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" class="sr-only peer" ${featureToggles[f.key] !== false ? 'checked' : ''} onchange="toggleFeature('${f.key}', this.checked)" />
+              <div class="w-9 h-5 bg-line2 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sage"></div>
+            </label>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+async function toggleFeature(key, enabled) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const body = {}; body[key] = enabled;
+  await fetch(API + '/api/clinic/features', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify(body),
+  });
+}
+
+// ─── Communications ───
+async function renderCommsSettings(c) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/templates', { headers: { 'Authorization': 'Bearer ' + token } });
+  msgTemplates = resp.ok ? (await resp.json()).templates : [];
+
+  const categories = ['welcome','protocol','lab_results','refill','missed_checkin','follow_up','general'];
+
+  c.innerHTML = `
+    <div>
+      <div class="flex justify-between items-center mb-6">
+        <div><h3 class="text-lg font-semibold">Communications</h3><p class="text-sm text-ink3">Message templates and notification preferences.</p></div>
+        <button onclick="showAddTemplate()" class="px-4 py-2 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep transition">+ New Template</button>
+      </div>
+
+      <div class="bg-white rounded-xl border border-line shadow-soft divide-y divide-line">
+        ${msgTemplates.length ? msgTemplates.map(t => `
+          <div class="px-5 py-4 flex items-center justify-between">
+            <div>
+              <div class="text-sm font-medium text-ink">${t.name}</div>
+              <div class="text-xs text-ink3">${t.category.replace(/_/g,' ')} · ${t.body.substring(0, 60)}${t.body.length > 60 ? '...' : ''}</div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="editTemplate('${t.id}')" class="text-xs text-sage hover:text-sageDeep">Edit</button>
+              <button onclick="deleteTemplate('${t.id}')" class="text-xs text-crit hover:text-ink">Delete</button>
+            </div>
+          </div>`).join('') : '<div class="px-5 py-12 text-center text-ink3 text-sm">No templates yet. Create templates for common patient communications.</div>'}
+      </div>
+
+      <div class="mt-6 bg-white rounded-xl border border-line shadow-soft p-6">
+        <h4 class="text-xs font-bold text-ink3 uppercase tracking-wide mb-3">Suggested Templates</h4>
+        <div class="grid grid-cols-2 gap-3">
+          ${[
+            { name: 'Welcome', cat: 'welcome', body: 'Welcome to our clinic! We\'re excited to support your health journey. Your care team is here for you.' },
+            { name: 'Protocol Assigned', cat: 'protocol', body: 'Your new protocol has been assigned. You can view it in your Wylde Self app under Protocol Tracker.' },
+            { name: 'Lab Results Ready', cat: 'lab_results', body: 'Your lab results are ready for review. We\'ll discuss them at your next appointment.' },
+            { name: 'Refill Reminder', cat: 'refill', body: 'Your current supply will need a refill soon. You can request a refill through the app.' },
+            { name: 'Missed Check-In', cat: 'missed_checkin', body: 'We noticed you haven\'t checked in recently. How are you feeling? Let us know if you need any adjustments.' },
+            { name: 'Follow-Up', cat: 'follow_up', body: 'Just checking in on your progress. How are things going with your current protocol?' },
+          ].map(t => `<button onclick="quickCreateTemplate('${t.name}','${t.cat}',\`${t.body}\`)" class="text-left px-4 py-3 rounded-lg border border-line2 hover:bg-cream transition"><div class="text-sm font-medium text-ink">${t.name}</div><div class="text-xs text-ink3">${t.cat.replace(/_/g,' ')}</div></button>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function showAddTemplate() {
+  openModal(`
+    <div class="p-6">
+      <h2 class="text-lg font-semibold mb-4">New Message Template</h2>
+      <div class="space-y-3">
+        <input id="tpl_name" placeholder="Template name" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
+        <select id="tpl_category" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm bg-white">
+          <option value="general">General</option><option value="welcome">Welcome</option><option value="protocol">Protocol</option><option value="lab_results">Lab Results</option><option value="refill">Refill</option><option value="missed_checkin">Missed Check-In</option><option value="follow_up">Follow-Up</option>
+        </select>
+        <textarea id="tpl_body" rows="4" placeholder="Message body..." class="w-full px-3 py-2 rounded-lg border border-line2 text-sm"></textarea>
+        <div class="flex gap-2 pt-2">
+          <button onclick="saveTemplate()" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Save</button>
+          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+async function saveTemplate() {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/templates', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ name: el('tpl_name').value, category: el('tpl_category').value, body: el('tpl_body').value }),
+  });
+  if (resp.ok) { closeModal(); renderSettingsContent(); }
+}
+
+async function quickCreateTemplate(name, category, body) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  await fetch(API + '/api/clinic/templates', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ name, category, body }),
+  });
+  renderSettingsContent();
+}
+
+async function deleteTemplate(id) {
+  if (!confirm('Delete this template?')) return;
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  await fetch(API + '/api/clinic/templates', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ id }),
+  });
+  renderSettingsContent();
 }
 
 // ─── Clinic Onboarding Wizard ───
