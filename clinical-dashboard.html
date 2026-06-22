@@ -80,6 +80,7 @@
       <div class="nav-item" data-section="reorders" onclick="navTo('reorders')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>Reorders</div>
       <div class="nav-item" data-section="messages" onclick="navTo('messages')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>Messages</div>
       <div class="nav-item" data-section="billing" onclick="navTo('billing')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>Billing</div>
+      <div class="nav-item" data-section="onboard" onclick="navTo('onboard')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>AI Setup</div>
       <div class="nav-item" data-section="settings" onclick="navTo('settings')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>Settings</div>
     </nav>
     <div class="p-4 border-t border-line">
@@ -176,6 +177,7 @@ function render() {
     case 'messages': renderMessages(c); break;
     case 'reorders': renderReorders(c); break;
     case 'billing': c.innerHTML = comingSoon('Billing & Orders'); break;
+    case 'onboard': renderOnboard(c); break;
     case 'settings': c.innerHTML = comingSoon('Settings'); break;
     case 'patientDetail': renderPatientDetail(c); break;
   }
@@ -1033,6 +1035,133 @@ async function saveClinicTherapyProduct(therapyId) {
   if (error) { alert(error.message); return; }
   closeModal();
   alert('Product added to your clinic!');
+}
+
+// ─── AI Onboard ───
+
+function renderOnboard(c) {
+  c.innerHTML = `
+    <div class="max-w-2xl">
+      <div class="mb-6">
+        <h2 class="text-lg font-semibold">AI Clinic Setup</h2>
+        <p class="text-sm text-ink3">Drop a file or paste your clinic's product list, pricing, protocols — the AI will structure everything into your dashboard.</p>
+      </div>
+
+      <!-- Drop zone -->
+      <div id="dropZone" class="border-2 border-dashed border-line2 rounded-2xl p-12 text-center cursor-pointer hover:border-sage transition mb-4"
+           onclick="el('fileInput').click()"
+           ondragover="event.preventDefault(); this.classList.add('border-sage','bg-sageDim')"
+           ondragleave="this.classList.remove('border-sage','bg-sageDim')"
+           ondrop="handleDrop(event)">
+        <svg class="w-10 h-10 mx-auto mb-3 text-ink3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+        <p class="text-sm font-medium text-ink">Drop a file here or click to upload</p>
+        <p class="text-xs text-ink3 mt-1">PDF, CSV, TXT, or any document with your clinic info</p>
+        <input type="file" id="fileInput" class="hidden" accept=".txt,.csv,.pdf,.doc,.docx,.xls,.xlsx" onchange="handleFileSelect(event)" />
+      </div>
+
+      <div class="text-center text-xs text-ink3 mb-4">— or paste your information below —</div>
+
+      <!-- Text input -->
+      <textarea id="onboardText" rows="10" placeholder="Paste your product list, pricing sheet, protocol descriptions, clinic info — anything. The AI will structure it.
+
+Example:
+Our clinic offers:
+- BPC-157 5mg vial - $150
+- TB-500 10mg - $200
+- Semaglutide 2.5mg weekly injection - $350/month
+- NAD+ IV drip - $400/session
+
+Protocols:
+- Recovery Stack: BPC-157 + TB-500, 4 weeks
+- Metabolic Reset: Semaglutide + B12 + coaching" class="w-full px-4 py-3 rounded-xl border border-line2 bg-white text-sm resize-vertical"></textarea>
+
+      <button onclick="processOnboard()" id="onboardBtn" class="w-full mt-4 py-3 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">
+        Process with AI
+      </button>
+
+      <!-- Results -->
+      <div id="onboardResults" class="hidden mt-6">
+        <div class="bg-successbg rounded-xl p-5 mb-4">
+          <h3 class="text-sm font-semibold text-success mb-2">Setup Complete</h3>
+          <div id="onboardSummary" class="text-sm text-ink2"></div>
+        </div>
+        <div id="onboardDetails"></div>
+      </div>
+    </div>`;
+}
+
+async function handleDrop(event) {
+  event.preventDefault();
+  event.currentTarget.classList.remove('border-sage', 'bg-sageDim');
+  const file = event.dataTransfer?.files?.[0];
+  if (file) readFile(file);
+}
+
+function handleFileSelect(event) {
+  const file = event.target.files?.[0];
+  if (file) readFile(file);
+}
+
+function readFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    el('onboardText').value = typeof text === 'string' ? text : 'File loaded: ' + file.name;
+    el('dropZone').innerHTML = '<p class="text-sm font-medium text-success">✓ ' + file.name + ' loaded</p><p class="text-xs text-ink3 mt-1">Click "Process with AI" to continue</p>';
+  };
+  reader.readAsText(file);
+}
+
+async function processOnboard() {
+  const text = el('onboardText').value.trim();
+  if (!text || text.length < 20) { alert('Please provide more information about your clinic.'); return; }
+
+  const btn = el('onboardBtn');
+  btn.textContent = 'Processing...'; btn.disabled = true;
+
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/onboard', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ content: text }),
+  });
+
+  btn.textContent = 'Process with AI'; btn.disabled = false;
+
+  if (resp.ok) {
+    const data = await resp.json();
+    if (data.success) {
+      el('onboardResults').classList.remove('hidden');
+      el('onboardSummary').innerHTML = `
+        ${data.clinic_name ? '<p>Clinic: <strong>' + data.clinic_name + '</strong></p>' : ''}
+        <p>${data.products_added} products added to your catalog</p>
+        <p>${data.protocols_added} protocols created</p>
+      `;
+
+      // Show parsed products
+      if (data.parsed_data?.products?.length) {
+        el('onboardDetails').innerHTML = `
+          <div class="bg-white rounded-xl border border-line shadow-soft p-5">
+            <h3 class="text-sm font-semibold mb-3">Products Added</h3>
+            <div class="space-y-2">
+              ${data.parsed_data.products.map(p => `
+                <div class="flex justify-between items-center py-2 border-b border-line last:border-0">
+                  <div><div class="text-sm font-medium">${p.name}</div><div class="text-xs text-ink3">${p.category || ''} · ${p.method || ''}</div></div>
+                  <div class="text-sm font-semibold text-sage">${p.price ? '$' + Number(p.price).toFixed(2) : '—'}</div>
+                </div>`).join('')}
+            </div>
+          </div>`;
+      }
+
+      // Refresh products
+      await loadProducts();
+    } else {
+      alert(data.error || 'Processing failed — try providing more detail.');
+    }
+  } else {
+    const err = await resp.json();
+    alert(err.error || 'Processing failed');
+  }
 }
 
 // ─── Init ───
