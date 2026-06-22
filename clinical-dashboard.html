@@ -147,12 +147,27 @@ async function checkAuth() {
   if (user) { currentUser = user; initDashboard(); }
 }
 
-function initDashboard() {
+let clinicSettings = null;
+
+async function initDashboard() {
   el('authScreen').classList.add('hidden');
-  el('dashboardScreen').classList.remove('hidden');
   const name = currentUser.email.split('@')[0];
-  el('sidebarName').textContent = name;
-  el('sidebarAvatar').textContent = name.substring(0,2).toUpperCase();
+
+  // Check clinic onboarding status
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  if (token) {
+    const resp = await fetch(API + '/api/clinic/settings', { headers: { 'Authorization': 'Bearer ' + token } });
+    if (resp.ok) { const d = await resp.json(); clinicSettings = d.settings; }
+  }
+
+  if (!clinicSettings || !clinicSettings.onboarding_complete) {
+    renderClinicOnboarding(clinicSettings);
+    return;
+  }
+
+  el('dashboardScreen').classList.remove('hidden');
+  el('sidebarName').textContent = clinicSettings.clinic_name || name;
+  el('sidebarAvatar').textContent = (clinicSettings.clinic_name || name).substring(0,2).toUpperCase();
   loadPatients();
   loadProducts();
 }
@@ -1162,6 +1177,187 @@ async function processOnboard() {
     const err = await resp.json();
     alert(err.error || 'Processing failed');
   }
+}
+
+// ─── Clinic Onboarding Wizard ───
+
+let obStep = 0;
+let obData = {};
+
+function renderClinicOnboarding(existing) {
+  obData = existing || {};
+  obStep = obData.onboarding_step || 0;
+  document.body.innerHTML = `
+  <div class="min-h-screen bg-paper flex items-center justify-center p-6">
+    <div class="w-full max-w-xl">
+      <div class="text-center mb-8">
+        <img src="/logo-icon.png" alt="Wylde" class="w-12 h-12 rounded-xl mx-auto mb-4" />
+        <h1 class="font-serif text-2xl text-ink">Set Up Your Clinic</h1>
+        <p class="text-ink3 text-sm mt-2">Complete your profile to start accepting patients on Wylde Self.</p>
+      </div>
+
+      <!-- Progress -->
+      <div class="flex gap-2 mb-8" id="obProgress"></div>
+
+      <!-- Step content -->
+      <div id="obContent" class="bg-white rounded-2xl border border-line shadow-card p-8"></div>
+
+      <!-- Nav -->
+      <div class="flex justify-between mt-6" id="obNav"></div>
+    </div>
+  </div>`;
+  renderObStep();
+}
+
+const OB_STEPS = [
+  { title: 'Clinic Information', fields: ['clinic_name','clinic_type','description','specialties','website','phone','email'] },
+  { title: 'Location', fields: ['address_line1','address_line2','city','state','zip'] },
+  { title: 'Licensing & Compliance', fields: ['medical_license_number','license_state','npi_number','liability_insurance_carrier','compliance_hipaa_acknowledged','compliance_terms_accepted'] },
+  { title: 'Branding', fields: ['tagline','brand_color_primary','brand_color_secondary','patient_welcome_message'] },
+  { title: 'Products & Protocols', fields: ['ai_upload'] },
+];
+
+function renderObStep() {
+  const total = OB_STEPS.length;
+  // Progress
+  el('obProgress').innerHTML = OB_STEPS.map((s, i) => `<div class="flex-1 h-1.5 rounded-full ${i <= obStep ? 'bg-sage' : 'bg-line2'}"></div>`).join('');
+
+  const step = OB_STEPS[obStep];
+  let html = `<h2 class="text-lg font-semibold mb-1">${step.title}</h2><p class="text-sm text-ink3 mb-6">Step ${obStep + 1} of ${total}</p><div class="space-y-4">`;
+
+  if (obStep === 0) {
+    html += obInput('clinic_name', 'Clinic Name', 'text', 'e.g. Wylde Wellness Clinic');
+    html += obSelect('clinic_type', 'Clinic Type', ['medspa','functional_medicine','hrt_clinic','wellness_center','integrative','concierge','other']);
+    html += obTextarea('description', 'Description', 'Brief description of your practice...');
+    html += obInput('specialties', 'Specialties', 'text', 'e.g. HRT, Peptides, Weight Loss (comma separated)');
+    html += obInput('website', 'Website', 'url', 'https://');
+    html += obInput('phone', 'Phone', 'tel', '(555) 555-5555');
+    html += obInput('email', 'Contact Email', 'email', 'clinic@example.com');
+  } else if (obStep === 1) {
+    html += obInput('address_line1', 'Address', 'text', 'Street address');
+    html += obInput('address_line2', 'Suite/Unit', 'text', 'Optional');
+    html += `<div class="grid grid-cols-3 gap-3">`;
+    html += obInput('city', 'City', 'text', 'City');
+    html += obInput('state', 'State', 'text', 'CA');
+    html += obInput('zip', 'ZIP', 'text', '90210');
+    html += `</div>`;
+  } else if (obStep === 2) {
+    html += obInput('medical_license_number', 'Medical License #', 'text', 'License number');
+    html += obInput('license_state', 'License State', 'text', 'e.g. CA');
+    html += obInput('npi_number', 'NPI Number', 'text', 'National Provider Identifier');
+    html += obInput('liability_insurance_carrier', 'Liability Insurance Carrier', 'text', 'Insurance company');
+    html += `<label class="flex items-start gap-3 py-3 cursor-pointer">
+      <input type="checkbox" id="ob_compliance_hipaa_acknowledged" ${obData.compliance_hipaa_acknowledged ? 'checked' : ''} class="mt-1" />
+      <span class="text-sm text-ink2">I acknowledge HIPAA compliance requirements and will maintain appropriate safeguards for patient data on this platform.</span>
+    </label>`;
+    html += `<label class="flex items-start gap-3 py-3 cursor-pointer">
+      <input type="checkbox" id="ob_compliance_terms_accepted" ${obData.compliance_terms_accepted ? 'checked' : ''} class="mt-1" />
+      <span class="text-sm text-ink2">I accept the <strong>Wylde Self Platform Terms</strong> for clinical providers and agree to maintain current licensing and insurance.</span>
+    </label>`;
+  } else if (obStep === 3) {
+    html += obInput('tagline', 'Clinic Tagline', 'text', 'e.g. Optimizing human performance');
+    html += `<div class="grid grid-cols-2 gap-3">`;
+    html += `<div><label class="text-xs font-medium text-ink3 block mb-1">Primary Color</label><input type="color" id="ob_brand_color_primary" value="${obData.brand_color_primary || '#6E8A7C'}" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>`;
+    html += `<div><label class="text-xs font-medium text-ink3 block mb-1">Secondary Color</label><input type="color" id="ob_brand_color_secondary" value="${obData.brand_color_secondary || '#C8A96E'}" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>`;
+    html += `</div>`;
+    html += obTextarea('patient_welcome_message', 'Patient Welcome Message', 'Message patients see when they connect with your clinic...');
+  } else if (obStep === 4) {
+    html += `<p class="text-sm text-ink2 mb-4">Upload or paste your product list, pricing, protocols. The AI will structure everything into your dashboard.</p>`;
+    html += `<textarea id="ob_ai_content" rows="8" placeholder="Paste your product list, pricing sheet, protocol descriptions...
+
+Example:
+- BPC-157 5mg vial - $150
+- Semaglutide 2.5mg weekly - $350/month
+- Recovery Stack: BPC-157 + TB-500, 4 weeks" class="w-full px-4 py-3 rounded-xl border border-line2 bg-paper text-sm resize-vertical"></textarea>`;
+    html += `<p class="text-xs text-ink3 mt-2">This step is optional — you can add products manually later.</p>`;
+  }
+
+  html += `</div>`;
+  el('obContent').innerHTML = html;
+
+  // Nav buttons
+  let nav = '';
+  if (obStep > 0) nav += `<button onclick="obBack()" class="px-6 py-2.5 border border-line2 rounded-xl text-sm text-ink2 hover:bg-cream transition">Back</button>`;
+  else nav += '<div></div>';
+
+  if (obStep < total - 1) nav += `<button onclick="obNext()" class="px-6 py-2.5 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">Continue</button>`;
+  else nav += `<button onclick="obFinish()" id="obFinishBtn" class="px-6 py-2.5 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">Complete Setup</button>`;
+  el('obNav').innerHTML = nav;
+}
+
+function obInput(key, label, type, placeholder) {
+  return `<div><label class="text-xs font-medium text-ink3 block mb-1">${label}</label><input type="${type}" id="ob_${key}" value="${obData[key] || ''}" placeholder="${placeholder}" class="w-full px-3 py-2.5 rounded-lg border border-line2 text-sm" /></div>`;
+}
+function obSelect(key, label, options) {
+  return `<div><label class="text-xs font-medium text-ink3 block mb-1">${label}</label><select id="ob_${key}" class="w-full px-3 py-2.5 rounded-lg border border-line2 text-sm bg-white"><option value="">Select...</option>${options.map(o => `<option value="${o}" ${obData[key] === o ? 'selected' : ''}>${o.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase())}</option>`).join('')}</select></div>`;
+}
+function obTextarea(key, label, placeholder) {
+  return `<div><label class="text-xs font-medium text-ink3 block mb-1">${label}</label><textarea id="ob_${key}" rows="3" placeholder="${placeholder}" class="w-full px-3 py-2.5 rounded-lg border border-line2 text-sm resize-vertical">${obData[key] || ''}</textarea></div>`;
+}
+
+function collectStepData() {
+  const step = OB_STEPS[obStep];
+  step.fields.forEach(f => {
+    if (f === 'ai_upload') return;
+    const input = document.getElementById('ob_' + f);
+    if (input) {
+      if (input.type === 'checkbox') obData[f] = input.checked;
+      else if (f === 'specialties') obData[f] = input.value.split(',').map(s => s.trim()).filter(Boolean);
+      else obData[f] = input.value;
+    }
+  });
+}
+
+async function saveStepData() {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  if (!token) return;
+  obData.onboarding_step = obStep;
+  if (obData.compliance_terms_accepted && !obData.compliance_accepted_at) {
+    obData.compliance_accepted_at = new Date().toISOString();
+  }
+  await fetch(API + '/api/clinic/settings', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify(obData),
+  });
+}
+
+async function obNext() {
+  collectStepData();
+  await saveStepData();
+  obStep++;
+  renderObStep();
+}
+
+async function obBack() {
+  collectStepData();
+  obStep--;
+  renderObStep();
+}
+
+async function obFinish() {
+  collectStepData();
+
+  const btn = document.getElementById('obFinishBtn');
+  btn.textContent = 'Setting up...'; btn.disabled = true;
+
+  // Process AI content if provided
+  const aiContent = document.getElementById('ob_ai_content')?.value?.trim();
+  if (aiContent && aiContent.length > 20) {
+    const token = (await sb.auth.getSession()).data?.session?.access_token;
+    await fetch(API + '/api/clinic/onboard', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ content: aiContent }),
+    });
+  }
+
+  obData.onboarding_complete = true;
+  obData.onboarding_step = OB_STEPS.length;
+  await saveStepData();
+
+  // Reload dashboard
+  location.reload();
 }
 
 // ─── Init ───
