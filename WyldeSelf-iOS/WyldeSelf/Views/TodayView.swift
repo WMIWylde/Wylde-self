@@ -16,6 +16,9 @@ struct TodayView: View {
     @State private var showProtocolTracker = false
     @StateObject private var scoreService = WyldeScoreService.shared
     @State private var ritualExpanded = true
+    @State private var walkTimerActive = false
+    @State private var walkSecondsElapsed = 0
+    @State private var walkTimer: Timer?
 
     @State private var didAppear = false
 
@@ -580,15 +583,15 @@ struct TodayView: View {
     // MARK: - Daily Walk
 
     private var walkCard: some View {
-        Button(action: toggleWalk) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 14) {
                 Image(systemName: "figure.walk")
                     .font(.system(size: 22))
-                    .foregroundColor(appState.dailyWalkCompleted ? Theme.sage : Theme.gold)
+                    .foregroundColor(appState.dailyWalkCompleted ? Theme.sage : Color(hex: "7FD0FF"))
                     .frame(width: 36, height: 36)
                     .background(
                         Circle()
-                            .fill((appState.dailyWalkCompleted ? Theme.sage : Theme.gold).opacity(0.12))
+                            .fill((appState.dailyWalkCompleted ? Theme.sage : Color(hex: "7FD0FF")).opacity(0.12))
                     )
 
                 VStack(alignment: .leading, spacing: 3) {
@@ -596,21 +599,100 @@ struct TodayView: View {
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(appState.dailyWalkCompleted ? Theme.muted : Theme.text)
                         .strikethrough(appState.dailyWalkCompleted, color: Theme.muted)
-                    Text(appState.dailyWalkCompleted ? "Done — that counts." : "30+ minutes outside, sometime today")
-                        .font(.system(size: 12))
-                        .foregroundColor(Theme.muted)
+                    if walkTimerActive {
+                        Text(walkTimeString)
+                            .font(.system(size: 20, weight: .bold, design: .monospaced))
+                            .foregroundColor(Color(hex: "7FD0FF"))
+                            .contentTransition(.numericText())
+                            .animation(.easeInOut(duration: 0.3), value: walkSecondsElapsed)
+                    } else {
+                        Text(appState.dailyWalkCompleted ? "Done — that counts." : "30+ minutes outside")
+                            .font(.system(size: 12))
+                            .foregroundColor(Theme.muted)
+                    }
                 }
                 Spacer()
-                Image(systemName: appState.dailyWalkCompleted ? "checkmark.circle.fill" : "circle")
-                    .foregroundColor(appState.dailyWalkCompleted ? Theme.sage : Theme.muted)
-                    .font(.system(size: 22))
+
+                if appState.dailyWalkCompleted {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(Theme.sage)
+                        .font(.system(size: 22))
+                }
             }
-            .padding(Theme.cardPadding)
-            .background(Theme.surface)
-            .cornerRadius(Theme.cardRadius)
-            .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
+
+            if !appState.dailyWalkCompleted {
+                HStack(spacing: 8) {
+                    if walkTimerActive {
+                        // Stop + Complete
+                        Button {
+                            stopWalkTimer()
+                            if walkSecondsElapsed >= 1800 { // 30 min
+                                toggleWalk()
+                            }
+                        } label: {
+                            Text(walkSecondsElapsed >= 1800 ? "Complete Walk" : "End (\(walkSecondsElapsed / 60)m)")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(walkSecondsElapsed >= 1800 ? Color(hex: "1A1816") : Color(hex: "7FD0FF"))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(walkSecondsElapsed >= 1800 ? Color(hex: "7FD0FF") : Color(hex: "7FD0FF").opacity(0.12))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+                    } else {
+                        // Start timer
+                        Button { startWalkTimer() } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "play.fill")
+                                    .font(.system(size: 11))
+                                Text("Start Walk")
+                                    .font(.system(size: 13, weight: .semibold))
+                            }
+                            .foregroundColor(Color(hex: "1A1816"))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color(hex: "7FD0FF"))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+
+                        // Manual complete
+                        Button { toggleWalk() } label: {
+                            Text("Done")
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundColor(Theme.muted)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(Theme.surface)
+                                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Theme.border, lineWidth: 1))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+                    }
+                }
+            }
         }
-        .buttonStyle(.plain)
+        .padding(Theme.cardPadding)
+        .background(Theme.surface)
+        .cornerRadius(Theme.cardRadius)
+        .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
+    }
+
+    private var walkTimeString: String {
+        let m = walkSecondsElapsed / 60
+        let s = walkSecondsElapsed % 60
+        return String(format: "%d:%02d", m, s)
+    }
+
+    private func startWalkTimer() {
+        walkSecondsElapsed = 0
+        walkTimerActive = true
+        walkTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            walkSecondsElapsed += 1
+        }
+    }
+
+    private func stopWalkTimer() {
+        walkTimer?.invalidate()
+        walkTimer = nil
+        walkTimerActive = false
     }
 
     // MARK: - Nutrition
@@ -803,7 +885,7 @@ struct TodayView: View {
     // MARK: - Health
 
     private var healthCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Image(systemName: "heart.fill")
                     .foregroundColor(.red.opacity(0.7))
@@ -818,9 +900,40 @@ struct TodayView: View {
                 }
             }
 
-            HStack(spacing: 24) {
-                healthStat(icon: "figure.walk", value: "\(healthSteps)", label: "steps")
-                healthStat(icon: "flame", value: "\(healthCalories)", label: "kcal burned")
+            // Activity Rings
+            HStack(spacing: 16) {
+                // Move ring
+                activityRing(
+                    label: "Move",
+                    current: healthCalories,
+                    goal: 500,
+                    color: .red.opacity(0.8),
+                    icon: "flame.fill"
+                )
+                // Exercise ring
+                activityRing(
+                    label: "Exercise",
+                    current: appState.workoutCompleted ? 30 : (walkTimerActive ? walkSecondsElapsed / 60 : 0),
+                    goal: 30,
+                    color: Color(hex: "5EE6D6"),
+                    icon: "figure.run"
+                )
+                // Stand/Steps ring
+                activityRing(
+                    label: "Steps",
+                    current: healthSteps,
+                    goal: 10000,
+                    color: Color(hex: "7FD0FF"),
+                    icon: "figure.walk"
+                )
+            }
+
+            // Stats row
+            HStack(spacing: 16) {
+                healthStat(value: "\(healthSteps)", label: "steps")
+                healthStat(value: "\(healthCalories)", label: "kcal")
+                healthStat(value: appState.workoutCompleted ? "✓" : "—", label: "workout")
+                healthStat(value: appState.dailyWalkCompleted ? "✓" : "—", label: "walk")
             }
         }
         .padding(Theme.cardPadding)
@@ -829,19 +942,39 @@ struct TodayView: View {
         .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
     }
 
-    private func healthStat(icon: String, value: String, label: String) -> some View {
-        HStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.system(size: 14))
-                .foregroundColor(Theme.sage)
-            VStack(alignment: .leading, spacing: 1) {
-                Text(value)
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(Theme.text)
-                Text(label)
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(Theme.muted)
+    private func activityRing(label: String, current: Int, goal: Int, color: Color, icon: String) -> some View {
+        let progress = goal > 0 ? min(1.0, CGFloat(current) / CGFloat(goal)) : 0
+        return VStack(spacing: 6) {
+            ZStack {
+                Circle()
+                    .stroke(color.opacity(0.15), lineWidth: 6)
+                    .frame(width: 56, height: 56)
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(color, style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                    .frame(width: 56, height: 56)
+                    .rotationEffect(.degrees(-90))
+                    .animation(.easeOut(duration: 0.6), value: current)
+                Image(systemName: icon)
+                    .font(.system(size: 14))
+                    .foregroundColor(color)
             }
+            Text(label)
+                .font(.system(size: 9, weight: .medium))
+                .foregroundColor(Theme.muted)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func healthStat(value: String, label: String) -> some View {
+        VStack(spacing: 2) {
+            Text(value)
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(Theme.text)
+                .contentTransition(.numericText())
+            Text(label)
+                .font(.system(size: 9, weight: .medium))
+                .foregroundColor(Theme.muted)
         }
     }
 

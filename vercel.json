@@ -31,7 +31,9 @@
     "api/consumer/messages.js": { "maxDuration": 10 },
     "api/consumer/reorder.js": { "maxDuration": 30 },
     "api/clinic/reorders.js": { "maxDuration": 10 },
-    "api/clinic/insights.js": { "maxDuration": 60 }
+    "api/clinic/insights.js": { "maxDuration": 60 },
+    "api/library/therapies.js": { "maxDuration": 10 },
+    "api/library/protocols.js": { "maxDuration": 10 }
   },
   "crons": [
     {

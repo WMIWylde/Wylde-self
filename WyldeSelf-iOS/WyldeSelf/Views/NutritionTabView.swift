@@ -3,6 +3,7 @@ import SwiftUI
 struct NutritionTabView: View {
     @EnvironmentObject var appState: AppState
     @StateObject private var tracker = MacroTrackerService.shared
+    @StateObject private var mealService = MealPlanService.shared
     @State private var showFoodScanner = false
     @State private var showMealPlan = false
 
@@ -23,46 +24,21 @@ struct NutritionTabView: View {
                                 .foregroundColor(Theme.muted)
                         }
                         Spacer()
+                        Button { showFoodScanner = true } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "camera.fill")
+                                    .font(.system(size: 13))
+                                Text("Scan")
+                                    .font(.system(size: 13, weight: .semibold))
+                            }
+                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 9)
+                            .background(Color(hex: "5EE6D6").opacity(0.85))
+                            .clipShape(Capsule())
+                        }
                     }
                     .padding(.top, 60)
-
-                    // Quick actions
-                    HStack(spacing: 10) {
-                        Button { showFoodScanner = true } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "camera.fill")
-                                    .font(.system(size: 14))
-                                Text("Scan Meal")
-                                    .font(.system(size: 14, weight: .semibold))
-                            }
-                            .foregroundColor(Color(hex: "1A1816"))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(
-                                LinearGradient(
-                                    colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
-                                    startPoint: .top, endPoint: .bottom
-                                )
-                            )
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .shadow(color: .black.opacity(0.25), radius: 6, x: 0, y: 3)
-                        }
-
-                        Button { showMealPlan = true } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "calendar")
-                                    .font(.system(size: 14))
-                                Text("Meal Plan")
-                                    .font(.system(size: 14, weight: .semibold))
-                            }
-                            .foregroundColor(Theme.text)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(Theme.surface)
-                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.border, lineWidth: 1))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                        }
-                    }
 
                     // Today's macros
                     VStack(alignment: .leading, spacing: 14) {
@@ -82,10 +58,82 @@ struct NutritionTabView: View {
                     .background(Theme.surface)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
 
-                    // Today's meals
+                    // Meal Plan card — prominent
+                    Button { showMealPlan = true } label: {
+                        VStack(alignment: .leading, spacing: 10) {
+                            HStack {
+                                Image(systemName: "calendar")
+                                    .font(.system(size: 16))
+                                    .foregroundColor(Color(hex: "FF9A3C"))
+                                Text("WEEKLY MEAL PLAN")
+                                    .font(.system(size: 10, weight: .bold))
+                                    .tracking(2)
+                                    .foregroundColor(Color(hex: "FF9A3C"))
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(Theme.muted)
+                            }
+
+                            if let today = mealService.todaysMeals() {
+                                // Show today's meals preview
+                                Text(today.dayName)
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(Theme.text)
+
+                                let done = today.meals.filter(\.completed).count
+                                Text("\(done)/\(today.meals.count) meals completed · \(today.totalCalories) cal")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(Theme.muted)
+
+                                // Mini meal list
+                                ForEach(today.meals.prefix(3)) { meal in
+                                    HStack(spacing: 8) {
+                                        Image(systemName: meal.completed ? "checkmark.circle.fill" : "circle")
+                                            .font(.system(size: 14))
+                                            .foregroundColor(meal.completed ? Theme.sage : Theme.muted)
+                                        Text("\(meal.mealType.rawValue) — \(meal.name)")
+                                            .font(.system(size: 13))
+                                            .foregroundColor(meal.completed ? Theme.muted : Theme.text)
+                                            .lineLimit(1)
+                                    }
+                                }
+                            } else {
+                                Text("Plan your week")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(Theme.text)
+                                Text("AI-built meal plan with recipes, macros, and grocery list.")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(Theme.muted)
+
+                                HStack(spacing: 8) {
+                                    Text("Generate Meal Plan")
+                                        .font(.system(size: 13, weight: .semibold))
+                                    Image(systemName: "sparkles")
+                                        .font(.system(size: 12))
+                                }
+                                .foregroundColor(Color(hex: "1A1816"))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(Color(hex: "FF9A3C"))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .padding(.top, 4)
+                            }
+                        }
+                        .padding(18)
+                        .background(Theme.surface)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .stroke(Color(hex: "FF9A3C").opacity(0.15), lineWidth: 1)
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+
+                    // Today's logged meals
                     if !tracker.todaysMeals.isEmpty {
                         VStack(alignment: .leading, spacing: 10) {
-                            Text("TODAY'S MEALS")
+                            Text("LOGGED TODAY")
                                 .font(.system(size: 10, weight: .bold))
                                 .tracking(2)
                                 .foregroundColor(Theme.muted)
@@ -114,6 +162,34 @@ struct NutritionTabView: View {
                             }
                         }
                     }
+
+                    // Scan meal CTA at bottom
+                    Button { showFoodScanner = true } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: "camera.viewfinder")
+                                .font(.system(size: 18))
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Log a meal")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(Theme.text)
+                                Text("Snap a photo — AI estimates your macros")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(Theme.muted)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 12))
+                                .foregroundColor(Theme.muted)
+                        }
+                        .padding(16)
+                        .background(Theme.surface)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .stroke(Color(hex: "5EE6D6").opacity(0.15), lineWidth: 1)
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
 
                     Spacer().frame(height: 100)
                 }

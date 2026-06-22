@@ -25,6 +25,7 @@ struct YouView: View {
     @State private var showCoach = false
     @State private var showProtocol = false
     @State private var showExercises = false
+    @State private var showTherapyLibrary = false
 
     var body: some View {
         NavigationStack {
@@ -52,6 +53,7 @@ struct YouView: View {
             .fullScreenCover(isPresented: $showCoach)  { CoachChatView().environmentObject(appState) }
             .fullScreenCover(isPresented: $showProtocol) { ProtocolTrackerView().environmentObject(appState) }
             .sheet(isPresented: $showExercises)        { NavigationStack { ExercisesView() } }
+            .fullScreenCover(isPresented: $showTherapyLibrary) { TherapyLibraryView() }
             .alert("Reset profile?", isPresented: $showResetConfirm) {
                 Button("Cancel", role: .cancel) {}
                 Button("Reset", role: .destructive) { appState.resetAllData() }
@@ -297,6 +299,8 @@ struct YouView: View {
             row(icon: "heart.text.square",       label: "Health Data")              { /* wire to HealthKit view */ }
             divider
             row(icon: "person.2.fill",           label: "Care Team")               { showCareTeam = true }
+            divider
+            row(icon: "book.fill",               label: "Therapy Library")           { showTherapyLibrary = true }
             divider
             row(icon: "books.vertical.fill",     label: "Exercise Library")         { showExercises = true }
             divider
