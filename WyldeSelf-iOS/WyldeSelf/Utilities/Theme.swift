@@ -23,12 +23,33 @@ enum Theme {
     static var cardPadding: CGFloat { WyldeStyles.Spacing.lg }
     static var screenPadding: CGFloat { WyldeStyles.Spacing.lg }
 
+    // Card surface — adaptive white/dark
+    static var cardSurface: Color {
+        Color(UIColor { tc in
+            tc.userInterfaceStyle == .dark
+                ? UIColor(wyldeHex: "111111")
+                : UIColor(wyldeHex: "FFFFFF")
+        })
+    }
+
     /// For `UITabBarAppearance` / `UINavigationBarAppearance` alongside SwiftUI chrome.
-    static var paperUIColor: UIColor { UIColor(wyldeHex: "F4F1EC") }
-    static var hairlineShadowUIColor: UIColor { UIColor(white: 0, alpha: 0.06) }
+    static var paperUIColor: UIColor {
+        UIColor { tc in
+            tc.userInterfaceStyle == .dark
+                ? UIColor(wyldeHex: "0B0B0B")
+                : UIColor(wyldeHex: "F4F1EC")
+        }
+    }
+    static var hairlineShadowUIColor: UIColor {
+        UIColor { tc in
+            tc.userInterfaceStyle == .dark
+                ? UIColor(white: 1, alpha: 0.04)
+                : UIColor(white: 0, alpha: 0.06)
+        }
+    }
 }
 
-private extension UIColor {
+extension UIColor {
     convenience init(wyldeHex: String, alpha: CGFloat = 1) {
         let hex = wyldeHex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0

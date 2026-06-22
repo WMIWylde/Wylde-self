@@ -380,6 +380,8 @@ struct TodayView: View {
                         Image(systemName: action.completed ? "checkmark.circle.fill" : "circle")
                             .foregroundColor(action.completed ? Theme.sage : Theme.muted)
                             .font(.system(size: 22))
+                            .scaleEffect(action.completed ? 1.0 : 0.92)
+                            .animation(.spring(response: 0.3, dampingFraction: 0.85), value: action.completed)
                             .onTapGesture {
                                 toggleMorningAction(index)
                             }
@@ -500,7 +502,7 @@ struct TodayView: View {
 
         return VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Image(systemName: "flame.fill")
+                Image(systemName: "dumbbell.fill")
                     .foregroundColor(Theme.gold)
                 Text("Today's Workout")
                     .font(.system(size: 16, weight: .semibold))
@@ -698,12 +700,16 @@ struct TodayView: View {
             Text(label)
                 .font(.system(size: 12, weight: .medium))
                 .foregroundColor(Theme.muted)
-            Text("\(current)\(unit)")
-                .font(.system(size: 20, weight: .bold))
-                .foregroundColor(Theme.text)
-            + Text(" / \(goal)\(unit)")
-                .font(.system(size: 13, weight: .medium))
-                .foregroundColor(Theme.muted)
+            HStack(alignment: .firstTextBaseline, spacing: 0) {
+                Text("\(current)\(unit)")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(Theme.text)
+                    .contentTransition(.numericText())
+                    .animation(.easeInOut(duration: 0.3), value: current)
+                Text(" / \(goal)\(unit)")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(Theme.muted)
+            }
 
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
@@ -713,6 +719,7 @@ struct TodayView: View {
                     RoundedRectangle(cornerRadius: 3)
                         .fill(Theme.sage)
                         .frame(width: min(geo.size.width, geo.size.width * CGFloat(current) / CGFloat(max(1, goal))), height: 4)
+                        .animation(.easeOut(duration: 0.5), value: current)
                 }
             }
             .frame(height: 4)
@@ -851,14 +858,14 @@ struct TodayView: View {
         HapticManager.shared.impact(.light)
         // Spring animation so the checkmark fills with a satisfying bounce
         // instead of an instant flip — small thing, big tactile difference
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) {
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
             appState.morningProtocolActions[index].completed.toggle()
         }
 
         // Check if all completed
         if appState.morningProtocolActions.allSatisfy({ $0.completed }) {
             HapticManager.shared.notification(.success)
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) {
                 appState.morningProtocolCompleted = true
             }
             appState.awardXP(25, reason: "Morning Protocol complete")
@@ -867,7 +874,7 @@ struct TodayView: View {
 
     private func toggleWalk() {
         HapticManager.shared.impact(.light)
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) {
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
             appState.dailyWalkCompleted.toggle()
         }
         if appState.dailyWalkCompleted {

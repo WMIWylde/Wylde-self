@@ -206,9 +206,7 @@ struct CareTeamView: View {
 
         // Messages + Protocol Tracker
         HStack(spacing: 10) {
-            NavigationLink {
-                CareMessagingView().environmentObject(AppState())
-            } label: {
+            Button { vm.showMessages = true } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "bubble.left.and.bubble.right")
                         .font(.system(size: 14))
@@ -222,9 +220,7 @@ struct CareTeamView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             }
 
-            NavigationLink {
-                ProtocolTrackerView().environmentObject(AppState())
-            } label: {
+            Button { vm.showProtocol = true } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "pills.fill")
                         .font(.system(size: 14))
@@ -237,6 +233,12 @@ struct CareTeamView: View {
                 .background(WyldeStyles.Colors.bone)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             }
+        }
+        .fullScreenCover(isPresented: $vm.showMessages) {
+            CareMessagingView()
+        }
+        .fullScreenCover(isPresented: $vm.showProtocol) {
+            ProtocolTrackerView()
         }
 
         WyldeCard {
@@ -437,6 +439,8 @@ final class CareTeamViewModel: ObservableObject {
     @Published var linkedDateString: String?
 
     @Published var codeInput: String = ""
+    @Published var showMessages: Bool = false
+    @Published var showProtocol: Bool = false
 
     func load() async {
         loading = true; defer { loading = false }

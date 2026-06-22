@@ -12,10 +12,8 @@ struct MainTabView: View {
             // the user switches tabs.
             ZStack {
                 tabContent(.today) { TodayView() }
-                tabContent(.exercises) { ExercisesView() }
-                tabContent(.future) { WebViewScreen(path: "#future") }
-                // Was WebViewScreen("#progress") — replaced with native
-                // YouView which hosts identity, care team, and settings.
+                tabContent(.nutrition) { NutritionTabView() }
+                tabContent(.future) { FutureTabView() }
                 tabContent(.settings) { YouView() }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -96,9 +94,7 @@ struct BottomTabBar: View {
         .frame(height: 72)
         .padding(.bottom, safeAreaBottom)
         .background(
-            Rectangle()
-                .fill(Theme.surface)
-                .shadow(color: .black.opacity(0.06), radius: 12, y: -4)
+            BlurredTabBarBackground()
                 .ignoresSafeArea(edges: .bottom)
         )
     }

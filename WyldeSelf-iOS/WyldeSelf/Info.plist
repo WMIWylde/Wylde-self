@@ -32,7 +32,7 @@
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>CLINICAL_API_BASE</key>
-	<string>https://clinical.wyldeself.com</string>
+	<string>https://www.wyldeself.com</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>

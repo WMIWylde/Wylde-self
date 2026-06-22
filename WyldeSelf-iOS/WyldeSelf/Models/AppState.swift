@@ -5,6 +5,16 @@ class AppState: ObservableObject {
     // Tab — not persisted (always start on Today)
     @Published var selectedTab: Tab = .today
 
+    // Appearance — "dark" (default, matches web), "light", or "system"
+    @Published var appearanceMode: String = "dark"                   { didSet { defaults.set(appearanceMode, forKey: "wylde_appearance") } }
+    var preferredColorScheme: ColorScheme? {
+        switch appearanceMode {
+        case "dark": return .dark
+        case "light": return .light
+        default: return nil  // "system" follows device
+        }
+    }
+
     // Auth / profile — persisted
     @Published var isAuthenticated = false                          { didSet { defaults.set(isAuthenticated, forKey: "wylde_authed") } }
     @Published var userName: String = ""                            { didSet { defaults.set(userName, forKey: "wylde_name") } }
@@ -36,6 +46,8 @@ class AppState: ObservableObject {
     @Published var dietaryPrefs: [String] = []                       { didSet { defaults.set(dietaryPrefs, forKey: "wylde_diet") } }
     @Published var dietNotes: String = ""                            { didSet { defaults.set(dietNotes, forKey: "wylde_diet_notes") } }
     @Published var classPreferences: [String] = []                   { didSet { defaults.set(classPreferences, forKey: "wylde_classes") } }
+    @Published var currentBook: String = ""                            { didSet { defaults.set(currentBook, forKey: "wylde_book") } }
+    @Published var pagesReadToday: Int = 0                             { didSet { defaults.set(pagesReadToday, forKey: dayKey("wylde_pages")) } }
 
     // Pro entitlement — cached locally for instant UI, refreshed from
     // RevenueCat on launch + when the SDK posts an entitlement change.
@@ -77,18 +89,15 @@ class AppState: ObservableObject {
     @Published var caloriesGoal: Int = 2400                         { didSet { defaults.set(caloriesGoal, forKey: "wylde_calories_goal") } }
 
     enum Tab: String, CaseIterable {
-        // Display labels chosen for brand alignment per CLAUDE.md target IA.
-        // Enum case `.settings` retained internally to avoid touching every
-        // routing reference; raw value renders as "You" in the bottom bar.
         case today     = "Today"
-        case exercises = "Library"
+        case nutrition = "Nutrition"
         case future    = "Future"
         case settings  = "You"
 
         var icon: String {
             switch self {
             case .today:     return "sun.horizon.fill"
-            case .exercises: return "book.closed.fill"
+            case .nutrition: return "leaf.fill"
             case .future:    return "figure.walk.motion"
             case .settings:  return "person.crop.circle.fill"
             }
@@ -99,9 +108,10 @@ class AppState: ObservableObject {
     // Three fixed practices — meditation, journaling, reading. Workout is
     // not part of morning protocol because it lives in the daily routine.
     static let defaultMorningActions: [MorningAction] = [
-        MorningAction(id: "meditation", name: "Meditation", desc: "Sit. Breathe. Notice.", dur: 10),
-        MorningAction(id: "journaling", name: "Journaling", desc: "What's on your mind. What you're grateful for. What you're building.", dur: 10),
-        MorningAction(id: "reading",    name: "Reading",    desc: "Feed your mind something deliberate.", dur: 15)
+        MorningAction(id: "qigong",     name: "Energy Movement", desc: "5-7 minutes of slow, intentional movement. Wake up the body's energy, loosen the joints, connect breath to motion.", dur: 7),
+        MorningAction(id: "meditation", name: "Meditation", desc: "10 minutes of stillness. This is how you train your mind to be calm under pressure.", dur: 10),
+        MorningAction(id: "journaling", name: "Journaling", desc: "Write what's on your mind, what you're grateful for, and what you're building. Clarity comes from the page, not the screen.", dur: 10),
+        MorningAction(id: "reading",    name: "Reading",    desc: "15 minutes of deliberate input. Feed your mind something that makes you sharper, calmer, or more capable.", dur: 15)
     ]
 
     // MARK: - Persistence
@@ -155,6 +165,7 @@ class AppState: ObservableObject {
     }
 
     func loadFromDefaults() {
+        appearanceMode = defaults.string(forKey: "wylde_appearance") ?? "dark"
         userName = defaults.string(forKey: "wylde_name") ?? ""
         currentDay = defaults.integer(forKey: "wylde_day")
         if currentDay == 0 { currentDay = 1 }
@@ -177,6 +188,8 @@ class AppState: ObservableObject {
         dietaryPrefs = defaults.stringArray(forKey: "wylde_diet") ?? []
         dietNotes = defaults.string(forKey: "wylde_diet_notes") ?? ""
         classPreferences = defaults.stringArray(forKey: "wylde_classes") ?? []
+        currentBook = defaults.string(forKey: "wylde_book") ?? ""
+        pagesReadToday = defaults.integer(forKey: dayKey("wylde_pages"))
 
         // Pro entitlement — cached locally for instant UI on launch.
         // Source of truth is RevenueCat / Supabase; this is just the

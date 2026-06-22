@@ -30,6 +30,8 @@ struct WyldeScoreCard: View {
                     Text("\(s.totalScore)")
                         .font(.system(size: 42, weight: .bold, design: .monospaced))
                         .foregroundColor(Color(hex: "F4F1E8"))
+                        .contentTransition(.numericText())
+                        .animation(.easeInOut(duration: 0.4), value: s.totalScore)
                     Text("/ 100")
                         .font(.system(size: 14))
                         .foregroundColor(Color(hex: "6E6B65"))
@@ -83,6 +85,7 @@ struct WyldeScoreCard: View {
                         .fill(color)
                         .frame(width: geo.size.width * CGFloat(score) / CGFloat(max))
                         .shadow(color: color.opacity(0.4), radius: 4, x: 0, y: 0)
+                        .animation(.easeOut(duration: 0.6), value: score)
                 }
             }
             .frame(height: 4)
