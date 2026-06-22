@@ -2,9 +2,13 @@ import SwiftUI
 
 struct WyldeScoreCard: View {
     let score: WyldeScore?
+    @State private var expanded = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) { expanded.toggle() }
+            } label: {
             HStack {
                 Image(systemName: "chart.line.uptrend.xyaxis")
                     .foregroundColor(Color(hex: "C8A96E"))
@@ -14,6 +18,10 @@ struct WyldeScoreCard: View {
                     .foregroundColor(Color(hex: "C8A96E"))
                 Spacer()
                 if let s = score {
+                    Text("\(s.totalScore)")
+                        .font(.system(size: 16, weight: .bold, design: .monospaced))
+                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .contentTransition(.numericText())
                     Text(s.grade)
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(gradeColor(s.totalScore))
@@ -22,8 +30,14 @@ struct WyldeScoreCard: View {
                         .background(gradeColor(s.totalScore).opacity(0.12))
                         .clipShape(Capsule())
                 }
+                Image(systemName: expanded ? "chevron.up" : "chevron.down")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(Color(hex: "6E6B65"))
             }
+            } // close Button label
+            .buttonStyle(.plain)
 
+            if expanded {
             if let s = score {
                 // Total score
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
@@ -59,6 +73,7 @@ struct WyldeScoreCard: View {
                     .font(.system(size: 12))
                     .foregroundColor(Color(hex: "A6A29A"))
             }
+            } // if expanded
         }
         .padding(20)
         .background(Color(hex: "111111"))

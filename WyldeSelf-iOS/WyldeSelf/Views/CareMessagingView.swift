@@ -180,13 +180,31 @@ struct CareMessagingView: View {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
         do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            struct Resp: Codable { let messages: [CareMessage]; let relationship_id: String? }
+            let (data, response) = try await URLSession.shared.data(for: request)
+            let httpCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+            print("[CareMessaging] Response: \(httpCode), bytes: \(data.count)")
+
+            if httpCode == 403 || httpCode == 401 {
+                print("[CareMessaging] Auth/relationship issue")
+                isLoading = false
+                return
+            }
+
+            struct Resp: Codable { let messages: [CareMessage]?; let relationship_id: String? }
             let resp = try JSONDecoder().decode(Resp.self, from: data)
-            messages = resp.messages
+            messages = resp.messages ?? []
             relationshipId = resp.relationship_id
+            print("[CareMessaging] Loaded \(messages.count) messages")
         } catch {
-            print("[CareMessaging] Load failed: \(error.localizedDescription)")
+            print("[CareMessaging] Load failed: \(error)")
+            // Try to print raw response for debugging
+            if let url = URL(string: "\(baseURL)/api/consumer/messages") {
+                var req2 = URLRequest(url: url)
+                if let t = await AuthService.shared.accessToken { req2.setValue("Bearer \(t)", forHTTPHeaderField: "Authorization") }
+                if let (d, _) = try? await URLSession.shared.data(for: req2), let str = String(data: d, encoding: .utf8) {
+                    print("[CareMessaging] Raw: \(str.prefix(300))")
+                }
+            }
         }
         isLoading = false
     }
@@ -212,13 +230,18 @@ struct CareMessagingView: View {
             request.httpBody = body
 
             do {
-                let (data, _) = try await URLSession.shared.data(for: request)
-                struct Resp: Codable { let message: CareMessage }
-                if let resp = try? JSONDecoder().decode(Resp.self, from: data) {
-                    messages.append(resp.message)
+                let (data, response) = try await URLSession.shared.data(for: request)
+                let httpCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+                print("[CareMessaging] Send response: \(httpCode)")
+                struct Resp: Codable { let message: CareMessage? }
+                if let resp = try? JSONDecoder().decode(Resp.self, from: data), let msg = resp.message {
+                    messages.append(msg)
+                } else {
+                    // Reload all messages as fallback
+                    await loadMessages()
                 }
             } catch {
-                print("[CareMessaging] Send failed: \(error.localizedDescription)")
+                print("[CareMessaging] Send failed: \(error)")
             }
         }
     }

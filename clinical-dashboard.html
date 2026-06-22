@@ -74,7 +74,8 @@
       <div class="nav-item active" data-section="dashboard" onclick="navTo('dashboard')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4"/></svg>Dashboard</div>
       <div class="nav-item" data-section="patients" onclick="navTo('patients')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Patients</div>
       <div class="nav-item" data-section="protocols" onclick="navTo('protocols')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Protocols</div>
-      <div class="nav-item" data-section="library" onclick="navTo('library')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>Product Library</div>
+      <div class="nav-item" data-section="therapyLibrary" onclick="navTo('therapyLibrary')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Research Library</div>
+      <div class="nav-item" data-section="library" onclick="navTo('library')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>Clinic Products</div>
       <div class="nav-item" data-section="insights" onclick="navTo('insights')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>Insights</div>
       <div class="nav-item" data-section="reorders" onclick="navTo('reorders')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>Reorders</div>
       <div class="nav-item" data-section="messages" onclick="navTo('messages')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>Messages</div>
@@ -171,6 +172,7 @@ function render() {
     case 'protocols': renderProtocols(c); break;
     case 'library': renderLibrary(c); break;
     case 'insights': renderInsightsPage(c); break;
+    case 'therapyLibrary': renderTherapyLibrary(c); break;
     case 'messages': renderMessages(c); break;
     case 'reorders': renderReorders(c); break;
     case 'billing': c.innerHTML = comingSoon('Billing & Orders'); break;
@@ -881,6 +883,156 @@ async function generateInsightsFromPage(patientId, btn) {
       container.textContent = 'No signals detected — patient is on track.';
     }
   }
+}
+
+// ─── Therapy Library ───
+
+let allTherapies = [];
+let therapyFilter = { type: null, search: '' };
+
+async function loadTherapies() {
+  let url = API + '/api/library/therapies?';
+  if (therapyFilter.type) url += 'type=' + therapyFilter.type + '&';
+  if (therapyFilter.search) url += 'search=' + encodeURIComponent(therapyFilter.search) + '&';
+  const resp = await fetch(url);
+  if (resp.ok) { const d = await resp.json(); allTherapies = d.therapies || []; }
+}
+
+function renderTherapyLibrary(c) {
+  loadTherapies().then(() => {
+    const types = ['peptide','hormone','medication','supplement'];
+    const evColors = { A: 'success', B: 'sky', C: 'warn', D: 'warn', X: 'crit' };
+    const evLabels = { A: 'Strong evidence', B: 'Moderate evidence', C: 'Limited evidence', D: 'Preclinical', X: 'Insufficient' };
+
+    c.innerHTML = `
+      <div class="flex justify-between items-center mb-4">
+        <div><h2 class="text-lg font-semibold">Research Library</h2><p class="text-sm text-ink3">Peptides, hormones, medications, supplements</p></div>
+      </div>
+
+      <!-- Search + Filters -->
+      <div class="flex gap-3 mb-4">
+        <input id="therapySearch" type="text" placeholder="Search therapies..." value="${therapyFilter.search}" class="flex-1 px-3 py-2 rounded-lg border border-line2 bg-white text-sm" oninput="therapyFilter.search=this.value; renderTherapyLibrary(el('content'))" />
+        <div class="flex gap-2">
+          <button onclick="therapyFilter.type=null; renderTherapyLibrary(el('content'))" class="px-3 py-1.5 rounded-lg text-xs font-medium ${!therapyFilter.type ? 'bg-sage text-white' : 'bg-white border border-line2 text-ink2'}">All</button>
+          ${types.map(t => `<button onclick="therapyFilter.type='${t}'; renderTherapyLibrary(el('content'))" class="px-3 py-1.5 rounded-lg text-xs font-medium ${therapyFilter.type === t ? 'bg-sage text-white' : 'bg-white border border-line2 text-ink2'}">${t.charAt(0).toUpperCase() + t.slice(1)}s</button>`).join('')}
+        </div>
+      </div>
+
+      <!-- Therapies Grid -->
+      <div class="grid grid-cols-2 gap-4">
+        ${allTherapies.map(t => `
+          <div class="bg-white rounded-xl border border-line shadow-soft p-5 hover:shadow-card transition cursor-pointer" onclick="showTherapyDetail('${t.slug}')">
+            <div class="flex items-start justify-between mb-2">
+              <h3 class="text-sm font-semibold text-ink">${t.name}</h3>
+              <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-${evColors[t.evidence_rating] || 'ink3'}bg text-${evColors[t.evidence_rating] || 'ink3'}">${t.evidence_rating || '—'}</span>
+            </div>
+            <p class="text-xs text-ink3 mb-3 leading-relaxed">${t.short_description || ''}</p>
+            <div class="flex flex-wrap gap-1">
+              <span class="text-[9px] px-2 py-0.5 rounded-full bg-sageDim text-sage">${t.therapy_type}</span>
+              ${t.prescription_required ? '<span class="text-[9px] px-2 py-0.5 rounded-full bg-warnbg text-warn">Rx required</span>' : ''}
+              ${t.requires_provider_review ? '<span class="text-[9px] px-2 py-0.5 rounded-full bg-skybg text-sky">Provider review</span>' : ''}
+            </div>
+          </div>`).join('') || '<div class="col-span-2 text-center py-12 text-ink3 text-sm">No therapies found</div>'}
+      </div>`;
+  });
+}
+
+async function showTherapyDetail(slug) {
+  const resp = await fetch(API + '/api/library/therapies?slug=' + slug);
+  if (!resp.ok) return;
+  const { therapy: t } = await resp.json();
+
+  const evLabels = { A: 'Strong human clinical evidence', B: 'Moderate human evidence', C: 'Limited human evidence', D: 'Preclinical / animal / theoretical', X: 'Not enough reliable evidence' };
+  const evColors = { A: 'success', B: 'sky', C: 'warn', D: 'warn', X: 'crit' };
+
+  openModal(`
+    <div class="p-6 max-h-[80vh] overflow-y-auto">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <h2 class="text-xl font-semibold text-ink">${t.name}</h2>
+          <div class="flex gap-2 mt-2">
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-sageDim text-sage">${t.therapy_type}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-${evColors[t.evidence_rating] || 'ink3'}bg text-${evColors[t.evidence_rating] || 'ink3'}">${t.evidence_rating}: ${evLabels[t.evidence_rating] || 'Not rated'}</span>
+            ${t.fda_status ? `<span class="text-[10px] px-2 py-0.5 rounded-full bg-warmgray text-ink3">${t.fda_status}</span>` : ''}
+          </div>
+        </div>
+        <button onclick="closeModal()" class="text-ink3 hover:text-ink">✕</button>
+      </div>
+
+      <p class="text-sm text-ink2 mb-4 leading-relaxed">${t.short_description || ''}</p>
+
+      ${t.mechanism_clinical ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">Clinical Mechanism</div><p class="text-sm text-ink2 leading-relaxed">${t.mechanism_clinical}</p></div>` : ''}
+      ${t.mechanism_plain_english ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">How It Works</div><p class="text-sm text-ink2 leading-relaxed">${t.mechanism_plain_english}</p></div>` : ''}
+
+      ${t.common_uses?.length ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-2">Common Uses</div>${t.common_uses.map(u => `<div class="flex items-center gap-2 py-1"><div class="w-1.5 h-1.5 rounded-full bg-sage"></div><span class="text-sm text-ink2">${u}</span></div>`).join('')}</div>` : ''}
+      ${t.potential_benefits?.length ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-2">Potential Benefits</div>${t.potential_benefits.map(b => `<div class="flex items-center gap-2 py-1"><div class="w-1.5 h-1.5 rounded-full bg-success"></div><span class="text-sm text-ink2">${b}</span></div>`).join('')}</div>` : ''}
+      ${t.potential_risks?.length ? `<div class="mb-4"><div class="text-[10px] font-bold text-crit uppercase tracking-wide mb-2">Potential Risks</div>${t.potential_risks.map(r => `<div class="flex items-center gap-2 py-1"><div class="w-1.5 h-1.5 rounded-full bg-crit"></div><span class="text-sm text-ink2">${r}</span></div>`).join('')}</div>` : ''}
+      ${t.contraindications?.length ? `<div class="mb-4"><div class="text-[10px] font-bold text-crit uppercase tracking-wide mb-2">Contraindications</div>${t.contraindications.map(c => `<div class="flex items-center gap-2 py-1"><div class="w-1.5 h-1.5 rounded-full bg-crit"></div><span class="text-sm text-ink2">${c}</span></div>`).join('')}</div>` : ''}
+
+      ${t.administration_routes?.length ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">Administration</div><p class="text-sm text-ink2">${t.administration_routes.join(' · ')}</p></div>` : ''}
+      ${t.typical_dosing_educational ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">Educational Dosing</div><p class="text-sm text-ink2">${t.typical_dosing_educational}</p></div>` : ''}
+
+      <div class="bg-warnbg rounded-lg p-4 mb-4">
+        <div class="flex items-center gap-2 mb-2"><span class="text-warn text-xs font-bold">⚠ IMPORTANT</span></div>
+        <p class="text-xs text-ink2 leading-relaxed">${t.safety_disclaimer || 'This information is for education only and is not medical advice.'}</p>
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="addTherapyToClinic('${t.id}','${t.name}')" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Add to Clinic Products</button>
+        <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Close</button>
+      </div>
+    </div>`);
+}
+
+function addTherapyToClinic(therapyId, therapyName) {
+  closeModal();
+  openModal(`
+    <div class="p-6">
+      <h2 class="text-lg font-semibold mb-4">Add ${therapyName} to Clinic</h2>
+      <div class="space-y-3">
+        <input id="ctpName" value="${therapyName}" placeholder="Product name" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
+        <div class="grid grid-cols-2 gap-3">
+          <input id="ctpFormulation" placeholder="Formulation" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
+          <input id="ctpConcentration" placeholder="Concentration" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <input id="ctpPrice" type="number" step="0.01" placeholder="Price" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
+          <select id="ctpPriceUnit" class="px-3 py-2 rounded-lg border border-line2 text-sm bg-white">
+            <option value="per unit">Per Unit</option><option value="per month">Per Month</option><option value="per cycle">Per Cycle</option>
+          </select>
+        </div>
+        <textarea id="ctpNotes" placeholder="Clinic notes..." rows="2" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm"></textarea>
+        <div class="flex gap-2 pt-2">
+          <button onclick="saveClinicTherapyProduct('${therapyId}')" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Save</button>
+          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+async function saveClinicTherapyProduct(therapyId) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const body = {
+    therapy_id: therapyId,
+    product_name: el('ctpName').value,
+    formulation: el('ctpFormulation').value,
+    concentration: el('ctpConcentration').value,
+    price: parseFloat(el('ctpPrice').value) || null,
+    price_unit: el('ctpPriceUnit').value,
+    clinic_notes: el('ctpNotes').value,
+  };
+
+  // Use Supabase directly since clinic_therapy_products has RLS
+  const { error } = await sb.from('clinic_therapy_products').insert({
+    clinic_id: currentUser.id,
+    ...body,
+    active: true,
+    requires_consult: true,
+  });
+
+  if (error) { alert(error.message); return; }
+  closeModal();
+  alert('Product added to your clinic!');
 }
 
 // ─── Init ───

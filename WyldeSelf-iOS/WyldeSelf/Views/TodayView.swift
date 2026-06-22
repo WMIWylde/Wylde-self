@@ -685,7 +685,9 @@ struct TodayView: View {
         walkSecondsElapsed = 0
         walkTimerActive = true
         walkTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            walkSecondsElapsed += 1
+            DispatchQueue.main.async {
+                walkSecondsElapsed += 1
+            }
         }
     }
 
