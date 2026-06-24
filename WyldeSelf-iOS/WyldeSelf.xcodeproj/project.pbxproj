@@ -33,6 +33,7 @@
 		7523CD98CF0AAF21E9CAD442 /* NutritionTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD1F3F8F5C76E6EA177FB4 /* NutritionTabView.swift */; };
 		7669D5F8914FB4FB31B28749 /* FutureTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5C465C4BB8F17531A9F2 /* FutureTabView.swift */; };
 		78ED69D6027E0112C15293C2 /* FutureReflectionFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F4745B49D36A58D1B9095F /* FutureReflectionFlow.swift */; };
+		805E81F5B3BF3C63CA86E14C /* WalkthroughOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA73C8676309DF2E6B7DBA1 /* WalkthroughOverlay.swift */; };
 		85C0CA21BE351B3D2BEFA09E /* WyldeScoreCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D83A4483E5DB70EE0AE39B /* WyldeScoreCard.swift */; };
 		895AE0504FC089DC025DFF9C /* QiGongFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2ECA0779B45656B4576A32 /* QiGongFlowView.swift */; };
 		8B14EA061C3FD0448FD49B3C /* VisionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE589914AA93A37EDC80FA9 /* VisionCard.swift */; };
@@ -91,6 +92,7 @@
 
 /* Begin PBXFileReference section */
 		0AF4835D17241407BFFB21D4 /* CoachChatView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoachChatView.swift; sourceTree = "<group>"; };
+		0FA73C8676309DF2E6B7DBA1 /* WalkthroughOverlay.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WalkthroughOverlay.swift; sourceTree = "<group>"; };
 		157C5C465C4BB8F17531A9F2 /* FutureTabView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FutureTabView.swift; sourceTree = "<group>"; };
 		16FAC72A0042A0FCA4C090D4 /* WyldeScore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WyldeScore.swift; sourceTree = "<group>"; };
 		19C7457299486313C374A0B9 /* WorkoutCalendarView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutCalendarView.swift; sourceTree = "<group>"; };
@@ -269,6 +271,7 @@
 				9AAD1F3F8F5C76E6EA177FB4 /* NutritionTabView.swift */,
 				D2506714E6F6E59E7BB6D829 /* TherapyLibraryView.swift */,
 				19C7457299486313C374A0B9 /* WorkoutCalendarView.swift */,
+				0FA73C8676309DF2E6B7DBA1 /* WalkthroughOverlay.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -494,6 +497,7 @@
 				CB13F2054F494BFCC899EF4B /* TherapyLibraryView.swift in Sources */,
 				99AC14C19937D84359DB2870 /* JournalingTimerView.swift in Sources */,
 				9D7133D59AEAABF595CE4DC7 /* WorkoutCalendarView.swift in Sources */,
+				805E81F5B3BF3C63CA86E14C /* WalkthroughOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

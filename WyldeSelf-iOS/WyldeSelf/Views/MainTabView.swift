@@ -3,6 +3,7 @@ import SwiftUI
 struct MainTabView: View {
     @EnvironmentObject var appState: AppState
     @State private var showSettingsDrawer = false
+    @State private var showWalkthrough = !UserDefaults.standard.bool(forKey: "wylde_walkthrough_seen")
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -59,6 +60,12 @@ struct MainTabView: View {
             }
         }
         .animation(.easeInOut(duration: 0.28), value: showSettingsDrawer)
+        .overlay {
+            if showWalkthrough {
+                WalkthroughOverlay(isShowing: $showWalkthrough)
+                    .zIndex(200)
+            }
+        }
     }
 
     /// Wraps a tab view so it stays in the hierarchy even when not selected.
