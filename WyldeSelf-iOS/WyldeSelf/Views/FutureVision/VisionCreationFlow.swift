@@ -117,13 +117,18 @@ struct VisionCreationFlow: View {
 
     // MARK: - Reflection Phase
 
+    @ViewBuilder
     private func reflectionPhase(index: Int) -> some View {
-        let cat = selectedCategories[index]
-        let binding = Binding<[String]>(
-            get: { allAnswers[cat.id] ?? [] },
-            set: { allAnswers[cat.id] = $0 }
-        )
-        return FutureReflectionFlow(category: cat, answers: binding)
+        if index < selectedCategories.count {
+            let cat = selectedCategories[index]
+            let binding = Binding<[String]>(
+                get: { allAnswers[cat.id] ?? [] },
+                set: { allAnswers[cat.id] = $0 }
+            )
+            FutureReflectionFlow(category: cat, answers: binding)
+        } else {
+            Text("Loading...").foregroundColor(VisionTheme.textMuted)
+        }
     }
 
     // MARK: - Generating Phase
@@ -219,53 +224,51 @@ struct VisionCreationFlow: View {
 
     // MARK: - Action Button
 
+    private var actionButtonDisabled: Bool {
+        if case .categories = phase { return selectedCategoryIds.isEmpty }
+        return false
+    }
+
+    private var actionButtonLabel: String {
+        switch phase {
+        case .categories: return "Continue"
+        case .reflecting(let i):
+            return i < selectedCategories.count - 1 ? "Next" : "Create My Vision"
+        default: return "Continue"
+        }
+    }
+
     private var actionButton: some View {
-        let isDisabled: Bool = {
-            switch phase {
-            case .categories: return selectedCategoryIds.isEmpty
-            case .reflecting(let i):
-                let cat = selectedCategories[i]
-                let answers = allAnswers[cat.id] ?? []
-                return answers.allSatisfy { $0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-            default: return false
-            }
-        }()
-
-        let label: String = {
-            switch phase {
-            case .categories: return "Continue"
-            case .reflecting(let i):
-                return i < selectedCategories.count - 1 ? "Next" : "Create My Vision"
-            default: return "Continue"
-            }
-        }()
-
-        return Button {
+        Button {
             advance()
         } label: {
-            Text(label)
+            Text(actionButtonLabel)
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(VisionTheme.background)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-                .background(isDisabled ? VisionTheme.accent.opacity(0.3) : VisionTheme.accent)
+                .background(actionButtonDisabled ? VisionTheme.accent.opacity(0.3) : VisionTheme.accent)
                 .clipShape(Capsule())
         }
-        .disabled(isDisabled)
+        .disabled(actionButtonDisabled)
     }
 
     // MARK: - Navigation
 
     private func advance() {
+        print("[VisionFlow] advance() called, phase: \(phase), categories: \(selectedCategoryIds.count)")
         switch phase {
         case .categories:
             if !selectedCategoryIds.isEmpty {
+                print("[VisionFlow] → reflecting(0)")
                 phase = .reflecting(0)
             }
         case .reflecting(let i):
             if i < selectedCategories.count - 1 {
+                print("[VisionFlow] → reflecting(\(i + 1))")
                 phase = .reflecting(i + 1)
             } else {
+                print("[VisionFlow] → generating")
                 phase = .generating
                 Task { await generateAll() }
             }
