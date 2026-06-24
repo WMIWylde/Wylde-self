@@ -23,17 +23,8 @@ struct VisionCreationFlow: View {
         VisionCategory.all.filter { selectedCategoryIds.contains($0.id) }
     }
 
-    private var totalSteps: Int {
-        1 + selectedCategories.count + 1  // categories + reflections + generate
-    }
-
-    private var currentStep: Int {
-        switch phase {
-        case .categories: return 1
-        case .reflecting(let i): return 2 + i
-        case .generating, .complete: return totalSteps
-        }
-    }
+    // totalSteps and currentStep removed — caused re-render loop
+    // Progress is now handled by fixed 5-segment progressBar
 
     var body: some View {
         ZStack {
@@ -100,12 +91,22 @@ struct VisionCreationFlow: View {
     // MARK: - Progress
 
     private var progressBar: some View {
+        // Fixed 5-segment bar to avoid ForEach range crash
         HStack(spacing: 4) {
-            ForEach(1...max(totalSteps, 2), id: \.self) { i in
+            ForEach(0..<5, id: \.self) { i in
                 Capsule()
-                    .fill(i <= currentStep ? VisionTheme.accent : VisionTheme.surface)
+                    .fill(i < progressFilled ? VisionTheme.accent : VisionTheme.surface)
                     .frame(height: 3)
             }
+        }
+    }
+
+    private var progressFilled: Int {
+        switch phase {
+        case .categories: return 1
+        case .reflecting(let i): return min(2 + i, 4)
+        case .generating: return 4
+        case .complete: return 5
         }
     }
 
