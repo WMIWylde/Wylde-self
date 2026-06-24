@@ -35,7 +35,7 @@ final class WorkoutService: ObservableObject {
                     try await self.callAIForProgram(appState: appState)
                 }
                 group.addTask {
-                    try await Task.sleep(nanoseconds: 30_000_000_000) // 30s timeout
+                    try await Task.sleep(nanoseconds: 60_000_000_000) // 60s timeout
                     throw WorkoutError.generationFailed
                 }
                 let result = try await group.next()!
@@ -44,8 +44,9 @@ final class WorkoutService: ObservableObject {
             }
             self.program = program
             saveProgram()
+            print("[WorkoutService] ✅ AI program generated: \(program.days.count) days")
         } catch {
-            print("[WorkoutService] AI generation failed: \(error.localizedDescription), using template")
+            print("[WorkoutService] ❌ AI failed: \(error.localizedDescription) — using fallback template")
             self.program = fallbackProgram(goal: appState.goals.first ?? "Get lean & athletic")
             saveProgram()
         }
@@ -95,32 +96,64 @@ final class WorkoutService: ObservableObject {
         let goals = appState.goals.isEmpty ? ["Get lean & athletic"] : appState.goals
         let equipment = appState.equipment.isEmpty ? "Some basics" : appState.equipment
         let gym = appState.gymAccess.isEmpty ? "No" : appState.gymAccess
+        let gender = appState.gender.isEmpty ? "male" : appState.gender
+        let weight = appState.weight.isEmpty ? "" : "Weight: \(appState.weight) \(appState.weightUnit)"
+        let height = appState.heightRange.isEmpty ? "" : "Height: \(appState.heightRange)"
+        let age = appState.ageRange.isEmpty ? "" : "Age range: \(appState.ageRange)"
+        let seed = Int.random(in: 1000...9999) // Forces different output each generation
 
         return """
-        Build a \(days)/week workout program for a \(level) \(appState.gender.isEmpty ? "male" : appState.gender) client.
+        Design a unique, personalized \(days)/week training program. Variation seed: \(seed).
 
-        Goals: \(goals.joined(separator: ", "))
-        Equipment at home: \(equipment)
-        Gym access: \(gym)
-        \(appState.gymName.isEmpty ? "" : "Gym: \(appState.gymName)")
-        \(appState.healthConcerns.isEmpty ? "" : "Health concerns: \(appState.healthConcerns.joined(separator: ", "))")
+        CLIENT PROFILE:
+        - Gender: \(gender)
+        \(weight.isEmpty ? "" : "- \(weight)")
+        \(height.isEmpty ? "" : "- \(height)")
+        \(age.isEmpty ? "" : "- \(age)")
+        - Fitness level: \(level)
+        - Goals: \(goals.joined(separator: ", "))
+        - Equipment at home: \(equipment)
+        - Gym access: \(gym)
+        \(appState.gymName.isEmpty ? "" : "- Gym: \(appState.gymName)")
+        \(appState.healthConcerns.isEmpty ? "" : "- Health concerns: \(appState.healthConcerns.joined(separator: ", "))")
 
-        MANDATORY RULES:
-        - EVERY workout MUST start with "Dynamic Warmup" as the first exercise (set to "10 min")
-        - EVERY workout MUST end with cardio as the last exercise (set to "15-20 min")
-        - Between warmup and cardio: 5-6 strength/resistance exercises
-        - Use precise exercise names (e.g., "Flat Barbell Bench Press", not just "Bench Press")
-        - Include a brief coaching cue (10-20 words) for each exercise
+        PROGRAMMING PRINCIPLES:
+        - Design this as a periodized program, not a random list of exercises
+        - Each day should have a clear training focus with logical exercise pairings
+        - Use progressive overload principles: compound movements first, isolation after
+        - Vary rep ranges: strength (3-5), hypertrophy (8-12), endurance (15-20)
+        - Include unilateral work (single-leg, single-arm) at least once per week
+        - Include a posterior chain focus day or emphasis
+        - Vary cardio: don't use treadmill every day — rotate rowing, cycling, stairmaster, jump rope, sled push, farmer's walks, battle ropes
+        - For \(level) level: \(level == "beginner" ? "focus on movement patterns and form, use machines where helpful" : level == "advanced" ? "include supersets, drop sets, tempo work, and advanced variations" : "balance compound strength with targeted hypertrophy work")
 
-        Return ONLY a JSON array in this exact format:
+        GOAL-SPECIFIC ADJUSTMENTS:
+        \(goals.contains("Burn fat") ? "- Higher volume, shorter rest (45-60s), include HIIT finishers" : "")
+        \(goals.contains("Build muscle") ? "- Heavy compounds 4-6 reps, moderate isolation 10-12 reps, rest 2-3 min on compounds" : "")
+        \(goals.contains("Improve endurance") ? "- Include circuit-style training, higher rep ranges, active recovery exercises" : "")
+        \(goals.contains("Increase flexibility") ? "- Include mobility exercises, yoga-inspired movements, dynamic stretching between sets" : "")
+        \(goals.contains("Build confidence") ? "- Focus on visible muscle groups (shoulders, arms, chest, glutes), include mirror-friendly exercises" : "")
+
+        MANDATORY STRUCTURE:
+        - First exercise: "Dynamic Warmup", "10 min", "Prepare the body for training"
+        - Last exercise: cardio/conditioning finisher, "15-20 min" (vary the type each day)
+        - Between warmup and finisher: 5-7 strength exercises with specific set × rep schemes
+        - Use precise exercise names (e.g., "Incline Dumbbell Press 30°", not "Chest Press")
+        - Each exercise needs a 10-20 word coaching cue with form tips
+
+        DO NOT repeat the same exercises across days. Each day should feel distinct.
+        DO NOT use generic exercises like "Push-ups" unless the client has no equipment.
+        DO NOT give the same cardio finisher on multiple days.
+
+        Return ONLY a valid JSON array:
         [
           {
             "day": "Day 01",
-            "focus": "Chest & Triceps",
+            "focus": "Upper Push + Shoulders",
             "exercises": [
               ["Dynamic Warmup", "10 min", "Prepare the body for training"],
-              ["Flat Barbell Bench Press", "5 × 5", "Grip slightly wider than shoulders, lower bar to mid-chest"],
-              ["Treadmill Incline Walk", "15-20 min", "3.5 mph, 10-12% incline, steady pace"]
+              ["Exercise Name", "4 × 8", "Detailed coaching cue about form"],
+              ["Conditioning Finisher Name", "15-20 min", "Pace and intensity cue"]
             ]
           }
         ]
