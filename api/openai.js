@@ -20,6 +20,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const { messages, model, max_tokens, temperature } = req.body || {};
+    const start = Date.now();
 
     // Allow callers to request specific models. Default to gpt-4o.
     const allowedModels = ['gpt-4o', 'gpt-4o-mini', 'gpt-4.1', 'gpt-4.1-mini', 'o3-mini'];
@@ -40,9 +41,11 @@ module.exports = async function handler(req, res) {
     });
 
     const data = await response.json();
+    const latency = Date.now() - start;
+    console.log(`[openai] model=${requestedModel} status=${response.status} latency=${latency}ms tokens=${data.usage?.total_tokens || '?'}`);
     return res.status(response.status).json(data);
   } catch (err) {
-    console.error('[openai] error:', err.message);
-    return res.status(500).json({ error: 'Upstream request failed' });
+    console.error(`[openai] error: ${err.message}`);
+    return res.status(500).json({ error: 'Upstream request failed', message: err.message });
   }
 };
