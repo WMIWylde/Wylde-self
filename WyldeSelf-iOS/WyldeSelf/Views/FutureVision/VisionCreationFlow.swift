@@ -2,29 +2,22 @@ import SwiftUI
 
 struct VisionCreationFlow: View {
     @EnvironmentObject var appState: AppState
-    @StateObject private var service = FutureVisionService.shared
+    @ObservedObject private var service = FutureVisionService.shared
     @Environment(\.dismiss) private var dismiss
 
     enum Phase: Equatable {
         case categories
-        case reflecting(Int)   // index into selectedCategories
+        case reflecting(Int)
         case generating
         case complete
     }
 
     @State private var phase: Phase = .categories
     @State private var selectedCategoryIds: Set<String> = []
-    @State private var allAnswers: [String: [String]] = [:]  // categoryId -> answers
+    @State private var allAnswers: [String: [String]] = [:]
     @State private var generatedVisions: [FutureVision] = []
     @State private var generationIndex = 0
     @State private var errorText: String?
-
-    private var selectedCategories: [VisionCategory] {
-        VisionCategory.all.filter { selectedCategoryIds.contains($0.id) }
-    }
-
-    // totalSteps and currentStep removed — caused re-render loop
-    // Progress is now handled by fixed 5-segment progressBar
 
     var body: some View {
         ZStack {
@@ -32,76 +25,64 @@ struct VisionCreationFlow: View {
 
             VStack(spacing: 0) {
                 // Top bar
-                HStack {
-                    if phase != .categories && phase != .generating && phase != .complete {
-                        Button("Back") { goBack() }
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(VisionTheme.textMuted)
-                    }
-                    Spacer()
-                    Button { dismiss() } label: {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(VisionTheme.textMuted)
-                            .frame(width: 36, height: 36)
-                            .background(VisionTheme.surface)
-                            .clipShape(Circle())
-                    }
-                }
-                .padding(.horizontal, 22)
-                .padding(.top, 12)
+                topBar
+                    .padding(.horizontal, 22)
+                    .padding(.top, 12)
 
-                // Progress
+                // Progress — fixed 5 segments
                 if phase != .complete {
-                    progressBar
-                        .padding(.horizontal, 22)
-                        .padding(.top, 12)
+                    HStack(spacing: 4) {
+                        ForEach(0..<5, id: \.self) { i in
+                            Capsule()
+                                .fill(i < currentProgress ? VisionTheme.accent : VisionTheme.surface)
+                                .frame(height: 3)
+                        }
+                    }
+                    .padding(.horizontal, 22)
+                    .padding(.top, 12)
                 }
 
                 // Content
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        switch phase {
-                        case .categories:
-                            categoriesPhase
-                        case .reflecting(let index):
-                            reflectionPhase(index: index)
-                        case .generating:
-                            generatingPhase
-                        case .complete:
-                            completePhase
-                        }
-                    }
-                    .padding(.horizontal, 22)
-                    .padding(.top, 28)
-                    .padding(.bottom, 40)
+                    contentView
+                        .padding(.horizontal, 22)
+                        .padding(.top, 28)
+                        .padding(.bottom, 40)
                 }
 
-                // Bottom action
-                if phase != .generating && phase != .complete {
-                    actionButton
-                        .padding(.horizontal, 22)
-                        .padding(.bottom, 32)
-                }
+                // Bottom button
+                bottomButton
+                    .padding(.horizontal, 22)
+                    .padding(.bottom, 32)
             }
         }
         .preferredColorScheme(.dark)
     }
 
-    // MARK: - Progress
+    // MARK: - Top Bar
 
-    private var progressBar: some View {
-        // Fixed 5-segment bar to avoid ForEach range crash
-        HStack(spacing: 4) {
-            ForEach(0..<5, id: \.self) { i in
-                Capsule()
-                    .fill(i < progressFilled ? VisionTheme.accent : VisionTheme.surface)
-                    .frame(height: 3)
+    private var topBar: some View {
+        HStack {
+            if case .reflecting = phase {
+                Button("Back") { goBack() }
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(VisionTheme.textMuted)
+            }
+            Spacer()
+            Button { dismiss() } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(VisionTheme.textMuted)
+                    .frame(width: 36, height: 36)
+                    .background(VisionTheme.surface)
+                    .clipShape(Circle())
             }
         }
     }
 
-    private var progressFilled: Int {
+    // MARK: - Progress
+
+    private var currentProgress: Int {
         switch phase {
         case .categories: return 1
         case .reflecting(let i): return min(2 + i, 4)
@@ -110,32 +91,40 @@ struct VisionCreationFlow: View {
         }
     }
 
-    // MARK: - Categories Phase
-
-    private var categoriesPhase: some View {
-        VisionCategorySelector(selected: $selectedCategoryIds)
-    }
-
-    // MARK: - Reflection Phase
+    // MARK: - Content
 
     @ViewBuilder
-    private func reflectionPhase(index: Int) -> some View {
-        if index < selectedCategories.count {
-            let cat = selectedCategories[index]
-            let binding = Binding<[String]>(
-                get: { allAnswers[cat.id] ?? [] },
-                set: { allAnswers[cat.id] = $0 }
-            )
-            FutureReflectionFlow(category: cat, answers: binding)
-        } else {
-            Text("Loading...").foregroundColor(VisionTheme.textMuted)
+    private var contentView: some View {
+        switch phase {
+        case .categories:
+            VisionCategorySelector(selected: $selectedCategoryIds)
+        case .reflecting(let index):
+            reflectionContent(index: index)
+        case .generating:
+            generatingContent
+        case .complete:
+            completeContent
         }
     }
 
-    // MARK: - Generating Phase
+    @ViewBuilder
+    private func reflectionContent(index: Int) -> some View {
+        let cats = VisionCategory.all.filter { selectedCategoryIds.contains($0.id) }
+        if index < cats.count {
+            let cat = cats[index]
+            FutureReflectionFlow(
+                category: cat,
+                answers: Binding(
+                    get: { allAnswers[cat.id] ?? [] },
+                    set: { allAnswers[cat.id] = $0 }
+                )
+            )
+        }
+    }
 
-    private var generatingPhase: some View {
-        VStack(spacing: 24) {
+    private var generatingContent: some View {
+        let cats = VisionCategory.all.filter { selectedCategoryIds.contains($0.id) }
+        return VStack(spacing: 24) {
             Spacer().frame(height: 80)
 
             ProgressView()
@@ -146,54 +135,42 @@ struct VisionCreationFlow: View {
                 .font(.system(size: 18, weight: .medium, design: .serif))
                 .foregroundColor(VisionTheme.text)
 
-            if !selectedCategories.isEmpty {
-                let current = min(generationIndex, selectedCategories.count - 1)
-                Text(selectedCategories[current].name)
+            if !cats.isEmpty {
+                let current = min(generationIndex, cats.count - 1)
+                Text(cats[current].name)
                     .font(.system(size: 13))
                     .foregroundColor(VisionTheme.textMuted)
-
-                Text("\(generationIndex + 1) of \(selectedCategories.count)")
+                Text("\(generationIndex + 1) of \(cats.count)")
                     .font(.system(size: 12))
                     .foregroundColor(VisionTheme.textFaint)
             }
 
-            Text("This may take a minute per category.\nThe AI is creating a cinematic scene for you.")
+            Text("This may take a minute per category.")
                 .font(.system(size: 12))
                 .foregroundColor(VisionTheme.textFaint)
-                .multilineTextAlignment(.center)
-                .padding(.top, 8)
 
             if let error = errorText {
                 Text(error)
                     .font(.system(size: 13))
-                    .foregroundColor(Color(hex: "8B3A2F"))
-                    .padding(.top, 8)
-
-                Button("Try Again") {
-                    Task { await generateAll() }
-                }
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(VisionTheme.accent)
+                    .foregroundColor(Color(hex: "C26B5A"))
+                Button("Try Again") { Task { await generateAll() } }
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(VisionTheme.accent)
             }
 
-            // Skip to complete with whatever we have so far
-            if generatedVisions.count > 0 {
+            if !generatedVisions.isEmpty {
                 Button("Continue with \(generatedVisions.count) vision\(generatedVisions.count == 1 ? "" : "s")") {
                     phase = .complete
                 }
                 .font(.system(size: 13, weight: .medium))
                 .foregroundColor(VisionTheme.textMuted)
-                .padding(.top, 4)
             }
 
             Spacer()
         }
-        .frame(maxWidth: .infinity)
     }
 
-    // MARK: - Complete Phase
-
-    private var completePhase: some View {
+    private var completeContent: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text("YOUR FUTURE VISION")
                 .font(.system(size: 10, weight: .semibold))
@@ -208,9 +185,7 @@ struct VisionCreationFlow: View {
                 VisionCard(vision: vision)
             }
 
-            Button {
-                dismiss()
-            } label: {
+            Button { dismiss() } label: {
                 Text("Done")
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundColor(VisionTheme.background)
@@ -219,81 +194,73 @@ struct VisionCreationFlow: View {
                     .background(VisionTheme.accent)
                     .clipShape(Capsule())
             }
-            .padding(.top, 12)
         }
     }
 
-    // MARK: - Action Button
+    // MARK: - Bottom Button
 
-    private var actionButtonDisabled: Bool {
-        if case .categories = phase { return selectedCategoryIds.isEmpty }
-        return false
-    }
-
-    private var actionButtonLabel: String {
+    @ViewBuilder
+    private var bottomButton: some View {
         switch phase {
-        case .categories: return "Continue"
-        case .reflecting(let i):
-            return i < selectedCategories.count - 1 ? "Next" : "Create My Vision"
-        default: return "Continue"
-        }
-    }
+        case .categories:
+            Button {
+                if !selectedCategoryIds.isEmpty {
+                    phase = .reflecting(0)
+                }
+            } label: {
+                Text("Continue")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(VisionTheme.background)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(selectedCategoryIds.isEmpty ? VisionTheme.accent.opacity(0.3) : VisionTheme.accent)
+                    .clipShape(Capsule())
+            }
+            .disabled(selectedCategoryIds.isEmpty)
 
-    private var actionButton: some View {
-        Button {
-            advance()
-        } label: {
-            Text(actionButtonLabel)
-                .font(.system(size: 15, weight: .semibold))
-                .foregroundColor(VisionTheme.background)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(actionButtonDisabled ? VisionTheme.accent.opacity(0.3) : VisionTheme.accent)
-                .clipShape(Capsule())
+        case .reflecting(let i):
+            let cats = VisionCategory.all.filter { selectedCategoryIds.contains($0.id) }
+            let isLast = i >= cats.count - 1
+            Button {
+                if isLast {
+                    phase = .generating
+                    Task { await generateAll() }
+                } else {
+                    phase = .reflecting(i + 1)
+                }
+            } label: {
+                Text(isLast ? "Create My Vision" : "Next")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(VisionTheme.background)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(VisionTheme.accent)
+                    .clipShape(Capsule())
+            }
+
+        default:
+            EmptyView()
         }
-        .disabled(actionButtonDisabled)
     }
 
     // MARK: - Navigation
 
-    private func advance() {
-        print("[VisionFlow] advance() called, phase: \(phase), categories: \(selectedCategoryIds.count)")
-        switch phase {
-        case .categories:
-            if !selectedCategoryIds.isEmpty {
-                print("[VisionFlow] → reflecting(0)")
-                phase = .reflecting(0)
-            }
-        case .reflecting(let i):
-            if i < selectedCategories.count - 1 {
-                print("[VisionFlow] → reflecting(\(i + 1))")
-                phase = .reflecting(i + 1)
-            } else {
-                print("[VisionFlow] → generating")
-                phase = .generating
-                Task { await generateAll() }
-            }
-        default: break
-        }
-    }
-
     private func goBack() {
-        switch phase {
-        case .reflecting(let i):
+        if case .reflecting(let i) = phase {
             if i > 0 { phase = .reflecting(i - 1) }
             else { phase = .categories }
-        default: break
         }
     }
 
     // MARK: - Generation
 
     private func generateAll() async {
+        let cats = VisionCategory.all.filter { selectedCategoryIds.contains($0.id) }
         errorText = nil
         generationIndex = 0
         generatedVisions = []
 
-        for (i, cat) in selectedCategories.enumerated() {
+        for (i, cat) in cats.enumerated() {
             generationIndex = i
             let answers = allAnswers[cat.id] ?? []
             do {
@@ -305,8 +272,7 @@ struct VisionCreationFlow: View {
                 generatedVisions.append(vision)
             } catch {
                 print("[VisionFlow] Failed for \(cat.name): \(error.localizedDescription)")
-                errorText = "\(cat.name) failed — continuing with others"
-                // Continue to next category instead of stopping
+                errorText = "\(cat.name) failed — continuing"
             }
         }
 
