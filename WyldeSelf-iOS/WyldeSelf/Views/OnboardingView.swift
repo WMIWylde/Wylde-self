@@ -23,8 +23,11 @@ struct OnboardingView: View {
     @State private var nameError = false
     @State private var futurePhoto: UIImage? = nil
     @State private var showPhotoPicker = false
+    @State private var futureRendering: UIImage? = nil
+    @State private var isRendering = false
+    @State private var renderError: String?
 
-    private let totalSteps = 5
+    private let totalSteps = 6
 
     var body: some View {
         ZStack {
@@ -50,6 +53,7 @@ struct OnboardingView: View {
                         case 3: step3
                         case 4: step4
                         case 5: step5
+                        case 6: step6
                         default: EmptyView()
                         }
                     }
@@ -113,6 +117,16 @@ struct OnboardingView: View {
             if trimmed.isEmpty { nameError = true; return }
             nameError = false
         }
+        if step == 5 {
+            // Moving to step 6 — save photo and start rendering
+            if let photo = futurePhoto, let jpegData = photo.jpegData(compressionQuality: 0.8) {
+                let base64 = jpegData.base64EncodedString()
+                UserDefaults.standard.set(base64, forKey: "wylde_future_photo")
+            }
+            step = 6
+            Task { await generateFutureSelf() }
+            return
+        }
         if step < totalSteps {
             step += 1
         } else {
@@ -139,10 +153,10 @@ struct OnboardingView: View {
         appState.healthNotes = healthNotes
         appState.dietaryPrefs = Array(dietaryPrefs)
         appState.dietNotes = dietNotes
-        // Save future self photo if uploaded
-        if let photo = futurePhoto, let jpegData = photo.jpegData(compressionQuality: 0.8) {
+        // Save rendered future self if generated
+        if let rendering = futureRendering, let jpegData = rendering.jpegData(compressionQuality: 0.9) {
             let base64 = jpegData.base64EncodedString()
-            UserDefaults.standard.set(base64, forKey: "wylde_future_photo")
+            UserDefaults.standard.set(base64, forKey: "wylde_future_rendering")
         }
         appState.onboardingComplete = true
         appState.awardXP(100, reason: "Profile created")
@@ -168,7 +182,7 @@ struct OnboardingView: View {
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .foregroundColor(WyldeStyles.Colors.ink)
-                    .onChange(of: name) { _ in nameError = false }
+                    .onChange(of: name) { nameError = false }
             }
 
             fieldGroup("I identify as") {
@@ -369,6 +383,211 @@ struct OnboardingView: View {
         .sheet(isPresented: $showPhotoPicker) {
             PhotoPicker(image: $futurePhoto)
         }
+    }
+
+    // MARK: - Step 6: Future Self Rendering
+
+    private var step6: some View {
+        VStack(spacing: 24) {
+            if isRendering {
+                // Generating
+                Spacer().frame(height: 40)
+
+                ZStack {
+                    // Ambient glow while generating
+                    Circle()
+                        .fill(
+                            RadialGradient(
+                                colors: [WyldeStyles.Colors.gold.opacity(0.15), .clear],
+                                center: .center,
+                                startRadius: 20,
+                                endRadius: 160
+                            )
+                        )
+                        .frame(width: 280, height: 280)
+
+                    VStack(spacing: 16) {
+                        ProgressView()
+                            .tint(WyldeStyles.Colors.gold)
+                            .scaleEffect(1.3)
+
+                        Text("Building your future self...")
+                            .font(.system(size: 20, weight: .medium, design: .serif))
+                            .foregroundColor(WyldeStyles.Colors.ink)
+
+                        Text("AI is rendering what you'll look like\nafter following through.")
+                            .font(.system(size: 13))
+                            .foregroundColor(WyldeStyles.Colors.stone)
+                            .multilineTextAlignment(.center)
+                            .lineSpacing(3)
+                    }
+                }
+            } else if let rendering = futureRendering {
+                // Show the result
+                Text("This is who you're becoming.")
+                    .font(.system(size: 24, weight: .bold, design: .serif))
+                    .foregroundColor(WyldeStyles.Colors.ink)
+
+                Image(uiImage: rendering)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(height: 400)
+                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .shadow(color: .black.opacity(0.2), radius: 16, x: 0, y: 8)
+
+                Text("12-week transformation")
+                    .font(.system(size: 12, weight: .semibold))
+                    .tracking(1.5)
+                    .foregroundColor(WyldeStyles.Colors.gold)
+
+                Text("This image evolves as you progress.\nEvery workout, every meal, every ritual moves you closer.")
+                    .font(.system(size: 13))
+                    .foregroundColor(WyldeStyles.Colors.stone)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(3)
+
+                Button {
+                    complete()
+                } label: {
+                    Text("Let's Begin")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(Color(hex: "1A1816"))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(
+                            LinearGradient(
+                                colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                                startPoint: .top, endPoint: .bottom
+                            )
+                        )
+                        .clipShape(Capsule())
+                        .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)
+                }
+            } else if let error = renderError {
+                // Error state
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.system(size: 36))
+                    .foregroundColor(WyldeStyles.Colors.clay)
+
+                Text("Couldn't generate your transformation")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(WyldeStyles.Colors.ink)
+
+                Text(error)
+                    .font(.system(size: 12))
+                    .foregroundColor(WyldeStyles.Colors.stone)
+
+                Button("Try Again") {
+                    Task { await generateFutureSelf() }
+                }
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(WyldeStyles.Colors.sage)
+
+                Button("Skip for now") {
+                    complete()
+                }
+                .font(.system(size: 13))
+                .foregroundColor(WyldeStyles.Colors.stone)
+            } else {
+                // No photo was uploaded — skip rendering
+                VStack(spacing: 16) {
+                    Image(systemName: "figure.walk.motion")
+                        .font(.system(size: 44))
+                        .foregroundColor(WyldeStyles.Colors.gold)
+
+                    Text("Your journey starts now.")
+                        .font(.system(size: 24, weight: .bold, design: .serif))
+                        .foregroundColor(WyldeStyles.Colors.ink)
+
+                    Text("Upload a photo anytime from the Future tab\nto see your transformation.")
+                        .font(.system(size: 13))
+                        .foregroundColor(WyldeStyles.Colors.stone)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(3)
+
+                    Button {
+                        complete()
+                    } label: {
+                        Text("Let's Begin")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(Color(hex: "1A1816"))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(
+                                LinearGradient(
+                                    colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                                    startPoint: .top, endPoint: .bottom
+                                )
+                            )
+                            .clipShape(Capsule())
+                    }
+                }
+                .padding(.top, 40)
+            }
+        }
+    }
+
+    // MARK: - Future Self Generation
+
+    private func generateFutureSelf() async {
+        guard let photo = futurePhoto,
+              let jpegData = photo.jpegData(compressionQuality: 0.6) else {
+            // No photo — skip to complete state
+            isRendering = false
+            return
+        }
+
+        isRendering = true
+        renderError = nil
+
+        let base64 = "data:image/jpeg;base64," + jpegData.base64EncodedString()
+        let g = gender.isEmpty ? "male" : gender.lowercased()
+        let userGoals = goals.isEmpty ? ["Get lean & athletic"] : Array(goals)
+
+        guard let url = URL(string: "https://www.wyldeself.com/api/generate-image") else {
+            renderError = "Invalid URL"
+            isRendering = false
+            return
+        }
+
+        let payload: [String: Any] = [
+            "mode": "physique",
+            "timeline": "12weeks",
+            "gender": g,
+            "goals": userGoals,
+            "image_base64": base64,
+        ]
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.timeoutInterval = 90
+        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            let httpCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+            print("[Onboarding] Future Self response: \(httpCode)")
+
+            struct Resp: Codable { let success: Bool?; let image_base64: String?; let error: String? }
+            let resp = try JSONDecoder().decode(Resp.self, from: data)
+
+            if let imgBase64 = resp.image_base64,
+               let cleanBase64 = imgBase64.components(separatedBy: ",").last,
+               let imgData = Data(base64Encoded: cleanBase64),
+               let image = UIImage(data: imgData) {
+                futureRendering = image
+                print("[Onboarding] ✅ Future Self image generated")
+            } else {
+                renderError = resp.error ?? "Image generation failed"
+                print("[Onboarding] ❌ Future Self failed: \(resp.error ?? "unknown")")
+            }
+        } catch {
+            renderError = error.localizedDescription
+            print("[Onboarding] ❌ Future Self error: \(error.localizedDescription)")
+        }
+
+        isRendering = false
     }
 
     // MARK: - Shared Components
