@@ -14,6 +14,7 @@
 		226DB19A0A68CF671A037743 /* CoachService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843B810CFE4E4C6C4991366 /* CoachService.swift */; };
 		362218F195F2E3CB7D31A5D9 /* guided-meditation.m4a in Resources */ = {isa = PBXBuildFile; fileRef = FA5FDC2D6C2789D0FC463D9D /* guided-meditation.m4a */; };
 		3CEB2998F10B188B9BB71D31 /* FutureVisionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2B347630952E8C8CA2062F /* FutureVisionView.swift */; };
+		3EB94B73D90D13EDAD1851DA /* wyldeself-intro.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 8DDF27D0AD3DFF23AE7F9504 /* wyldeself-intro.mp4 */; };
 		497DB2330828280086695940 /* CheckinSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED05833A5593DE8DE9080106 /* CheckinSync.swift */; };
 		49E9488F2FE1C51C007FD50D /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 49E9488E2FE1C51C007FD50D /* Supabase */; };
 		4A507556A9AAD62894AFF6F1 /* VisionCreationFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7439DFCD26DABDF020845D2E /* VisionCreationFlow.swift */; };
@@ -84,6 +85,7 @@
 		C67910E979584C833D7A4BFF /* SupabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF1630ABE8FEBBA81A03240 /* SupabaseClient.swift */; };
 		CB13F2054F494BFCC899EF4B /* TherapyLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2506714E6F6E59E7BB6D829 /* TherapyLibraryView.swift */; };
 		D2421988CEDCAD47A494339A /* ProgramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75AB4CA4640E38AE003A94AB /* ProgramView.swift */; };
+		D5CEDDD9C143C8A38DFEEB08 /* IntroAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24DF7686CA8480ADCA7BA7CC /* IntroAnimationView.swift */; };
 		E19B9D461B3AB1C2EE60070C /* CareMessagingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF7FBABC90464C1050C45FA /* CareMessagingView.swift */; };
 		F01C427D255E073C74CC7611 /* FutureVision.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07F46ED130E8FA952F7BE9A /* FutureVision.swift */; };
 		F6F60DD2FAF8EF8AA596BF42 /* ImageLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F09EC6B89EAABB04C9E946F /* ImageLibrary.swift */; };
@@ -97,6 +99,7 @@
 		16FAC72A0042A0FCA4C090D4 /* WyldeScore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WyldeScore.swift; sourceTree = "<group>"; };
 		19C7457299486313C374A0B9 /* WorkoutCalendarView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutCalendarView.swift; sourceTree = "<group>"; };
 		1B2ECA0779B45656B4576A32 /* QiGongFlowView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = QiGongFlowView.swift; sourceTree = "<group>"; };
+		24DF7686CA8480ADCA7BA7CC /* IntroAnimationView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = IntroAnimationView.swift; sourceTree = "<group>"; };
 		266BF07DED1AA40E9CE5A9FF /* ClinicalAPI.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClinicalAPI.swift; sourceTree = "<group>"; };
 		2F09EC6B89EAABB04C9E946F /* ImageLibrary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ImageLibrary.swift; sourceTree = "<group>"; };
 		3245AF428E0732CDC8B62655 /* WyldeScoreService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WyldeScoreService.swift; sourceTree = "<group>"; };
@@ -117,6 +120,7 @@
 		7843B810CFE4E4C6C4991366 /* CoachService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoachService.swift; sourceTree = "<group>"; };
 		7A1AA03C12AC3C85B020A3B1 /* ProtocolTrackerService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProtocolTrackerService.swift; sourceTree = "<group>"; };
 		88CEE5CC471CD6CDF6FC9422 /* LiftingCoach.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LiftingCoach.swift; sourceTree = "<group>"; };
+		8DDF27D0AD3DFF23AE7F9504 /* wyldeself-intro.mp4 */ = {isa = PBXFileReference; includeInIndex = 1; path = "wyldeself-intro.mp4"; sourceTree = "<group>"; };
 		91180521F9514686E9160EBF /* OnboardingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		96AFFF42775D4153D41F2066 /* MealPlan.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MealPlan.swift; sourceTree = "<group>"; };
 		9AAD1F3F8F5C76E6EA177FB4 /* NutritionTabView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NutritionTabView.swift; sourceTree = "<group>"; };
@@ -224,6 +228,7 @@
 				D10005 /* Services */,
 				D10006 /* Utilities */,
 				FA5FDC2D6C2789D0FC463D9D /* guided-meditation.m4a */,
+				8DDF27D0AD3DFF23AE7F9504 /* wyldeself-intro.mp4 */,
 			);
 			path = WyldeSelf;
 			sourceTree = "<group>";
@@ -272,6 +277,7 @@
 				D2506714E6F6E59E7BB6D829 /* TherapyLibraryView.swift */,
 				19C7457299486313C374A0B9 /* WorkoutCalendarView.swift */,
 				0FA73C8676309DF2E6B7DBA1 /* WalkthroughOverlay.swift */,
+				24DF7686CA8480ADCA7BA7CC /* IntroAnimationView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -412,6 +418,7 @@
 				A10013 /* Assets.xcassets in Resources */,
 				A10018 /* exercises.json in Resources */,
 				362218F195F2E3CB7D31A5D9 /* guided-meditation.m4a in Resources */,
+				3EB94B73D90D13EDAD1851DA /* wyldeself-intro.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -498,6 +505,7 @@
 				99AC14C19937D84359DB2870 /* JournalingTimerView.swift in Sources */,
 				9D7133D59AEAABF595CE4DC7 /* WorkoutCalendarView.swift in Sources */,
 				805E81F5B3BF3C63CA86E14C /* WalkthroughOverlay.swift in Sources */,
+				D5CEDDD9C143C8A38DFEEB08 /* IntroAnimationView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
