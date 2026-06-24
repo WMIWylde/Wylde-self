@@ -14,7 +14,7 @@ final class IdentityAnalysisService: ObservableObject {
     @Published var isAnalyzing: Bool = false
     @Published var lastError: String? = nil
 
-    private let endpoint = URL(string: "https://wyldeself.com/api/identity-analyze")!
+    private let endpoint = URL(string: "https://www.wyldeself.com/api/identity-analyze")!
 
     /// Submit the import. Returns the parsed profile on success, throws on failure.
     func analyze(userId: String, urls: [String], rawText: String) async throws -> IdentityProfile {

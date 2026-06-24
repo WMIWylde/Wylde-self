@@ -54,14 +54,16 @@ final class WorkoutService: ObservableObject {
     }
 
     private func callAIForProgram(appState: AppState) async throws -> WorkoutProgram {
-        guard let url = URL(string: "https://wyldeself.com/api/openai") else {
+        guard let url = URL(string: "https://www.wyldeself.com/api/openai") else {
             throw WorkoutError.invalidURL
         }
 
         let prompt = buildProgramPrompt(appState: appState)
         let payload: [String: Any] = [
+            "model": "gpt-4o",
+            "max_tokens": 4096,
             "messages": [
-                ["role": "system", "content": "You are a world-class strength coach. Return ONLY valid JSON."],
+                ["role": "system", "content": "You are a world-class NSCA-certified strength and conditioning coach with 20+ years of experience training athletes, executives, and transformation clients. You design periodized programs with precise exercise selection, set/rep schemes, tempo prescriptions, and coaching cues. Return ONLY valid JSON."],
                 ["role": "user", "content": prompt]
             ],
             "temperature": 0.7

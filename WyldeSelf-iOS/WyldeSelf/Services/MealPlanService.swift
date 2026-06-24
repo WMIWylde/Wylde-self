@@ -60,14 +60,17 @@ final class MealPlanService: ObservableObject {
     }
 
     private func callAI(appState: AppState) async throws -> WeeklyMealPlan {
-        guard let url = URL(string: "https://wyldeself.com/api/openai") else {
+        guard let url = URL(string: "https://www.wyldeself.com/api/openai") else {
             throw MealPlanError.invalidURL
         }
 
         let prompt = buildPrompt(appState: appState)
         let payload: [String: Any] = [
+            "model": "gpt-4o",
+            "max_tokens": 4096,
+            "temperature": 0.8,
             "messages": [
-                ["role": "system", "content": "You are a precision nutrition coach. Return ONLY valid JSON. No explanations."],
+                ["role": "system", "content": "You are an elite sports nutritionist and registered dietitian with expertise in body composition, performance nutrition, and meal prep. You create detailed, varied, macro-precise meal plans with real recipes people actually want to eat. Include protein shakes, functional snacks, and practical prep instructions. Return ONLY valid JSON."],
                 ["role": "user", "content": prompt]
             ]
         ]
@@ -75,7 +78,7 @@ final class MealPlanService: ObservableObject {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.timeoutInterval = 45
+        request.timeoutInterval = 60
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
 
         let (data, response) = try await URLSession.shared.data(for: request)

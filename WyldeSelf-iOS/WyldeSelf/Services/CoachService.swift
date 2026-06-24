@@ -42,7 +42,7 @@ final class CoachService: ObservableObject {
     // MARK: - API
 
     private func callAPI(userMessage: String, appState: AppState) async throws -> String {
-        guard let url = URL(string: "https://wyldeself.com/api/openai") else {
+        guard let url = URL(string: "https://www.wyldeself.com/api/openai") else {
             throw CoachError.invalidURL
         }
 
@@ -55,6 +55,9 @@ final class CoachService: ObservableObject {
         conversationMessages.append(["role": "user", "content": userMessage])
 
         let payload: [String: Any] = [
+            "model": "gpt-4o",
+            "max_tokens": 800,
+            "temperature": 0.8,
             "messages": conversationMessages
         ]
 

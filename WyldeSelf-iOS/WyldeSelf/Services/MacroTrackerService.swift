@@ -91,12 +91,12 @@ final class MacroTrackerService: ObservableObject {
     // MARK: - Vision API
 
     private func callVisionAPI(base64: String) async throws -> FoodAnalysis {
-        guard let url = URL(string: "https://wyldeself.com/api/openai") else {
+        guard let url = URL(string: "https://www.wyldeself.com/api/openai") else {
             throw MacroError.invalidURL
         }
 
         let prompt = """
-        Analyze this food photo. Estimate the macronutrient content.
+        Analyze this food photo carefully. Estimate portion sizes from visual cues and calculate macronutrient content precisely.
 
         Return ONLY valid JSON in this exact format:
         {
