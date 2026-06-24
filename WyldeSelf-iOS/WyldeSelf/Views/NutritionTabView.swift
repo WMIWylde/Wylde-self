@@ -50,8 +50,25 @@ struct NutritionTabView: View {
                         HStack(spacing: 0) {
                             macroRing(label: "Calories", current: appState.caloriesLogged, goal: appState.caloriesGoal, unit: "", color: Color(hex: "C8A96E"))
                             macroRing(label: "Protein", current: appState.proteinLogged, goal: appState.proteinGoal, unit: "g", color: Color(hex: "5EE6D6"))
-                            macroRing(label: "Carbs", current: tracker.totalCarbs, goal: 250, unit: "g", color: Color(hex: "FF9A3C"))
-                            macroRing(label: "Fat", current: tracker.totalFat, goal: 80, unit: "g", color: Color(hex: "B68BFF"))
+                            macroRing(label: "Carbs", current: appState.carbsLogged, goal: appState.carbsGoal, unit: "g", color: Color(hex: "FF9A3C"))
+                            macroRing(label: "Fat", current: appState.fatLogged, goal: appState.fatGoal, unit: "g", color: Color(hex: "B68BFF"))
+                        }
+
+                        // Calories burned
+                        if appState.caloriesBurned > 0 {
+                            HStack(spacing: 6) {
+                                Image(systemName: "flame.fill")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.red.opacity(0.7))
+                                Text("\(appState.caloriesBurned) cal burned")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(Theme.muted)
+                                Spacer()
+                                Text("Net: \(appState.caloriesLogged - appState.caloriesBurned) cal")
+                                    .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                                    .foregroundColor(Theme.text)
+                            }
+                            .padding(.top, 4)
                         }
                     }
                     .padding(20)

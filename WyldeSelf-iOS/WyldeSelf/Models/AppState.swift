@@ -87,6 +87,11 @@ class AppState: ObservableObject {
     @Published var proteinGoal: Int = 180                           { didSet { defaults.set(proteinGoal, forKey: "wylde_protein_goal") } }
     @Published var caloriesLogged: Int = 0                          { didSet { defaults.set(caloriesLogged, forKey: dayKey("wylde_calories_logged")) } }
     @Published var caloriesGoal: Int = 2400                         { didSet { defaults.set(caloriesGoal, forKey: "wylde_calories_goal") } }
+    @Published var carbsLogged: Int = 0                              { didSet { defaults.set(carbsLogged, forKey: dayKey("wylde_carbs_logged")) } }
+    @Published var carbsGoal: Int = 250                              { didSet { defaults.set(carbsGoal, forKey: "wylde_carbs_goal") } }
+    @Published var fatLogged: Int = 0                                { didSet { defaults.set(fatLogged, forKey: dayKey("wylde_fat_logged")) } }
+    @Published var fatGoal: Int = 80                                 { didSet { defaults.set(fatGoal, forKey: "wylde_fat_goal") } }
+    @Published var caloriesBurned: Int = 0                           { didSet { defaults.set(caloriesBurned, forKey: dayKey("wylde_calories_burned")) } }
 
     enum Tab: String, CaseIterable {
         case today     = "Today"
@@ -223,12 +228,19 @@ class AppState: ObservableObject {
         workoutCompleted = defaults.bool(forKey: dayKey("wylde_workout_done"))
         proteinLogged = defaults.integer(forKey: dayKey("wylde_protein_logged"))
         caloriesLogged = defaults.integer(forKey: dayKey("wylde_calories_logged"))
+        carbsLogged = defaults.integer(forKey: dayKey("wylde_carbs_logged"))
+        fatLogged = defaults.integer(forKey: dayKey("wylde_fat_logged"))
+        caloriesBurned = defaults.integer(forKey: dayKey("wylde_calories_burned"))
 
         // Goals carry over day-to-day, only reset when user changes them
         let pg = defaults.integer(forKey: "wylde_protein_goal")
         if pg > 0 { proteinGoal = pg }
         let cg = defaults.integer(forKey: "wylde_calories_goal")
         if cg > 0 { caloriesGoal = cg }
+        let cbg = defaults.integer(forKey: "wylde_carbs_goal")
+        if cbg > 0 { carbsGoal = cbg }
+        let fg = defaults.integer(forKey: "wylde_fat_goal")
+        if fg > 0 { fatGoal = fg }
 
         // Auth: prefer explicit flag, fall back to "did the user set a name"
         if defaults.object(forKey: "wylde_authed") != nil {

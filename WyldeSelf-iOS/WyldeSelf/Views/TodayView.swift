@@ -16,6 +16,8 @@ struct TodayView: View {
     @State private var showProtocolTracker = false
     @StateObject private var scoreService = WyldeScoreService.shared
     @State private var ritualExpanded = true
+    @State private var showJournaling = false
+    @State private var showSchedule = false
     @State private var walkTimerActive = false
     @State private var walkSecondsElapsed = 0
     @State private var walkTimer: Timer?
@@ -180,6 +182,12 @@ struct TodayView: View {
         }
         .fullScreenCover(isPresented: $showMeditation) {
             GuidedMeditationView()
+        }
+        .sheet(isPresented: $showSchedule) {
+            WorkoutCalendarView().environmentObject(appState)
+        }
+        .fullScreenCover(isPresented: $showJournaling) {
+            JournalingTimerView()
         }
         .fullScreenCover(isPresented: $showWorkout) {
             workoutDestination
@@ -411,6 +419,9 @@ struct TodayView: View {
                         } else if action.id == "meditation" && !action.completed {
                             showMeditation = true
                             toggleMorningAction(index)
+                        } else if action.id == "journaling" && !action.completed {
+                            showJournaling = true
+                            toggleMorningAction(index)
                         } else {
                             toggleMorningAction(index)
                         }
@@ -511,6 +522,11 @@ struct TodayView: View {
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(Theme.text)
                 Spacer()
+                Button { showSchedule = true } label: {
+                    Image(systemName: "calendar")
+                        .font(.system(size: 13))
+                        .foregroundColor(Theme.muted)
+                }
                 if appState.workoutCompleted {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(Theme.sage)
@@ -1082,6 +1098,8 @@ struct TodayView: View {
         let defaults = UserDefaults.standard
         healthSteps = defaults.integer(forKey: "wylde_health_steps")
         healthCalories = defaults.integer(forKey: "wylde_health_calories")
+        // Sync burned calories to AppState for nutrition tracking
+        appState.caloriesBurned = healthCalories
     }
 }
 

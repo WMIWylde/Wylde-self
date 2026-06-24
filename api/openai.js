@@ -28,8 +28,8 @@ module.exports = async function handler(req, res) {
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        max_tokens: 2048,
+        model: 'gpt-4o',
+        max_tokens: 4096,
         messages: messages || []
       })
     });

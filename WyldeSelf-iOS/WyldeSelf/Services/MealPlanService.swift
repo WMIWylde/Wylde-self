@@ -100,12 +100,43 @@ final class MealPlanService: ObservableObject {
         let goals = appState.goals.isEmpty ? "Get lean & athletic" : appState.goals.joined(separator: ", ")
         let proteinGoal = appState.proteinGoal
         let calorieGoal = appState.caloriesGoal
+        let carbsGoal = appState.carbsGoal
+        let fatGoal = appState.fatGoal
+        let weight = appState.weight.isEmpty ? "unknown" : appState.weight + " " + appState.weightUnit
+        let height = appState.heightRange.isEmpty ? "unknown" : appState.heightRange
+        let gender = appState.gender.isEmpty ? "unspecified" : appState.gender
+        let level = appState.fitnessLevel.isEmpty ? "intermediate" : appState.fitnessLevel
+        let trainingDays = appState.trainingDays.isEmpty ? "4 days" : appState.trainingDays
 
         return """
-        Create a 7-day meal plan for someone with these goals: \(goals).
-        Dietary preferences: \(diet).
-        \(appState.dietNotes.isEmpty ? "" : "Notes: \(appState.dietNotes)")
-        Daily targets: ~\(calorieGoal) calories, ~\(proteinGoal)g protein.
+        Create a 7-day meal plan for this person:
+
+        Gender: \(gender)
+        Weight: \(weight)
+        Height: \(height)
+        Fitness level: \(level)
+        Training: \(trainingDays)/week
+        Goals: \(goals)
+        Dietary preferences: \(diet)
+        \(appState.dietNotes.isEmpty ? "" : "Diet notes: \(appState.dietNotes)")
+        \(appState.healthConcerns.isEmpty ? "" : "Health concerns: \(appState.healthConcerns.joined(separator: ", "))")
+
+        Daily macro targets:
+        - Calories: ~\(calorieGoal)
+        - Protein: ~\(proteinGoal)g
+        - Carbs: ~\(carbsGoal)g
+        - Fat: ~\(fatGoal)g
+
+        CRITICAL RULES:
+        - Every day MUST have DIFFERENT meals. No repeated meals across the week.
+        - Include variety: different proteins (chicken, fish, beef, turkey, shrimp, tofu), different grains, different vegetables.
+        - Include 1-2 protein shakes per day if needed to hit protein targets (whey, plant-based, or collagen).
+        - Training days should have slightly higher carbs pre/post workout.
+        - Rest days can have slightly lower calories.
+        - Include meal prep friendly options for weekdays.
+        - Weekend meals can be slightly more elaborate.
+        - Snacks should be functional: protein bars, shakes, nuts, Greek yogurt, fruit.
+        - Calculate macros accurately for each meal — they should add up to daily targets.
 
         Return JSON in this EXACT format:
         {
@@ -116,15 +147,15 @@ final class MealPlanService: ObservableObject {
               "meals": [
                 {
                   "mealType": "Breakfast",
-                  "name": "Scrambled Eggs with Avocado Toast",
-                  "description": "Quick, high-protein start",
-                  "ingredients": ["3 eggs", "1 avocado", "2 slices sourdough", "salt", "pepper"],
-                  "instructions": ["Scramble eggs in butter", "Toast bread", "Slice avocado on top", "Season"],
+                  "name": "Meal name",
+                  "description": "Brief description",
+                  "ingredients": ["ingredient 1", "ingredient 2"],
+                  "instructions": ["Step 1", "Step 2"],
                   "prepTime": 10,
                   "calories": 520,
-                  "protein": 28,
-                  "carbs": 35,
-                  "fat": 32
+                  "protein": 35,
+                  "carbs": 40,
+                  "fat": 20
                 }
               ]
             }
@@ -132,16 +163,17 @@ final class MealPlanService: ObservableObject {
           "groceryList": [
             {
               "category": "Protein",
-              "items": [{"name": "Chicken breast", "quantity": "3 lbs"}]
+              "items": [{"name": "Item", "quantity": "amount"}]
             }
           ],
           "generatedAt": "\(ISO8601DateFormatter().string(from: Date()))",
           "goal": "\(goals)"
         }
 
-        Include 3 meals (Breakfast, Lunch, Dinner) and 1 Snack per day.
-        Keep meals practical — 10-20 min prep. Real food, not supplements.
-        Grocery list grouped by: Protein, Produce, Dairy, Pantry, Grains.
+        Include 3 meals (Breakfast, Lunch, Dinner) and 1-2 Snacks per day.
+        Keep meals practical — 10-30 min prep. Real food.
+        At least 1 protein shake or smoothie per day.
+        Grocery list grouped by: Protein, Produce, Dairy, Pantry, Grains, Supplements.
         """
     }
 

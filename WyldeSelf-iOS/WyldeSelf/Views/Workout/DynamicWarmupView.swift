@@ -14,11 +14,11 @@ struct DynamicWarmupView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let movements: [WarmupMovement] = [
-        WarmupMovement(name: "Arm Circles", cue: "Loosen the shoulders and open the chest.", duration: 30, color: Color(hex: "FF9A3C"), icon: "figure.arms.open", videoURL: URL(string: "https://wyldeself.com/warmup-videos/arm-circles.mp4")),
-        WarmupMovement(name: "Leg Swings", cue: "Hips first. Let the leg fall and rise like a pendulum.", duration: 30, color: Color(hex: "5EE6D6"), icon: "figure.walk", videoURL: URL(string: "https://wyldeself.com/warmup-videos/leg-swings.mp4")),
-        WarmupMovement(name: "Hip Openers", cue: "Slow rotations. Breathe into the joint.", duration: 35, color: Color(hex: "B68BFF"), icon: "figure.cooldown", videoURL: URL(string: "https://wyldeself.com/warmup-videos/hip-openers.mp4")),
-        WarmupMovement(name: "Bodyweight Squats", cue: "Chest tall. Drive the knees out. Light, easy reps.", duration: 40, color: Color(hex: "FF6B8B"), icon: "figure.strengthtraining.functional", videoURL: URL(string: "https://wyldeself.com/warmup-videos/bodyweight-squats.mp4")),
-        WarmupMovement(name: "Light Jog", cue: "In place. Find your rhythm. Get the blood moving.", duration: 45, color: Color(hex: "7FD0FF"), icon: "figure.run", videoURL: URL(string: "https://wyldeself.com/warmup-videos/light-jog.mp4")),
+        WarmupMovement(name: "Arm Circles", cue: "Loosen the shoulders and open the chest.", duration: 30, color: Color(hex: "FF9A3C"), icon: "figure.arms.open", videoURL: URL(string: "https://www.wyldeself.com/warmup-videos/arm-circles.mp4")),
+        WarmupMovement(name: "Leg Swings", cue: "Hips first. Let the leg fall and rise like a pendulum.", duration: 30, color: Color(hex: "5EE6D6"), icon: "figure.walk", videoURL: URL(string: "https://www.wyldeself.com/warmup-videos/leg-swings.mp4")),
+        WarmupMovement(name: "Hip Openers", cue: "Slow rotations. Breathe into the joint.", duration: 35, color: Color(hex: "B68BFF"), icon: "figure.cooldown", videoURL: URL(string: "https://www.wyldeself.com/warmup-videos/hip-openers.mp4")),
+        WarmupMovement(name: "Bodyweight Squats", cue: "Chest tall. Drive the knees out. Light, easy reps.", duration: 40, color: Color(hex: "FF6B8B"), icon: "figure.strengthtraining.functional", videoURL: URL(string: "https://www.wyldeself.com/warmup-videos/bodyweight-squats.mp4")),
+        WarmupMovement(name: "Light Jog", cue: "In place. Find your rhythm. Get the blood moving.", duration: 45, color: Color(hex: "7FD0FF"), icon: "figure.run", videoURL: URL(string: "https://www.wyldeself.com/warmup-videos/light-jog.mp4")),
     ]
 
     enum Phase { case intro, active, complete }
@@ -231,7 +231,7 @@ struct DynamicWarmupView: View {
             .padding(.bottom, 40)
         }
         } // close ZStack
-        .onChange(of: currentIndex) { _ in loadVideo() }
+        .onChange(of: currentIndex) { loadVideo() }
         .onAppear { loadVideo() }
     }
 

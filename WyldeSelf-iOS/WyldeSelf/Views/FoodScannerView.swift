@@ -55,8 +55,8 @@ struct FoodScannerView: View {
         .sheet(isPresented: $showPhotoPicker) {
             PhotoPicker(image: $capturedImage)
         }
-        .onChange(of: capturedImage) { newImage in
-            if let img = newImage {
+        .onChange(of: capturedImage) {
+            if let img = capturedImage {
                 phase = .analyzing
                 Task { await analyze(img) }
             }
@@ -222,6 +222,8 @@ struct FoodScannerView: View {
                     // Sync to AppState
                     appState.proteinLogged = tracker.totalProtein
                     appState.caloriesLogged = tracker.totalCalories
+                    appState.carbsLogged = tracker.totalCarbs
+                    appState.fatLogged = tracker.totalFat
                     dismiss()
                 }
                 .padding(.top, 8)

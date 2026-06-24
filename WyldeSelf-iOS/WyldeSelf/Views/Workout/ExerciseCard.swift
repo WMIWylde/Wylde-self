@@ -148,12 +148,12 @@ struct ExerciseCard: View {
     }
 
     private func setRow(setIndex: Int, setLog: SetLog) -> some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 6) {
             // Set number
             Text("\(setIndex + 1)")
-                .font(.system(size: 13, weight: .bold, design: .monospaced))
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
                 .foregroundColor(setLog.completed ? Color(hex: "C8A96E") : Color(hex: "6E6B65"))
-                .frame(width: 24)
+                .frame(width: 18)
 
             // Reps stepper
             stepper(value: repBinding(setIndex), step: 1, label: "reps")
@@ -163,9 +163,9 @@ struct ExerciseCard: View {
                 stepper(value: weightBinding(setIndex), step: 5, label: "lb")
             } else {
                 Text("BW")
-                    .font(.system(size: 12, weight: .bold, design: .monospaced))
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
                     .foregroundColor(Color(hex: "7FD0FF"))
-                    .frame(width: 88)
+                    .frame(minWidth: 30)
             }
 
             // Log button
@@ -200,16 +200,16 @@ struct ExerciseCard: View {
     private func stepper(value: Binding<Double>, step: Double, label: String) -> some View {
         HStack(spacing: 0) {
             Button { value.wrappedValue = max(0, value.wrappedValue - step) } label: {
-                Text("−").font(.system(size: 16, weight: .medium)).foregroundColor(Color(hex: "A6A29A"))
-                    .frame(width: 28, height: 32)
+                Text("−").font(.system(size: 14, weight: .medium)).foregroundColor(Color(hex: "A6A29A"))
+                    .frame(width: 24, height: 30)
             }
             Text("\(Int(value.wrappedValue))")
-                .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                .font(.system(size: 13, weight: .semibold, design: .monospaced))
                 .foregroundColor(Color(hex: "F4F1E8"))
-                .frame(width: 40)
+                .frame(minWidth: 30)
             Button { value.wrappedValue += step } label: {
-                Text("+").font(.system(size: 16, weight: .medium)).foregroundColor(Color(hex: "A6A29A"))
-                    .frame(width: 28, height: 32)
+                Text("+").font(.system(size: 14, weight: .medium)).foregroundColor(Color(hex: "A6A29A"))
+                    .frame(width: 24, height: 30)
             }
         }
         .background(Color(hex: "1A1A1A"))

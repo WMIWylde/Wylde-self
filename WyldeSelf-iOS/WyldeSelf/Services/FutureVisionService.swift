@@ -64,7 +64,7 @@ final class FutureVisionService: ObservableObject {
         reflectionText: String,
         gender: String
     ) async throws -> String? {
-        guard let url = URL(string: "https://wyldeself.com/api/generate-image") else {
+        guard let url = URL(string: "https://www.wyldeself.com/api/generate-image") else {
             throw VisionError.invalidURL
         }
 
@@ -80,10 +80,13 @@ final class FutureVisionService: ObservableObject {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.timeoutInterval = 120
+        request.timeoutInterval = 90
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
 
+        print("[FutureVision] Generating image for \(category)...")
         let (data, response) = try await URLSession.shared.data(for: request)
+        let httpCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+        print("[FutureVision] Response: \(httpCode), bytes: \(data.count)")
 
         guard let httpResponse = response as? HTTPURLResponse,
               httpResponse.statusCode == 200 else {

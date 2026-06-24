@@ -151,6 +151,12 @@ struct VisionCreationFlow: View {
                     .foregroundColor(VisionTheme.textFaint)
             }
 
+            Text("This may take a minute per category.\nThe AI is creating a cinematic scene for you.")
+                .font(.system(size: 12))
+                .foregroundColor(VisionTheme.textFaint)
+                .multilineTextAlignment(.center)
+                .padding(.top, 8)
+
             if let error = errorText {
                 Text(error)
                     .font(.system(size: 13))
@@ -162,6 +168,16 @@ struct VisionCreationFlow: View {
                 }
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(VisionTheme.accent)
+            }
+
+            // Skip to complete with whatever we have so far
+            if generatedVisions.count > 0 {
+                Button("Continue with \(generatedVisions.count) vision\(generatedVisions.count == 1 ? "" : "s")") {
+                    phase = .complete
+                }
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(VisionTheme.textMuted)
+                .padding(.top, 4)
             }
 
             Spacer()
@@ -284,11 +300,16 @@ struct VisionCreationFlow: View {
                 )
                 generatedVisions.append(vision)
             } catch {
-                errorText = error.localizedDescription
-                return
+                print("[VisionFlow] Failed for \(cat.name): \(error.localizedDescription)")
+                errorText = "\(cat.name) failed — continuing with others"
+                // Continue to next category instead of stopping
             }
         }
 
-        phase = .complete
+        if generatedVisions.isEmpty {
+            errorText = "Generation failed. Check your connection and try again."
+        } else {
+            phase = .complete
+        }
     }
 }

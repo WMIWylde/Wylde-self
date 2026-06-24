@@ -39,6 +39,8 @@
 		8DD104BAA288418643EAFAAB /* VisionCategorySelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D9A067504A893EE3724E05 /* VisionCategorySelector.swift */; };
 		8E8881408C7AD92A30FBD15D /* MacroTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 450A3040BEA993FD183CB41B /* MacroTrackerService.swift */; };
 		8F10BCBC638BDED70C47FA03 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F126C93E921C9F6B9698D5 /* SplashView.swift */; };
+		99AC14C19937D84359DB2870 /* JournalingTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9B457E960389780C1D7432D /* JournalingTimerView.swift */; };
+		9D7133D59AEAABF595CE4DC7 /* WorkoutCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C7457299486313C374A0B9 /* WorkoutCalendarView.swift */; };
 		A10001 /* WyldeSelfApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001 /* WyldeSelfApp.swift */; };
 		A10002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10002 /* ContentView.swift */; };
 		A10003 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10003 /* AppDelegate.swift */; };
@@ -91,6 +93,7 @@
 		0AF4835D17241407BFFB21D4 /* CoachChatView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoachChatView.swift; sourceTree = "<group>"; };
 		157C5C465C4BB8F17531A9F2 /* FutureTabView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FutureTabView.swift; sourceTree = "<group>"; };
 		16FAC72A0042A0FCA4C090D4 /* WyldeScore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WyldeScore.swift; sourceTree = "<group>"; };
+		19C7457299486313C374A0B9 /* WorkoutCalendarView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutCalendarView.swift; sourceTree = "<group>"; };
 		1B2ECA0779B45656B4576A32 /* QiGongFlowView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = QiGongFlowView.swift; sourceTree = "<group>"; };
 		266BF07DED1AA40E9CE5A9FF /* ClinicalAPI.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClinicalAPI.swift; sourceTree = "<group>"; };
 		2F09EC6B89EAABB04C9E946F /* ImageLibrary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ImageLibrary.swift; sourceTree = "<group>"; };
@@ -163,7 +166,8 @@
 		ED05833A5593DE8DE9080106 /* CheckinSync.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CheckinSync.swift; sourceTree = "<group>"; };
 		EFE589914AA93A37EDC80FA9 /* VisionCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VisionCard.swift; sourceTree = "<group>"; };
 		F8A1FB6CF9D2C933C1754C50 /* WorkoutContainerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutContainerView.swift; sourceTree = "<group>"; };
-		FA5FDC2D6C2789D0FC463D9D /* guided-meditation.m4a */ = {isa = PBXFileReference; includeInIndex = 1; path = "guided-meditation.m4a"; sourceTree = "<group>"; };
+		F9B457E960389780C1D7432D /* JournalingTimerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = JournalingTimerView.swift; sourceTree = "<group>"; };
+		FA5FDC2D6C2789D0FC463D9D /* guided-meditation.m4a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file; path = "guided-meditation.m4a"; sourceTree = "<group>"; };
 		FCDBF19CEB09C8382410A612 /* CareTeamView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CareTeamView.swift; sourceTree = "<group>"; };
 		FD6EAA094DE1A417B99DD349 /* VisionTheme.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VisionTheme.swift; sourceTree = "<group>"; };
 		FF420548325F72C353160DF2 /* AuthService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
@@ -192,7 +196,6 @@
 				61D9A067504A893EE3724E05 /* VisionCategorySelector.swift */,
 				72F4745B49D36A58D1B9095F /* FutureReflectionFlow.swift */,
 			);
-			name = FutureVision;
 			path = FutureVision;
 			sourceTree = "<group>";
 		};
@@ -265,6 +268,7 @@
 				33C2E7A7E79E3612AD1F4F4A /* ReorderView.swift */,
 				9AAD1F3F8F5C76E6EA177FB4 /* NutritionTabView.swift */,
 				D2506714E6F6E59E7BB6D829 /* TherapyLibraryView.swift */,
+				19C7457299486313C374A0B9 /* WorkoutCalendarView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -336,8 +340,8 @@
 				F8A1FB6CF9D2C933C1754C50 /* WorkoutContainerView.swift */,
 				1B2ECA0779B45656B4576A32 /* QiGongFlowView.swift */,
 				CC61017E88572D0AF4662A7C /* GuidedMeditationView.swift */,
+				F9B457E960389780C1D7432D /* JournalingTimerView.swift */,
 			);
-			name = Workout;
 			path = Workout;
 			sourceTree = "<group>";
 		};
@@ -369,7 +373,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1540;
-				LastUpgradeCheck = 1540;
+				LastUpgradeCheck = 2640;
 				TargetAttributes = {
 					E10001 = {
 						CreatedOnToolsVersion = 15.4;
@@ -488,6 +492,8 @@
 				531AF1254D1C85952EB2BA0F /* ReorderView.swift in Sources */,
 				7523CD98CF0AAF21E9CAD442 /* NutritionTabView.swift in Sources */,
 				CB13F2054F494BFCC899EF4B /* TherapyLibraryView.swift in Sources */,
+				99AC14C19937D84359DB2870 /* JournalingTimerView.swift in Sources */,
+				9D7133D59AEAABF595CE4DC7 /* WorkoutCalendarView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -513,6 +519,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -522,10 +529,13 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = L5869XDHF7;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -545,6 +555,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -569,6 +580,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -578,10 +590,13 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = L5869XDHF7;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -594,6 +609,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -607,7 +623,6 @@
 				CODE_SIGN_ENTITLEMENTS = WyldeSelf/WyldeSelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WyldeSelf/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Wylde Self";
@@ -638,7 +653,6 @@
 				CODE_SIGN_ENTITLEMENTS = WyldeSelf/WyldeSelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WyldeSelf/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Wylde Self";

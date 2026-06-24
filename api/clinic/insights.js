@@ -84,7 +84,7 @@ module.exports = async function handler(req, res) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4o',
         max_tokens: 800,
         messages: [
           { role: 'system', content: INSIGHT_SYSTEM_PROMPT },
