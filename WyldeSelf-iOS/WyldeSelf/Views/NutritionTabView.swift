@@ -5,6 +5,7 @@ struct NutritionTabView: View {
     @StateObject private var tracker = MacroTrackerService.shared
     @StateObject private var mealService = MealPlanService.shared
     @State private var showFoodScanner = false
+    @State private var showFoodSearch = false
     @State private var showMealPlan = false
 
     var body: some View {
@@ -24,18 +25,28 @@ struct NutritionTabView: View {
                                 .foregroundColor(Theme.muted)
                         }
                         Spacer()
-                        Button { showFoodScanner = true } label: {
-                            HStack(spacing: 6) {
+                        HStack(spacing: 8) {
+                            Button { showFoodSearch = true } label: {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "magnifyingglass")
+                                        .font(.system(size: 11))
+                                    Text("Search")
+                                        .font(.system(size: 12, weight: .semibold))
+                                }
+                                .foregroundColor(Color(hex: "F4F1E8"))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(Color(hex: "5EE6D6").opacity(0.85))
+                                .clipShape(Capsule())
+                            }
+                            Button { showFoodScanner = true } label: {
                                 Image(systemName: "camera.fill")
                                     .font(.system(size: 13))
-                                Text("Scan")
-                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(Color(hex: "C8A96E"))
+                                    .frame(width: 32, height: 32)
+                                    .background(Color(hex: "C8A96E").opacity(0.10))
+                                    .clipShape(Circle())
                             }
-                            .foregroundColor(Color(hex: "F4F1E8"))
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 9)
-                            .background(Color(hex: "5EE6D6").opacity(0.85))
-                            .clipShape(Capsule())
                         }
                     }
                     .padding(.top, 60)
@@ -212,6 +223,9 @@ struct NutritionTabView: View {
                 }
                 .padding(.horizontal, Theme.screenPadding)
             }
+        }
+        .fullScreenCover(isPresented: $showFoodSearch) {
+            FoodSearchView().environmentObject(appState)
         }
         .fullScreenCover(isPresented: $showFoodScanner) {
             FoodScannerView().environmentObject(appState)

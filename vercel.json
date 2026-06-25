@@ -38,7 +38,8 @@
     "api/clinic/settings.js": { "maxDuration": 10 },
     "api/clinic/team.js": { "maxDuration": 10 },
     "api/clinic/features.js": { "maxDuration": 10 },
-    "api/clinic/templates.js": { "maxDuration": 10 }
+    "api/clinic/templates.js": { "maxDuration": 10 },
+    "api/nutrition/search.js": { "maxDuration": 15 }
   },
   "crons": [
     {
