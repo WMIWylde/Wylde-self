@@ -2,10 +2,9 @@ import SwiftUI
 
 struct VisionCreationFlow: View {
     @EnvironmentObject var appState: AppState
-    @ObservedObject private var service = FutureVisionService.shared
     @Environment(\.dismiss) private var dismiss
 
-    enum Phase: Equatable {
+    enum Phase {
         case categories
         case reflecting(Int)
         case generating
@@ -18,6 +17,12 @@ struct VisionCreationFlow: View {
     @State private var generatedVisions: [FutureVision] = []
     @State private var generationIndex = 0
     @State private var errorText: String?
+    @State private var generatingName = ""
+
+    private var isComplete: Bool {
+        if case .complete = phase { return true }
+        return false
+    }
 
     var body: some View {
         ZStack {
@@ -30,7 +35,7 @@ struct VisionCreationFlow: View {
                     .padding(.top, 12)
 
                 // Progress — fixed 5 segments
-                if phase != .complete {
+                if !isComplete {
                     HStack(spacing: 4) {
                         ForEach(0..<5, id: \.self) { i in
                             Capsule()
@@ -69,7 +74,10 @@ struct VisionCreationFlow: View {
                     .foregroundColor(VisionTheme.textMuted)
             }
             Spacer()
-            Button { dismiss() } label: {
+            Button {
+                print("[VisionFlow] X tapped — dismissing")
+                dismiss()
+            } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(VisionTheme.textMuted)
@@ -123,8 +131,7 @@ struct VisionCreationFlow: View {
     }
 
     private var generatingContent: some View {
-        let cats = VisionCategory.all.filter { selectedCategoryIds.contains($0.id) }
-        return VStack(spacing: 24) {
+        VStack(spacing: 24) {
             Spacer().frame(height: 80)
 
             ProgressView()
@@ -135,14 +142,10 @@ struct VisionCreationFlow: View {
                 .font(.system(size: 18, weight: .medium, design: .serif))
                 .foregroundColor(VisionTheme.text)
 
-            if !cats.isEmpty {
-                let current = min(generationIndex, cats.count - 1)
-                Text(cats[current].name)
+            if !generatingName.isEmpty {
+                Text(generatingName)
                     .font(.system(size: 13))
                     .foregroundColor(VisionTheme.textMuted)
-                Text("\(generationIndex + 1) of \(cats.count)")
-                    .font(.system(size: 12))
-                    .foregroundColor(VisionTheme.textFaint)
             }
 
             Text("This may take a minute per category.")
@@ -204,11 +207,13 @@ struct VisionCreationFlow: View {
         switch phase {
         case .categories:
             Button {
+                print("[VisionFlow] Continue tapped, selected: \(selectedCategoryIds.count)")
                 if !selectedCategoryIds.isEmpty {
+                    print("[VisionFlow] → reflecting(0)")
                     phase = .reflecting(0)
                 }
             } label: {
-                Text("Continue")
+                Text("Continue (\(selectedCategoryIds.count))")
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundColor(VisionTheme.background)
                     .frame(maxWidth: .infinity)
@@ -256,12 +261,14 @@ struct VisionCreationFlow: View {
 
     private func generateAll() async {
         let cats = VisionCategory.all.filter { selectedCategoryIds.contains($0.id) }
+        let service = FutureVisionService.shared
         errorText = nil
         generationIndex = 0
         generatedVisions = []
 
         for (i, cat) in cats.enumerated() {
             generationIndex = i
+            generatingName = cat.name
             let answers = allAnswers[cat.id] ?? []
             do {
                 let vision = try await service.generateVision(
