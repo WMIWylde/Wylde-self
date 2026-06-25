@@ -1,4 +1,5 @@
 import SwiftUI
+import AudioToolbox
 
 struct ExerciseCard: View {
     let exercise: WorkoutExercise
@@ -17,6 +18,10 @@ struct ExerciseCard: View {
     @State private var lastOverloadTip: String?
     @State private var showAlternatives = false
     @State private var alternatives: [String] = []
+    @State private var cardioRunning = false
+    @State private var cardioRemaining: Int = 0
+    @State private var cardioTimer: Timer?
+    @State private var cardioComplete = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -90,13 +95,88 @@ struct ExerciseCard: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
             } else if exercise.isCardio {
-                // Cardio timer
-                HStack {
-                    Image(systemName: "timer")
-                        .foregroundColor(Color(hex: "C8A96E"))
-                    Text("\(exercise.timerMinutes) minutes")
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                // Cardio timer — interactive
+                VStack(spacing: 10) {
+                    if cardioComplete {
+                        HStack(spacing: 8) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(Color(hex: "7A8771"))
+                            Text("Cardio complete")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(Color(hex: "7A8771"))
+                        }
+                    } else if cardioRunning {
+                        // Running timer
+                        let mins = cardioRemaining / 60
+                        let secs = cardioRemaining % 60
+                        Text(String(format: "%d:%02d", mins, secs))
+                            .font(.system(size: 32, weight: .bold, design: .monospaced))
+                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .contentTransition(.numericText())
+                            .animation(.easeInOut(duration: 0.3), value: cardioRemaining)
+
+                        HStack(spacing: 12) {
+                            Button {
+                                cardioTimer?.invalidate()
+                                cardioRunning = false
+                            } label: {
+                                Text("Pause")
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundColor(Color(hex: "A6A29A"))
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 10)
+                                    .background(Color(hex: "1A1A1A"))
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            }
+                            Button {
+                                cardioTimer?.invalidate()
+                                cardioComplete = true
+                                AudioServicesPlaySystemSound(1025)
+                                HapticManager.shared.notification(.success)
+                            } label: {
+                                Text("Complete")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(Color(hex: "070707"))
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 10)
+                                    .background(Color(hex: "7A8771"))
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            }
+                        }
+                    } else {
+                        // Start button
+                        Button {
+                            cardioRemaining = exercise.timerMinutes * 60
+                            cardioRunning = true
+                            cardioTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+                                DispatchQueue.main.async {
+                                    if cardioRemaining > 0 {
+                                        cardioRemaining -= 1
+                                        if cardioRemaining <= 3 && cardioRemaining > 0 {
+                                            AudioServicesPlaySystemSound(1057)
+                                        }
+                                    } else {
+                                        cardioTimer?.invalidate()
+                                        cardioComplete = true
+                                        AudioServicesPlaySystemSound(1025)
+                                        HapticManager.shared.notification(.success)
+                                    }
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "play.fill")
+                                    .font(.system(size: 12))
+                                Text("Start \(exercise.timerMinutes) min")
+                                    .font(.system(size: 14, weight: .semibold))
+                            }
+                            .foregroundColor(Color(hex: "070707"))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color(hex: "5EE6D6"))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
