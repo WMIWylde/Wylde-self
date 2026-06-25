@@ -1,4 +1,5 @@
 import SwiftUI
+import AudioToolbox
 
 struct RestTimerView: View {
     let duration: Int  // seconds
@@ -74,8 +75,14 @@ struct RestTimerView: View {
         }
         .onAppear { startTimer() }
         .onDisappear { timer?.invalidate() }
-        .onChange(of: remaining) { newValue in
-            if newValue <= 0 {
+        .onChange(of: remaining) {
+            // Countdown sounds
+            if remaining <= 3 && remaining > 0 {
+                AudioServicesPlaySystemSound(1057) // tick
+            }
+            if remaining <= 0 {
+                AudioServicesPlaySystemSound(1025) // completion chime
+                HapticManager.shared.notification(.success)
                 timer?.invalidate()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     onComplete?()

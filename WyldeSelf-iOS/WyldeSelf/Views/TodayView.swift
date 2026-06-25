@@ -199,6 +199,11 @@ struct TodayView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
         }
+        .onReceive(NotificationCenter.default.publisher(for: .navigateToScreen)) { note in
+            if let screen = note.userInfo?["screen"] as? String, screen == "workout" {
+                showWorkout = true
+            }
+        }
     }
 
     // MARK: - Founding Member CTA card
@@ -756,9 +761,11 @@ struct TodayView: View {
             }
 
             // Macro bars
-            HStack(spacing: 16) {
+            HStack(spacing: 12) {
                 macroColumn(label: "Protein", current: appState.proteinLogged, goal: appState.proteinGoal, unit: "g")
                 macroColumn(label: "Calories", current: appState.caloriesLogged, goal: appState.caloriesGoal, unit: "")
+                macroColumn(label: "Carbs", current: appState.carbsLogged, goal: appState.carbsGoal, unit: "g")
+                macroColumn(label: "Fat", current: appState.fatLogged, goal: appState.fatGoal, unit: "g")
             }
 
             // Today's logged meals

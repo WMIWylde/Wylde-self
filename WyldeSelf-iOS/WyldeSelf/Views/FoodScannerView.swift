@@ -55,6 +55,9 @@ struct FoodScannerView: View {
         .sheet(isPresented: $showPhotoPicker) {
             PhotoPicker(image: $capturedImage)
         }
+        .fullScreenCover(isPresented: $showCamera) {
+            CameraPicker(image: $capturedImage)
+        }
         .onChange(of: capturedImage) {
             if let img = capturedImage {
                 phase = .analyzing
@@ -101,8 +104,10 @@ struct FoodScannerView: View {
 
             // Action buttons
             VStack(spacing: 12) {
-                GoldButton(label: "Take Photo") {
-                    showPhotoPicker = true // Using photo picker since camera isn't available in simulator
+                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                    GoldButton(label: "Take Photo") {
+                        showCamera = true
+                    }
                 }
 
                 Button {

@@ -1,5 +1,6 @@
 import SwiftUI
 import AVKit
+import AudioToolbox
 
 struct WarmupMovement {
     let name: String
@@ -284,6 +285,12 @@ struct DynamicWarmupView: View {
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             if remaining > 0 {
                 remaining -= 1
+                if remaining <= 3 && remaining > 0 {
+                    AudioServicesPlaySystemSound(1057)
+                }
+                if remaining == 0 {
+                    AudioServicesPlaySystemSound(1025)
+                }
             } else {
                 advanceMovement()
             }

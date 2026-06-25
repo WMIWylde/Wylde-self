@@ -65,6 +65,12 @@ enum LiftingCoach {
             }
             return WeightSuggestion(weight: isBeginner ? 65 : isAdvanced ? 135 : 95, note: "Start with dumbbells if barbell feels heavy.")
         }
+        // Dumbbell rows — per hand
+        if lower.contains("dumbbell") && lower.contains("row") {
+            let w: Double = isFemale ? (isBeginner ? 10 : isAdvanced ? 35 : 20) : (isBeginner ? 20 : isAdvanced ? 60 : 35)
+            return WeightSuggestion(weight: w, note: "Per dumbbell. Brace on bench, pull to hip, squeeze the back.")
+        }
+        // Barbell/cable rows
         if lower.contains("row") {
             if isFemale {
                 return WeightSuggestion(weight: isBeginner ? 45 : isAdvanced ? 95 : 65, note: "Squeeze shoulder blades together at the top.")

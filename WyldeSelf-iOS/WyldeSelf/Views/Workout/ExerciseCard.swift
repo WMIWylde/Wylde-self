@@ -15,6 +15,8 @@ struct ExerciseCard: View {
     @State private var reps: [Double] = []
     @State private var showGuide = false
     @State private var lastOverloadTip: String?
+    @State private var showAlternatives = false
+    @State private var alternatives: [String] = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -30,11 +32,38 @@ struct ExerciseCard: View {
                         .lineLimit(2)
                 }
                 Spacer()
+                if !exercise.isWarmup && !exercise.isCardio {
+                    Button {
+                        showAlternatives.toggle()
+                        if alternatives.isEmpty { loadAlternatives() }
+                    } label: {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                            .font(.system(size: 11))
+                            .foregroundColor(Color(hex: "6E6B65"))
+                    }
+                }
                 Text(exercise.setsReps)
                     .font(.system(size: 13, weight: .semibold, design: .monospaced))
                     .foregroundColor(Color(hex: "C8A96E"))
             }
             .padding(16)
+
+            // Alternatives panel
+            if showAlternatives && !alternatives.isEmpty {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("ALTERNATIVES")
+                        .font(.system(size: 9, weight: .bold))
+                        .tracking(1.5)
+                        .foregroundColor(Color(hex: "6E6B65"))
+                    ForEach(alternatives, id: \.self) { alt in
+                        Text("→ \(alt)")
+                            .font(.system(size: 12))
+                            .foregroundColor(Color(hex: "A6A29A"))
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 10)
+            }
 
             // Warmup CTA
             if exercise.isWarmup {
@@ -246,6 +275,38 @@ struct ExerciseCard: View {
         .background(Color(hex: "0B0B0B"))
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .padding(.horizontal, 4)
+    }
+
+    private func loadAlternatives() {
+        // Find exercises targeting the same muscle group from the bundled library
+        let repo = ExerciseRepository.shared
+        let current = exercise.name.lowercased()
+
+        // Find the current exercise's primary muscle
+        let match = repo.all.first { $0.name.lowercased().contains(current.prefix(10)) }
+        let muscle = match?.primaryMuscle ?? ""
+
+        if !muscle.isEmpty {
+            alternatives = repo.search(query: "", muscle: muscle, equipment: nil, level: nil)
+                .filter { $0.name.lowercased() != current }
+                .prefix(5)
+                .map { $0.name }
+        } else {
+            // Fallback: search by keywords from exercise name
+            let keywords = current.components(separatedBy: " ").filter { $0.count > 3 }
+            for kw in keywords {
+                let results = repo.search(query: kw, muscle: nil, equipment: nil, level: nil)
+                    .filter { $0.name.lowercased() != current }
+                if !results.isEmpty {
+                    alternatives = results.prefix(5).map { $0.name }
+                    break
+                }
+            }
+        }
+
+        if alternatives.isEmpty {
+            alternatives = ["No alternatives found"]
+        }
     }
 
     private func initState() {

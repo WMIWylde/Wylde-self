@@ -15,9 +15,12 @@ struct FutureVisionView: View {
                 gallery
             }
         }
-        .fullScreenCover(isPresented: $showCreationFlow) {
-            VisionCreationFlow()
-                .environmentObject(appState)
+        .sheet(isPresented: $showCreationFlow) {
+            NavigationStack {
+                VisionCreationFlow()
+                    .environmentObject(appState)
+                    .navigationBarHidden(true)
+            }
         }
     }
 
