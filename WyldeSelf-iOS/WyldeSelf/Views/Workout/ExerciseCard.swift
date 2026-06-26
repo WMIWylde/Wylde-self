@@ -22,6 +22,14 @@ struct ExerciseCard: View {
     @State private var cardioRemaining: Int = 0
     @State private var cardioTimer: Timer?
     @State private var cardioComplete = false
+    // Interval mode
+    @State private var isInterval = false
+    @State private var intervalWork: Int = 30
+    @State private var intervalRest: Int = 30
+    @State private var intervalRounds: Int = 8
+    @State private var currentRound: Int = 1
+    @State private var isWorkPhase = true
+    @State private var intervalRemaining: Int = 30
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -95,25 +103,64 @@ struct ExerciseCard: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
             } else if exercise.isCardio {
-                // Cardio timer — interactive
+                // Cardio / Interval timer
                 VStack(spacing: 10) {
                     if cardioComplete {
                         HStack(spacing: 8) {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(Color(hex: "7A8771"))
-                            Text("Cardio complete")
+                            Text("Complete")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(Color(hex: "7A8771"))
                         }
+                    } else if cardioRunning && isInterval {
+                        // Interval mode — work/rest phases
+                        Text(isWorkPhase ? "WORK" : "REST")
+                            .font(.system(size: 11, weight: .bold))
+                            .tracking(2)
+                            .foregroundColor(isWorkPhase ? Color(hex: "FF6B8B") : Color(hex: "5EE6D6"))
+
+                        Text("\(intervalRemaining)")
+                            .font(.system(size: 48, weight: .bold, design: .monospaced))
+                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .contentTransition(.numericText())
+                            .animation(.easeInOut(duration: 0.2), value: intervalRemaining)
+
+                        Text("Round \(currentRound) of \(intervalRounds)")
+                            .font(.system(size: 12, design: .monospaced))
+                            .foregroundColor(Color(hex: "A6A29A"))
+
+                        // Progress dots
+                        HStack(spacing: 4) {
+                            ForEach(1...intervalRounds, id: \.self) { r in
+                                Circle()
+                                    .fill(r < currentRound ? Color(hex: "7A8771") : (r == currentRound ? (isWorkPhase ? Color(hex: "FF6B8B") : Color(hex: "5EE6D6")) : Color(hex: "1A1A1A")))
+                                    .frame(width: 8, height: 8)
+                            }
+                        }
+
+                        Button {
+                            cardioTimer?.invalidate()
+                            cardioComplete = true
+                            AudioServicesPlaySystemSound(1025)
+                        } label: {
+                            Text("Complete")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(Color(hex: "070707"))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .background(Color(hex: "7A8771"))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+
                     } else if cardioRunning {
-                        // Running timer
+                        // Standard cardio timer
                         let mins = cardioRemaining / 60
                         let secs = cardioRemaining % 60
                         Text(String(format: "%d:%02d", mins, secs))
                             .font(.system(size: 32, weight: .bold, design: .monospaced))
                             .foregroundColor(Color(hex: "F4F1E8"))
                             .contentTransition(.numericText())
-                            .animation(.easeInOut(duration: 0.3), value: cardioRemaining)
 
                         HStack(spacing: 12) {
                             Button {
@@ -132,7 +179,6 @@ struct ExerciseCard: View {
                                 cardioTimer?.invalidate()
                                 cardioComplete = true
                                 AudioServicesPlaySystemSound(1025)
-                                HapticManager.shared.notification(.success)
                             } label: {
                                 Text("Complete")
                                     .font(.system(size: 13, weight: .semibold))
@@ -144,36 +190,36 @@ struct ExerciseCard: View {
                             }
                         }
                     } else {
-                        // Start button
-                        Button {
-                            cardioRemaining = exercise.timerMinutes * 60
-                            cardioRunning = true
-                            cardioTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-                                DispatchQueue.main.async {
-                                    if cardioRemaining > 0 {
-                                        cardioRemaining -= 1
-                                        if cardioRemaining <= 3 && cardioRemaining > 0 {
-                                            AudioServicesPlaySystemSound(1057)
-                                        }
-                                    } else {
-                                        cardioTimer?.invalidate()
-                                        cardioComplete = true
-                                        AudioServicesPlaySystemSound(1025)
-                                        HapticManager.shared.notification(.success)
-                                    }
+                        // Start buttons — detect if interval or standard
+                        let hasInterval = exercise.cue.lowercased().contains("seconds") || exercise.cue.lowercased().contains("sec on") || exercise.cue.lowercased().contains("sec work") || exercise.name.lowercased().contains("hiit") || exercise.name.lowercased().contains("tabata") || exercise.name.lowercased().contains("interval")
+
+                        if hasInterval {
+                            Button { startIntervalTimer() } label: {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "timer")
+                                        .font(.system(size: 12))
+                                    Text("Start Intervals")
+                                        .font(.system(size: 14, weight: .semibold))
                                 }
+                                .foregroundColor(Color(hex: "070707"))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(Color(hex: "FF6B8B"))
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
-                        } label: {
+                        }
+
+                        Button { startCardioTimer() } label: {
                             HStack(spacing: 8) {
                                 Image(systemName: "play.fill")
                                     .font(.system(size: 12))
                                 Text("Start \(exercise.timerMinutes) min")
                                     .font(.system(size: 14, weight: .semibold))
                             }
-                            .foregroundColor(Color(hex: "070707"))
+                            .foregroundColor(hasInterval ? Color(hex: "A6A29A") : Color(hex: "070707"))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
-                            .background(Color(hex: "5EE6D6"))
+                            .background(hasInterval ? Color(hex: "1A1A1A") : Color(hex: "5EE6D6"))
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                     }
@@ -355,6 +401,83 @@ struct ExerciseCard: View {
         .background(Color(hex: "0B0B0B"))
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .padding(.horizontal, 4)
+    }
+
+    private func startCardioTimer() {
+        cardioRemaining = exercise.timerMinutes * 60
+        cardioRunning = true
+        isInterval = false
+        cardioTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            DispatchQueue.main.async {
+                if cardioRemaining > 0 {
+                    cardioRemaining -= 1
+                    if cardioRemaining <= 3 && cardioRemaining > 0 { AudioServicesPlaySystemSound(1057) }
+                } else {
+                    cardioTimer?.invalidate()
+                    cardioComplete = true
+                    AudioServicesPlaySystemSound(1025)
+                    HapticManager.shared.notification(.success)
+                }
+            }
+        }
+    }
+
+    private func startIntervalTimer() {
+        // Parse intervals from cue — default 30/30 x 8
+        let cue = exercise.cue.lowercased()
+        if cue.contains("tabata") || cue.contains("20 sec") {
+            intervalWork = 20; intervalRest = 10; intervalRounds = 8
+        } else if cue.contains("30 sec") {
+            intervalWork = 30; intervalRest = 30
+            // Try to parse rounds
+            if let match = cue.firstMatch(of: /(\d+)\s*round/) {
+                intervalRounds = Int(match.1) ?? 8
+            } else {
+                intervalRounds = Int(exercise.timerMinutes * 60 / (intervalWork + intervalRest))
+                if intervalRounds < 1 { intervalRounds = 8 }
+            }
+        } else {
+            intervalWork = 30; intervalRest = 30; intervalRounds = 8
+        }
+
+        isInterval = true
+        isWorkPhase = true
+        currentRound = 1
+        intervalRemaining = intervalWork
+        cardioRunning = true
+
+        cardioTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            DispatchQueue.main.async {
+                if intervalRemaining > 0 {
+                    intervalRemaining -= 1
+                    if intervalRemaining <= 3 && intervalRemaining > 0 {
+                        AudioServicesPlaySystemSound(1057)
+                    }
+                } else {
+                    // Phase complete
+                    AudioServicesPlaySystemSound(1025)
+                    HapticManager.shared.impact(.medium)
+
+                    if isWorkPhase {
+                        // Switch to rest
+                        isWorkPhase = false
+                        intervalRemaining = intervalRest
+                    } else {
+                        // Switch to work, next round
+                        currentRound += 1
+                        if currentRound > intervalRounds {
+                            // All rounds done
+                            cardioTimer?.invalidate()
+                            cardioComplete = true
+                            HapticManager.shared.notification(.success)
+                            return
+                        }
+                        isWorkPhase = true
+                        intervalRemaining = intervalWork
+                    }
+                }
+            }
+        }
     }
 
     private func loadAlternatives() {
