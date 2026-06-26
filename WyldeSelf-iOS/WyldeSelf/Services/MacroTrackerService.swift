@@ -127,11 +127,15 @@ final class MacroTrackerService: ObservableObject {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.timeoutInterval = 30
+        request.timeoutInterval = 60
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
 
+        print("[MacroTracker] Sending photo, payload: \(request.httpBody?.count ?? 0) bytes")
         let (data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        let httpCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+        print("[MacroTracker] Response: \(httpCode), bytes: \(data.count)")
+        guard httpCode == 200 else {
+            if let str = String(data: data, encoding: .utf8) { print("[MacroTracker] Error: \(str.prefix(300))") }
             throw MacroError.apiFailed
         }
 

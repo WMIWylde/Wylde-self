@@ -15,41 +15,55 @@ struct NutritionTabView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
                     // Header
-                    HStack {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Nutrition")
-                                .font(.system(size: 26, weight: .bold))
-                                .foregroundColor(Theme.text)
-                            Text("Track your fuel")
-                                .font(.system(size: 13))
-                                .foregroundColor(Theme.muted)
+                    Text("Nutrition")
+                        .font(.system(size: 26, weight: .bold))
+                        .foregroundColor(Theme.text)
+                        .padding(.top, 60)
+
+                    // Log food actions — prominent
+                    HStack(spacing: 10) {
+                        Button { showFoodSearch = true } label: {
+                            VStack(spacing: 8) {
+                                Image(systemName: "magnifyingglass")
+                                    .font(.system(size: 20))
+                                Text("Search Food")
+                                    .font(.system(size: 12, weight: .semibold))
+                            }
+                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 18)
+                            .background(Color(hex: "5EE6D6").opacity(0.85))
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
-                        Spacer()
-                        HStack(spacing: 8) {
-                            Button { showFoodSearch = true } label: {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "magnifyingglass")
-                                        .font(.system(size: 11))
-                                    Text("Search")
-                                        .font(.system(size: 12, weight: .semibold))
-                                }
-                                .foregroundColor(Color(hex: "F4F1E8"))
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .background(Color(hex: "5EE6D6").opacity(0.85))
-                                .clipShape(Capsule())
-                            }
-                            Button { showFoodScanner = true } label: {
+
+                        Button { showFoodScanner = true } label: {
+                            VStack(spacing: 8) {
                                 Image(systemName: "camera.fill")
-                                    .font(.system(size: 13))
-                                    .foregroundColor(Color(hex: "C8A96E"))
-                                    .frame(width: 32, height: 32)
-                                    .background(Color(hex: "C8A96E").opacity(0.10))
-                                    .clipShape(Circle())
+                                    .font(.system(size: 20))
+                                Text("Snap Meal")
+                                    .font(.system(size: 12, weight: .semibold))
                             }
+                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 18)
+                            .background(Color(hex: "C8A96E"))
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                        }
+
+                        Button { showMealPlan = true } label: {
+                            VStack(spacing: 8) {
+                                Image(systemName: "calendar")
+                                    .font(.system(size: 20))
+                                Text("Meal Plan")
+                                    .font(.system(size: 12, weight: .semibold))
+                            }
+                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 18)
+                            .background(Color(hex: "FF9A3C"))
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
                     }
-                    .padding(.top, 60)
 
                     // Today's macros
                     VStack(alignment: .leading, spacing: 14) {
@@ -65,7 +79,6 @@ struct NutritionTabView: View {
                             macroRing(label: "Fat", current: appState.fatLogged, goal: appState.fatGoal, unit: "g", color: Color(hex: "B68BFF"))
                         }
 
-                        // Calories burned
                         if appState.caloriesBurned > 0 {
                             HStack(spacing: 6) {
                                 Image(systemName: "flame.fill")
@@ -79,93 +92,34 @@ struct NutritionTabView: View {
                                     .font(.system(size: 12, weight: .semibold, design: .monospaced))
                                     .foregroundColor(Theme.text)
                             }
-                            .padding(.top, 4)
                         }
                     }
                     .padding(20)
                     .background(Theme.surface)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
 
-                    // Meal Plan card — prominent
-                    Button { showMealPlan = true } label: {
-                        VStack(alignment: .leading, spacing: 10) {
-                            HStack {
-                                Image(systemName: "calendar")
-                                    .font(.system(size: 16))
-                                    .foregroundColor(Color(hex: "FF9A3C"))
-                                Text("WEEKLY MEAL PLAN")
-                                    .font(.system(size: 10, weight: .bold))
-                                    .tracking(2)
-                                    .foregroundColor(Color(hex: "FF9A3C"))
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(Theme.muted)
-                            }
-
-                            if let today = mealService.todaysMeals() {
-                                // Show today's meals preview
-                                Text(today.dayName)
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(Theme.text)
-
-                                let done = today.meals.filter(\.completed).count
-                                Text("\(done)/\(today.meals.count) meals completed · \(today.totalCalories) cal")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(Theme.muted)
-
-                                // Mini meal list
-                                ForEach(today.meals.prefix(3)) { meal in
-                                    HStack(spacing: 8) {
-                                        Image(systemName: meal.completed ? "checkmark.circle.fill" : "circle")
-                                            .font(.system(size: 14))
-                                            .foregroundColor(meal.completed ? Theme.sage : Theme.muted)
-                                        Text("\(meal.mealType.rawValue) — \(meal.name)")
-                                            .font(.system(size: 13))
-                                            .foregroundColor(meal.completed ? Theme.muted : Theme.text)
-                                            .lineLimit(1)
-                                    }
-                                }
-                            } else {
-                                Text("Plan your week")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(Theme.text)
-                                Text("AI-built meal plan with recipes, macros, and grocery list.")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(Theme.muted)
-
-                                HStack(spacing: 8) {
-                                    Text("Generate Meal Plan")
-                                        .font(.system(size: 13, weight: .semibold))
-                                    Image(systemName: "sparkles")
-                                        .font(.system(size: 12))
-                                }
-                                .foregroundColor(Color(hex: "1A1816"))
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
-                                .background(Color(hex: "FF9A3C"))
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .padding(.top, 4)
-                            }
-                        }
-                        .padding(18)
-                        .background(Theme.surface)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                .stroke(Color(hex: "FF9A3C").opacity(0.15), lineWidth: 1)
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    }
-                    .buttonStyle(.plain)
-
                     // Today's logged meals
-                    if !tracker.todaysMeals.isEmpty {
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("LOGGED TODAY")
-                                .font(.system(size: 10, weight: .bold))
-                                .tracking(2)
-                                .foregroundColor(Theme.muted)
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("TODAY'S LOG")
+                            .font(.system(size: 10, weight: .bold))
+                            .tracking(2)
+                            .foregroundColor(Theme.muted)
 
+                        if tracker.todaysMeals.isEmpty {
+                            VStack(spacing: 12) {
+                                Image(systemName: "fork.knife")
+                                    .font(.system(size: 28))
+                                    .foregroundColor(Theme.muted.opacity(0.5))
+                                Text("No meals logged yet")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(Theme.muted)
+                                Text("Search a food, snap a photo, or scan a barcode")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(Theme.muted.opacity(0.7))
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 30)
+                        } else {
                             ForEach(tracker.todaysMeals) { meal in
                                 HStack(spacing: 12) {
                                     Image(systemName: meal.logged ? "checkmark.circle.fill" : "circle")
@@ -191,33 +145,43 @@ struct NutritionTabView: View {
                         }
                     }
 
-                    // Scan meal CTA at bottom
-                    Button { showFoodScanner = true } label: {
-                        HStack(spacing: 10) {
-                            Image(systemName: "camera.viewfinder")
-                                .font(.system(size: 18))
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Log a meal")
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(Theme.text)
-                                Text("Snap a photo — AI estimates your macros")
-                                    .font(.system(size: 11))
-                                    .foregroundColor(Theme.muted)
+                    // Meal plan preview
+                    if let today = mealService.todaysMeals() {
+                        Button { showMealPlan = true } label: {
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Image(systemName: "calendar")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(Color(hex: "FF9A3C"))
+                                    Text("TODAY'S MEAL PLAN")
+                                        .font(.system(size: 10, weight: .bold))
+                                        .tracking(2)
+                                        .foregroundColor(Color(hex: "FF9A3C"))
+                                    Spacer()
+                                    let done = today.meals.filter(\.completed).count
+                                    Text("\(done)/\(today.meals.count)")
+                                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                                        .foregroundColor(Theme.muted)
+                                }
+                                ForEach(today.meals.prefix(3)) { meal in
+                                    HStack(spacing: 6) {
+                                        Image(systemName: meal.completed ? "checkmark.circle.fill" : "circle")
+                                            .font(.system(size: 12))
+                                            .foregroundColor(meal.completed ? Theme.sage : Theme.muted)
+                                        Text("\(meal.mealType.rawValue) — \(meal.name)")
+                                            .font(.system(size: 12))
+                                            .foregroundColor(meal.completed ? Theme.muted : Theme.text)
+                                            .lineLimit(1)
+                                    }
+                                }
                             }
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 12))
-                                .foregroundColor(Theme.muted)
+                            .padding(16)
+                            .background(Theme.surface)
+                            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color(hex: "FF9A3C").opacity(0.15), lineWidth: 1))
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
-                        .padding(16)
-                        .background(Theme.surface)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                .stroke(Color(hex: "5EE6D6").opacity(0.15), lineWidth: 1)
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
 
                     Spacer().frame(height: 100)
                 }
