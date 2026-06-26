@@ -84,6 +84,7 @@ struct WorkoutDayView: View {
             DynamicWarmupView()
         }
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button { dismiss() } label: {

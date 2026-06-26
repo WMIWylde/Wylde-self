@@ -44,7 +44,7 @@ struct CoachChatView: View {
                         .padding(.top, 16)
                         .padding(.bottom, 16)
                     }
-                    .onChange(of: service.messages.count) { _ in
+                    .onChange(of: service.messages.count) {
                         if let last = service.messages.last {
                             withAnimation {
                                 proxy.scrollTo(last.id, anchor: .bottom)
@@ -66,8 +66,25 @@ struct CoachChatView: View {
 
     // MARK: - Header
 
+    @Environment(\.dismiss) private var dismiss
+
     private var header: some View {
         VStack(spacing: 6) {
+            HStack {
+                Spacer()
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(Color(hex: "A6A29A"))
+                        .frame(width: 36, height: 36)
+                        .background(Color(hex: "111111"))
+                        .clipShape(Circle())
+                }
+            }
+            .padding(.horizontal, 4)
+
             Text(coachName)
                 .font(.system(size: 11, weight: .semibold))
                 .tracking(2)
