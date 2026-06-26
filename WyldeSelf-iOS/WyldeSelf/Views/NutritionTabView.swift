@@ -184,6 +184,51 @@ struct NutritionTabView: View {
                         .buttonStyle(.plain)
                     }
 
+                    // History
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("RECENT HISTORY")
+                            .font(.system(size: 10, weight: .bold))
+                            .tracking(2)
+                            .foregroundColor(Theme.muted)
+
+                        let historyDates = tracker.datesWithData(last: 14).filter {
+                            Calendar.current.isDateInToday($0) == false
+                        }
+
+                        if historyDates.isEmpty {
+                            Text("Log meals to build your nutrition history")
+                                .font(.system(size: 12))
+                                .foregroundColor(Theme.muted.opacity(0.7))
+                        } else {
+                            ForEach(historyDates.prefix(7), id: \.self) { date in
+                                let summary = tracker.summaryForDate(date)
+                                let meals = tracker.mealsForDate(date)
+                                HStack(spacing: 12) {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(formatHistoryDate(date))
+                                            .font(.system(size: 13, weight: .medium))
+                                            .foregroundColor(Theme.text)
+                                        Text("\(meals.count) meals")
+                                            .font(.system(size: 10))
+                                            .foregroundColor(Theme.muted)
+                                    }
+                                    Spacer()
+                                    VStack(alignment: .trailing, spacing: 2) {
+                                        Text("\(summary.calories) cal")
+                                            .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                                            .foregroundColor(Color(hex: "C8A96E"))
+                                        Text("\(summary.protein)g P · \(summary.carbs)g C · \(summary.fat)g F")
+                                            .font(.system(size: 9, design: .monospaced))
+                                            .foregroundColor(Theme.muted)
+                                    }
+                                }
+                                .padding(12)
+                                .background(Theme.surface)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                            }
+                        }
+                    }
+
                     Spacer().frame(height: 100)
                 }
                 .padding(.horizontal, Theme.screenPadding)
@@ -198,6 +243,13 @@ struct NutritionTabView: View {
         .fullScreenCover(isPresented: $showMealPlan) {
             MealPlanView().environmentObject(appState)
         }
+    }
+
+    private func formatHistoryDate(_ date: Date) -> String {
+        if Calendar.current.isDateInYesterday(date) { return "Yesterday" }
+        let f = DateFormatter()
+        f.dateFormat = "EEEE, MMM d"
+        return f.string(from: date)
     }
 
     private func macroRing(label: String, current: Int, goal: Int, unit: String, color: Color) -> some View {

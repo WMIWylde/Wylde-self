@@ -175,6 +175,41 @@ final class MacroTrackerService: ObservableObject {
         }
     }
 
+    // MARK: - History
+
+    func mealsForDate(_ date: Date) -> [MealEntry] {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        let key = mealsKey + "_" + f.string(from: date)
+        guard let data = UserDefaults.standard.data(forKey: key),
+              let meals = try? JSONDecoder().decode([MealEntry].self, from: data) else { return [] }
+        return meals
+    }
+
+    func datesWithData(last days: Int = 30) -> [Date] {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        var dates: [Date] = []
+        for i in 0..<days {
+            let date = Calendar.current.date(byAdding: .day, value: -i, to: Date())!
+            let key = mealsKey + "_" + f.string(from: date)
+            if UserDefaults.standard.data(forKey: key) != nil {
+                dates.append(date)
+            }
+        }
+        return dates
+    }
+
+    func summaryForDate(_ date: Date) -> (calories: Int, protein: Int, carbs: Int, fat: Int) {
+        let meals = mealsForDate(date).filter(\.logged)
+        return (
+            meals.reduce(0) { $0 + $1.calories },
+            meals.reduce(0) { $0 + $1.protein },
+            meals.reduce(0) { $0 + $1.carbs },
+            meals.reduce(0) { $0 + $1.fat }
+        )
+    }
+
     private func loadTodaysMeals() {
         guard let data = UserDefaults.standard.data(forKey: dayKey()),
               let saved = try? JSONDecoder().decode([MealEntry].self, from: data) else { return }
