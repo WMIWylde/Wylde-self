@@ -3,8 +3,6 @@ import SwiftUI
 struct VisionCategorySelector: View {
     @Binding var selected: Set<String>
 
-    private let columns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
-
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text("CHOOSE YOUR CATEGORIES")
@@ -17,26 +15,43 @@ struct VisionCategorySelector: View {
                 .foregroundColor(VisionTheme.textMuted)
                 .lineSpacing(3)
 
+            let columns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
+
             LazyVGrid(columns: columns, spacing: 12) {
                 ForEach(VisionCategory.all) { cat in
-                    categoryCard(cat)
+                    CategoryCardButton(
+                        category: cat,
+                        isSelected: selected.contains(cat.id),
+                        onTap: {
+                            DispatchQueue.main.async {
+                                if selected.contains(cat.id) {
+                                    selected.remove(cat.id)
+                                } else {
+                                    selected.insert(cat.id)
+                                }
+                            }
+                        }
+                    )
                 }
             }
         }
     }
+}
 
-    private func categoryCard(_ cat: VisionCategory) -> some View {
-        let isSelected = selected.contains(cat.id)
-        return Button {
-            if isSelected { selected.remove(cat.id) }
-            else { selected.insert(cat.id) }
-        } label: {
+// Separate view to isolate state changes
+struct CategoryCardButton: View {
+    let category: VisionCategory
+    let isSelected: Bool
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
             VStack(spacing: 10) {
-                Image(systemName: cat.icon)
+                Image(systemName: category.icon)
                     .font(.system(size: 22))
                     .foregroundColor(isSelected ? VisionTheme.accent : VisionTheme.textFaint)
 
-                Text(cat.name)
+                Text(category.name)
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(isSelected ? VisionTheme.text : VisionTheme.textMuted)
                     .multilineTextAlignment(.center)
