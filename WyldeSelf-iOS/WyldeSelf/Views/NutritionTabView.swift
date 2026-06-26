@@ -19,6 +19,7 @@ struct NutritionTabView: View {
                         .font(.system(size: 26, weight: .bold))
                         .foregroundColor(Theme.text)
                         .padding(.top, 60)
+                        .onAppear { print("[NutritionTab] View appeared") }
 
                     // Log food actions — prominent
                     HStack(spacing: 10) {

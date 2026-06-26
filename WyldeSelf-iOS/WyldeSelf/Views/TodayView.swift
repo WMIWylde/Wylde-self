@@ -721,85 +721,36 @@ struct TodayView: View {
     // MARK: - Nutrition
 
     private var nutritionCard: some View {
-        let tracker = MacroTrackerService.shared
-        return VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: "leaf.fill")
-                    .foregroundColor(Theme.sage)
-                Text("Nutrition")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(Theme.text)
-                Spacer()
-                HStack(spacing: 8) {
-                    Button { showMealPlan = true } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "calendar")
-                                .font(.system(size: 11))
-                            Text("Plan")
-                                .font(.system(size: 12, weight: .semibold))
-                        }
-                        .foregroundColor(Color(hex: "A6A29A"))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(Color(hex: "1A1A1A"))
-                        .clipShape(Capsule())
-                    }
-                    Button { showFoodScanner = true } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "camera.fill")
-                                .font(.system(size: 11))
-                            Text("Log")
-                                .font(.system(size: 12, weight: .semibold))
-                        }
-                        .foregroundColor(Color(hex: "C8A96E"))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(Color(hex: "C8A96E").opacity(0.10))
-                        .clipShape(Capsule())
-                    }
+        Button { appState.selectedTab = .nutrition } label: {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "leaf.fill")
+                        .foregroundColor(Theme.sage)
+                    Text("Nutrition")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(Theme.text)
+                    Spacer()
+                    Text("\(appState.proteinLogged)g P · \(appState.caloriesLogged) cal")
+                        .font(.system(size: 11, design: .monospaced))
+                        .foregroundColor(Theme.muted)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12))
+                        .foregroundColor(Theme.muted)
+                }
+
+                HStack(spacing: 12) {
+                    macroColumn(label: "Protein", current: appState.proteinLogged, goal: appState.proteinGoal, unit: "g")
+                    macroColumn(label: "Calories", current: appState.caloriesLogged, goal: appState.caloriesGoal, unit: "")
+                    macroColumn(label: "Carbs", current: appState.carbsLogged, goal: appState.carbsGoal, unit: "g")
+                    macroColumn(label: "Fat", current: appState.fatLogged, goal: appState.fatGoal, unit: "g")
                 }
             }
-
-            // Macro bars
-            HStack(spacing: 12) {
-                macroColumn(label: "Protein", current: appState.proteinLogged, goal: appState.proteinGoal, unit: "g")
-                macroColumn(label: "Calories", current: appState.caloriesLogged, goal: appState.caloriesGoal, unit: "")
-                macroColumn(label: "Carbs", current: appState.carbsLogged, goal: appState.carbsGoal, unit: "g")
-                macroColumn(label: "Fat", current: appState.fatLogged, goal: appState.fatGoal, unit: "g")
-            }
-
-            // Today's logged meals
-            if !tracker.todaysMeals.isEmpty {
-                VStack(spacing: 0) {
-                    ForEach(tracker.todaysMeals) { meal in
-                        HStack(spacing: 10) {
-                            Image(systemName: meal.logged ? "checkmark.circle.fill" : "circle")
-                                .foregroundColor(meal.logged ? Theme.sage : Theme.muted)
-                                .font(.system(size: 16))
-                                .onTapGesture { tracker.toggleMealLogged(meal.id) }
-
-                            VStack(alignment: .leading, spacing: 1) {
-                                Text("\(meal.mealType.rawValue) — \(meal.name)")
-                                    .font(.system(size: 13, weight: .medium))
-                                    .foregroundColor(meal.logged ? Theme.text : Theme.muted)
-                                    .strikethrough(!meal.logged, color: Theme.muted)
-                                    .lineLimit(1)
-                                Text("\(meal.calories) cal · \(meal.protein)g P · \(meal.carbs)g C · \(meal.fat)g F")
-                                    .font(.system(size: 10, design: .monospaced))
-                                    .foregroundColor(Theme.muted)
-                            }
-                            Spacer()
-                        }
-                        .padding(.vertical, 6)
-                    }
-                }
-                .padding(.top, 4)
-            }
+            .padding(Theme.cardPadding)
+            .background(Theme.surface)
+            .cornerRadius(Theme.cardRadius)
+            .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
         }
-        .padding(Theme.cardPadding)
-        .background(Theme.surface)
-        .cornerRadius(Theme.cardRadius)
-        .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
+        .buttonStyle(.plain)
     }
 
     private func macroColumn(label: String, current: Int, goal: Int, unit: String) -> some View {
