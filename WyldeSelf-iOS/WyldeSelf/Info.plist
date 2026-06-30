@@ -39,6 +39,10 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Wylde Self uses the camera to scan your meals for nutrition tracking and capture progress photos.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Wylde Self uses the microphone to let you voice-log your meals for nutrition tracking.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Wylde Self uses speech recognition to transcribe your meal descriptions for nutrition tracking.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Wylde Self reads your health data to track steps, calories burned, and sleep to optimize your training program.</string>
 	<key>NSHealthUpdateUsageDescription</key>

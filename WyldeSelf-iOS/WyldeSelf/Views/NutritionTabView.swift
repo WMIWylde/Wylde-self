@@ -7,6 +7,7 @@ struct NutritionTabView: View {
     @State private var showFoodScanner = false
     @State private var showFoodSearch = false
     @State private var showMealPlan = false
+    @State private var showVoiceLog = false
 
     var body: some View {
         ZStack {
@@ -22,7 +23,21 @@ struct NutritionTabView: View {
                         .onAppear { print("[NutritionTab] View appeared") }
 
                     // Log food actions — prominent
-                    HStack(spacing: 10) {
+                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+                        Button { showVoiceLog = true } label: {
+                            VStack(spacing: 8) {
+                                Image(systemName: "mic.fill")
+                                    .font(.system(size: 20))
+                                Text("Voice Log")
+                                    .font(.system(size: 12, weight: .semibold))
+                            }
+                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 18)
+                            .background(Color(hex: "C8A96E"))
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                        }
+
                         Button { showFoodSearch = true } label: {
                             VStack(spacing: 8) {
                                 Image(systemName: "magnifyingglass")
@@ -47,7 +62,7 @@ struct NutritionTabView: View {
                             .foregroundColor(Color(hex: "F4F1E8"))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 18)
-                            .background(Color(hex: "C8A96E"))
+                            .background(Color(hex: "FF9A3C"))
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
 
@@ -61,7 +76,7 @@ struct NutritionTabView: View {
                             .foregroundColor(Color(hex: "F4F1E8"))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 18)
-                            .background(Color(hex: "FF9A3C"))
+                            .background(Color(hex: "B68BFF"))
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
                     }
@@ -233,6 +248,9 @@ struct NutritionTabView: View {
                 }
                 .padding(.horizontal, Theme.screenPadding)
             }
+        }
+        .fullScreenCover(isPresented: $showVoiceLog) {
+            VoiceFoodLogView().environmentObject(appState)
         }
         .fullScreenCover(isPresented: $showFoodSearch) {
             FoodSearchView().environmentObject(appState)
