@@ -119,9 +119,7 @@ struct WyldeWebView: UIViewRepresentable {
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {
-        // Navigate to the correct screen if the path changed
-        let js = "if (typeof showScreen === 'function') { showScreen('\(path.replacingOccurrences(of: "#", with: ""))'); }"
-        webView.evaluateJavaScript(js)
+        // Intentionally no-op: avoid forcing web navigation on every SwiftUI update.
     }
 
     // MARK: - Coordinator handles JS → Swift messages

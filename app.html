@@ -6907,6 +6907,23 @@
   }
 
   // ONBOARDING
+  function _finalizeOnboardingToOverview() {
+    // Idempotent: if we already landed the user, bail.
+    if (window._onboardingFinalized) return;
+    window._onboardingFinalized = true;
+    try { localStorage.setItem('wylde_last_screen', 'overview'); } catch(_) {}
+
+    // Ensure transition layers are not blocking interaction.
+    var intro = document.getElementById('screen-intro');
+    var geo = document.getElementById('geoTransition');
+    if (intro) intro.style.display = 'none';
+    if (geo) {
+      geo.classList.remove('active', 'dissolving');
+      geo.style.display = 'none';
+    }
+    showScreen('overview');
+  }
+
   function completeOnboard() {
     var name = document.getElementById('userName').value.trim();
     if (!name) { document.getElementById('userName').style.borderColor='rgba(220,80,80,0.6)'; return; }
@@ -6985,12 +7002,15 @@
     // Reset _introSkipped so the chain's callback fires even on re-onboard in
     // the same session — leaving it stale was the previous bug that prevented
     // the Today screen from appearing.
+    window._onboardingFinalized = false;
     window._introSkipped = false;
     if (!localStorage.getItem('wylde_intro_seen')) {
-      playIntro(function() { showScreen('overview'); });
+      playIntro(function() { _finalizeOnboardingToOverview(); });
     } else {
-      playGeoTransition(function() { showScreen('overview'); });
+      playGeoTransition(function() { _finalizeOnboardingToOverview(); });
     }
+    // Mobile safety net: if intro/geo callbacks don't resolve, force-complete.
+    setTimeout(_finalizeOnboardingToOverview, 7000);
   }
 
   function playIntro(callback) {
