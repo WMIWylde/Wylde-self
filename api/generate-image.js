@@ -39,36 +39,69 @@ function rateLimit(ip, limit, windowMs) {
   return { ok: true };
 }
 
-function buildPrompt(timeline, goals, gender, hasImage) {
-  const g = gender || 'male';
-
-  // Normalize goals
+function normalizeGoals(goals, userGoal, goal) {
   let goalList = [];
-  if (Array.isArray(goals)) goalList = goals;
+  if (Array.isArray(goals)) goalList = goals.filter(Boolean);
   else if (typeof goals === 'string' && goals) goalList = [goals];
+  if (goalList.length === 0 && userGoal) goalList = [userGoal];
+  if (goalList.length === 0 && goal) goalList = [goal];
   if (goalList.length === 0) goalList = ['Get lean & athletic'];
+  return goalList;
+}
+
+/** Physique transformation prompt — gender-aware, goal-aware. */
+function buildPhysiquePrompt(timeline, goalList, gender, hasImage) {
+  const g = gender || 'male';
+  const isFemale = g.toLowerCase() === 'female';
   const goalKey = goalList.map(s => s.toLowerCase()).join(' + ');
 
-  // Detect emphasis — but EVERY transformation always includes muscle + fat loss
-  const wantsBulk   = goalKey.match(/muscle|bulk|build|mass|size|strong/);
-  const wantsCut    = goalKey.match(/burn|fat|los|weight|slim|lean|tone|defin|cut|shred/);
-  const emphasis = wantsBulk && wantsCut ? 'body recomposition'
-    : wantsBulk ? 'maximum muscle gain'
-    : wantsCut  ? 'lean and shredded'
-    : 'lean athletic muscle';
+  // Detect goal categories
+  const wantsBulk       = goalKey.match(/muscle|bulk|build|mass|size|strong/);
+  const wantsCut        = goalKey.match(/burn|fat|los|weight|slim|lean|tone|defin|cut|shred/);
+  const wantsEndurance  = goalKey.match(/endurance|cardio|stamina|run|marathon/);
+  const wantsFlexibility = goalKey.match(/flex|mobil|yoga|stretch/);
 
-  // Short, punchy style note based on goals
-  const styleNote = wantsBulk && !wantsCut
-    ? 'Prioritize muscle SIZE — bigger arms, wider shoulders, thicker chest. Some body fat is fine.'
-    : wantsCut && !wantsBulk
-    ? 'Prioritize being SHREDDED — very low body fat, every muscle visible, veins showing.'
-    : 'Balance muscle gain and fat loss — bigger AND leaner.';
+  // Build emphasis that reflects all goals
+  let emphasis;
+  if (wantsBulk && wantsCut) emphasis = 'body recomposition — lean muscle with visible definition';
+  else if (wantsBulk) emphasis = 'athletic muscle gain';
+  else if (wantsCut) emphasis = 'lean and toned';
+  else if (wantsEndurance) emphasis = 'athletic endurance physique';
+  else if (wantsFlexibility) emphasis = 'flexible, toned, and balanced';
+  else emphasis = 'lean athletic physique';
+
+  // Goal-aware style note — different for male and female
+  let styleNote;
+  if (isFemale) {
+    if (wantsBulk && !wantsCut)
+      styleNote = 'Show athletic muscle — defined shoulders, sculpted arms, strong glutes and legs. Fit and powerful, not bulky.';
+    else if (wantsCut && !wantsBulk)
+      styleNote = 'Show a lean toned physique — visible muscle definition, flat stomach, sculpted arms and legs. Think fitness model.';
+    else if (wantsEndurance)
+      styleNote = 'Show a lean runner/athlete build — long toned muscles, low body fat, effortless athleticism. Think Olympic athlete.';
+    else if (wantsFlexibility)
+      styleNote = 'Show a lithe, toned body — lean muscle, graceful posture, dancer/yogi build. Balanced and strong.';
+    else
+      styleNote = 'Show a strong, toned, confident physique — visible definition in arms, shoulders, core, and legs. Healthy and athletic.';
+  } else {
+    if (wantsBulk && !wantsCut)
+      styleNote = 'Prioritize muscle SIZE — bigger arms, wider shoulders, thicker chest. Some body fat is fine.';
+    else if (wantsCut && !wantsBulk)
+      styleNote = 'Prioritize being SHREDDED — very low body fat, every muscle visible, veins showing.';
+    else if (wantsEndurance)
+      styleNote = 'Show an endurance athlete build — lean, wiry muscle, low body fat, strong legs and core. Think triathlete or distance runner.';
+    else if (wantsFlexibility)
+      styleNote = 'Show a balanced, flexible physique — lean muscle, excellent posture, functional strength. Think martial artist or gymnast.';
+    else
+      styleNote = 'Balance muscle gain and fat loss — bigger AND leaner.';
+  }
 
   const identity = hasImage
     ? 'Transform this person\'s body. Keep their FACE, skin tone, hair, and tattoos identical. Same person — rebuilt body.'
     : `Generate a photorealistic image of a ${g} with a dramatically transformed athletic physique.`;
 
-  const timelines = {
+  // Gender-aware timeline descriptions
+  const maleTimelines = {
     '12weeks': `12-WEEK TRANSFORMATION. This person trained hard 4x/week for 3 months straight.
 Show: noticeably more muscular shoulders, arms, and chest. Tighter waist, leaner face. Visible arm definition. Abs starting to show. V-taper forming. Clear muscle tone in every body part.
 Think: Instagram before/after that makes people say "what program is that?" This is NOT subtle — the change is obvious at first glance.
@@ -80,11 +113,29 @@ Think: Men's Health cover. The kind of transformation people call "insane." The 
 ${styleNote}`,
 
     '1year': `1-YEAR PEAK TRANSFORMATION. 365 days of disciplined training, strict nutrition, full dedication.
-Show: ELITE natural physique. Thick vascular arms, striated cannonball shoulders, full chest with visible striations, wide lat spread, carved 6-pack with obliques, V-lines. Veins everywhere — forearms, biceps, delts. Every muscle group shows separation. Quads have visible heads. This body is COMPETITION READY.
+Show: ELITE natural physique. Thick vascular arms, striated cannonball shoulders, full chest with visible striations, wide lat spread, carved 6-pack with obliques, V-lines. Veins everywhere — forearms, biceps, delts. Every muscle group shows separation. This body is COMPETITION READY.
 Think: natural bodybuilder or fitness model at peak condition. Magazine cover physique. Unrecognizable from the original.
 ${styleNote}`,
   };
 
+  const femaleTimelines = {
+    '12weeks': `12-WEEK TRANSFORMATION. This person trained hard 4x/week for 3 months straight.
+Show: noticeably more toned shoulders and arms. Tighter waist, more defined legs and glutes. Visible muscle definition starting to emerge. Posture is confident and strong. Skin looks healthier, face is leaner.
+Think: that friend who started working out 3 months ago and you can clearly tell. The change is real and visible.
+${styleNote}`,
+
+    '6months': `6-MONTH TRANSFORMATION. This person trained 5x/week for half a year with zero breaks.
+Show: DRAMATIC body transformation — sculpted arms and shoulders, defined abs, strong toned legs, lifted round glutes. Waist is tight, body fat is low. Every outfit fits differently. Posture radiates strength.
+Think: Women's Health cover. The kind of transformation that inspires everyone around her.
+${styleNote}`,
+
+    '1year': `1-YEAR PEAK TRANSFORMATION. 365 days of disciplined training, strict nutrition, full dedication.
+Show: PEAK athletic physique. Sculpted shoulders with visible caps, defined arms, visible abs with oblique lines, strong back, powerful legs with quad definition, round lifted glutes. Every muscle group shows tone and separation. This body moves with power and grace.
+Think: elite fitness athlete or bikini competitor at peak condition. Magazine cover physique. Unrecognizable from the original.
+${styleNote}`,
+  };
+
+  const timelines = isFemale ? femaleTimelines : maleTimelines;
   const t = timelines[timeline] || timelines['12weeks'];
 
   return `${identity}
@@ -93,7 +144,134 @@ ${t}
 
 Goal: ${emphasis} — ${goalList.join(', ')}.
 
-Rules: Photorealistic. No text/watermarks. EXAGGERATE the transformation — make it dramatic and motivating. Err on the side of MORE muscle, MORE definition, LESS body fat. Do NOT be conservative.`;
+CRITICAL: Generate ONE SINGLE full-body photograph. Do NOT create a collage, mood board, vision board, grid, split image, or multiple images. One continuous photorealistic image of one person standing or posing. No text, no labels, no watermarks, no borders, no frames.
+
+Make the transformation dramatic and motivating. This should inspire the person to keep going.`;
+}
+
+/**
+ * Vision board: one editorial collage — health, vitality, intentional wealth/ease,
+ * mindset, and life in motion — not physique-only.
+ */
+function buildVisionBoardPrompt(timeline, goalList, gender, hasImage, ctx) {
+  const g = (gender || 'male').toLowerCase();
+  const futureVisionText = (ctx && ctx.futureVisionText) ? String(ctx.futureVisionText).trim().slice(0, 400) : '';
+  const obstacle = (ctx && ctx.obstacle) ? String(ctx.obstacle).trim().slice(0, 200) : '';
+  const motivations = Array.isArray(ctx && ctx.motivations) ? ctx.motivations.filter(Boolean).slice(0, 8) : [];
+
+  const identity = hasImage
+    ? 'The person in the reference photo MUST appear as the recognizable hero in the largest panel (same face, skin tone, hair, age). Do not replace them with a model.'
+    : `Feature one recognizable photorealistic ${g === 'female' ? 'woman' : g === 'non-binary' ? 'person' : 'man'} as the hero across the board.`;
+
+  const horizons = {
+    '12weeks': `12-WEEK HORIZON — early momentum: disciplined routines forming, visible vitality returning, life feeling more intentional. Energy is rising; results are starting to show.`,
+    '6months': `6-MONTH HORIZON — clear transformation: strong body, calmer mind, lifestyle upgrades that feel earned. Confidence is obvious.`,
+    '1year': `1-YEAR HORIZON — embodied future self: peak health, financial ease, composed presence, a life that matches who they decided to become.`,
+  };
+  const horizon = horizons[timeline] || horizons['12weeks'];
+
+  const wealthNote = goalList.some(g => /confidence|health|energy|lifestyle/i.test(g))
+    ? 'Wealth shown as ease and quality of life — not excess.'
+    : 'Wealth shown as intentional abundance: calm premium spaces, purposeful work, freedom of time — never gaudy.';
+
+  const lines = [
+    'Create ONE single high-end editorial VISION BOARD image — a cohesive photorealistic collage (soft grid or cinematic mosaic).',
+    'This is NOT a before/after body shot alone. It is a life visualization: healthy, wealthy-in-spirit, composed, capable.',
+    '',
+    identity,
+    '',
+    horizon,
+    '',
+    'In ONE image, include 5–6 vignettes that read as one aspirational life:',
+    '1. BODY & VITALITY — athletic health, energy, strength (same person if reference provided)',
+    '2. WEALTH & EASE — ' + wealthNote + ' NO cash piles, lottery, lamborghinis, or cliché "rich" tropes.',
+    '3. MIND & RITUAL — morning light, focus, stillness, journaling or meditation atmosphere',
+    '4. PURPOSE & WORK — meaningful craft, creation, or leadership energy (subtle, not corporate stock)',
+    '5. LIFE IN MOTION — training, nature, travel, or movement aligned with their goals',
+    '6. CONNECTION (optional) — warmth, partnership, or community suggested tastefully — no cheesy romance stock',
+    '',
+    'Training goals: ' + goalList.join(', ') + '.',
+  ];
+
+  if (motivations.length) lines.push('Core motivations: ' + motivations.join(', ') + '.');
+  if (futureVisionText) lines.push('In their words: "' + futureVisionText + '" — reflect this visually.');
+  if (obstacle) lines.push('They named friction: "' + obstacle + '" — the board should imply they overcome it through consistency, not fantasy shortcuts.');
+
+  lines.push(
+    '',
+    'Aesthetic: Equinox / Whoop / Aesop — warm neutrals, sage green and soft gold accents, cinematic natural light, magazine-quality. Premium, grounded, believable.',
+    '',
+    'Rules: Photorealistic photography only. CRITICAL — absolutely no text, typography, letters, numbers, words, captions, labels, logos, or watermarks anywhere in the image. NO cartoon or illustration. Single output image. Avoid cluttered Pinterest scrapbook chaos — elegant editorial layout.',
+  );
+
+  return lines.join('\n');
+}
+
+/**
+ * Future vision: one cinematic photograph per life category.
+ * NOT a collage — a single scene that embodies the user's vision for that area of life.
+ */
+function buildFutureVisionPrompt(category, reflectionText, gender) {
+  const g = (gender || 'male').toLowerCase();
+  const pronoun = g === 'female' ? 'woman' : g === 'non-binary' ? 'person' : 'man';
+
+  const categoryScenes = {
+    'health_body': `A ${pronoun} in peak physical condition — training outdoors at dawn, radiating strength and vitality. Athletic, lean, powerful posture. The light catches their form in a way that feels aspirational but real.`,
+    'relationships': `A ${pronoun} surrounded by close friends or a partner — an intimate dinner, rooftop sunset, or quiet moment of genuine connection. Warm lighting, laughter frozen in time. The feeling of being deeply known.`,
+    'family': `A ${pronoun} present with family — playing with children in a beautiful garden, a family dinner in a warm home, or a quiet generational moment. Love visible in body language. Premium, grounded, real.`,
+    'wealth': `A ${pronoun} in a scene of calm abundance — a beautiful workspace with floor-to-ceiling windows, a composed morning in a premium home, or sitting peacefully in a space that radiates earned success. No flashiness — quiet wealth.`,
+    'business': `A ${pronoun} in a purpose-driven work environment — leading a team in a modern space, deep in creative flow, or presenting to a room that's engaged. The energy is leadership, not corporate stock.`,
+    'home': `The interior of a dream living space — warm natural materials, intentional design, morning light pouring through large windows. Plants, books, clean surfaces. A space that reflects someone who has their life together.`,
+    'adventure': `A ${pronoun} in an extraordinary setting — a mountain summit, a Mediterranean coastline, a jungle trail, or an iconic cityscape. The feeling of freedom, exploration, and a life fully lived.`,
+    'spirituality': `A ${pronoun} in a moment of deep stillness — meditating at sunrise, walking through a forest, or sitting by water in contemplation. The light is golden, the scene is vast and peaceful.`,
+    'impact': `A ${pronoun} making visible impact — teaching, building, serving a community, or mentoring. People around them are affected by their presence. The scene radiates purpose and contribution.`,
+    'lifestyle': `A ${pronoun} moving through an intentional day — a calm morning ritual, a focused work session, an evening walk. Every detail suggests discipline, taste, and presence. The kind of life people aspire to.`,
+  };
+
+  const scene = categoryScenes[category] || `A ${pronoun} living their best life in the ${category} domain. Cinematic, aspirational, grounded.`;
+
+  const lines = [
+    `Generate ONE photorealistic cinematic photograph.`,
+    '',
+    scene,
+    '',
+  ];
+
+  if (reflectionText) {
+    lines.push(`The person described their vision: "${reflectionText.slice(0, 600)}"`);
+    lines.push('Incorporate the emotional tone and specific details from their words into the scene.');
+    lines.push('');
+  }
+
+  lines.push(
+    'Aesthetic: Tracksmith × Aesop × Apple — warm tones, cinematic natural light, shallow depth of field. Magazine-quality. Premium and grounded.',
+    '',
+    'CRITICAL: ONE single photograph. NOT a collage, grid, mood board, or multiple images. No text, labels, watermarks, borders, or frames. Photorealistic only — no illustration or cartoon.',
+  );
+
+  return lines.join('\n');
+}
+
+/**
+ * Route to the right prompt builder based on mode.
+ * Default is 'physique' — the Future Self transformation photo.
+ * Pass mode='vision_board' for the life collage.
+ * Pass mode='future_vision' for per-category cinematic scenes.
+ */
+function buildPrompt(timeline, goals, gender, hasImage, options) {
+  const mode = (options && options.mode) || 'physique';
+  const goalList = normalizeGoals(goals, options && options.userGoal, options && options.goal);
+  if (mode === 'vision_board') {
+    return buildVisionBoardPrompt(timeline, goalList, gender, hasImage, options);
+  }
+  if (mode === 'future_vision') {
+    return buildFutureVisionPrompt(
+      options && options.category,
+      options && options.reflectionText,
+      gender
+    );
+  }
+  return buildPhysiquePrompt(timeline, goalList, gender, hasImage);
 }
 
 module.exports = async function handler(req, res) {
@@ -112,7 +290,6 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
-  // Rate limit: image gen is expensive — 5/min per IP
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
   const rl = rateLimit(ip, 5, 60_000);
   if (!rl.ok) {
@@ -124,16 +301,36 @@ module.exports = async function handler(req, res) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error('GEMINI_API_KEY not configured');
 
-    const { image_base64, timeline, goal, userGoal, goals, gender } = req.body || {};
+    const body = req.body || {};
+    const {
+      image_base64,
+      timeline,
+      goal,
+      userGoal,
+      goals,
+      gender,
+      mode,
+      futureVisionText,
+      motivations,
+      obstacle,
+      category,
+      reflectionText,
+    } = body;
 
-    // goals array takes precedence, then userGoal, then legacy goal field
-    const effectiveGoals = (Array.isArray(goals) && goals.length > 0)
-      ? goals
-      : (userGoal || goal || 'lean and athletic');
+    const effectiveGoals = normalizeGoals(goals, userGoal, goal);
     const effectiveTimeline = timeline || '12weeks';
 
-    const prompt = buildPrompt(effectiveTimeline, effectiveGoals, gender, !!image_base64);
-    console.log(`[generate-image] Timeline: ${effectiveTimeline}, Goals: ${JSON.stringify(effectiveGoals)}, Prompt length: ${prompt.length}`);
+    const prompt = buildPrompt(effectiveTimeline, effectiveGoals, gender, !!image_base64, {
+      mode: mode || 'physique',
+      userGoal,
+      goal,
+      futureVisionText,
+      motivations,
+      obstacle,
+      category,
+      reflectionText,
+    });
+    console.log(`[generate-image] mode=${mode || 'physique'} timeline=${effectiveTimeline} goals=${JSON.stringify(effectiveGoals)} promptLen=${prompt.length}`);
 
     let contents;
 
@@ -158,18 +355,13 @@ module.exports = async function handler(req, res) {
       ];
     }
 
-    // Try models in order — names change often, first success wins.
-    // All entries must support the :generateContent endpoint with
-    // responseModalities: ['TEXT', 'IMAGE']. Imagen models use a
-    // different :predict shape and are intentionally excluded.
     const models = [
-      'gemini-3.1-flash-image-preview', // Nano Banana 2 — high-efficiency native image gen (preview)
-      'gemini-3-pro-image-preview',     // Nano Banana Pro — pro-tier native image gen (preview)
-      'gemini-2.5-flash-image',         // Nano Banana — GA fallback
-      'gemini-2.0-flash-exp',           // legacy fallback
+      'gemini-3.1-flash-image-preview',
+      'gemini-3-pro-image-preview',
+      'gemini-2.5-flash-image',
+      'gemini-2.0-flash-exp',
     ];
 
-    // Helper: attempt generation with given contents
     async function tryGenerate(reqContents) {
       const reqBody = JSON.stringify({
         contents: reqContents,
@@ -197,7 +389,6 @@ module.exports = async function handler(req, res) {
 
       console.log(`[generate-image] Final model: ${usedModel}, status: ${response.status}`);
 
-      // Check for safety block (candidates blocked or finishReason SAFETY)
       const candidate = data?.candidates?.[0];
       const finishReason = candidate?.finishReason || '';
       const blocked = data?.promptFeedback?.blockReason || '';
@@ -224,10 +415,8 @@ module.exports = async function handler(req, res) {
       return { success: true, imagePart };
     }
 
-    // Attempt 1: with user's photo (if provided)
     let result = await tryGenerate(contents);
 
-    // If safety-blocked and we had a photo, retry WITHOUT the photo
     if ((result.blocked || result.error) && image_base64) {
       console.log('[generate-image] Retrying WITHOUT user photo (safety fallback)...');
       const textOnlyContents = [
@@ -250,7 +439,11 @@ module.exports = async function handler(req, res) {
     }
 
     const { mimeType, data: imgData } = result.imagePart.inlineData;
-    return res.status(200).json({ success: true, image_base64: `data:${mimeType};base64,${imgData}` });
+    return res.status(200).json({
+      success: true,
+      image_base64: `data:${mimeType};base64,${imgData}`,
+      mode: mode || 'physique',
+    });
 
   } catch (err) {
     console.error('generate-image error:', err.message);

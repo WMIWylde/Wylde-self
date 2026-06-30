@@ -1,6 +1,6 @@
 const { applyCors, rateLimit, clientIp } = require('../lib/security');
 
-const MAX_BODY_BYTES = 64 * 1024;
+const MAX_BODY_BYTES = 2 * 1024 * 1024; // 2MB for image payloads
 
 module.exports = async function handler(req, res) {
   if (applyCors(req, res, { methods: 'POST, OPTIONS' })) return;
@@ -19,7 +19,12 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { messages } = req.body || {};
+    const { messages, model, max_tokens, temperature } = req.body || {};
+    const start = Date.now();
+
+    // Allow callers to request specific models. Default to gpt-4o.
+    const allowedModels = ['gpt-4o', 'gpt-4o-mini', 'gpt-4.1', 'gpt-4.1-mini', 'o3-mini'];
+    const requestedModel = allowedModels.includes(model) ? model : 'gpt-4o';
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -28,16 +33,19 @@ module.exports = async function handler(req, res) {
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        max_tokens: 2048,
+        model: requestedModel,
+        max_tokens: max_tokens || 4096,
+        temperature: temperature !== undefined ? temperature : 0.7,
         messages: messages || []
       })
     });
 
     const data = await response.json();
+    const latency = Date.now() - start;
+    console.log(`[openai] model=${requestedModel} status=${response.status} latency=${latency}ms tokens=${data.usage?.total_tokens || '?'}`);
     return res.status(response.status).json(data);
   } catch (err) {
-    console.error('[openai] error:', err.message);
-    return res.status(500).json({ error: 'Upstream request failed' });
+    console.error(`[openai] error: ${err.message}`);
+    return res.status(500).json({ error: 'Upstream request failed', message: err.message });
   }
 };

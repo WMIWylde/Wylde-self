@@ -1,28 +1,38 @@
 import SwiftUI
+import UIKit
 
 /// Central design tokens for WyldeSelf iOS.
-/// Source of truth: DESIGN.md
+/// Adaptive: automatically switches between dark (web-matching) and light palettes.
 enum WyldeStyles {
 
-    enum Colors {
-        // Foundation
-        static let paper = Color(hex: "F4F1EC")
-        static let bone = Color(hex: "E8E2D6")
-        static let sand = Color(hex: "D4C9B5")
-        static let stone = Color(hex: "9A9286")
-        static let charcoal = Color(hex: "2C2A26")
-        static let ink = Color(hex: "1A1816")
+    /// Helper: creates a Color that adapts to dark/light mode.
+    private static func adaptive(light: String, dark: String) -> Color {
+        Color(UIColor { tc in
+            tc.userInterfaceStyle == .dark
+                ? UIColor(wyldeHex: dark)
+                : UIColor(wyldeHex: light)
+        })
+    }
 
-        // Accent
-        static let bronze = Color(hex: "9C7A4A")
-        static let gold = Color(hex: "C9A84C")
-        static let sage = Color(hex: "7A8771")
-        static let clay = Color(hex: "A06B4F")
+    enum Colors {
+        // Foundation — dark matches web app (#070707 bg, #F4F1E8 text)
+        static let paper    = adaptive(light: "F4F1EC", dark: "070707")
+        static let bone     = adaptive(light: "E8E2D6", dark: "111111")
+        static let sand     = adaptive(light: "D4C9B5", dark: "1A1A1A")
+        static let stone    = adaptive(light: "9A9286", dark: "A6A29A")
+        static let charcoal = adaptive(light: "2C2A26", dark: "F4F1E8")
+        static let ink      = adaptive(light: "1A1816", dark: "F4F1E8")
+
+        // Accent — gold replaces sage as primary accent in dark mode (matches web)
+        static let bronze = adaptive(light: "9C7A4A", dark: "C8A96E")
+        static let gold   = adaptive(light: "C9A84C", dark: "C8A96E")
+        static let sage   = adaptive(light: "7A8771", dark: "D4BE92")
+        static let clay   = adaptive(light: "A06B4F", dark: "C26B5A")
 
         // Semantic
         static let success = sage
         static let warning = clay
-        static let error = Color(hex: "8B3A2F")
+        static let error = adaptive(light: "8B3A2F", dark: "C26B5A")
     }
 
     /// Layout primitives from DESIGN.md (sizes not on the spacing scale).

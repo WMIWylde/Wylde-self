@@ -249,14 +249,15 @@ struct StartTodayFlow: View {
         HapticManager.shared.impact(.light)
         switch flow.step {
         case 3:
-            // Training — leave the flow and use the existing native pattern.
-            // (workout itself remains web-based; that's the Phase Later port.)
+            // Training — dismiss flow and open the native workout
             isPresented = false
-            NotificationCenter.default.post(
-                name: .navigateToScreen,
-                object: nil,
-                userInfo: ["screen": "today"]
-            )
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                NotificationCenter.default.post(
+                    name: .navigateToScreen,
+                    object: nil,
+                    userInfo: ["screen": "workout"]
+                )
+            }
         case 6:
             if showFinal {
                 isPresented = false

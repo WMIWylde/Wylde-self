@@ -3,6 +3,7 @@ import SwiftUI
 struct MainTabView: View {
     @EnvironmentObject var appState: AppState
     @State private var showSettingsDrawer = false
+    @State private var showWalkthrough = !UserDefaults.standard.bool(forKey: "wylde_walkthrough_seen")
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -12,9 +13,9 @@ struct MainTabView: View {
             // the user switches tabs.
             ZStack {
                 tabContent(.today) { TodayView() }
-                tabContent(.exercises) { ExercisesView() }
-                tabContent(.future) { WebViewScreen(path: "#future") }
-                tabContent(.settings) { WebViewScreen(path: "#progress") }
+                tabContent(.nutrition) { NutritionTabView() }
+                tabContent(.future) { FutureTabView() }
+                tabContent(.settings) { YouView() }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
@@ -59,6 +60,12 @@ struct MainTabView: View {
             }
         }
         .animation(.easeInOut(duration: 0.28), value: showSettingsDrawer)
+        .overlay {
+            if showWalkthrough {
+                WalkthroughOverlay(isShowing: $showWalkthrough)
+                    .zIndex(200)
+            }
+        }
     }
 
     /// Wraps a tab view so it stays in the hierarchy even when not selected.
@@ -68,6 +75,8 @@ struct MainTabView: View {
     private func tabContent<Content: View>(_ tab: AppState.Tab, @ViewBuilder content: () -> Content) -> some View {
         let isActive = appState.selectedTab == tab
         content()
+            .frame(maxWidth: UIScreen.main.bounds.width)
+            .clipped()
             .opacity(isActive ? 1 : 0)
             .allowsHitTesting(isActive)
             // Don't expose hidden tabs to VoiceOver
@@ -84,6 +93,7 @@ struct BottomTabBar: View {
         HStack(spacing: 0) {
             ForEach(AppState.Tab.allCases, id: \.self) { tab in
                 TabButton(tab: tab, isActive: appState.selectedTab == tab) {
+                    print("[Tab] Tapped: \(tab.rawValue)")
                     HapticManager.shared.impact(.light)
                     withAnimation(.easeInOut(duration: 0.15)) {
                         appState.selectedTab = tab
@@ -94,9 +104,7 @@ struct BottomTabBar: View {
         .frame(height: 72)
         .padding(.bottom, safeAreaBottom)
         .background(
-            Rectangle()
-                .fill(Theme.surface)
-                .shadow(color: .black.opacity(0.06), radius: 12, y: -4)
+            BlurredTabBarBackground()
                 .ignoresSafeArea(edges: .bottom)
         )
     }

@@ -5,6 +5,16 @@ class AppState: ObservableObject {
     // Tab — not persisted (always start on Today)
     @Published var selectedTab: Tab = .today
 
+    // Appearance — "dark" (default, matches web), "light", or "system"
+    @Published var appearanceMode: String = "dark"                   { didSet { defaults.set(appearanceMode, forKey: "wylde_appearance") } }
+    var preferredColorScheme: ColorScheme? {
+        switch appearanceMode {
+        case "dark": return .dark
+        case "light": return .light
+        default: return nil  // "system" follows device
+        }
+    }
+
     // Auth / profile — persisted
     @Published var isAuthenticated = false                          { didSet { defaults.set(isAuthenticated, forKey: "wylde_authed") } }
     @Published var userName: String = ""                            { didSet { defaults.set(userName, forKey: "wylde_name") } }
@@ -22,6 +32,22 @@ class AppState: ObservableObject {
     @Published var gender: String = ""                              { didSet { defaults.set(gender, forKey: "wylde_gender") } }
     @Published var goals: [String] = []                             { didSet { defaults.set(goals, forKey: "wylde_goals") } }
     @Published var gymName: String = ""                             { didSet { defaults.set(gymName, forKey: "wylde_gym") } }
+    @Published var onboardingComplete: Bool = false                  { didSet { defaults.set(onboardingComplete, forKey: "wylde_onboarded") } }
+    @Published var ageRange: String = ""                             { didSet { defaults.set(ageRange, forKey: "wylde_age") } }
+    @Published var fitnessLevel: String = ""                         { didSet { defaults.set(fitnessLevel, forKey: "wylde_level") } }
+    @Published var trainingDays: String = ""                         { didSet { defaults.set(trainingDays, forKey: "wylde_days") } }
+    @Published var equipment: String = ""                            { didSet { defaults.set(equipment, forKey: "wylde_equipment") } }
+    @Published var gymAccess: String = ""                            { didSet { defaults.set(gymAccess, forKey: "wylde_gym_access") } }
+    @Published var heightRange: String = ""                          { didSet { defaults.set(heightRange, forKey: "wylde_height") } }
+    @Published var weight: String = ""                               { didSet { defaults.set(weight, forKey: "wylde_weight") } }
+    @Published var weightUnit: String = "lbs"                        { didSet { defaults.set(weightUnit, forKey: "wylde_weight_unit") } }
+    @Published var healthConcerns: [String] = []                     { didSet { defaults.set(healthConcerns, forKey: "wylde_health") } }
+    @Published var healthNotes: String = ""                          { didSet { defaults.set(healthNotes, forKey: "wylde_health_notes") } }
+    @Published var dietaryPrefs: [String] = []                       { didSet { defaults.set(dietaryPrefs, forKey: "wylde_diet") } }
+    @Published var dietNotes: String = ""                            { didSet { defaults.set(dietNotes, forKey: "wylde_diet_notes") } }
+    @Published var classPreferences: [String] = []                   { didSet { defaults.set(classPreferences, forKey: "wylde_classes") } }
+    @Published var currentBook: String = ""                            { didSet { defaults.set(currentBook, forKey: "wylde_book") } }
+    @Published var pagesReadToday: Int = 0                             { didSet { defaults.set(pagesReadToday, forKey: dayKey("wylde_pages")) } }
 
     // Pro entitlement — cached locally for instant UI, refreshed from
     // RevenueCat on launch + when the SDK posts an entitlement change.
@@ -61,19 +87,24 @@ class AppState: ObservableObject {
     @Published var proteinGoal: Int = 180                           { didSet { defaults.set(proteinGoal, forKey: "wylde_protein_goal") } }
     @Published var caloriesLogged: Int = 0                          { didSet { defaults.set(caloriesLogged, forKey: dayKey("wylde_calories_logged")) } }
     @Published var caloriesGoal: Int = 2400                         { didSet { defaults.set(caloriesGoal, forKey: "wylde_calories_goal") } }
+    @Published var carbsLogged: Int = 0                              { didSet { defaults.set(carbsLogged, forKey: dayKey("wylde_carbs_logged")) } }
+    @Published var carbsGoal: Int = 250                              { didSet { defaults.set(carbsGoal, forKey: "wylde_carbs_goal") } }
+    @Published var fatLogged: Int = 0                                { didSet { defaults.set(fatLogged, forKey: dayKey("wylde_fat_logged")) } }
+    @Published var fatGoal: Int = 80                                 { didSet { defaults.set(fatGoal, forKey: "wylde_fat_goal") } }
+    @Published var caloriesBurned: Int = 0                           { didSet { defaults.set(caloriesBurned, forKey: dayKey("wylde_calories_burned")) } }
 
     enum Tab: String, CaseIterable {
-        case today = "Today"
-        case exercises = "Library"
-        case future = "Future"
-        case settings = "Settings"
+        case today     = "Today"
+        case nutrition = "Nutrition"
+        case future    = "Future"
+        case settings  = "You"
 
         var icon: String {
             switch self {
-            case .today: return "house.fill"
-            case .exercises: return "figure.strengthtraining.traditional"
-            case .future: return "person.fill"
-            case .settings: return "gearshape.fill"
+            case .today:     return "sun.horizon.fill"
+            case .nutrition: return "leaf.fill"
+            case .future:    return "figure.walk.motion"
+            case .settings:  return "person.crop.circle.fill"
             }
         }
     }
@@ -82,9 +113,10 @@ class AppState: ObservableObject {
     // Three fixed practices — meditation, journaling, reading. Workout is
     // not part of morning protocol because it lives in the daily routine.
     static let defaultMorningActions: [MorningAction] = [
-        MorningAction(id: "meditation", name: "Meditation", desc: "Sit. Breathe. Notice.", dur: 10),
-        MorningAction(id: "journaling", name: "Journaling", desc: "What's on your mind. What you're grateful for. What you're building.", dur: 10),
-        MorningAction(id: "reading",    name: "Reading",    desc: "Feed your mind something deliberate.", dur: 15)
+        MorningAction(id: "qigong",     name: "Energy Movement", desc: "5-7 minutes of slow, intentional movement. Wake up the body's energy, loosen the joints, connect breath to motion.", dur: 7),
+        MorningAction(id: "meditation", name: "Meditation", desc: "10 minutes of stillness. This is how you train your mind to be calm under pressure.", dur: 10),
+        MorningAction(id: "journaling", name: "Journaling", desc: "Write what's on your mind, what you're grateful for, and what you're building. Clarity comes from the page, not the screen.", dur: 10),
+        MorningAction(id: "reading",    name: "Reading",    desc: "15 minutes of deliberate input. Feed your mind something that makes you sharper, calmer, or more capable.", dur: 15)
     ]
 
     // MARK: - Persistence
@@ -138,6 +170,7 @@ class AppState: ObservableObject {
     }
 
     func loadFromDefaults() {
+        appearanceMode = defaults.string(forKey: "wylde_appearance") ?? "dark"
         userName = defaults.string(forKey: "wylde_name") ?? ""
         currentDay = defaults.integer(forKey: "wylde_day")
         if currentDay == 0 { currentDay = 1 }
@@ -146,6 +179,22 @@ class AppState: ObservableObject {
         gender = defaults.string(forKey: "wylde_gender") ?? ""
         goals = defaults.stringArray(forKey: "wylde_goals") ?? []
         gymName = defaults.string(forKey: "wylde_gym") ?? ""
+        onboardingComplete = defaults.bool(forKey: "wylde_onboarded")
+        ageRange = defaults.string(forKey: "wylde_age") ?? ""
+        fitnessLevel = defaults.string(forKey: "wylde_level") ?? ""
+        trainingDays = defaults.string(forKey: "wylde_days") ?? ""
+        equipment = defaults.string(forKey: "wylde_equipment") ?? ""
+        gymAccess = defaults.string(forKey: "wylde_gym_access") ?? ""
+        heightRange = defaults.string(forKey: "wylde_height") ?? ""
+        weight = defaults.string(forKey: "wylde_weight") ?? ""
+        weightUnit = defaults.string(forKey: "wylde_weight_unit") ?? "lbs"
+        healthConcerns = defaults.stringArray(forKey: "wylde_health") ?? []
+        healthNotes = defaults.string(forKey: "wylde_health_notes") ?? ""
+        dietaryPrefs = defaults.stringArray(forKey: "wylde_diet") ?? []
+        dietNotes = defaults.string(forKey: "wylde_diet_notes") ?? ""
+        classPreferences = defaults.stringArray(forKey: "wylde_classes") ?? []
+        currentBook = defaults.string(forKey: "wylde_book") ?? ""
+        pagesReadToday = defaults.integer(forKey: dayKey("wylde_pages"))
 
         // Pro entitlement — cached locally for instant UI on launch.
         // Source of truth is RevenueCat / Supabase; this is just the
@@ -179,12 +228,19 @@ class AppState: ObservableObject {
         workoutCompleted = defaults.bool(forKey: dayKey("wylde_workout_done"))
         proteinLogged = defaults.integer(forKey: dayKey("wylde_protein_logged"))
         caloriesLogged = defaults.integer(forKey: dayKey("wylde_calories_logged"))
+        carbsLogged = defaults.integer(forKey: dayKey("wylde_carbs_logged"))
+        fatLogged = defaults.integer(forKey: dayKey("wylde_fat_logged"))
+        caloriesBurned = defaults.integer(forKey: dayKey("wylde_calories_burned"))
 
         // Goals carry over day-to-day, only reset when user changes them
         let pg = defaults.integer(forKey: "wylde_protein_goal")
         if pg > 0 { proteinGoal = pg }
         let cg = defaults.integer(forKey: "wylde_calories_goal")
         if cg > 0 { caloriesGoal = cg }
+        let cbg = defaults.integer(forKey: "wylde_carbs_goal")
+        if cbg > 0 { carbsGoal = cbg }
+        let fg = defaults.integer(forKey: "wylde_fat_goal")
+        if fg > 0 { fatGoal = fg }
 
         // Auth: prefer explicit flag, fall back to "did the user set a name"
         if defaults.object(forKey: "wylde_authed") != nil {
@@ -198,7 +254,10 @@ class AppState: ObservableObject {
     func resetAllData() {
         let keys = [
             "wylde_authed", "wylde_name", "wylde_day", "wylde_streak", "wylde_xp",
-            "wylde_gender", "wylde_goals", "wylde_gym",
+            "wylde_gender", "wylde_goals", "wylde_gym", "wylde_onboarded",
+            "wylde_age", "wylde_level", "wylde_days", "wylde_equipment",
+            "wylde_gym_access", "wylde_height", "wylde_weight", "wylde_weight_unit",
+            "wylde_health", "wylde_health_notes", "wylde_diet", "wylde_diet_notes", "wylde_classes",
             "wylde_morning_actions", "wylde_morning_done",
             "wylde_protein_goal", "wylde_calories_goal"
         ]

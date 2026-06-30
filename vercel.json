@@ -16,7 +16,30 @@
     "api/exercises.js": {
       "maxDuration": 10,
       "includeFiles": "data/exercises.json"
-    }
+    },
+    "api/consumer/me.js": { "maxDuration": 10 },
+    "api/consumer/checkin.js": { "maxDuration": 10 },
+    "api/consumer/progress.js": { "maxDuration": 10 },
+    "api/consumer/care/invite.js": { "maxDuration": 10 },
+    "api/consumer/care/accept.js": { "maxDuration": 10 },
+    "api/consumer/care/relationships.js": { "maxDuration": 10 },
+    "api/clinic/products.js": { "maxDuration": 10 },
+    "api/clinic/notes.js": { "maxDuration": 10 },
+    "api/clinic/assign-protocol.js": { "maxDuration": 10 },
+    "api/consumer/wylde-score.js": { "maxDuration": 10 },
+    "api/consumer/protocols.js": { "maxDuration": 10 },
+    "api/consumer/messages.js": { "maxDuration": 10 },
+    "api/consumer/reorder.js": { "maxDuration": 30 },
+    "api/clinic/reorders.js": { "maxDuration": 10 },
+    "api/clinic/insights.js": { "maxDuration": 60 },
+    "api/library/therapies.js": { "maxDuration": 10 },
+    "api/library/protocols.js": { "maxDuration": 10 },
+    "api/clinic/onboard.js": { "maxDuration": 60 },
+    "api/clinic/settings.js": { "maxDuration": 10 },
+    "api/clinic/team.js": { "maxDuration": 10 },
+    "api/clinic/features.js": { "maxDuration": 10 },
+    "api/clinic/templates.js": { "maxDuration": 10 },
+    "api/nutrition/search.js": { "maxDuration": 15 }
   },
   "crons": [
     {

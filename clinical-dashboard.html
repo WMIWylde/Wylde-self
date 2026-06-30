@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="en" style="background:#F7F5F0;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wylde Clinical · Dashboard</title>
+  <link rel="icon" href="/logo-icon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper: '#F7F5F0', cream: '#FAF8F3', warmgray: '#F0EDE6',
+            line: 'rgba(45,42,38,0.08)', line2: 'rgba(45,42,38,0.14)',
+            ink: '#2A2823', ink2: '#6B675F', ink3: '#9A958B',
+            sage: '#6E8A7C', sageDeep: '#5C7A6C', sageDim: 'rgba(110,138,124,0.10)',
+            success: '#5C9678', successbg: 'rgba(92,150,120,0.10)',
+            warn: '#C7965E', warnbg: 'rgba(199,150,94,0.10)',
+            crit: '#B86570', critbg: 'rgba(184,101,112,0.10)',
+            sky: '#6B89A8', skybg: 'rgba(107,137,168,0.08)',
+          },
+          fontFamily: { sans: ['Inter','sans-serif'], serif: ['Fraunces','serif'] },
+          boxShadow: { soft: '0 1px 2px rgba(45,42,38,0.04), 0 4px 16px rgba(45,42,38,0.04)', card: '0 2px 4px rgba(45,42,38,0.04), 0 8px 24px rgba(45,42,38,0.05)' },
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .nav-item { transition: all 0.15s; cursor: pointer; }
+    .nav-item:hover, .nav-item.active { background: rgba(110,138,124,0.10); color: #5C7A6C; }
+    .stat-card:hover { transform: translateY(-1px); transition: transform 0.15s; }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: #6E8A7C; }
+    .modal-overlay { background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); }
+    .tab-btn { transition: all 0.15s; }
+    .tab-btn.active { color: #5C7A6C; border-bottom: 2px solid #6E8A7C; }
+  </style>
+</head>
+<body class="bg-paper text-ink min-h-screen">
+
+<!-- ═══ AUTH ═══ -->
+<div id="authScreen" class="min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-sm p-8">
+    <div class="text-center mb-8">
+      <img src="/logo-icon.png" alt="Wylde" class="w-12 h-12 rounded-xl mx-auto mb-4" />
+      <h1 class="font-serif text-2xl text-ink">Wylde Clinical</h1>
+      <p class="text-ink3 text-sm mt-2">Sign in to your clinician account</p>
+    </div>
+    <div class="space-y-3">
+      <input id="authEmail" type="email" placeholder="Email" class="w-full px-4 py-3 rounded-xl border border-line2 bg-white text-sm" />
+      <input id="authPassword" type="password" placeholder="Password" class="w-full px-4 py-3 rounded-xl border border-line2 bg-white text-sm" />
+      <button onclick="signIn()" class="w-full py-3 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">Sign In</button>
+      <button onclick="signUp()" class="w-full py-2.5 bg-white border border-line2 text-ink2 rounded-xl text-sm font-medium hover:bg-cream transition">Create Clinician Account</button>
+      <p id="authError" class="text-crit text-xs text-center hidden"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div id="dashboardScreen" class="hidden min-h-screen flex">
+
+  <!-- Sidebar -->
+  <aside class="w-56 bg-white border-r border-line flex flex-col h-screen sticky top-0 shrink-0">
+    <div class="p-5 border-b border-line">
+      <div class="flex items-center gap-2">
+        <img src="/logo-icon.png" alt="" class="w-8 h-8 rounded-lg" />
+        <div><div class="text-xs font-semibold tracking-wide text-ink">WYLDE</div><div class="text-[10px] text-ink3 tracking-widest">CLINICAL</div></div>
+      </div>
+    </div>
+    <nav class="flex-1 p-3 space-y-1" id="sidebarNav">
+      <div class="nav-item active" data-section="dashboard" onclick="navTo('dashboard')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4"/></svg>Dashboard</div>
+      <div class="nav-item" data-section="patients" onclick="navTo('patients')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Patients</div>
+      <div class="nav-item" data-section="protocols" onclick="navTo('protocols')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Protocols</div>
+      <div class="nav-item" data-section="therapyLibrary" onclick="navTo('therapyLibrary')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Research Library</div>
+      <div class="nav-item" data-section="library" onclick="navTo('library')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>Clinic Products</div>
+      <div class="nav-item" data-section="insights" onclick="navTo('insights')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>Insights</div>
+      <div class="nav-item" data-section="reorders" onclick="navTo('reorders')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>Reorders</div>
+      <div class="nav-item" data-section="messages" onclick="navTo('messages')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>Messages</div>
+      <div class="nav-item" data-section="billing" onclick="navTo('billing')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>Billing</div>
+      <div class="nav-item" data-section="onboard" onclick="navTo('onboard')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>AI Setup</div>
+      <div class="nav-item" data-section="settings" onclick="navTo('settings')"><svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>Settings</div>
+    </nav>
+    <div class="p-4 border-t border-line">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-sageDim flex items-center justify-center text-sage text-xs font-semibold" id="sidebarAvatar">DR</div>
+        <div class="flex-1 min-w-0"><div class="text-xs font-medium text-ink truncate" id="sidebarName">Clinician</div><button onclick="signOut()" class="text-[10px] text-ink3 hover:text-crit">Sign out</button></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 overflow-y-auto min-h-screen">
+    <!-- Top Bar -->
+    <div class="sticky top-0 bg-paper/90 backdrop-blur-md border-b border-line z-10 px-6 py-3 flex items-center justify-between">
+      <div id="breadcrumb" class="text-sm"><span class="text-ink3">Dashboard</span></div>
+      <div class="flex items-center gap-3">
+        <input id="acceptCodeInput" type="text" placeholder="Enter patient code..." class="px-3 py-1.5 rounded-lg border border-line2 bg-white text-xs w-44" />
+        <button onclick="acceptCode()" class="px-3 py-1.5 bg-sage text-white rounded-lg text-xs font-semibold hover:bg-sageDeep transition">Link Patient</button>
+      </div>
+    </div>
+
+    <!-- Sections -->
+    <div id="content" class="p-6"></div>
+  </main>
+</div>
+
+<!-- ═══ MODALS ═══ -->
+<div id="modalOverlay" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center">
+  <div id="modalContent" class="bg-white rounded-2xl shadow-card max-w-lg w-full mx-4 max-h-[85vh] overflow-y-auto"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+const API = 'https://www.wyldeself.com';
+const sb = supabase.createClient(
+  'https://huclolzxzpitdpyogolu.supabase.co',
+  'sb_publishable_VFZOYd0PhqAh3AgZF1TcXQ_cX4ElGkl'
+);
+let currentUser = null;
+let patients = [];
+let products = [];
+let currentSection = 'dashboard';
+let selectedPatient = null;
+
+// ─── Auth ───
+async function signIn() {
+  const email = el('authEmail').value.trim(), pw = el('authPassword').value;
+  const errEl = el('authError'); errEl.classList.add('hidden');
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
+  if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
+  currentUser = data.user; initDashboard();
+}
+async function signUp() {
+  const email = el('authEmail').value.trim(), pw = el('authPassword').value;
+  const errEl = el('authError'); errEl.classList.add('hidden');
+  if (!email || pw.length < 6) { errEl.textContent = 'Email and password (6+ chars) required'; errEl.classList.remove('hidden'); return; }
+  const { data, error } = await sb.auth.signUp({ email, password: pw });
+  if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
+  if (data.user) { currentUser = data.user; initDashboard(); }
+}
+async function signOut() { await sb.auth.signOut(); location.reload(); }
+async function checkAuth() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (user) { currentUser = user; initDashboard(); }
+}
+
+let clinicSettings = null;
+
+async function initDashboard() {
+  el('authScreen').classList.add('hidden');
+  const name = currentUser.email.split('@')[0];
+
+  // Check clinic onboarding status
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  if (token) {
+    const resp = await fetch(API + '/api/clinic/settings', { headers: { 'Authorization': 'Bearer ' + token } });
+    if (resp.ok) { const d = await resp.json(); clinicSettings = d.settings; }
+  }
+
+  if (!clinicSettings || !clinicSettings.onboarding_complete) {
+    renderClinicOnboarding(clinicSettings);
+    return;
+  }
+
+  el('dashboardScreen').classList.remove('hidden');
+  el('sidebarName').textContent = clinicSettings.clinic_name || name;
+  el('sidebarAvatar').textContent = (clinicSettings.clinic_name || name).substring(0,2).toUpperCase();
+  loadPatients();
+  loadProducts();
+}
+
+// ─── Navigation ───
+function navTo(section) {
+  currentSection = section;
+  selectedPatient = null;
+  document.querySelectorAll('.nav-item').forEach(n => { n.classList.toggle('active', n.dataset.section === section); });
+  render();
+}
+
+function render() {
+  const c = el('content');
+  switch (currentSection) {
+    case 'dashboard': renderDashboard(c); break;
+    case 'patients': renderPatients(c); break;
+    case 'protocols': renderProtocols(c); break;
+    case 'library': renderLibrary(c); break;
+    case 'insights': renderInsightsPage(c); break;
+    case 'therapyLibrary': renderTherapyLibrary(c); break;
+    case 'messages': renderMessages(c); break;
+    case 'reorders': renderReorders(c); break;
+    case 'billing': c.innerHTML = comingSoon('Billing & Orders'); break;
+    case 'onboard': renderOnboard(c); break;
+    case 'settings': renderSettings(c); break;
+    case 'patientDetail': renderPatientDetail(c); break;
+  }
+  el('breadcrumb').innerHTML = currentSection === 'patientDetail' && selectedPatient
+    ? `<span class="text-ink3 cursor-pointer hover:text-ink" onclick="navTo('patients')">Patients</span> <span class="text-ink3 mx-1">›</span> <span class="text-ink font-medium">${selectedPatient.name}</span>`
+    : `<span class="text-ink3">${currentSection.charAt(0).toUpperCase() + currentSection.slice(1)}</span>`;
+}
+
+// ─── Load Data ───
+async function loadPatients() {
+  const { data: rels } = await sb.from('care_relationships').select('patient_id, clinic_name, linked_at').eq('clinician_id', currentUser.id).eq('status', 'active');
+  patients = [];
+  const today = new Date().toISOString().split('T')[0];
+  for (const rel of (rels || [])) {
+    const { data: profile } = await sb.from('profiles').select('id, email, profile_data').eq('id', rel.patient_id).single();
+    const { data: checkins } = await sb.from('patient_checkins').select('*').eq('user_id', rel.patient_id).order('date', { ascending: false }).limit(30);
+    const { data: protocols } = await sb.from('patient_protocols').select('*').eq('user_id', rel.patient_id).eq('status', 'active');
+    const { data: rxs } = await sb.from('patient_prescriptions').select('*').eq('user_id', rel.patient_id).eq('status', 'active');
+    const last7 = (checkins || []).slice(0, 7);
+    const adherence = last7.length > 0 ? Math.round(last7.reduce((s, c) => s + (c.doses > 0 ? 1 : 0), 0) / last7.length * 100) : null;
+    const pd = profile?.profile_data || {};
+    // Wylde Score
+    const { data: scoreData } = await sb.from('wylde_scores').select('*').eq('user_id', rel.patient_id).eq('date', today).single();
+    // Adherence logs (last 14 days)
+    const fourteenAgo = new Date(Date.now() - 14 * 86400000).toISOString();
+    const { data: adherenceLogs } = await sb.from('protocol_adherence_logs').select('*').eq('user_id', rel.patient_id).gte('created_at', fourteenAgo).order('created_at', { ascending: false });
+    // Unread messages
+    const { data: unreadMsgs } = await sb.from('care_messages').select('id').eq('recipient_id', currentUser.id).is('read_at', null);
+
+    patients.push({
+      id: rel.patient_id, name: pd.name || profile?.email?.split('@')[0] || 'Patient',
+      email: profile?.email || '', linkedAt: rel.linked_at, adherence,
+      todayCheckin: (checkins || []).find(c => c.date === today),
+      checkins: checkins || [], protocols: protocols || [], prescriptions: rxs || [],
+      wyldeScore: scoreData, adherenceLogs: adherenceLogs || [], unreadMessages: (unreadMsgs || []).length,
+      relationshipId: rel.id,
+    });
+  }
+  render();
+}
+
+async function loadProducts() {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  if (!token) return;
+  const resp = await fetch(API + '/api/clinic/products', { headers: { 'Authorization': 'Bearer ' + token } });
+  if (resp.ok) { const d = await resp.json(); products = d.products || []; }
+}
+
+// ─── Accept Code ───
+async function acceptCode() {
+  const code = el('acceptCodeInput').value.trim();
+  if (!code) return;
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/consumer/care/accept', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ code }),
+  });
+  const data = await resp.json();
+  if (data.linked) { el('acceptCodeInput').value = ''; alert('Patient linked!'); loadPatients(); }
+  else { alert(data.error || 'Failed to link'); }
+}
+
+// ─── Dashboard View ───
+function renderDashboard(c) {
+  const todayCount = patients.filter(p => p.todayCheckin).length;
+  const avgAdh = patients.filter(p => p.adherence != null);
+  const avg = avgAdh.length > 0 ? Math.round(avgAdh.reduce((s, p) => s + p.adherence, 0) / avgAdh.length) : 0;
+  c.innerHTML = `
+    <div class="grid grid-cols-4 gap-4 mb-6">
+      ${statCard('Active Patients', patients.length, 'ink')}
+      ${statCard('Avg Adherence', avg + '%', avg >= 80 ? 'success' : 'warn')}
+      ${statCard('Check-ins Today', todayCount + '/' + patients.length, 'ink')}
+      ${statCard('Total Protocols', patients.reduce((s,p) => s + p.protocols.length, 0), 'sage')}
+    </div>
+    <div class="grid grid-cols-3 gap-6">
+      <div class="col-span-2">
+        <div class="bg-white rounded-xl border border-line shadow-soft">
+          <div class="px-5 py-4 border-b border-line flex justify-between items-center">
+            <h2 class="text-sm font-semibold">Your Patients</h2>
+            <span class="text-xs text-ink3">${patients.length} active</span>
+          </div>
+          <div class="divide-y divide-line">${patients.length ? patients.map(p => patientRow(p)).join('') : '<div class="px-5 py-12 text-center text-ink3 text-sm">No patients linked yet. Have them share a code from the Wylde Self app.</div>'}</div>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div class="bg-white rounded-xl border border-line shadow-soft p-5">
+          <h3 class="text-xs font-semibold text-ink3 uppercase tracking-wide mb-3">Recent Activity</h3>
+          ${patients.flatMap(p => p.checkins.slice(0,2).map(c => `<div class="flex items-start gap-2 py-2"><div class="w-1.5 h-1.5 rounded-full bg-sage mt-1.5 shrink-0"></div><div><div class="text-xs text-ink">${p.name} — ${c.workout > 0 ? 'Workout' : 'Check-in'}</div><div class="text-[10px] text-ink3">${fmtDate(c.date)}</div></div></div>`)).slice(0,8).join('') || '<div class="text-xs text-ink3">No recent activity</div>'}
+        </div>
+        <div class="bg-white rounded-xl border border-line shadow-soft p-5">
+          <h3 class="text-xs font-semibold text-ink3 uppercase tracking-wide mb-3">Product Library</h3>
+          <div class="text-xs text-ink2 mb-2">${products.length} products</div>
+          <button onclick="navTo('library')" class="text-xs text-sage font-medium hover:text-sageDeep">Manage products →</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ─── Patients List ───
+function renderPatients(c) { renderDashboard(c); }
+
+// ─── Patient Detail ───
+function showPatient(id) {
+  selectedPatient = patients.find(p => p.id === id);
+  if (!selectedPatient) return;
+  currentSection = 'patientDetail';
+  render();
+}
+
+function renderPatientDetail(c) {
+  const p = selectedPatient;
+  if (!p) return;
+  c.innerHTML = `
+    <!-- Header -->
+    <div class="bg-white rounded-xl border border-line shadow-soft p-6 mb-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-5">
+          <div class="w-16 h-16 rounded-full bg-sageDim flex items-center justify-center text-sage text-xl font-semibold">${p.name.substring(0,2).toUpperCase()}</div>
+          <div>
+            <h2 class="text-xl font-semibold">${p.name}</h2>
+            <p class="text-sm text-ink3">${p.email}</p>
+            <p class="text-xs text-ink3 mt-1">Linked ${fmtDate(p.linkedAt)}</p>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <div class="bg-cream rounded-xl p-4 text-center min-w-[90px]">
+            <div class="text-2xl font-semibold ${p.wyldeScore && p.wyldeScore.total_score >= 75 ? 'text-success' : p.wyldeScore && p.wyldeScore.total_score >= 50 ? 'text-warn' : 'text-ink2'}">${p.wyldeScore ? p.wyldeScore.total_score : '—'}</div>
+            <div class="text-xs text-ink3 mt-1">Wylde Score</div>
+          </div>
+          <div class="bg-cream rounded-xl p-4 text-center min-w-[90px]">
+            <div class="text-2xl font-semibold ${p.adherence >= 80 ? 'text-success' : 'text-warn'}">${p.adherence ?? '—'}%</div>
+            <div class="text-xs text-ink3 mt-1">Adherence</div>
+          </div>
+          <div class="bg-cream rounded-xl p-4 text-center min-w-[90px]">
+            <div class="text-2xl font-semibold text-ink">${p.checkins.length}</div>
+            <div class="text-xs text-ink3 mt-1">Check-ins</div>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-2 mt-4">
+        <button onclick="showAssignProtocol('${p.id}')" class="px-4 py-2 bg-sage text-white rounded-lg text-xs font-semibold hover:bg-sageDeep transition">Assign Protocol</button>
+        <button onclick="generateInsights('${p.id}')" class="px-4 py-2 bg-sky text-white rounded-lg text-xs font-semibold hover:opacity-90 transition" id="insightBtn">Generate Insights</button>
+        <button onclick="showAddNote('${p.id}')" class="px-4 py-2 bg-white border border-line2 text-ink2 rounded-lg text-xs font-medium hover:bg-cream transition">Add Note</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-6">
+      <!-- Check-in History -->
+      <div class="col-span-2 bg-white rounded-xl border border-line shadow-soft">
+        <div class="px-5 py-4 border-b border-line"><h3 class="text-sm font-semibold">Check-in History</h3></div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead><tr class="text-ink3 text-xs border-b border-line">
+              <th class="px-5 py-3 text-left font-medium">Date</th>
+              <th class="px-3 py-3 text-center font-medium">Doses</th>
+              <th class="px-3 py-3 text-center font-medium">Workout</th>
+              <th class="px-3 py-3 text-center font-medium">Nutrition</th>
+              <th class="px-3 py-3 text-center font-medium">Mood</th>
+              <th class="px-3 py-3 text-center font-medium">Weight</th>
+              <th class="px-3 py-3 text-left font-medium">Notes</th>
+            </tr></thead>
+            <tbody class="divide-y divide-line">
+              ${p.checkins.slice(0,21).map(ch => `<tr class="hover:bg-cream transition">
+                <td class="px-5 py-3">${fmtDate(ch.date)}</td>
+                <td class="px-3 py-3 text-center">${scoreIcon(ch.doses)}</td>
+                <td class="px-3 py-3 text-center">${scoreIcon(ch.workout)}</td>
+                <td class="px-3 py-3 text-center">${scoreIcon(ch.nutrition)}</td>
+                <td class="px-3 py-3 text-center">${ch.mood != null ? moodDot(ch.mood) : '<span class="text-ink3">—</span>'}</td>
+                <td class="px-3 py-3 text-center text-ink2">${ch.weight ? ch.weight + 'lb' : '—'}</td>
+                <td class="px-3 py-3 text-ink3 text-xs max-w-[160px] truncate">${ch.notes || '—'}</td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="space-y-4">
+        <!-- Current Protocols -->
+        <div class="bg-white rounded-xl border border-line shadow-soft">
+          <div class="px-5 py-4 border-b border-line"><h3 class="text-sm font-semibold">Current Protocols</h3></div>
+          <div class="p-5 space-y-3">
+            ${p.protocols.length ? p.protocols.map(pr => `
+              <div class="flex items-center gap-3">
+                <div class="w-2 h-2 rounded-full bg-success"></div>
+                <div><div class="text-sm font-medium">${pr.name}</div><div class="text-xs text-ink3">${pr.phase || 'Active'} · Started ${fmtDate(pr.started_at)}</div></div>
+              </div>`).join('') : '<div class="text-sm text-ink3">No active protocols</div>'}
+          </div>
+        </div>
+
+        <!-- Prescriptions -->
+        <div class="bg-white rounded-xl border border-line shadow-soft">
+          <div class="px-5 py-4 border-b border-line"><h3 class="text-sm font-semibold">Active Prescriptions</h3></div>
+          <div class="p-5 space-y-2">
+            ${p.prescriptions.length ? p.prescriptions.map(rx => `
+              <div class="flex justify-between items-center py-1">
+                <div><div class="text-sm font-medium">${rx.drug}</div><div class="text-xs text-ink3">${rx.dose} · ${rx.frequency}</div></div>
+                <span class="text-[10px] px-2 py-0.5 rounded-full ${rx.status === 'active' ? 'bg-successbg text-success' : 'bg-warnbg text-warn'}">${rx.status}</span>
+              </div>`).join('') : '<div class="text-sm text-ink3">No prescriptions</div>'}
+          </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="bg-white rounded-xl border border-line shadow-soft">
+          <div class="px-5 py-4 border-b border-line flex justify-between items-center">
+            <h3 class="text-sm font-semibold">AI Insights</h3>
+            <button onclick="generateInsights('${p.id}')" class="text-xs text-sky font-medium hover:text-ink">Generate</button>
+          </div>
+          <div class="p-5 space-y-3" id="patientInsights">
+            <div class="text-xs text-ink3">Click "Generate Insights" to analyze patient data.</div>
+          </div>
+        </div>
+
+        <!-- Protocol Adherence -->
+        ${p.adherenceLogs.length > 0 ? `
+        <div class="bg-white rounded-xl border border-line shadow-soft">
+          <div class="px-5 py-4 border-b border-line"><h3 class="text-sm font-semibold">Protocol Adherence</h3></div>
+          <div class="p-5 space-y-2">
+            ${p.adherenceLogs.slice(0, 10).map(l => `
+              <div class="flex items-center gap-3 py-1">
+                <span class="w-5 h-5 rounded-full ${l.status === 'taken' ? 'bg-successbg text-success' : 'bg-critbg text-crit'} text-xs flex items-center justify-center">${l.status === 'taken' ? '✓' : '✗'}</span>
+                <div class="flex-1"><div class="text-xs text-ink">${l.dose || 'Dose'}</div><div class="text-[10px] text-ink3">${fmtDate(l.created_at)}</div></div>
+                ${l.side_effects ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-warnbg text-warn">Side effect</span>' : ''}
+              </div>`).join('')}
+          </div>
+        </div>` : ''}
+
+        <!-- Messages -->
+        <div class="bg-white rounded-xl border border-line shadow-soft">
+          <div class="px-5 py-4 border-b border-line flex justify-between items-center">
+            <h3 class="text-sm font-semibold">Messages</h3>
+            ${p.unreadMessages > 0 ? '<span class="w-2 h-2 rounded-full bg-crit"></span>' : ''}
+          </div>
+          <div class="p-4" id="patientMessages" style="max-height:300px;overflow-y:auto;">
+            <div class="text-xs text-ink3">Loading...</div>
+          </div>
+          <div class="px-4 pb-4 flex gap-2">
+            <input id="msgInput" type="text" placeholder="Send a message..." class="flex-1 px-3 py-2 rounded-lg border border-line2 text-sm" onkeydown="if(event.key==='Enter')sendPatientMsg('${p.id}','${p.relationshipId}')" />
+            <button onclick="sendPatientMsg('${p.id}','${p.relationshipId}')" class="px-3 py-2 bg-sage text-white rounded-lg text-xs font-semibold hover:bg-sageDeep">Send</button>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="bg-white rounded-xl border border-line shadow-soft">
+          <div class="px-5 py-4 border-b border-line flex justify-between items-center">
+            <h3 class="text-sm font-semibold">Notes</h3>
+            <button onclick="showAddNote('${p.id}')" class="text-xs text-sage font-medium">+ Add</button>
+          </div>
+          <div class="p-5" id="patientNotes">
+            <div class="text-xs text-ink3">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button onclick="navTo('dashboard')" class="mt-6 text-sm text-ink3 hover:text-ink">← Back</button>`;
+
+  loadPatientNotes(p.id);
+  if (p.relationshipId) loadPatientMessages(p.id, p.relationshipId);
+  loadInsights(p.id);
+}
+
+async function loadPatientNotes(patientId) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/notes?patient_id=' + patientId, { headers: { 'Authorization': 'Bearer ' + token } });
+  const notesEl = el('patientNotes');
+  if (resp.ok) {
+    const { notes } = await resp.json();
+    notesEl.innerHTML = notes.length ? notes.map(n => `<div class="py-2 border-b border-line last:border-0"><div class="text-sm text-ink">${n.content}</div><div class="text-[10px] text-ink3 mt-1">${fmtDate(n.created_at)} · ${n.note_type}</div></div>`).join('') : '<div class="text-xs text-ink3">No notes yet</div>';
+  }
+}
+
+// ─── Library View ───
+function renderLibrary(c) {
+  const cats = { peptide: '💉', supplement: '💊', medication: '💊', service: '🩺', lab_test: '🧪' };
+  c.innerHTML = `
+    <div class="flex justify-between items-center mb-6">
+      <div><h2 class="text-lg font-semibold">Product Library</h2><p class="text-sm text-ink3">Peptides, supplements, medications, and services</p></div>
+      <button onclick="showAddProduct()" class="px-4 py-2 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep transition">+ Add Product</button>
+    </div>
+    <div class="grid grid-cols-3 gap-4">
+      ${products.map(p => `
+        <div class="bg-white rounded-xl border border-line shadow-soft p-5 hover:shadow-card transition cursor-pointer" onclick="showEditProduct('${p.id}')">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-lg">${cats[p.category] || '📦'}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full ${p.in_stock ? 'bg-successbg text-success' : 'bg-critbg text-crit'}">${p.in_stock ? 'In Stock' : 'Out'}</span>
+          </div>
+          <h3 class="text-sm font-semibold mb-1">${p.name}</h3>
+          <p class="text-xs text-ink3 mb-2">${p.category} · ${p.method || '—'}</p>
+          <div class="flex justify-between items-end">
+            <div><div class="text-xs text-ink3">Dose</div><div class="text-sm font-medium">${p.typical_dose || '—'}</div></div>
+            <div class="text-right"><div class="text-xs text-ink3">Price</div><div class="text-sm font-semibold text-sage">$${p.price ? Number(p.price).toFixed(2) : '—'}</div></div>
+          </div>
+        </div>`).join('') || '<div class="col-span-3 text-center py-12 text-ink3">No products yet. Add your first peptide, supplement, or service.</div>'}
+    </div>`;
+}
+
+// ─── Protocols View ───
+function renderProtocols(c) {
+  const allProtocols = patients.flatMap(p => p.protocols.map(pr => ({ ...pr, patientName: p.name, patientId: p.id })));
+  c.innerHTML = `
+    <div class="flex justify-between items-center mb-6">
+      <div><h2 class="text-lg font-semibold">Active Protocols</h2><p class="text-sm text-ink3">All patient protocols</p></div>
+    </div>
+    <div class="bg-white rounded-xl border border-line shadow-soft">
+      <div class="divide-y divide-line">
+        ${allProtocols.length ? allProtocols.map(pr => `
+          <div class="px-5 py-4 flex items-center justify-between hover:bg-cream transition cursor-pointer" onclick="showPatient('${pr.patientId}')">
+            <div class="flex items-center gap-4">
+              <div class="w-2 h-2 rounded-full bg-success"></div>
+              <div><div class="text-sm font-medium">${pr.name}</div><div class="text-xs text-ink3">${pr.patientName} · ${pr.phase || 'Active'}</div></div>
+            </div>
+            <div class="text-xs text-ink3">Started ${fmtDate(pr.started_at)}</div>
+          </div>`).join('') : '<div class="px-5 py-12 text-center text-ink3 text-sm">No active protocols. Assign one from a patient\'s detail page.</div>'}
+      </div>
+    </div>`;
+}
+
+// ─── Modals ───
+function openModal(html) { el('modalContent').innerHTML = html; el('modalOverlay').classList.remove('hidden'); }
+function closeModal() { el('modalOverlay').classList.add('hidden'); }
+el('modalOverlay').addEventListener('click', e => { if (e.target === el('modalOverlay')) closeModal(); });
+
+function showAddProduct() {
+  openModal(`
+    <div class="p-6">
+      <h2 class="text-lg font-semibold mb-4">Add Product</h2>
+      <div class="space-y-3">
+        <input id="pName" placeholder="Product name" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
+        <select id="pCategory" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm bg-white">
+          <option value="peptide">Peptide</option><option value="supplement">Supplement</option><option value="medication">Medication</option><option value="service">Service</option><option value="lab_test">Lab Test</option>
+        </select>
+        <textarea id="pDesc" placeholder="Description" rows="2" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm"></textarea>
+        <div class="grid grid-cols-2 gap-3">
+          <input id="pDose" placeholder="Typical dose" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
+          <input id="pFreq" placeholder="Frequency" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <select id="pMethod" class="px-3 py-2 rounded-lg border border-line2 text-sm bg-white">
+            <option value="">Method...</option><option>Injection</option><option>Oral</option><option>Topical</option><option>Sublingual</option><option>IV</option><option>Nasal</option>
+          </select>
+          <input id="pCycle" placeholder="Cycle length" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <input id="pPrice" type="number" step="0.01" placeholder="Price" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
+          <select id="pPriceUnit" class="px-3 py-2 rounded-lg border border-line2 text-sm bg-white">
+            <option value="per unit">Per Unit</option><option value="per month">Per Month</option><option value="per cycle">Per Cycle</option><option value="per session">Per Session</option>
+          </select>
+        </div>
+        <textarea id="pMech" placeholder="Mechanism of action" rows="2" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm"></textarea>
+        <div class="flex gap-2 pt-2">
+          <button onclick="saveProduct()" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Save Product</button>
+          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+async function saveProduct() {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const body = {
+    name: el('pName').value, category: el('pCategory').value, description: el('pDesc').value,
+    typical_dose: el('pDose').value, frequency: el('pFreq').value, method: el('pMethod').value,
+    cycle_length: el('pCycle').value, price: parseFloat(el('pPrice').value) || null,
+    price_unit: el('pPriceUnit').value, mechanism: el('pMech').value,
+  };
+  const resp = await fetch(API + '/api/clinic/products', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify(body),
+  });
+  if (resp.ok) { closeModal(); await loadProducts(); render(); }
+  else { alert('Failed to save'); }
+}
+
+function showEditProduct(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  openModal(`
+    <div class="p-6">
+      <h2 class="text-lg font-semibold mb-2">${p.name}</h2>
+      <p class="text-xs text-ink3 mb-4">${p.category} · ${p.method || '—'}</p>
+      <div class="space-y-3 text-sm">
+        <div><span class="text-ink3">Description:</span> <span class="text-ink">${p.description || '—'}</span></div>
+        <div><span class="text-ink3">Mechanism:</span> <span class="text-ink">${p.mechanism || '—'}</span></div>
+        <div><span class="text-ink3">Dose:</span> <span class="text-ink">${p.typical_dose || '—'}</span></div>
+        <div><span class="text-ink3">Frequency:</span> <span class="text-ink">${p.frequency || '—'}</span></div>
+        <div><span class="text-ink3">Cycle:</span> <span class="text-ink">${p.cycle_length || '—'}</span></div>
+        <div><span class="text-ink3">Price:</span> <span class="text-ink font-semibold text-sage">$${p.price ? Number(p.price).toFixed(2) : '—'} ${p.price_unit}</span></div>
+        <div class="flex gap-2 pt-3">
+          <button onclick="deleteProduct('${p.id}')" class="px-4 py-2 bg-critbg text-crit rounded-lg text-xs font-medium">Remove</button>
+          <button onclick="closeModal()" class="px-4 py-2 border border-line2 rounded-lg text-xs text-ink2">Close</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+async function deleteProduct(id) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  await fetch(API + '/api/clinic/products', {
+    method: 'DELETE', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ id }),
+  });
+  closeModal(); await loadProducts(); render();
+}
+
+function showAssignProtocol(patientId) {
+  openModal(`
+    <div class="p-6">
+      <h2 class="text-lg font-semibold mb-4">Assign Protocol</h2>
+      <div class="space-y-3">
+        <input id="protoName" placeholder="Protocol name (e.g. Hormone Balance)" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
+        <input id="protoPhase" placeholder="Phase (e.g. Loading, Maintenance)" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
+        <div class="border border-line rounded-lg p-3">
+          <div class="text-xs font-medium text-ink3 mb-2">Select products to include:</div>
+          ${products.map(p => `
+            <label class="flex items-center gap-2 py-1.5 cursor-pointer">
+              <input type="checkbox" class="proto-rx" value="${p.id}" data-name="${p.name}" data-dose="${p.typical_dose || ''}" data-freq="${p.frequency || 'daily'}" data-method="${p.method || ''}" />
+              <span class="text-sm">${p.name}</span>
+              <span class="text-xs text-ink3 ml-auto">${p.typical_dose || ''}</span>
+            </label>`).join('') || '<div class="text-xs text-ink3">No products in library. Add some first.</div>'}
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button onclick="assignProtocol('${patientId}')" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Assign</button>
+          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+async function assignProtocol(patientId) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const checked = document.querySelectorAll('.proto-rx:checked');
+  const prescriptions = Array.from(checked).map(cb => ({
+    name: cb.dataset.name, dose: cb.dataset.dose, frequency: cb.dataset.freq, method: cb.dataset.method,
+  }));
+  const resp = await fetch(API + '/api/clinic/assign-protocol', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ patient_id: patientId, protocol_name: el('protoName').value, phase: el('protoPhase').value, prescriptions }),
+  });
+  if (resp.ok) { closeModal(); await loadPatients(); currentSection = 'patientDetail'; render(); }
+  else { const d = await resp.json(); alert(d.error || 'Failed'); }
+}
+
+function showAddNote(patientId) {
+  openModal(`
+    <div class="p-6">
+      <h2 class="text-lg font-semibold mb-4">Add Note</h2>
+      <textarea id="noteContent" rows="4" placeholder="Write your note..." class="w-full px-3 py-2 rounded-lg border border-line2 text-sm mb-3"></textarea>
+      <select id="noteType" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm bg-white mb-3">
+        <option value="general">General</option><option value="protocol">Protocol</option><option value="lab">Lab Result</option><option value="follow_up">Follow-up</option>
+      </select>
+      <div class="flex gap-2">
+        <button onclick="saveNote('${patientId}')" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Save Note</button>
+        <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+      </div>
+    </div>`);
+}
+
+async function saveNote(patientId) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/notes', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ patient_id: patientId, content: el('noteContent').value, note_type: el('noteType').value }),
+  });
+  if (resp.ok) { closeModal(); loadPatientNotes(patientId); }
+}
+
+// ─── Helpers ───
+function el(id) { return document.getElementById(id); }
+function fmtDate(d) { if (!d) return '—'; const dt = new Date(d.includes('T') ? d : d + 'T00:00:00'); return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
+function scoreIcon(s) { return s >= 3 ? '<span class="inline-flex w-5 h-5 rounded-full bg-successbg text-success text-xs items-center justify-center">✓</span>' : s > 0 ? '<span class="inline-flex w-5 h-5 rounded-full bg-warnbg text-warn text-xs items-center justify-center">~</span>' : '<span class="inline-flex w-5 h-5 rounded-full bg-warmgray text-ink3 text-xs items-center justify-center">—</span>'; }
+function moodDot(m) { return m >= 4 ? '<span class="text-success">●</span>' : m >= 2 ? '<span class="text-warn">●</span>' : '<span class="text-crit">●</span>'; }
+function statCard(label, value, color) { return `<div class="stat-card bg-white rounded-xl p-4 border border-line shadow-soft"><div class="text-ink3 text-xs mb-1">${label}</div><div class="text-2xl font-semibold text-${color}">${value}</div></div>`; }
+function patientRow(p) {
+  const ws = p.wyldeScore;
+  return `<div class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-cream transition" onclick="showPatient('${p.id}')">
+    <div class="flex items-center gap-4">
+      <div class="w-10 h-10 rounded-full bg-sageDim flex items-center justify-center text-sage text-sm font-semibold">${p.name.substring(0,2).toUpperCase()}</div>
+      <div><div class="text-sm font-medium">${p.name}</div><div class="text-xs text-ink3">${p.protocols.length > 0 ? p.protocols[0].name : 'No protocol'}</div></div>
+    </div>
+    <div class="flex items-center gap-5">
+      <div class="text-right"><div class="text-xs text-ink3">Wylde Score</div><div class="text-sm font-semibold ${ws && ws.total_score >= 75 ? 'text-success' : ws && ws.total_score >= 50 ? 'text-warn' : 'text-ink2'}">${ws ? ws.total_score : '—'}</div></div>
+      <div class="text-right"><div class="text-xs text-ink3">Adherence</div><div class="text-sm font-semibold ${p.adherence >= 80 ? 'text-success' : p.adherence >= 50 ? 'text-warn' : 'text-crit'}">${p.adherence != null ? p.adherence + '%' : '—'}</div></div>
+      <div class="text-right"><div class="text-xs text-ink3">Today</div><div class="text-sm ${p.todayCheckin ? 'text-success' : 'text-ink3'}">${p.todayCheckin ? '✓' : '—'}</div></div>
+      ${p.unreadMessages > 0 ? '<span class="w-2 h-2 rounded-full bg-crit"></span>' : ''}
+      <svg class="w-4 h-4 text-ink3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+    </div>
+  </div>`;
+}
+function comingSoon(title) { return `<div class="flex items-center justify-center h-64"><div class="text-center"><div class="text-ink3 text-lg font-serif mb-2">${title}</div><div class="text-ink3 text-sm">Coming soon</div></div></div>`; }
+
+// ─── Messages ───
+
+async function loadPatientMessages(patientId, relationshipId) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  if (!token || !relationshipId) return;
+  const resp = await fetch(API + '/api/consumer/messages?relationship_id=' + relationshipId, {
+    headers: { 'Authorization': 'Bearer ' + token }
+  });
+  const msgEl = el('patientMessages');
+  if (resp.ok) {
+    const { messages } = await resp.json();
+    msgEl.innerHTML = messages.length ? messages.map(m => {
+      const isMe = m.sender_id === currentUser.id;
+      return `<div class="flex ${isMe ? 'justify-end' : 'justify-start'} mb-2">
+        <div class="max-w-[80%] px-3 py-2 rounded-xl text-sm ${isMe ? 'bg-sageDim text-ink' : 'bg-warmgray text-ink'}">
+          ${m.body}
+          <div class="text-[9px] text-ink3 mt-1">${fmtDate(m.created_at)}</div>
+        </div>
+      </div>`;
+    }).join('') : '<div class="text-xs text-ink3 text-center py-4">No messages yet</div>';
+    msgEl.scrollTop = msgEl.scrollHeight;
+  }
+}
+
+async function sendPatientMsg(patientId, relationshipId) {
+  const input = el('msgInput');
+  const body = input.value.trim();
+  if (!body) return;
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/consumer/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ body, relationship_id: relationshipId }),
+  });
+  if (resp.ok) {
+    input.value = '';
+    loadPatientMessages(patientId, relationshipId);
+  }
+}
+
+function renderMessages(c) {
+  const allUnread = patients.reduce((s, p) => s + (p.unreadMessages || 0), 0);
+  c.innerHTML = `
+    <div class="mb-6"><h2 class="text-lg font-semibold">Messages</h2><p class="text-sm text-ink3">${allUnread} unread</p></div>
+    <div class="bg-white rounded-xl border border-line shadow-soft divide-y divide-line">
+      ${patients.map(p => `
+        <div class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-cream transition" onclick="showPatient('${p.id}')">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full bg-sageDim flex items-center justify-center text-sage text-sm font-semibold">${p.name.substring(0,2).toUpperCase()}</div>
+            <div><div class="text-sm font-medium">${p.name}</div><div class="text-xs text-ink3">${p.protocols.length > 0 ? p.protocols[0].name : '—'}</div></div>
+          </div>
+          <div class="flex items-center gap-3">
+            ${p.unreadMessages > 0 ? `<span class="px-2 py-0.5 rounded-full bg-critbg text-crit text-xs font-semibold">${p.unreadMessages}</span>` : '<span class="text-xs text-ink3">—</span>'}
+            <svg class="w-4 h-4 text-ink3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+          </div>
+        </div>`).join('') || '<div class="px-5 py-12 text-center text-ink3 text-sm">No patients</div>'}
+    </div>`;
+}
+
+// ─── Reorders ───
+
+let reordersList = [];
+
+async function loadReorders() {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  if (!token) return;
+  const resp = await fetch(API + '/api/clinic/reorders', { headers: { 'Authorization': 'Bearer ' + token } });
+  if (resp.ok) { const d = await resp.json(); reordersList = d.orders || []; }
+}
+
+function renderReorders(c) {
+  loadReorders().then(() => {
+    const statusColors = { requested: 'warn', approved: 'sage', rejected: 'crit', fulfilled: 'success', cancelled: 'ink3' };
+    c.innerHTML = `
+      <div class="mb-6"><h2 class="text-lg font-semibold">Reorder Requests</h2><p class="text-sm text-ink3">${reordersList.filter(o => o.status === 'requested').length} pending</p></div>
+      <div class="bg-white rounded-xl border border-line shadow-soft">
+        <table class="w-full text-sm">
+          <thead><tr class="text-ink3 text-xs border-b border-line">
+            <th class="px-5 py-3 text-left font-medium">Patient</th>
+            <th class="px-3 py-3 text-left font-medium">Product</th>
+            <th class="px-3 py-3 text-center font-medium">Qty</th>
+            <th class="px-3 py-3 text-center font-medium">Amount</th>
+            <th class="px-3 py-3 text-center font-medium">Status</th>
+            <th class="px-3 py-3 text-left font-medium">Date</th>
+            <th class="px-3 py-3 text-center font-medium">Actions</th>
+          </tr></thead>
+          <tbody class="divide-y divide-line">
+            ${reordersList.length ? reordersList.map(o => `
+              <tr class="hover:bg-cream transition">
+                <td class="px-5 py-3 font-medium">${o.patient_name || 'Patient'}</td>
+                <td class="px-3 py-3">${o.clinic_products?.name || '—'}</td>
+                <td class="px-3 py-3 text-center">${o.quantity}</td>
+                <td class="px-3 py-3 text-center">$${o.amount_cents ? (o.amount_cents / 100).toFixed(2) : '—'}</td>
+                <td class="px-3 py-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-${statusColors[o.status] || 'ink3'}bg text-${statusColors[o.status] || 'ink3'}">${o.status}</span></td>
+                <td class="px-3 py-3 text-ink3">${fmtDate(o.created_at)}</td>
+                <td class="px-3 py-3 text-center">
+                  ${o.status === 'requested' ? `
+                    <button onclick="updateReorder('${o.id}','approved')" class="px-2 py-1 bg-successbg text-success rounded text-[10px] font-semibold mr-1">Approve</button>
+                    <button onclick="updateReorder('${o.id}','rejected')" class="px-2 py-1 bg-critbg text-crit rounded text-[10px] font-semibold">Reject</button>
+                  ` : o.status === 'approved' ? `
+                    <button onclick="updateReorder('${o.id}','fulfilled')" class="px-2 py-1 bg-successbg text-success rounded text-[10px] font-semibold">Mark Fulfilled</button>
+                  ` : '—'}
+                </td>
+              </tr>`).join('') : '<tr><td colspan="7" class="px-5 py-12 text-center text-ink3">No reorder requests</td></tr>'}
+          </tbody>
+        </table>
+      </div>`;
+  });
+}
+
+async function updateReorder(id, status) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  await fetch(API + '/api/clinic/reorders', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ id, status }),
+  });
+  renderReorders(el('content'));
+}
+
+// ─── Insights ───
+
+async function generateInsights(patientId) {
+  const btn = el('insightBtn');
+  if (btn) { btn.textContent = 'Analyzing...'; btn.disabled = true; }
+
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/insights', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ patient_id: patientId }),
+  });
+
+  if (btn) { btn.textContent = 'Generate Insights'; btn.disabled = false; }
+
+  if (resp.ok) {
+    const { insights } = await resp.json();
+    renderInsightsPanel(insights);
+  } else {
+    const err = await resp.json();
+    alert(err.error || 'Insight generation failed');
+  }
+}
+
+async function loadInsights(patientId) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/insights?patient_id=' + patientId, {
+    headers: { 'Authorization': 'Bearer ' + token }
+  });
+  if (resp.ok) {
+    const { insights } = await resp.json();
+    renderInsightsPanel(insights);
+  }
+}
+
+function renderInsightsPanel(insights) {
+  const container = el('patientInsights');
+  if (!container) return;
+  if (!insights || insights.length === 0) {
+    container.innerHTML = '<div class="text-xs text-ink3">No insights yet.</div>';
+    return;
+  }
+  const sevColors = { high: 'crit', medium: 'warn', low: 'success' };
+  container.innerHTML = insights.map(i => `
+    <div class="border-l-2 border-${sevColors[i.severity] || 'ink3'} pl-3 py-2">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-${sevColors[i.severity] || 'ink3'}bg text-${sevColors[i.severity] || 'ink3'}">${i.severity}</span>
+        <span class="text-sm font-medium text-ink">${i.title}</span>
+      </div>
+      <p class="text-xs text-ink2 leading-relaxed">${i.summary}</p>
+      <p class="text-xs text-sage mt-1 font-medium">→ ${i.recommended_action}</p>
+      ${i.status !== 'new' ? `<span class="text-[9px] text-ink3 mt-1 inline-block">${i.status}</span>` : ''}
+    </div>`).join('');
+}
+
+function renderInsightsPage(c) {
+  c.innerHTML = `
+    <div class="mb-6"><h2 class="text-lg font-semibold">Clinical Insights</h2><p class="text-sm text-ink3">AI-generated signals across your patients</p></div>
+    <div class="grid grid-cols-1 gap-4">
+      ${patients.map(p => `
+        <div class="bg-white rounded-xl border border-line shadow-soft p-5">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-sageDim flex items-center justify-center text-sage text-xs font-semibold">${p.name.substring(0,2).toUpperCase()}</div>
+              <div><div class="text-sm font-medium">${p.name}</div><div class="text-xs text-ink3">${p.protocols.length > 0 ? p.protocols[0].name : '—'}</div></div>
+            </div>
+            <button onclick="generateInsightsFromPage('${p.id}', this)" class="px-3 py-1.5 bg-skybg text-sky rounded-lg text-xs font-semibold hover:bg-sky hover:text-white transition">Analyze</button>
+          </div>
+          <div id="insights_${p.id}" class="text-xs text-ink3">Click Analyze to generate insights</div>
+        </div>`).join('') || '<div class="text-center py-12 text-ink3">No patients</div>'}
+    </div>`;
+}
+
+async function generateInsightsFromPage(patientId, btn) {
+  btn.textContent = 'Analyzing...'; btn.disabled = true;
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/insights', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ patient_id: patientId }),
+  });
+  btn.textContent = 'Analyze'; btn.disabled = false;
+  if (resp.ok) {
+    const { insights } = await resp.json();
+    const container = document.getElementById('insights_' + patientId);
+    if (container && insights.length > 0) {
+      const sevColors = { high: 'crit', medium: 'warn', low: 'success' };
+      container.innerHTML = insights.slice(0, 5).map(i => `
+        <div class="border-l-2 border-${sevColors[i.severity] || 'ink3'} pl-3 py-1.5 mt-2">
+          <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-${sevColors[i.severity] || 'ink3'}bg text-${sevColors[i.severity] || 'ink3'}">${i.severity}</span>
+          <span class="text-xs font-medium text-ink ml-1">${i.title}</span>
+          <p class="text-xs text-ink2 mt-0.5">${i.summary}</p>
+        </div>`).join('');
+    } else {
+      container.textContent = 'No signals detected — patient is on track.';
+    }
+  }
+}
+
+// ─── Therapy Library ───
+
+let allTherapies = [];
+let therapyFilter = { type: null, search: '' };
+
+async function loadTherapies() {
+  let url = API + '/api/library/therapies?';
+  if (therapyFilter.type) url += 'type=' + therapyFilter.type + '&';
+  if (therapyFilter.search) url += 'search=' + encodeURIComponent(therapyFilter.search) + '&';
+  const resp = await fetch(url);
+  if (resp.ok) { const d = await resp.json(); allTherapies = d.therapies || []; }
+}
+
+function renderTherapyLibrary(c) {
+  loadTherapies().then(() => {
+    const types = ['peptide','hormone','medication','supplement'];
+    const evColors = { A: 'success', B: 'sky', C: 'warn', D: 'warn', X: 'crit' };
+    const evLabels = { A: 'Strong evidence', B: 'Moderate evidence', C: 'Limited evidence', D: 'Preclinical', X: 'Insufficient' };
+
+    c.innerHTML = `
+      <div class="flex justify-between items-center mb-4">
+        <div><h2 class="text-lg font-semibold">Research Library</h2><p class="text-sm text-ink3">Peptides, hormones, medications, supplements</p></div>
+      </div>
+
+      <!-- Search + Filters -->
+      <div class="flex gap-3 mb-4">
+        <input id="therapySearch" type="text" placeholder="Search therapies..." value="${therapyFilter.search}" class="flex-1 px-3 py-2 rounded-lg border border-line2 bg-white text-sm" oninput="therapyFilter.search=this.value; renderTherapyLibrary(el('content'))" />
+        <div class="flex gap-2">
+          <button onclick="therapyFilter.type=null; renderTherapyLibrary(el('content'))" class="px-3 py-1.5 rounded-lg text-xs font-medium ${!therapyFilter.type ? 'bg-sage text-white' : 'bg-white border border-line2 text-ink2'}">All</button>
+          ${types.map(t => `<button onclick="therapyFilter.type='${t}'; renderTherapyLibrary(el('content'))" class="px-3 py-1.5 rounded-lg text-xs font-medium ${therapyFilter.type === t ? 'bg-sage text-white' : 'bg-white border border-line2 text-ink2'}">${t.charAt(0).toUpperCase() + t.slice(1)}s</button>`).join('')}
+        </div>
+      </div>
+
+      <!-- Therapies Grid -->
+      <div class="grid grid-cols-2 gap-4">
+        ${allTherapies.map(t => `
+          <div class="bg-white rounded-xl border border-line shadow-soft p-5 hover:shadow-card transition cursor-pointer" onclick="showTherapyDetail('${t.slug}')">
+            <div class="flex items-start justify-between mb-2">
+              <h3 class="text-sm font-semibold text-ink">${t.name}</h3>
+              <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-${evColors[t.evidence_rating] || 'ink3'}bg text-${evColors[t.evidence_rating] || 'ink3'}">${t.evidence_rating || '—'}</span>
+            </div>
+            <p class="text-xs text-ink3 mb-3 leading-relaxed">${t.short_description || ''}</p>
+            <div class="flex flex-wrap gap-1">
+              <span class="text-[9px] px-2 py-0.5 rounded-full bg-sageDim text-sage">${t.therapy_type}</span>
+              ${t.prescription_required ? '<span class="text-[9px] px-2 py-0.5 rounded-full bg-warnbg text-warn">Rx required</span>' : ''}
+              ${t.requires_provider_review ? '<span class="text-[9px] px-2 py-0.5 rounded-full bg-skybg text-sky">Provider review</span>' : ''}
+            </div>
+          </div>`).join('') || '<div class="col-span-2 text-center py-12 text-ink3 text-sm">No therapies found</div>'}
+      </div>`;
+  });
+}
+
+async function showTherapyDetail(slug) {
+  const resp = await fetch(API + '/api/library/therapies?slug=' + slug);
+  if (!resp.ok) return;
+  const { therapy: t } = await resp.json();
+
+  const evLabels = { A: 'Strong human clinical evidence', B: 'Moderate human evidence', C: 'Limited human evidence', D: 'Preclinical / animal / theoretical', X: 'Not enough reliable evidence' };
+  const evColors = { A: 'success', B: 'sky', C: 'warn', D: 'warn', X: 'crit' };
+
+  openModal(`
+    <div class="p-6 max-h-[80vh] overflow-y-auto">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <h2 class="text-xl font-semibold text-ink">${t.name}</h2>
+          <div class="flex gap-2 mt-2">
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-sageDim text-sage">${t.therapy_type}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-${evColors[t.evidence_rating] || 'ink3'}bg text-${evColors[t.evidence_rating] || 'ink3'}">${t.evidence_rating}: ${evLabels[t.evidence_rating] || 'Not rated'}</span>
+            ${t.fda_status ? `<span class="text-[10px] px-2 py-0.5 rounded-full bg-warmgray text-ink3">${t.fda_status}</span>` : ''}
+          </div>
+        </div>
+        <button onclick="closeModal()" class="text-ink3 hover:text-ink">✕</button>
+      </div>
+
+      <p class="text-sm text-ink2 mb-4 leading-relaxed">${t.short_description || ''}</p>
+
+      ${t.mechanism_clinical ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">Clinical Mechanism</div><p class="text-sm text-ink2 leading-relaxed">${t.mechanism_clinical}</p></div>` : ''}
+      ${t.mechanism_plain_english ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">How It Works</div><p class="text-sm text-ink2 leading-relaxed">${t.mechanism_plain_english}</p></div>` : ''}
+
+      ${t.common_uses?.length ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-2">Common Uses</div>${t.common_uses.map(u => `<div class="flex items-center gap-2 py-1"><div class="w-1.5 h-1.5 rounded-full bg-sage"></div><span class="text-sm text-ink2">${u}</span></div>`).join('')}</div>` : ''}
+      ${t.potential_benefits?.length ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-2">Potential Benefits</div>${t.potential_benefits.map(b => `<div class="flex items-center gap-2 py-1"><div class="w-1.5 h-1.5 rounded-full bg-success"></div><span class="text-sm text-ink2">${b}</span></div>`).join('')}</div>` : ''}
+      ${t.potential_risks?.length ? `<div class="mb-4"><div class="text-[10px] font-bold text-crit uppercase tracking-wide mb-2">Potential Risks</div>${t.potential_risks.map(r => `<div class="flex items-center gap-2 py-1"><div class="w-1.5 h-1.5 rounded-full bg-crit"></div><span class="text-sm text-ink2">${r}</span></div>`).join('')}</div>` : ''}
+      ${t.contraindications?.length ? `<div class="mb-4"><div class="text-[10px] font-bold text-crit uppercase tracking-wide mb-2">Contraindications</div>${t.contraindications.map(c => `<div class="flex items-center gap-2 py-1"><div class="w-1.5 h-1.5 rounded-full bg-crit"></div><span class="text-sm text-ink2">${c}</span></div>`).join('')}</div>` : ''}
+
+      ${t.administration_routes?.length ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">Administration</div><p class="text-sm text-ink2">${t.administration_routes.join(' · ')}</p></div>` : ''}
+      ${t.typical_dosing_educational ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">Educational Dosing</div><p class="text-sm text-ink2">${t.typical_dosing_educational}</p></div>` : ''}
+
+      <div class="bg-warnbg rounded-lg p-4 mb-4">
+        <div class="flex items-center gap-2 mb-2"><span class="text-warn text-xs font-bold">⚠ IMPORTANT</span></div>
+        <p class="text-xs text-ink2 leading-relaxed">${t.safety_disclaimer || 'This information is for education only and is not medical advice.'}</p>
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="addTherapyToClinic('${t.id}','${t.name}')" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Add to Clinic Products</button>
+        <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Close</button>
+      </div>
+    </div>`);
+}
+
+function addTherapyToClinic(therapyId, therapyName) {
+  closeModal();
+  openModal(`
+    <div class="p-6">
+      <h2 class="text-lg font-semibold mb-4">Add ${therapyName} to Clinic</h2>
+      <div class="space-y-3">
+        <input id="ctpName" value="${therapyName}" placeholder="Product name" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
+        <div class="grid grid-cols-2 gap-3">
+          <input id="ctpFormulation" placeholder="Formulation" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
+          <input id="ctpConcentration" placeholder="Concentration" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <input id="ctpPrice" type="number" step="0.01" placeholder="Price" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
+          <select id="ctpPriceUnit" class="px-3 py-2 rounded-lg border border-line2 text-sm bg-white">
+            <option value="per unit">Per Unit</option><option value="per month">Per Month</option><option value="per cycle">Per Cycle</option>
+          </select>
+        </div>
+        <textarea id="ctpNotes" placeholder="Clinic notes..." rows="2" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm"></textarea>
+        <div class="flex gap-2 pt-2">
+          <button onclick="saveClinicTherapyProduct('${therapyId}')" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Save</button>
+          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+async function saveClinicTherapyProduct(therapyId) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const body = {
+    therapy_id: therapyId,
+    product_name: el('ctpName').value,
+    formulation: el('ctpFormulation').value,
+    concentration: el('ctpConcentration').value,
+    price: parseFloat(el('ctpPrice').value) || null,
+    price_unit: el('ctpPriceUnit').value,
+    clinic_notes: el('ctpNotes').value,
+  };
+
+  // Use Supabase directly since clinic_therapy_products has RLS
+  const { error } = await sb.from('clinic_therapy_products').insert({
+    clinic_id: currentUser.id,
+    ...body,
+    active: true,
+    requires_consult: true,
+  });
+
+  if (error) { alert(error.message); return; }
+  closeModal();
+  alert('Product added to your clinic!');
+}
+
+// ─── AI Onboard ───
+
+function renderOnboard(c) {
+  c.innerHTML = `
+    <div class="max-w-2xl">
+      <div class="mb-6">
+        <h2 class="text-lg font-semibold">AI Clinic Setup</h2>
+        <p class="text-sm text-ink3">Drop a file or paste your clinic's product list, pricing, protocols — the AI will structure everything into your dashboard.</p>
+      </div>
+
+      <!-- Drop zone -->
+      <div id="dropZone" class="border-2 border-dashed border-line2 rounded-2xl p-12 text-center cursor-pointer hover:border-sage transition mb-4"
+           onclick="el('fileInput').click()"
+           ondragover="event.preventDefault(); this.classList.add('border-sage','bg-sageDim')"
+           ondragleave="this.classList.remove('border-sage','bg-sageDim')"
+           ondrop="handleDrop(event)">
+        <svg class="w-10 h-10 mx-auto mb-3 text-ink3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+        <p class="text-sm font-medium text-ink">Drop a file here or click to upload</p>
+        <p class="text-xs text-ink3 mt-1">PDF, CSV, TXT, or any document with your clinic info</p>
+        <input type="file" id="fileInput" class="hidden" accept=".txt,.csv,.pdf,.doc,.docx,.xls,.xlsx" onchange="handleFileSelect(event)" />
+      </div>
+
+      <div class="text-center text-xs text-ink3 mb-4">— or paste your information below —</div>
+
+      <!-- Text input -->
+      <textarea id="onboardText" rows="10" placeholder="Paste your product list, pricing sheet, protocol descriptions, clinic info — anything. The AI will structure it.
+
+Example:
+Our clinic offers:
+- BPC-157 5mg vial - $150
+- TB-500 10mg - $200
+- Semaglutide 2.5mg weekly injection - $350/month
+- NAD+ IV drip - $400/session
+
+Protocols:
+- Recovery Stack: BPC-157 + TB-500, 4 weeks
+- Metabolic Reset: Semaglutide + B12 + coaching" class="w-full px-4 py-3 rounded-xl border border-line2 bg-white text-sm resize-vertical"></textarea>
+
+      <button onclick="processOnboard()" id="onboardBtn" class="w-full mt-4 py-3 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">
+        Process with AI
+      </button>
+
+      <!-- Results -->
+      <div id="onboardResults" class="hidden mt-6">
+        <div class="bg-successbg rounded-xl p-5 mb-4">
+          <h3 class="text-sm font-semibold text-success mb-2">Setup Complete</h3>
+          <div id="onboardSummary" class="text-sm text-ink2"></div>
+        </div>
+        <div id="onboardDetails"></div>
+      </div>
+    </div>`;
+}
+
+async function handleDrop(event) {
+  event.preventDefault();
+  event.currentTarget.classList.remove('border-sage', 'bg-sageDim');
+  const file = event.dataTransfer?.files?.[0];
+  if (file) readFile(file);
+}
+
+function handleFileSelect(event) {
+  const file = event.target.files?.[0];
+  if (file) readFile(file);
+}
+
+function readFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    el('onboardText').value = typeof text === 'string' ? text : 'File loaded: ' + file.name;
+    el('dropZone').innerHTML = '<p class="text-sm font-medium text-success">✓ ' + file.name + ' loaded</p><p class="text-xs text-ink3 mt-1">Click "Process with AI" to continue</p>';
+  };
+  reader.readAsText(file);
+}
+
+async function processOnboard() {
+  const text = el('onboardText').value.trim();
+  if (!text || text.length < 20) { alert('Please provide more information about your clinic.'); return; }
+
+  const btn = el('onboardBtn');
+  btn.textContent = 'Processing...'; btn.disabled = true;
+
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/onboard', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ content: text }),
+  });
+
+  btn.textContent = 'Process with AI'; btn.disabled = false;
+
+  if (resp.ok) {
+    const data = await resp.json();
+    if (data.success) {
+      el('onboardResults').classList.remove('hidden');
+      el('onboardSummary').innerHTML = `
+        ${data.clinic_name ? '<p>Clinic: <strong>' + data.clinic_name + '</strong></p>' : ''}
+        <p>${data.products_added} products added to your catalog</p>
+        <p>${data.protocols_added} protocols created</p>
+      `;
+
+      // Show parsed products
+      if (data.parsed_data?.products?.length) {
+        el('onboardDetails').innerHTML = `
+          <div class="bg-white rounded-xl border border-line shadow-soft p-5">
+            <h3 class="text-sm font-semibold mb-3">Products Added</h3>
+            <div class="space-y-2">
+              ${data.parsed_data.products.map(p => `
+                <div class="flex justify-between items-center py-2 border-b border-line last:border-0">
+                  <div><div class="text-sm font-medium">${p.name}</div><div class="text-xs text-ink3">${p.category || ''} · ${p.method || ''}</div></div>
+                  <div class="text-sm font-semibold text-sage">${p.price ? '$' + Number(p.price).toFixed(2) : '—'}</div>
+                </div>`).join('')}
+            </div>
+          </div>`;
+      }
+
+      // Refresh products
+      await loadProducts();
+    } else {
+      alert(data.error || 'Processing failed — try providing more detail.');
+    }
+  } else {
+    const err = await resp.json();
+    alert(err.error || 'Processing failed');
+  }
+}
+
+// ─── Settings ───
+
+let settingsTab = 'profile';
+let teamMembers = [];
+let featureToggles = {};
+let msgTemplates = [];
+
+function renderSettings(c) {
+  const tabs = [
+    { id: 'profile', label: 'Clinic Profile', icon: '🏥' },
+    { id: 'team', label: 'Team & Permissions', icon: '👥' },
+    { id: 'products', label: 'Products', icon: '📦' },
+    { id: 'features', label: 'Patient Experience', icon: '✨' },
+    { id: 'comms', label: 'Communications', icon: '💬' },
+  ];
+
+  c.innerHTML = `
+    <div class="flex gap-6">
+      <!-- Settings Sidebar -->
+      <div class="w-48 shrink-0">
+        <h2 class="text-lg font-semibold mb-4">Settings</h2>
+        <div class="space-y-1">
+          ${tabs.map(t => `
+            <button onclick="settingsTab='${t.id}'; renderSettingsContent()" class="settings-tab w-full text-left px-3 py-2 rounded-lg text-sm ${settingsTab === t.id ? 'bg-sageDim text-sageDeep font-medium' : 'text-ink2 hover:bg-cream'} transition" data-tab="${t.id}">
+              ${t.icon} ${t.label}
+            </button>`).join('')}
+        </div>
+      </div>
+      <!-- Settings Content -->
+      <div class="flex-1" id="settingsContent"></div>
+    </div>`;
+
+  renderSettingsContent();
+}
+
+async function renderSettingsContent() {
+  const c = el('settingsContent');
+  document.querySelectorAll('.settings-tab').forEach(t => {
+    t.classList.toggle('bg-sageDim', t.dataset.tab === settingsTab);
+    t.classList.toggle('text-sageDeep', t.dataset.tab === settingsTab);
+    t.classList.toggle('font-medium', t.dataset.tab === settingsTab);
+  });
+
+  switch (settingsTab) {
+    case 'profile': await renderProfileSettings(c); break;
+    case 'team': await renderTeamSettings(c); break;
+    case 'products': renderLibrary(c); break; // reuse existing
+    case 'features': await renderFeatureSettings(c); break;
+    case 'comms': await renderCommsSettings(c); break;
+  }
+}
+
+// ─── Profile Settings ───
+async function renderProfileSettings(c) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/settings', { headers: { 'Authorization': 'Bearer ' + token } });
+  const s = resp.ok ? (await resp.json()).settings : {};
+
+  c.innerHTML = `
+    <div class="max-w-2xl">
+      <h3 class="text-lg font-semibold mb-1">Clinic Profile</h3>
+      <p class="text-sm text-ink3 mb-6">Your clinic's public information and branding.</p>
+
+      <div class="bg-white rounded-xl border border-line shadow-soft p-6 space-y-4 mb-6">
+        <h4 class="text-xs font-bold text-ink3 uppercase tracking-wide">General Information</h4>
+        ${settingsInput('sp_clinic_name', 'Clinic Name', s.clinic_name)}
+        ${settingsInput('sp_clinic_type', 'Clinic Type', s.clinic_type)}
+        <div class="grid grid-cols-2 gap-3">
+          ${settingsInput('sp_phone', 'Phone', s.phone)}
+          ${settingsInput('sp_email', 'Email', s.email)}
+        </div>
+        ${settingsInput('sp_website', 'Website', s.website)}
+        <div><label class="text-xs font-medium text-ink3 block mb-1">Description</label><textarea id="sp_description" rows="3" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm">${s.description || ''}</textarea></div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-line shadow-soft p-6 space-y-4 mb-6">
+        <h4 class="text-xs font-bold text-ink3 uppercase tracking-wide">Address</h4>
+        ${settingsInput('sp_address_line1', 'Address', s.address_line1)}
+        <div class="grid grid-cols-3 gap-3">
+          ${settingsInput('sp_city', 'City', s.city)}
+          ${settingsInput('sp_state', 'State', s.state)}
+          ${settingsInput('sp_zip', 'ZIP', s.zip)}
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-line shadow-soft p-6 space-y-4 mb-6">
+        <h4 class="text-xs font-bold text-ink3 uppercase tracking-wide">Branding</h4>
+        ${settingsInput('sp_tagline', 'Tagline', s.tagline)}
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="text-xs font-medium text-ink3 block mb-1">Primary Color</label><input type="color" id="sp_brand_color_primary" value="${s.brand_color_primary || '#6E8A7C'}" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>
+          <div><label class="text-xs font-medium text-ink3 block mb-1">Secondary Color</label><input type="color" id="sp_brand_color_secondary" value="${s.brand_color_secondary || '#C8A96E'}" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>
+        </div>
+        <div><label class="text-xs font-medium text-ink3 block mb-1">Patient Welcome Message</label><textarea id="sp_patient_welcome_message" rows="2" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm">${s.patient_welcome_message || ''}</textarea></div>
+      </div>
+
+      <button onclick="saveProfileSettings()" class="px-6 py-2.5 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">Save Changes</button>
+    </div>`;
+}
+
+function settingsInput(id, label, value) {
+  return `<div><label class="text-xs font-medium text-ink3 block mb-1">${label}</label><input id="${id}" value="${value || ''}" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" /></div>`;
+}
+
+async function saveProfileSettings() {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const body = {};
+  ['clinic_name','clinic_type','phone','email','website','description','address_line1','city','state','zip','tagline','brand_color_primary','brand_color_secondary','patient_welcome_message'].forEach(k => {
+    const input = document.getElementById('sp_' + k);
+    if (input) body[k] = input.type === 'color' ? input.value : input.value;
+  });
+
+  const resp = await fetch(API + '/api/clinic/settings', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify(body),
+  });
+  if (resp.ok) alert('Settings saved!');
+  else alert('Failed to save');
+}
+
+// ─── Team Settings ───
+async function renderTeamSettings(c) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/team', { headers: { 'Authorization': 'Bearer ' + token } });
+  teamMembers = resp.ok ? (await resp.json()).team : [];
+
+  const roles = ['physician','nurse_practitioner','nurse','health_coach','trainer','nutrition_coach','front_desk','billing','admin','staff'];
+
+  c.innerHTML = `
+    <div>
+      <div class="flex justify-between items-center mb-6">
+        <div><h3 class="text-lg font-semibold">Team & Permissions</h3><p class="text-sm text-ink3">Manage who has access to your clinic dashboard.</p></div>
+        <button onclick="showInviteTeamMember()" class="px-4 py-2 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep transition">+ Invite Member</button>
+      </div>
+
+      <div class="bg-white rounded-xl border border-line shadow-soft">
+        <table class="w-full text-sm">
+          <thead><tr class="text-ink3 text-xs border-b border-line">
+            <th class="px-5 py-3 text-left font-medium">Member</th>
+            <th class="px-3 py-3 text-left font-medium">Role</th>
+            <th class="px-3 py-3 text-center font-medium">Status</th>
+            <th class="px-3 py-3 text-center font-medium">Actions</th>
+          </tr></thead>
+          <tbody class="divide-y divide-line">
+            ${teamMembers.length ? teamMembers.map(m => `
+              <tr class="hover:bg-cream transition">
+                <td class="px-5 py-3"><div class="font-medium">${m.name || m.email.split('@')[0]}</div><div class="text-xs text-ink3">${m.email}</div></td>
+                <td class="px-3 py-3"><select onchange="updateTeamRole('${m.id}', this.value)" class="text-xs px-2 py-1 rounded border border-line2 bg-white">${roles.map(r => `<option value="${r}" ${m.role === r ? 'selected' : ''}>${r.replace(/_/g,' ')}</option>`).join('')}</select></td>
+                <td class="px-3 py-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold ${m.status === 'active' ? 'bg-successbg text-success' : m.status === 'disabled' ? 'bg-critbg text-crit' : 'bg-warnbg text-warn'}">${m.status}</span></td>
+                <td class="px-3 py-3 text-center"><button onclick="removeTeamMember('${m.id}')" class="text-xs text-crit hover:text-ink">Remove</button></td>
+              </tr>`).join('') : '<tr><td colspan="4" class="px-5 py-12 text-center text-ink3">No team members yet</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function showInviteTeamMember() {
+  openModal(`
+    <div class="p-6">
+      <h2 class="text-lg font-semibold mb-4">Invite Team Member</h2>
+      <div class="space-y-3">
+        <input id="tm_email" placeholder="Email address" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
+        <input id="tm_name" placeholder="Name (optional)" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
+        <select id="tm_role" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm bg-white">
+          <option value="staff">Staff</option><option value="physician">Physician</option><option value="nurse_practitioner">Nurse Practitioner</option><option value="nurse">Nurse</option><option value="health_coach">Health Coach</option><option value="trainer">Trainer</option><option value="nutrition_coach">Nutrition Coach</option><option value="front_desk">Front Desk</option><option value="billing">Billing</option><option value="admin">Admin</option>
+        </select>
+        <div class="flex gap-2 pt-2">
+          <button onclick="inviteTeamMember()" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Send Invite</button>
+          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+async function inviteTeamMember() {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/team', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ email: el('tm_email').value, name: el('tm_name').value, role: el('tm_role').value }),
+  });
+  if (resp.ok) { closeModal(); renderSettingsContent(); }
+  else alert('Failed to invite');
+}
+
+async function updateTeamRole(id, role) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  await fetch(API + '/api/clinic/team', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ id, role }),
+  });
+}
+
+async function removeTeamMember(id) {
+  if (!confirm('Remove this team member?')) return;
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  await fetch(API + '/api/clinic/team', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ id }),
+  });
+  renderSettingsContent();
+}
+
+// ─── Feature Toggles ───
+async function renderFeatureSettings(c) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/features', { headers: { 'Authorization': 'Bearer ' + token } });
+  featureToggles = resp.ok ? (await resp.json()).features : {};
+
+  const features = [
+    { key: 'ai_coach', label: 'AI Coach', desc: 'Conversational AI that speaks as the patient\'s future self' },
+    { key: 'workouts', label: 'Workouts', desc: 'AI-generated training programs with guided warmups' },
+    { key: 'nutrition', label: 'Nutrition Tracking', desc: 'Photo macro tracking and weekly meal plans' },
+    { key: 'meal_tracking', label: 'Meal Planning', desc: 'AI-generated 7-day meal plans with recipes' },
+    { key: 'protocol_tracking', label: 'Protocol Tracker', desc: 'Dose logging and adherence tracking' },
+    { key: 'wylde_score', label: 'Wylde Score', desc: 'Daily composite health score (0-100)' },
+    { key: 'future_self', label: 'Future Self', desc: 'AI transformation image generation' },
+    { key: 'vision_board', label: 'Future Vision', desc: 'Life vision creation across 10 categories' },
+    { key: 'meditation', label: 'Meditation', desc: 'Guided visualization meditation with audio' },
+    { key: 'journaling', label: 'Journaling', desc: 'Daily journaling as part of morning ritual' },
+    { key: 'habits', label: 'Daily Habits', desc: 'Morning ritual tracking (Qi Gong, reading, etc.)' },
+    { key: 'messaging', label: 'Patient Messaging', desc: 'Direct messaging between patient and clinic' },
+  ];
+
+  c.innerHTML = `
+    <div class="max-w-2xl">
+      <h3 class="text-lg font-semibold mb-1">Patient Experience</h3>
+      <p class="text-sm text-ink3 mb-6">Control which Wylde features are available to your patients.</p>
+
+      <div class="bg-white rounded-xl border border-line shadow-soft divide-y divide-line">
+        ${features.map(f => `
+          <div class="px-6 py-4 flex items-center justify-between">
+            <div>
+              <div class="text-sm font-medium text-ink">${f.label}</div>
+              <div class="text-xs text-ink3">${f.desc}</div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" class="sr-only peer" ${featureToggles[f.key] !== false ? 'checked' : ''} onchange="toggleFeature('${f.key}', this.checked)" />
+              <div class="w-9 h-5 bg-line2 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sage"></div>
+            </label>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+async function toggleFeature(key, enabled) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const body = {}; body[key] = enabled;
+  await fetch(API + '/api/clinic/features', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify(body),
+  });
+}
+
+// ─── Communications ───
+async function renderCommsSettings(c) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/templates', { headers: { 'Authorization': 'Bearer ' + token } });
+  msgTemplates = resp.ok ? (await resp.json()).templates : [];
+
+  const categories = ['welcome','protocol','lab_results','refill','missed_checkin','follow_up','general'];
+
+  c.innerHTML = `
+    <div>
+      <div class="flex justify-between items-center mb-6">
+        <div><h3 class="text-lg font-semibold">Communications</h3><p class="text-sm text-ink3">Message templates and notification preferences.</p></div>
+        <button onclick="showAddTemplate()" class="px-4 py-2 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep transition">+ New Template</button>
+      </div>
+
+      <div class="bg-white rounded-xl border border-line shadow-soft divide-y divide-line">
+        ${msgTemplates.length ? msgTemplates.map(t => `
+          <div class="px-5 py-4 flex items-center justify-between">
+            <div>
+              <div class="text-sm font-medium text-ink">${t.name}</div>
+              <div class="text-xs text-ink3">${t.category.replace(/_/g,' ')} · ${t.body.substring(0, 60)}${t.body.length > 60 ? '...' : ''}</div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="editTemplate('${t.id}')" class="text-xs text-sage hover:text-sageDeep">Edit</button>
+              <button onclick="deleteTemplate('${t.id}')" class="text-xs text-crit hover:text-ink">Delete</button>
+            </div>
+          </div>`).join('') : '<div class="px-5 py-12 text-center text-ink3 text-sm">No templates yet. Create templates for common patient communications.</div>'}
+      </div>
+
+      <div class="mt-6 bg-white rounded-xl border border-line shadow-soft p-6">
+        <h4 class="text-xs font-bold text-ink3 uppercase tracking-wide mb-3">Suggested Templates</h4>
+        <div class="grid grid-cols-2 gap-3">
+          ${[
+            { name: 'Welcome', cat: 'welcome', body: 'Welcome to our clinic! We\'re excited to support your health journey. Your care team is here for you.' },
+            { name: 'Protocol Assigned', cat: 'protocol', body: 'Your new protocol has been assigned. You can view it in your Wylde Self app under Protocol Tracker.' },
+            { name: 'Lab Results Ready', cat: 'lab_results', body: 'Your lab results are ready for review. We\'ll discuss them at your next appointment.' },
+            { name: 'Refill Reminder', cat: 'refill', body: 'Your current supply will need a refill soon. You can request a refill through the app.' },
+            { name: 'Missed Check-In', cat: 'missed_checkin', body: 'We noticed you haven\'t checked in recently. How are you feeling? Let us know if you need any adjustments.' },
+            { name: 'Follow-Up', cat: 'follow_up', body: 'Just checking in on your progress. How are things going with your current protocol?' },
+          ].map(t => `<button onclick="quickCreateTemplate('${t.name}','${t.cat}',\`${t.body}\`)" class="text-left px-4 py-3 rounded-lg border border-line2 hover:bg-cream transition"><div class="text-sm font-medium text-ink">${t.name}</div><div class="text-xs text-ink3">${t.cat.replace(/_/g,' ')}</div></button>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function showAddTemplate() {
+  openModal(`
+    <div class="p-6">
+      <h2 class="text-lg font-semibold mb-4">New Message Template</h2>
+      <div class="space-y-3">
+        <input id="tpl_name" placeholder="Template name" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
+        <select id="tpl_category" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm bg-white">
+          <option value="general">General</option><option value="welcome">Welcome</option><option value="protocol">Protocol</option><option value="lab_results">Lab Results</option><option value="refill">Refill</option><option value="missed_checkin">Missed Check-In</option><option value="follow_up">Follow-Up</option>
+        </select>
+        <textarea id="tpl_body" rows="4" placeholder="Message body..." class="w-full px-3 py-2 rounded-lg border border-line2 text-sm"></textarea>
+        <div class="flex gap-2 pt-2">
+          <button onclick="saveTemplate()" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Save</button>
+          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+async function saveTemplate() {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const resp = await fetch(API + '/api/clinic/templates', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ name: el('tpl_name').value, category: el('tpl_category').value, body: el('tpl_body').value }),
+  });
+  if (resp.ok) { closeModal(); renderSettingsContent(); }
+}
+
+async function quickCreateTemplate(name, category, body) {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  await fetch(API + '/api/clinic/templates', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ name, category, body }),
+  });
+  renderSettingsContent();
+}
+
+async function deleteTemplate(id) {
+  if (!confirm('Delete this template?')) return;
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  await fetch(API + '/api/clinic/templates', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ id }),
+  });
+  renderSettingsContent();
+}
+
+// ─── Clinic Onboarding Wizard ───
+
+let obStep = 0;
+let obData = {};
+
+function renderClinicOnboarding(existing) {
+  obData = existing || {};
+  obStep = obData.onboarding_step || 0;
+  document.body.innerHTML = `
+  <div class="min-h-screen bg-paper flex items-center justify-center p-6">
+    <div class="w-full max-w-xl">
+      <div class="text-center mb-8">
+        <img src="/logo-icon.png" alt="Wylde" class="w-12 h-12 rounded-xl mx-auto mb-4" />
+        <h1 class="font-serif text-2xl text-ink">Set Up Your Clinic</h1>
+        <p class="text-ink3 text-sm mt-2">Complete your profile to start accepting patients on Wylde Self.</p>
+      </div>
+
+      <!-- Progress -->
+      <div class="flex gap-2 mb-8" id="obProgress"></div>
+
+      <!-- Step content -->
+      <div id="obContent" class="bg-white rounded-2xl border border-line shadow-card p-8"></div>
+
+      <!-- Nav -->
+      <div class="flex justify-between mt-6" id="obNav"></div>
+    </div>
+  </div>`;
+  renderObStep();
+}
+
+const OB_STEPS = [
+  { title: 'Clinic Information', fields: ['clinic_name','clinic_type','description','specialties','website','phone','email'] },
+  { title: 'Location', fields: ['address_line1','address_line2','city','state','zip'] },
+  { title: 'Licensing & Compliance', fields: ['medical_license_number','license_state','npi_number','liability_insurance_carrier','compliance_hipaa_acknowledged','compliance_terms_accepted'] },
+  { title: 'Branding', fields: ['tagline','brand_color_primary','brand_color_secondary','patient_welcome_message'] },
+  { title: 'Products & Protocols', fields: ['ai_upload'] },
+];
+
+function renderObStep() {
+  const total = OB_STEPS.length;
+  // Progress
+  el('obProgress').innerHTML = OB_STEPS.map((s, i) => `<div class="flex-1 h-1.5 rounded-full ${i <= obStep ? 'bg-sage' : 'bg-line2'}"></div>`).join('');
+
+  const step = OB_STEPS[obStep];
+  let html = `<h2 class="text-lg font-semibold mb-1">${step.title}</h2><p class="text-sm text-ink3 mb-6">Step ${obStep + 1} of ${total}</p><div class="space-y-4">`;
+
+  if (obStep === 0) {
+    html += obInput('clinic_name', 'Clinic Name', 'text', 'e.g. Wylde Wellness Clinic');
+    html += obSelect('clinic_type', 'Clinic Type', ['medspa','functional_medicine','hrt_clinic','wellness_center','integrative','concierge','other']);
+    html += obTextarea('description', 'Description', 'Brief description of your practice...');
+    html += obInput('specialties', 'Specialties', 'text', 'e.g. HRT, Peptides, Weight Loss (comma separated)');
+    html += obInput('website', 'Website', 'url', 'https://');
+    html += obInput('phone', 'Phone', 'tel', '(555) 555-5555');
+    html += obInput('email', 'Contact Email', 'email', 'clinic@example.com');
+  } else if (obStep === 1) {
+    html += obInput('address_line1', 'Address', 'text', 'Street address');
+    html += obInput('address_line2', 'Suite/Unit', 'text', 'Optional');
+    html += `<div class="grid grid-cols-3 gap-3">`;
+    html += obInput('city', 'City', 'text', 'City');
+    html += obInput('state', 'State', 'text', 'CA');
+    html += obInput('zip', 'ZIP', 'text', '90210');
+    html += `</div>`;
+  } else if (obStep === 2) {
+    html += obInput('medical_license_number', 'Medical License #', 'text', 'License number');
+    html += obInput('license_state', 'License State', 'text', 'e.g. CA');
+    html += obInput('npi_number', 'NPI Number', 'text', 'National Provider Identifier');
+    html += obInput('liability_insurance_carrier', 'Liability Insurance Carrier', 'text', 'Insurance company');
+    html += `<label class="flex items-start gap-3 py-3 cursor-pointer">
+      <input type="checkbox" id="ob_compliance_hipaa_acknowledged" ${obData.compliance_hipaa_acknowledged ? 'checked' : ''} class="mt-1" />
+      <span class="text-sm text-ink2">I acknowledge HIPAA compliance requirements and will maintain appropriate safeguards for patient data on this platform.</span>
+    </label>`;
+    html += `<label class="flex items-start gap-3 py-3 cursor-pointer">
+      <input type="checkbox" id="ob_compliance_terms_accepted" ${obData.compliance_terms_accepted ? 'checked' : ''} class="mt-1" />
+      <span class="text-sm text-ink2">I accept the <strong>Wylde Self Platform Terms</strong> for clinical providers and agree to maintain current licensing and insurance.</span>
+    </label>`;
+  } else if (obStep === 3) {
+    html += obInput('tagline', 'Clinic Tagline', 'text', 'e.g. Optimizing human performance');
+    html += `<div class="grid grid-cols-2 gap-3">`;
+    html += `<div><label class="text-xs font-medium text-ink3 block mb-1">Primary Color</label><input type="color" id="ob_brand_color_primary" value="${obData.brand_color_primary || '#6E8A7C'}" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>`;
+    html += `<div><label class="text-xs font-medium text-ink3 block mb-1">Secondary Color</label><input type="color" id="ob_brand_color_secondary" value="${obData.brand_color_secondary || '#C8A96E'}" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>`;
+    html += `</div>`;
+    html += obTextarea('patient_welcome_message', 'Patient Welcome Message', 'Message patients see when they connect with your clinic...');
+  } else if (obStep === 4) {
+    html += `<p class="text-sm text-ink2 mb-4">Upload or paste your product list, pricing, protocols. The AI will structure everything into your dashboard.</p>`;
+    html += `<textarea id="ob_ai_content" rows="8" placeholder="Paste your product list, pricing sheet, protocol descriptions...
+
+Example:
+- BPC-157 5mg vial - $150
+- Semaglutide 2.5mg weekly - $350/month
+- Recovery Stack: BPC-157 + TB-500, 4 weeks" class="w-full px-4 py-3 rounded-xl border border-line2 bg-paper text-sm resize-vertical"></textarea>`;
+    html += `<p class="text-xs text-ink3 mt-2">This step is optional — you can add products manually later.</p>`;
+  }
+
+  html += `</div>`;
+  el('obContent').innerHTML = html;
+
+  // Nav buttons
+  let nav = '';
+  if (obStep > 0) nav += `<button onclick="obBack()" class="px-6 py-2.5 border border-line2 rounded-xl text-sm text-ink2 hover:bg-cream transition">Back</button>`;
+  else nav += '<div></div>';
+
+  if (obStep < total - 1) nav += `<button onclick="obNext()" class="px-6 py-2.5 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">Continue</button>`;
+  else nav += `<button onclick="obFinish()" id="obFinishBtn" class="px-6 py-2.5 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">Complete Setup</button>`;
+  el('obNav').innerHTML = nav;
+}
+
+function obInput(key, label, type, placeholder) {
+  return `<div><label class="text-xs font-medium text-ink3 block mb-1">${label}</label><input type="${type}" id="ob_${key}" value="${obData[key] || ''}" placeholder="${placeholder}" class="w-full px-3 py-2.5 rounded-lg border border-line2 text-sm" /></div>`;
+}
+function obSelect(key, label, options) {
+  return `<div><label class="text-xs font-medium text-ink3 block mb-1">${label}</label><select id="ob_${key}" class="w-full px-3 py-2.5 rounded-lg border border-line2 text-sm bg-white"><option value="">Select...</option>${options.map(o => `<option value="${o}" ${obData[key] === o ? 'selected' : ''}>${o.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase())}</option>`).join('')}</select></div>`;
+}
+function obTextarea(key, label, placeholder) {
+  return `<div><label class="text-xs font-medium text-ink3 block mb-1">${label}</label><textarea id="ob_${key}" rows="3" placeholder="${placeholder}" class="w-full px-3 py-2.5 rounded-lg border border-line2 text-sm resize-vertical">${obData[key] || ''}</textarea></div>`;
+}
+
+function collectStepData() {
+  const step = OB_STEPS[obStep];
+  step.fields.forEach(f => {
+    if (f === 'ai_upload') return;
+    const input = document.getElementById('ob_' + f);
+    if (input) {
+      if (input.type === 'checkbox') obData[f] = input.checked;
+      else if (f === 'specialties') obData[f] = input.value.split(',').map(s => s.trim()).filter(Boolean);
+      else obData[f] = input.value;
+    }
+  });
+}
+
+async function saveStepData() {
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  if (!token) return;
+  obData.onboarding_step = obStep;
+  if (obData.compliance_terms_accepted && !obData.compliance_accepted_at) {
+    obData.compliance_accepted_at = new Date().toISOString();
+  }
+  await fetch(API + '/api/clinic/settings', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify(obData),
+  });
+}
+
+async function obNext() {
+  collectStepData();
+  await saveStepData();
+  obStep++;
+  renderObStep();
+}
+
+async function obBack() {
+  collectStepData();
+  obStep--;
+  renderObStep();
+}
+
+async function obFinish() {
+  collectStepData();
+
+  const btn = document.getElementById('obFinishBtn');
+  btn.textContent = 'Setting up...'; btn.disabled = true;
+
+  // Process AI content if provided
+  const aiContent = document.getElementById('ob_ai_content')?.value?.trim();
+  if (aiContent && aiContent.length > 20) {
+    const token = (await sb.auth.getSession()).data?.session?.access_token;
+    await fetch(API + '/api/clinic/onboard', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ content: aiContent }),
+    });
+  }
+
+  obData.onboarding_complete = true;
+  obData.onboarding_step = OB_STEPS.length;
+  await saveStepData();
+
+  // Reload dashboard
+  location.reload();
+}
+
+// ─── Init ───
+checkAuth();
+</script>
+</body>
+</html>

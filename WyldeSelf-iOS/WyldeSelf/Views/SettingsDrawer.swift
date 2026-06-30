@@ -212,7 +212,7 @@ struct SettingsDrawer: View {
         HapticManager.shared.impact(.light)
         // For now, library has its own native tab — switch to it directly
         if screenId == "library" {
-            appState.selectedTab = .exercises
+            appState.selectedTab = .nutrition
             dismiss()
             return
         }
