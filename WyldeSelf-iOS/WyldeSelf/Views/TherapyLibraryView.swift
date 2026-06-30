@@ -55,7 +55,7 @@ struct TherapyLibraryView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
-                .onChange(of: searchText) { _ in Task { await loadTherapies() } }
+                .onChange(of: searchText) { Task { await loadTherapies() } }
 
                 // Type filter
                 ScrollView(.horizontal, showsIndicators: false) {

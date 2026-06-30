@@ -27,7 +27,7 @@ struct FutureReflectionFlow: View {
                         .font(.system(size: 15, weight: .medium))
                         .foregroundColor(VisionTheme.textMuted)
 
-                    TextField("", text: binding(for: index), axis: .vertical)
+                    TextField("", text: safeBinding(for: index), axis: .vertical)
                         .lineLimit(2...5)
                         .font(.system(size: 15))
                         .foregroundColor(VisionTheme.text)
@@ -43,13 +43,24 @@ struct FutureReflectionFlow: View {
                 }
             }
         }
+        .onAppear {
+            // Pre-fill answers array to match prompts count — OUTSIDE of body render
+            while answers.count < category.prompts.count {
+                answers.append("")
+            }
+        }
     }
 
-    private func binding(for index: Int) -> Binding<String> {
-        while answers.count <= index { answers.append("") }
-        return Binding(
+    private func safeBinding(for index: Int) -> Binding<String> {
+        Binding(
             get: { index < answers.count ? answers[index] : "" },
-            set: { answers[index] = $0 }
+            set: { newValue in
+                DispatchQueue.main.async {
+                    if index < answers.count {
+                        answers[index] = newValue
+                    }
+                }
+            }
         )
     }
 }

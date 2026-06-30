@@ -255,8 +255,36 @@ struct TodayView: View {
 
     // MARK: - Header
 
+    private var futureSelfImage: UIImage? {
+        guard let base64 = UserDefaults.standard.string(forKey: "wylde_future_rendering"),
+              let data = Data(base64Encoded: base64),
+              let img = UIImage(data: data) else { return nil }
+        return img
+    }
+
     private var headerSection: some View {
-        HStack {
+        HStack(spacing: 12) {
+            // Profile photo — future self rendering
+            if let img = futureSelfImage {
+                Image(uiImage: img)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 44, height: 44)
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(Color(hex: "C8A96E").opacity(0.4), lineWidth: 1.5))
+                    .fixedSize()
+            } else {
+                Circle()
+                    .fill(Color(hex: "C8A96E").opacity(0.15))
+                    .frame(width: 44, height: 44)
+                    .overlay(
+                        Text(String((appState.userName.first ?? "W").uppercased()))
+                            .font(.system(size: 18, weight: .bold, design: .serif))
+                            .foregroundColor(Color(hex: "C8A96E"))
+                    )
+                    .fixedSize()
+            }
+
             VStack(alignment: .leading, spacing: 2) {
                 Text(greeting)
                     .font(.system(size: 14, weight: .medium))
@@ -266,9 +294,6 @@ struct TodayView: View {
                     .foregroundColor(Theme.text)
             }
             Spacer()
-            // Streak badge — replaces the old level badge. A streak is a
-            // measure of how consistently you've shown up for yourself,
-            // which is on-brand. A "level" implies you're being graded.
             if appState.streak > 0 {
                 HStack(spacing: 4) {
                     Image(systemName: "flame.fill")

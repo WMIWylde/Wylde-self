@@ -75,6 +75,8 @@ struct MainTabView: View {
     private func tabContent<Content: View>(_ tab: AppState.Tab, @ViewBuilder content: () -> Content) -> some View {
         let isActive = appState.selectedTab == tab
         content()
+            .frame(maxWidth: UIScreen.main.bounds.width)
+            .clipped()
             .opacity(isActive ? 1 : 0)
             .allowsHitTesting(isActive)
             // Don't expose hidden tabs to VoiceOver

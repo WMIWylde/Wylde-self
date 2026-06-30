@@ -3,6 +3,8 @@ import SwiftUI
 struct WorkoutGeneratorView: View {
     @EnvironmentObject var appState: AppState
     @StateObject private var service = WorkoutService.shared
+    @State private var showEquipmentPicker = false
+    @State private var pendingAction: ((Set<String>) -> Void)?
 
     var body: some View {
         ZStack {
@@ -39,7 +41,7 @@ struct WorkoutGeneratorView: View {
                             .font(.system(size: 26, weight: .bold, design: .serif))
                             .foregroundColor(Color(hex: "F4F1E8"))
 
-                        Text("Select a training style built for your goals.")
+                        Text("Select a training style, then pick your equipment.")
                             .font(.system(size: 14))
                             .foregroundColor(Color(hex: "A6A29A"))
                             .multilineTextAlignment(.center)
@@ -50,14 +52,31 @@ struct WorkoutGeneratorView: View {
                                 icon: "sparkles",
                                 title: "AI-Built Program",
                                 subtitle: "Custom split based on your goals, equipment, and schedule.",
-                                action: { Task { await service.generateProgram(appState: appState) } }
+                                action: {
+                                    pendingAction = { equipment in
+                                        Task { await service.generateProgram(appState: appState, equipment: equipment) }
+                                    }
+                                    showEquipmentPicker = true
+                                }
+                            )
+
+                            programOption(
+                                icon: "figure.walk",
+                                title: "Bodyweight Only",
+                                subtitle: "No equipment needed. Push-ups, pull-ups, squats, HIIT. Train anywhere.",
+                                accent: Color(hex: "5EE6D6"),
+                                action: {
+                                    service.sessionEquipment = ["bodyweight"]
+                                    service.program = service.bodyweightProgram()
+                                }
                             )
 
                             programOption(
                                 icon: "dumbbell.fill",
-                                title: "Strength Split",
+                                title: "Gym Strength Split",
                                 subtitle: "4-day push/pull split. Chest & Tri, Back & Bi, Legs, Shoulders & Arms.",
                                 action: {
+                                    service.sessionEquipment = ["bodyweight", "dumbbells", "barbell", "bench", "cables", "machines"]
                                     service.program = service.fallbackProgram(goal: appState.goals.first ?? "Build muscle & strength")
                                 }
                             )
@@ -68,6 +87,7 @@ struct WorkoutGeneratorView: View {
                                 subtitle: "Full body. Core-focused. 4 days of kettlebell + high intensity intervals.",
                                 accent: Color(hex: "FF9A3C"),
                                 action: {
+                                    service.sessionEquipment = ["bodyweight", "kettlebell"]
                                     service.program = service.kettlebellHIITProgram()
                                 }
                             )
@@ -79,6 +99,13 @@ struct WorkoutGeneratorView: View {
                 }
                 .padding(.horizontal, 28)
             }
+        }
+        .sheet(isPresented: $showEquipmentPicker) {
+            EquipmentPickerView { equipment in
+                pendingAction?(equipment)
+                pendingAction = nil
+            }
+            .environmentObject(appState)
         }
     }
 

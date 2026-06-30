@@ -24,9 +24,14 @@ final class WorkoutService: ObservableObject {
 
     // MARK: - Program Generation
 
-    func generateProgram(appState: AppState) async {
+    /// Equipment selected for this session — drives AI prompt and fallback selection
+    @Published var sessionEquipment: Set<String> = []
+
+    func generateProgram(appState: AppState, equipment: Set<String>? = nil) async {
         isGenerating = true
         generationError = nil
+
+        if let eq = equipment { sessionEquipment = eq }
 
         // Try AI generation with a timeout, fall back to template
         do {
@@ -47,11 +52,22 @@ final class WorkoutService: ObservableObject {
             print("[WorkoutService] ✅ AI program generated: \(program.days.count) days")
         } catch {
             print("[WorkoutService] ❌ AI failed: \(error.localizedDescription) — using fallback template")
-            self.program = fallbackProgram(goal: appState.goals.first ?? "Get lean & athletic")
+            self.program = fallbackForEquipment(appState: appState)
             saveProgram()
         }
 
         isGenerating = false
+    }
+
+    private func fallbackForEquipment(appState: AppState) -> WorkoutProgram {
+        let eq = sessionEquipment
+        if eq.isSubset(of: ["bodyweight"]) {
+            return bodyweightProgram()
+        } else if eq.contains("kettlebell") && !eq.contains("barbell") && !eq.contains("machines") {
+            return kettlebellHIITProgram()
+        } else {
+            return fallbackProgram(goal: appState.goals.first ?? "Get lean & athletic")
+        }
     }
 
     private func callAIForProgram(appState: AppState) async throws -> WorkoutProgram {
@@ -94,8 +110,28 @@ final class WorkoutService: ObservableObject {
         let days = appState.trainingDays.isEmpty ? "4 days" : appState.trainingDays
         let level = appState.fitnessLevel.isEmpty ? "intermediate" : appState.fitnessLevel
         let goals = appState.goals.isEmpty ? ["Get lean & athletic"] : appState.goals
-        let equipment = appState.equipment.isEmpty ? "Some basics" : appState.equipment
-        let gym = appState.gymAccess.isEmpty ? "No" : appState.gymAccess
+
+        // Use session equipment if available, otherwise fall back to onboarding
+        let equipmentNames: [String: String] = [
+            "bodyweight": "Bodyweight only",
+            "dumbbells": "Dumbbells",
+            "barbell": "Barbell & weight plates",
+            "kettlebell": "Kettlebell",
+            "bench": "Adjustable bench",
+            "pull_up_bar": "Pull-up bar",
+            "resistance_bands": "Resistance bands",
+            "cables": "Cable machine",
+            "machines": "Gym machines (leg press, lat pulldown, etc.)",
+            "trx": "TRX/suspension trainer",
+            "cardio_machines": "Cardio machines (treadmill, bike, rower, stairmaster)"
+        ]
+        let equipment: String
+        if !sessionEquipment.isEmpty {
+            equipment = sessionEquipment.compactMap { equipmentNames[$0] }.joined(separator: ", ")
+        } else {
+            equipment = appState.equipment.isEmpty ? "Some basics" : appState.equipment
+        }
+        let gym = sessionEquipment.contains("machines") || sessionEquipment.contains("cables") || sessionEquipment.contains("cardio_machines") ? "Yes" : (appState.gymAccess.isEmpty ? "No" : appState.gymAccess)
         let gender = appState.gender.isEmpty ? "male" : appState.gender
         let weight = appState.weight.isEmpty ? "" : "Weight: \(appState.weight) \(appState.weightUnit)"
         let height = appState.heightRange.isEmpty ? "" : "Height: \(appState.heightRange)"
@@ -112,10 +148,16 @@ final class WorkoutService: ObservableObject {
         \(age.isEmpty ? "" : "- \(age)")
         - Fitness level: \(level)
         - Goals: \(goals.joined(separator: ", "))
-        - Equipment at home: \(equipment)
+        - Available equipment: \(equipment)
         - Gym access: \(gym)
         \(appState.gymName.isEmpty ? "" : "- Gym: \(appState.gymName)")
         \(appState.healthConcerns.isEmpty ? "" : "- Health concerns: \(appState.healthConcerns.joined(separator: ", "))")
+
+        CRITICAL EQUIPMENT CONSTRAINT:
+        - ONLY use exercises that can be performed with the listed equipment
+        - If "Bodyweight only": use push-ups, pull-ups, squats, lunges, planks, burpees, mountain climbers, dips, etc. NO barbells, dumbbells, cables, or machines
+        - If no cardio machines listed: use running, jump rope, high knees, jumping jacks, bear crawls for conditioning
+        - Do NOT suggest exercises that require equipment the client does not have
 
         PROGRAMMING PRINCIPLES:
         - Design this as a periodized program, not a random list of exercises
@@ -219,6 +261,54 @@ final class WorkoutService: ObservableObject {
     }
 
     // MARK: - Specialized Programs
+
+    func bodyweightProgram() -> WorkoutProgram {
+        let templates: [[String: Any]] = [
+            ["day": "Day 01", "focus": "Upper Body Push", "exercises": [
+                ["Dynamic Warmup", "10 min", "Prepare the body for training"],
+                ["Push-Up Variations", "4 × 15", "Standard, wide, narrow — 5 reps each. Chest to floor, full lockout."],
+                ["Pike Push-Up", "4 × 10", "Hips high, hands shoulder-width. Press head toward floor. Builds shoulders."],
+                ["Diamond Push-Up", "3 × 12", "Hands together under chest. Elbows tight. Squeeze triceps at top."],
+                ["Dips (Chair/Bench)", "4 × 12", "Hands on edge, lower until elbows at 90°. Don't shrug shoulders."],
+                ["Plank to Push-Up", "3 × 8 each", "Forearm plank, press up one hand at a time. Alternate leading arm."],
+                ["Decline Push-Up", "3 × 10", "Feet elevated on bench or step. Slow negative, explosive push."],
+                ["Run or Jump Rope", "15 min", "Steady pace, keep breathing rhythmic."]
+            ]],
+            ["day": "Day 02", "focus": "Lower Body & Core", "exercises": [
+                ["Dynamic Warmup", "10 min", "Prepare the body for training"],
+                ["Bulgarian Split Squat", "4 × 10 each", "Rear foot on bench. Drop knee straight down. Drive through front heel."],
+                ["Pistol Squat Progression", "3 × 6 each", "Hold onto doorframe if needed. Full depth one leg."],
+                ["Glute Bridge March", "3 × 12 each", "Bridge up, alternate lifting knees to chest. Hips stay level."],
+                ["Jump Squat", "4 × 12", "Squat deep, explode up. Land soft. Reset between reps."],
+                ["Walking Lunge", "3 × 12 each", "Long stride, knee tracks over toe, chest tall."],
+                ["Hollow Body Hold", "3 × 30 sec", "Low back pressed to floor. Arms overhead. Don't arch."],
+                ["Sprint Intervals", "12 min", "30 seconds hard, 30 seconds walk. Repeat."]
+            ]],
+            ["day": "Day 03", "focus": "Pull & Posterior Chain", "exercises": [
+                ["Dynamic Warmup", "10 min", "Prepare the body for training"],
+                ["Pull-Up or Inverted Row", "4 × 8", "Full dead hang, pull chin over bar. Use table for inverted rows if needed."],
+                ["Chin-Up (Underhand)", "3 × 8", "Supinated grip, pull chest to bar. Control the negative."],
+                ["Superman Hold", "3 × 12", "Lift arms and legs off floor. Squeeze glutes and upper back. Hold 2 sec."],
+                ["Single-Leg Deadlift", "3 × 10 each", "Hinge on one leg, reach toward floor. Balance + hamstring."],
+                ["Reverse Snow Angel", "3 × 12", "Lie face down, sweep arms from hips to overhead. Squeeze back."],
+                ["Burpee", "4 × 10", "Chest to floor, jump up. Each rep is complete. No half reps."],
+                ["Bear Crawl", "3 × 40 steps", "Knees 1 inch off ground. Opposite hand and foot move together."],
+                ["Hill Sprints or Stair Runs", "15 min", "Sprint up, walk down. Repeat."]
+            ]],
+            ["day": "Day 04", "focus": "Full Body HIIT", "exercises": [
+                ["Dynamic Warmup", "10 min", "Prepare the body for training"],
+                ["Burpee to Tuck Jump", "4 × 8", "Burpee + explode into tuck jump at the top. Max effort."],
+                ["Squat Jump to Lunge", "3 × 10", "Jump squat, land into alternating lunges. Keep moving."],
+                ["Mountain Climbers", "4 × 30 sec", "Sprint pace, hands under shoulders, core locked."],
+                ["Push-Up to Shoulder Tap", "3 × 12", "Push-up, tap opposite shoulder at top. Don't rotate hips."],
+                ["Lateral Bound", "3 × 10 each", "Jump sideways, land on one foot, stick it. Power + stability."],
+                ["V-Up", "3 × 15", "Arms and legs meet at the top. Slow negative."],
+                ["High Knees to Broad Jump", "8 min", "10 high knees then broad jump. Walk back, repeat."]
+            ]]
+        ]
+
+        return WorkoutProgram(days: buildDaysFromTemplates(templates), generatedAt: Date(), goal: "Bodyweight — No Equipment Needed")
+    }
 
     func kettlebellHIITProgram() -> WorkoutProgram {
         let templates: [[String: Any]] = [

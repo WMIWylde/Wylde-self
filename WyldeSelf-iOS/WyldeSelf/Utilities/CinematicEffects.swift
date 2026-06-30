@@ -51,6 +51,7 @@ struct AmbientBackground: View {
                     y: 200 + cos(phase) * 10
                 )
         }
+        .frame(maxWidth: UIScreen.main.bounds.width)
         .clipped()
         .ignoresSafeArea()
         .onAppear {
