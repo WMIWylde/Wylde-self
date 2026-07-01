@@ -129,14 +129,13 @@ struct TodayView: View {
                     .offset(y: didAppear ? 0 : 12)
                     .animation(.easeOut(duration: 0.6).delay(0.35), value: didAppear)
 
-                // Founding Member offer — only shown to non-Pro users.
-                // Soft CTA, never blocks. Identity-driven framing.
-                if !appState.isPro {
-                    foundingMemberCard
-                        .opacity(didAppear ? 1 : 0)
-                        .offset(y: didAppear ? 0 : 12)
-                        .animation(.easeOut(duration: 0.6).delay(0.40), value: didAppear)
-                }
+                // Founding Member offer — hidden until purchases are wired.
+                // Stub PurchaseManager simulates success; showing a paywall
+                // CTA with no real products will confuse testers and fail
+                // App Review. Re-enable once RevenueCat is integrated.
+                // if !appState.isPro {
+                //     foundingMemberCard
+                // }
 
                 Spacer(minLength: 100)
             }

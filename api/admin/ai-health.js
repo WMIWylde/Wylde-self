@@ -2,10 +2,15 @@
 // Tests all AI providers and returns status
 
 module.exports = async function handler(req, res) {
-  // Allow GET with no auth for internal monitoring
   res.setHeader('Access-Control-Allow-Origin', '*');
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'GET only' });
+
+  // Require admin secret to prevent public config leakage
+  const secret = req.headers['x-admin-secret'] || req.query.secret;
+  if (!process.env.ADMIN_SECRET || secret !== process.env.ADMIN_SECRET) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
 
   const results = {};
   const testPrompt = [{ role: 'user', content: 'Respond with exactly: OK' }];

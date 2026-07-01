@@ -20,7 +20,11 @@ struct NutritionTabView: View {
                         .font(.system(size: 26, weight: .bold))
                         .foregroundColor(Theme.text)
                         .padding(.top, 60)
-                        .onAppear { print("[NutritionTab] View appeared") }
+                        .onAppear {
+                            #if DEBUG
+                            print("[NutritionTab] View appeared")
+                            #endif
+                        }
 
                     // Log food actions — prominent
                     LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {

@@ -20,7 +20,9 @@ struct IntroAnimationView: View {
         .opacity(fadeOut ? 0 : 1)
         .onAppear {
             guard let url = Bundle.main.url(forResource: "wyldeself-intro", withExtension: "mp4") else {
+                #if DEBUG
                 print("[Intro] Video not found in bundle")
+                #endif
                 isShowing = false
                 return
             }

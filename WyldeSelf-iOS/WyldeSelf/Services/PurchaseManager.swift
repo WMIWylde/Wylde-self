@@ -132,7 +132,9 @@ final class PurchaseManager: ObservableObject {
         } else {
             // STUB: pretend everyone is free until they "buy"
             self.entitlement = .free
+            #if DEBUG
             print("[Purchases] STUB mode — RevenueCat not yet wired")
+            #endif
         }
     }
 

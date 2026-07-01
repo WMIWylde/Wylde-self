@@ -49,9 +49,13 @@ final class WorkoutService: ObservableObject {
             }
             self.program = program
             saveProgram()
+            #if DEBUG
             print("[WorkoutService] ✅ AI program generated: \(program.days.count) days")
+            #endif
         } catch {
+            #if DEBUG
             print("[WorkoutService] ❌ AI failed: \(error.localizedDescription) — using fallback template")
+            #endif
             self.program = fallbackForEquipment(appState: appState)
             saveProgram()
         }
@@ -89,6 +93,9 @@ final class WorkoutService: ObservableObject {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let token = await AuthService.shared.accessToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
         request.timeoutInterval = 60
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
 
@@ -132,7 +139,7 @@ final class WorkoutService: ObservableObject {
             equipment = appState.equipment.isEmpty ? "Some basics" : appState.equipment
         }
         let gym = sessionEquipment.contains("machines") || sessionEquipment.contains("cables") || sessionEquipment.contains("cardio_machines") ? "Yes" : (appState.gymAccess.isEmpty ? "No" : appState.gymAccess)
-        let gender = appState.gender.isEmpty ? "male" : appState.gender
+        let gender = appState.gender.isEmpty ? "unspecified" : appState.gender
         let weight = appState.weight.isEmpty ? "" : "Weight: \(appState.weight) \(appState.weightUnit)"
         let height = appState.heightRange.isEmpty ? "" : "Height: \(appState.heightRange)"
         let age = appState.ageRange.isEmpty ? "" : "Age range: \(appState.ageRange)"

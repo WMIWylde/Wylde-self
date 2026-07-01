@@ -75,7 +75,9 @@ struct VisionCreationFlow: View {
             }
             Spacer()
             Button {
+                #if DEBUG
                 print("[VisionFlow] X tapped — dismissing")
+                #endif
                 dismiss()
             } label: {
                 Image(systemName: "xmark")
@@ -207,9 +209,13 @@ struct VisionCreationFlow: View {
         switch phase {
         case .categories:
             Button {
+                #if DEBUG
                 print("[VisionFlow] Continue tapped, selected: \(selectedCategoryIds.count)")
+                #endif
                 if !selectedCategoryIds.isEmpty {
+                    #if DEBUG
                     print("[VisionFlow] → reflecting(0)")
+                    #endif
                     phase = .reflecting(0)
                 }
             } label: {
@@ -278,7 +284,9 @@ struct VisionCreationFlow: View {
                 )
                 generatedVisions.append(vision)
             } catch {
+                #if DEBUG
                 print("[VisionFlow] Failed for \(cat.name): \(error.localizedDescription)")
+                #endif
                 errorText = "\(cat.name) failed — continuing"
             }
         }

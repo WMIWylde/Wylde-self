@@ -33,7 +33,9 @@ final class ProtocolTrackerService: ObservableObject {
             adherenceLogs = resp.adherenceLogs ?? []
             adherenceRate = resp.adherenceRate
         } catch {
+            #if DEBUG
             print("[ProtocolTracker] Fetch failed: \(error.localizedDescription)")
+            #endif
         }
     }
 
@@ -66,7 +68,9 @@ final class ProtocolTrackerService: ObservableObject {
                 await fetch() // Refresh data
             }
         } catch {
+            #if DEBUG
             print("[ProtocolTracker] Log dose failed: \(error.localizedDescription)")
+            #endif
         }
     }
 

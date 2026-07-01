@@ -30,7 +30,9 @@ class HealthKitManager {
             try await store.requestAuthorization(toShare: writeTypes, read: readTypes)
             return true
         } catch {
+            #if DEBUG
             print("[HealthKit] Auth error: \(error.localizedDescription)")
+            #endif
             return false
         }
     }
@@ -52,7 +54,9 @@ class HealthKitManager {
         defaults.set(Int(e), forKey: "wylde_health_exercise_min")
         defaults.set(Date().timeIntervalSince1970, forKey: "wylde_health_last_sync")
 
+        #if DEBUG
         print("[HealthKit] Synced — Steps: \(Int(s)), Cal: \(Int(c)), Exercise: \(Int(e))min")
+        #endif
     }
 
     private func fetchSum(_ identifier: HKQuantityTypeIdentifier, from start: Date, to end: Date) async -> Double {

@@ -93,7 +93,9 @@ struct BottomTabBar: View {
         HStack(spacing: 0) {
             ForEach(AppState.Tab.allCases, id: \.self) { tab in
                 TabButton(tab: tab, isActive: appState.selectedTab == tab) {
+                    #if DEBUG
                     print("[Tab] Tapped: \(tab.rawValue)")
+                    #endif
                     HapticManager.shared.impact(.light)
                     withAnimation(.easeInOut(duration: 0.15)) {
                         appState.selectedTab = tab

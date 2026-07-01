@@ -182,10 +182,14 @@ struct CareMessagingView: View {
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             let httpCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+            #if DEBUG
             print("[CareMessaging] Response: \(httpCode), bytes: \(data.count)")
+            #endif
 
             if httpCode == 403 || httpCode == 401 {
+                #if DEBUG
                 print("[CareMessaging] Auth/relationship issue")
+                #endif
                 isLoading = false
                 return
             }
@@ -194,10 +198,12 @@ struct CareMessagingView: View {
             let resp = try JSONDecoder().decode(Resp.self, from: data)
             messages = resp.messages ?? []
             relationshipId = resp.relationship_id
+            #if DEBUG
             print("[CareMessaging] Loaded \(messages.count) messages")
+            #endif
         } catch {
+            #if DEBUG
             print("[CareMessaging] Load failed: \(error)")
-            // Try to print raw response for debugging
             if let url = URL(string: "\(baseURL)/api/consumer/messages") {
                 var req2 = URLRequest(url: url)
                 if let t = await AuthService.shared.accessToken { req2.setValue("Bearer \(t)", forHTTPHeaderField: "Authorization") }
@@ -205,6 +211,7 @@ struct CareMessagingView: View {
                     print("[CareMessaging] Raw: \(str.prefix(300))")
                 }
             }
+            #endif
         }
         isLoading = false
     }
@@ -232,7 +239,9 @@ struct CareMessagingView: View {
             do {
                 let (data, response) = try await URLSession.shared.data(for: request)
                 let httpCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+                #if DEBUG
                 print("[CareMessaging] Send response: \(httpCode)")
+                #endif
                 struct Resp: Codable { let message: CareMessage? }
                 if let resp = try? JSONDecoder().decode(Resp.self, from: data), let msg = resp.message {
                     messages.append(msg)
@@ -241,7 +250,9 @@ struct CareMessagingView: View {
                     await loadMessages()
                 }
             } catch {
+                #if DEBUG
                 print("[CareMessaging] Send failed: \(error)")
+                #endif
             }
         }
     }

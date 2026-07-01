@@ -10,10 +10,12 @@ class NotificationManager: NSObject {
 
     func requestPermission() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+            #if DEBUG
             if let error = error {
                 print("[Notifications] Error: \(error.localizedDescription)")
             }
             print("[Notifications] Permission granted: \(granted)")
+            #endif
         }
     }
 
@@ -31,9 +33,11 @@ class NotificationManager: NSObject {
         )
 
         UNUserNotificationCenter.current().add(request) { error in
+            #if DEBUG
             if let error = error {
                 print("[Notifications] Schedule error: \(error.localizedDescription)")
             }
+            #endif
         }
     }
 

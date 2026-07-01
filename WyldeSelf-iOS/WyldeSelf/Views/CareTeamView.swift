@@ -468,16 +468,22 @@ final class CareTeamViewModel: ObservableObject {
     func generateCode(note: String? = nil) async {
         loading = true; defer { loading = false }
         error = nil
+        #if DEBUG
         print("[CareTeam] Generating code...")
+        #endif
         do {
             let r = try await ClinicalAPI.generateCareInvite(message: note)
+            #if DEBUG
             print("[CareTeam] Code generated: \(r.code)")
+            #endif
             generatedCode = r.code
             generatedExpiresAt = formatDate(r.expires_at)
             generatedShareText = r.share_text
             mode = .generated
         } catch {
+            #if DEBUG
             print("[CareTeam] Error: \(error)")
+            #endif
             self.error = error.localizedDescription
         }
     }

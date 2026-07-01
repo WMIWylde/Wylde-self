@@ -298,7 +298,9 @@ struct PaywallView: View {
             }
         } catch {
             // Silent fallback — counter still renders with default values
+            #if DEBUG
             print("[Paywall] Couldn't load founder count: \(error.localizedDescription)")
+            #endif
         }
     }
 }

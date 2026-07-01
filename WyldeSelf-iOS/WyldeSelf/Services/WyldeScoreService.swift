@@ -65,7 +65,9 @@ final class WyldeScoreService: ObservableObject {
                 todayScore = resp.score
             }
         } catch {
+            #if DEBUG
             print("[WyldeScore] Update failed: \(error.localizedDescription)")
+            #endif
         }
     }
 
@@ -85,7 +87,9 @@ final class WyldeScoreService: ObservableObject {
                 scoreHistory = resp.scores
             }
         } catch {
+            #if DEBUG
             print("[WyldeScore] Fetch failed: \(error.localizedDescription)")
+            #endif
         }
     }
 }

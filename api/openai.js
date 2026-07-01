@@ -1,10 +1,16 @@
+// Authentication: requires a valid Supabase JWT in the Authorization header.
 const { applyCors, rateLimit, clientIp } = require('../lib/security');
+const { getUserFromRequest } = require('../lib/supabase-admin');
 
 const MAX_BODY_BYTES = 2 * 1024 * 1024; // 2MB for image payloads
 
 module.exports = async function handler(req, res) {
   if (applyCors(req, res, { methods: 'POST, OPTIONS' })) return;
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  // Verify Supabase JWT — reject unauthenticated requests
+  const user = await getUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
   const ip = clientIp(req);
   const limit = rateLimit({ key: 'openai', ip, limit: 30, windowMs: 60_000 });

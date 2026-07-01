@@ -182,7 +182,9 @@ struct TherapyLibraryView: View {
             let resp = try JSONDecoder().decode(Resp.self, from: data)
             therapies = resp.therapies
         } catch {
+            #if DEBUG
             print("[Library] Load failed: \(error.localizedDescription)")
+            #endif
         }
         isLoading = false
     }
@@ -195,7 +197,9 @@ struct TherapyLibraryView: View {
             let resp = try JSONDecoder().decode(Resp.self, from: data)
             selectedTherapy = resp.therapy
         } catch {
+            #if DEBUG
             print("[Library] Detail load failed: \(error.localizedDescription)")
+            #endif
         }
     }
 }

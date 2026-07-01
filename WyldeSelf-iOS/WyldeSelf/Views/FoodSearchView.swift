@@ -204,7 +204,9 @@ struct FoodSearchView: View {
             let resp = try JSONDecoder().decode(Resp.self, from: data)
             results = resp.foods
         } catch {
+            #if DEBUG
             print("[FoodSearch] Error: \(error.localizedDescription)")
+            #endif
         }
     }
 
@@ -220,7 +222,9 @@ struct FoodSearchView: View {
             let resp = try JSONDecoder().decode(Resp.self, from: data)
             results = resp.foods
         } catch {
+            #if DEBUG
             print("[FoodSearch] Barcode error: \(error.localizedDescription)")
+            #endif
         }
     }
 

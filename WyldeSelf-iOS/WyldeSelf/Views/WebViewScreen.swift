@@ -185,7 +185,9 @@ struct WyldeWebView: UIViewRepresentable {
 
             case "log":
                 let msg = body["message"] as? String ?? ""
+                #if DEBUG
                 print("[WyldeBridge] \(msg)")
+                #endif
 
             default:
                 break

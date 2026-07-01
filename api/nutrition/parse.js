@@ -1,8 +1,14 @@
+// Authentication: requires a valid Supabase JWT in the Authorization header.
 const { applyCors } = require('../../lib/security');
+const { getUserFromRequest } = require('../../lib/supabase-admin');
 
 module.exports = async function handler(req, res) {
   if (applyCors(req, res, { methods: 'POST, OPTIONS' })) return;
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  // Verify Supabase JWT — reject unauthenticated requests
+  const user = await getUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
   const { text } = req.body || {};
   if (!text || typeof text !== 'string' || text.trim().length < 2) {

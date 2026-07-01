@@ -335,7 +335,9 @@ struct VoiceFoodLogView: View {
             try session.setCategory(.record, mode: .measurement, options: .duckOthers)
             try session.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
+            #if DEBUG
             print("[VoiceLog] Audio session error: \(error)")
+            #endif
             return
         }
 
@@ -364,7 +366,9 @@ struct VoiceFoodLogView: View {
             isRecording = true
             HapticManager.shared.impact(.medium)
         } catch {
+            #if DEBUG
             print("[VoiceLog] Engine error: \(error)")
+            #endif
         }
     }
 
@@ -396,6 +400,9 @@ struct VoiceFoodLogView: View {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let token = await AuthService.shared.accessToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
         request.timeoutInterval = 30
 
         let payload: [String: String] = ["text": text]
@@ -416,7 +423,9 @@ struct VoiceFoodLogView: View {
             showResult = true
             HapticManager.shared.notification(.success)
         } catch {
+            #if DEBUG
             print("[VoiceLog] Parse error: \(error)")
+            #endif
             errorText = "Failed to analyze food. Try again."
         }
     }

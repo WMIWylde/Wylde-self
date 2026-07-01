@@ -36,14 +36,18 @@ final class AuthService: ObservableObject {
             cachedToken = session.accessToken
             isSignedIn = true
             postAuthChanged(true)
+            #if DEBUG
             print("[AuthService] Session restored, token: \(session.accessToken.prefix(20))...")
+            #endif
         } catch {
             userID = nil
             email = nil
             cachedToken = nil
             isSignedIn = false
             postAuthChanged(false)
+            #if DEBUG
             print("[AuthService] No session to restore — will require sign-in")
+            #endif
         }
     }
 
@@ -72,7 +76,9 @@ final class AuthService: ObservableObject {
         // Try to get session token after sign up
         if let session = try? await supabase.auth.session {
             cachedToken = session.accessToken
+            #if DEBUG
             print("[AuthService] SignUp token: \(session.accessToken.prefix(20))...")
+            #endif
         }
         isSignedIn = true
         postAuthChanged(true)
@@ -80,13 +86,19 @@ final class AuthService: ObservableObject {
 
     /// Sign in with email + password.
     func signIn(email: String, password: String) async throws {
+        #if DEBUG
         print("[AuthService] Attempting sign-in for \(email)...")
+        #endif
         let session = try await supabase.auth.signIn(email: email, password: password)
+        #if DEBUG
         print("[AuthService] Sign-in succeeded!")
+        #endif
         userID = session.user.id.uuidString
         self.email = session.user.email
         cachedToken = session.accessToken
+        #if DEBUG
         print("[AuthService] Token cached: \(session.accessToken.prefix(30))...")
+        #endif
         isSignedIn = true
         postAuthChanged(true)
     }
@@ -163,9 +175,13 @@ final class AuthService: ObservableObject {
                 .from("profiles")
                 .upsert(row)
                 .execute()
+            #if DEBUG
             print("[AuthService] Profile synced to Supabase")
+            #endif
         } catch {
+            #if DEBUG
             print("[AuthService] Profile sync failed: \(error.localizedDescription)")
+            #endif
         }
     }
 

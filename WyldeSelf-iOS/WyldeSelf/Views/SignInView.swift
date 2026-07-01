@@ -230,7 +230,9 @@ struct SignInView: View {
                 sent = true
             }
         } catch {
+            #if DEBUG
             print("[SignIn] ERROR: \(error)")
+            #endif
             errorText = error.localizedDescription
         }
     }

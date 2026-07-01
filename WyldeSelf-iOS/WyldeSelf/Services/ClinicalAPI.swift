@@ -64,9 +64,13 @@ enum ClinicalAPI {
         // Attach the user's Supabase JWT (silent if signed out — server rejects).
         if let token = await AuthService.shared.accessToken {
             req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            #if DEBUG
             print("[ClinicalAPI] Token attached: \(token.prefix(20))...")
+            #endif
         } else {
+            #if DEBUG
             print("[ClinicalAPI] WARNING: No auth token available")
+            #endif
         }
 
         if let body, !(body is EmptyBody) {

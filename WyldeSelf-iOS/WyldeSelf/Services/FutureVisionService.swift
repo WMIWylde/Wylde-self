@@ -80,13 +80,20 @@ final class FutureVisionService: ObservableObject {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let token = await AuthService.shared.accessToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
         request.timeoutInterval = 90
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
 
+        #if DEBUG
         print("[FutureVision] Generating image for \(category)...")
+        #endif
         let (data, response) = try await URLSession.shared.data(for: request)
         let httpCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+        #if DEBUG
         print("[FutureVision] Response: \(httpCode), bytes: \(data.count)")
+        #endif
 
         guard let httpResponse = response as? HTTPURLResponse,
               httpResponse.statusCode == 200 else {

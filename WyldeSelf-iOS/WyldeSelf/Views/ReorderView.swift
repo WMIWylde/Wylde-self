@@ -240,7 +240,9 @@ struct ReorderView: View {
                 .value
             products = response
         } catch {
+            #if DEBUG
             print("[Reorder] Load products failed: \(error.localizedDescription)")
+            #endif
         }
 
         isLoading = false
@@ -277,7 +279,9 @@ struct ReorderView: View {
                 await loadData() // Refresh
             }
         } catch {
+            #if DEBUG
             print("[Reorder] Submit failed: \(error.localizedDescription)")
+            #endif
         }
     }
 

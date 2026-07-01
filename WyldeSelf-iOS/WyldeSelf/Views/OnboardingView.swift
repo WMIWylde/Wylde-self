@@ -561,13 +561,18 @@ struct OnboardingView: View {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let token = await AuthService.shared.accessToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
         request.timeoutInterval = 90
         request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
 
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             let httpCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+            #if DEBUG
             print("[Onboarding] Future Self response: \(httpCode)")
+            #endif
 
             struct Resp: Codable { let success: Bool?; let image_base64: String?; let error: String? }
             let resp = try JSONDecoder().decode(Resp.self, from: data)
@@ -577,14 +582,20 @@ struct OnboardingView: View {
                let imgData = Data(base64Encoded: cleanBase64),
                let image = UIImage(data: imgData) {
                 futureRendering = image
+                #if DEBUG
                 print("[Onboarding] ✅ Future Self image generated")
+                #endif
             } else {
                 renderError = resp.error ?? "Image generation failed"
+                #if DEBUG
                 print("[Onboarding] ❌ Future Self failed: \(resp.error ?? "unknown")")
+                #endif
             }
         } catch {
             renderError = error.localizedDescription
+            #if DEBUG
             print("[Onboarding] ❌ Future Self error: \(error.localizedDescription)")
+            #endif
         }
 
         isRendering = false
@@ -762,8 +773,12 @@ struct CameraPicker: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
         picker.delegate = context.coordinator
-        picker.sourceType = .camera
-        picker.cameraCaptureMode = .photo
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            picker.sourceType = .camera
+            picker.cameraCaptureMode = .photo
+        } else {
+            picker.sourceType = .photoLibrary
+        }
         picker.allowsEditing = true
         return picker
     }

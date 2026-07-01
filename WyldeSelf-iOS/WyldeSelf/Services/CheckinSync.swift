@@ -74,7 +74,9 @@ final class CheckinSync {
 
     private func sync(appState: AppState) {
         guard hasActiveCareRelationship else {
+            #if DEBUG
             print("[CheckinSync] Skipping sync — no care relationship")
+            #endif
             return
         }
 
@@ -103,10 +105,14 @@ final class CheckinSync {
         do {
             let r = try await ClinicalAPI.careRelationships()
             hasActiveCareRelationship = (r.active_relationship != nil)
+            #if DEBUG
             print("[CheckinSync] Care relationship active: \(hasActiveCareRelationship)")
+            #endif
         } catch {
             hasActiveCareRelationship = false
+            #if DEBUG
             print("[CheckinSync] Care relationship check failed: \(error.localizedDescription)")
+            #endif
         }
     }
 
