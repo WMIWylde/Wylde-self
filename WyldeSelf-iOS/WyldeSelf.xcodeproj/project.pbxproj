@@ -50,7 +50,6 @@
 		A10004 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10004 /* AppState.swift */; };
 		A10005 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10005 /* Theme.swift */; };
 		A10006 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10006 /* MainTabView.swift */; };
-		A10007 /* WebViewScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10007 /* WebViewScreen.swift */; };
 		A10008 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10008 /* TodayView.swift */; };
 		A10009 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10009 /* HapticManager.swift */; };
 		A10010 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10010 /* NotificationManager.swift */; };
@@ -137,7 +136,6 @@
 		B10004 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		B10005 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		B10006 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
-		B10007 /* WebViewScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewScreen.swift; sourceTree = "<group>"; };
 		B10008 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 		B10009 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		B10010 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
@@ -254,7 +252,6 @@
 			isa = PBXGroup;
 			children = (
 				B10006 /* MainTabView.swift */,
-				B10007 /* WebViewScreen.swift */,
 				B10008 /* TodayView.swift */,
 				B10017 /* ExercisesView.swift */,
 				B10020 /* PaywallView.swift */,
@@ -438,7 +435,6 @@
 				A10004 /* AppState.swift in Sources */,
 				A10005 /* Theme.swift in Sources */,
 				A10006 /* MainTabView.swift in Sources */,
-				A10007 /* WebViewScreen.swift in Sources */,
 				A10008 /* TodayView.swift in Sources */,
 				A10009 /* HapticManager.swift in Sources */,
 				A10010 /* NotificationManager.swift in Sources */,

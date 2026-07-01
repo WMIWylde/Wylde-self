@@ -1,5 +1,4 @@
 import SwiftUI
-import WebKit
 
 // ════════════════════════════════════════════════════════════════════
 //  SettingsDrawer — native SwiftUI version of the web settings drawer.
@@ -88,8 +87,8 @@ struct SettingsDrawer: View {
                 HapticManager.shared.impact(.light)
                 showIdentityImport = true
             })
-            DrawerLink(icon: "person.fill",             label: "Edit Profile",       action: { openWebFunction("openEditProfile") })
-            DrawerLink(icon: "arrow.triangle.2.circlepath", label: "Rebuild My Program", action: { openWebFunction("regenerateProgram") })
+            // TODO: Wire up native Edit Profile and Rebuild My Program screens
+            // (Previously routed through the WebView bridge which has been removed.)
 
             // ── Divider ────────────────────────────────────────
             Rectangle()
@@ -226,29 +225,11 @@ struct SettingsDrawer: View {
         dismiss()
     }
 
-    /// Triggers a web JS function in the active WebView (Edit Profile,
-    /// Regenerate Program both live in the web layer for now).
-    private func openWebFunction(_ jsFunction: String) {
-        HapticManager.shared.impact(.light)
-        appState.selectedTab = .future
-        NotificationCenter.default.post(
-            name: .invokeWebFunction,
-            object: nil,
-            userInfo: ["function": jsFunction]
-        )
-        dismiss()
-    }
 
     private func signOutAndDismiss() {
         HapticManager.shared.notification(.warning)
         appState.isAuthenticated = false
         appState.resetAllData()
-        // Tell the embedded web layer to sign out of Supabase too
-        NotificationCenter.default.post(
-            name: .invokeWebFunction,
-            object: nil,
-            userInfo: ["function": "signOutUser"]
-        )
         dismiss()
     }
 }
@@ -284,6 +265,3 @@ private struct DrawerLink: View {
     }
 }
 
-extension Notification.Name {
-    static let invokeWebFunction = Notification.Name("invokeWebFunction")
-}

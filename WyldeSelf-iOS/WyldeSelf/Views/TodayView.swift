@@ -23,6 +23,7 @@ struct TodayView: View {
     @State private var walkTimer: Timer?
 
     @State private var didAppear = false
+    @State private var showReflection = false
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -124,6 +125,14 @@ struct TodayView: View {
                     .offset(y: didAppear ? 0 : 12)
                     .animation(.easeOut(duration: 0.6).delay(0.30), value: didAppear)
 
+                // Evening Reflection — shows after 5 PM if not done today
+                if isEveningTime && !appState.eveningReflectionDone {
+                    reflectionCard
+                        .opacity(didAppear ? 1 : 0)
+                        .offset(y: didAppear ? 0 : 12)
+                        .animation(.easeOut(duration: 0.6).delay(0.33), value: didAppear)
+                }
+
                 healthCard
                     .opacity(didAppear ? 1 : 0)
                     .offset(y: didAppear ? 0 : 12)
@@ -174,6 +183,10 @@ struct TodayView: View {
         }
         .fullScreenCover(isPresented: $showCoach) {
             CoachChatView()
+                .environmentObject(appState)
+        }
+        .fullScreenCover(isPresented: $showReflection) {
+            EveningReflectionView()
                 .environmentObject(appState)
         }
         .fullScreenCover(isPresented: $showQiGong) {
@@ -1080,8 +1093,44 @@ struct TodayView: View {
         let defaults = UserDefaults.standard
         healthSteps = defaults.integer(forKey: "wylde_health_steps")
         healthCalories = defaults.integer(forKey: "wylde_health_calories")
-        // Sync burned calories to AppState for nutrition tracking
         appState.caloriesBurned = healthCalories
+    }
+
+    // MARK: - Evening Reflection
+
+    private var isEveningTime: Bool {
+        Calendar.current.component(.hour, from: Date()) >= 17
+    }
+
+    private var reflectionCard: some View {
+        Button { showReflection = true } label: {
+            HStack(spacing: 14) {
+                Image(systemName: "moon.stars.fill")
+                    .font(.system(size: 18))
+                    .foregroundColor(Color(hex: "B68BFF"))
+                    .frame(width: 44, height: 44)
+                    .background(Color(hex: "B68BFF").opacity(0.10))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("EVENING REFLECTION")
+                        .font(.system(size: 10, weight: .bold))
+                        .tracking(1.6)
+                        .foregroundColor(Color(hex: "B68BFF"))
+                    Text("Close the day with clarity")
+                        .font(.system(size: 13))
+                        .foregroundColor(Color(hex: "A6A29A"))
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12))
+                    .foregroundColor(Color(hex: "6E6B65"))
+            }
+            .padding(16)
+            .background(Color(hex: "111111"))
+            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color(hex: "B68BFF").opacity(0.15), lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        }
+        .buttonStyle(.plain)
     }
 }
 

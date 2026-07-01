@@ -44,9 +44,9 @@
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Wylde Self uses speech recognition to transcribe your meal descriptions for nutrition tracking.</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Wylde Self reads your health data to track steps, calories burned, and sleep to optimize your training program.</string>
+	<string>Wylde Self reads step count, active calories, heart rate, exercise minutes, and sleep data to personalize your daily training and recovery recommendations.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>Wylde Self writes workout data to keep your health records in sync.</string>
+	<string>Wylde Self writes active energy burned from logged workouts to keep your Apple Health records accurate.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Wylde Self accesses your photo library to upload progress photos and meal images.</string>
 	<key>SUPABASE_ANON_KEY</key>

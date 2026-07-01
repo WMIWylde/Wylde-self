@@ -115,7 +115,7 @@ final class MacroTrackerService: ObservableObject {
         """
 
         let messages: [[String: Any]] = [
-            ["role": "system", "content": "You are a nutrition analyst. Analyze food photos and return macro estimates as JSON only. No explanations."],
+            ["role": "system", "content": "You are a nutrition analyst. Analyze food photos and return macro estimates as JSON only. No explanations. You are not a medical professional. If the meal appears severely restrictive (under 200 calories for a full meal), include a note in the description suggesting the user ensure adequate daily intake. Nutrition needs change during pregnancy and breastfeeding — do not provide specialized medical dietary advice."],
             ["role": "user", "content": [
                 ["type": "text", "text": prompt],
                 ["type": "image_url", "image_url": ["url": "data:image/jpeg;base64,\(base64)"]]

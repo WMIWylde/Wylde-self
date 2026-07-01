@@ -12,6 +12,7 @@ final class FutureVisionService: ObservableObject {
     @Published var generationProgress: String = ""
 
     private let cacheKey = "wylde_future_visions"
+    private let fileStorage = FileStorage.shared
 
     // MARK: - Generate vision for a category
 
@@ -153,18 +154,30 @@ final class FutureVisionService: ObservableObject {
         "lifestyle": "How you spend your days is how you spend your life.",
     ]
 
-    // MARK: - Persistence (local cache)
+    // MARK: - Persistence (file-based cache)
+    //
+    // Vision data includes base64-encoded images that can be several MB
+    // each — too large for UserDefaults or Keychain. We store the full
+    // JSON in Application Support via FileStorage.
 
     private func saveCache() {
         if let data = try? JSONEncoder().encode(visions) {
-            UserDefaults.standard.set(data, forKey: cacheKey)
+            fileStorage.write(data, forKey: cacheKey)
         }
     }
 
     private func loadCache() {
-        guard let data = UserDefaults.standard.data(forKey: cacheKey),
-              let cached = try? JSONDecoder().decode([FutureVision].self, from: data) else { return }
-        visions = cached
+        // Try FileStorage first, fall back to UserDefaults for migration
+        if let data = fileStorage.read(forKey: cacheKey),
+           let cached = try? JSONDecoder().decode([FutureVision].self, from: data) {
+            visions = cached
+        } else if let data = UserDefaults.standard.data(forKey: cacheKey),
+                  let cached = try? JSONDecoder().decode([FutureVision].self, from: data) {
+            visions = cached
+            // Migrate: save to FileStorage and remove from UserDefaults
+            saveCache()
+            UserDefaults.standard.removeObject(forKey: cacheKey)
+        }
     }
 
     func deleteVision(_ id: UUID) {

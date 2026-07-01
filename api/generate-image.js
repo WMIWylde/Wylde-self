@@ -150,7 +150,7 @@ Goal: ${emphasis} — ${goalList.join(', ')}.
 
 CRITICAL: Generate ONE SINGLE full-body photograph. Do NOT create a collage, mood board, vision board, grid, split image, or multiple images. One continuous photorealistic image of one person standing or posing. No text, no labels, no watermarks, no borders, no frames.
 
-Make the transformation dramatic and motivating. This should inspire the person to keep going.`;
+Make the transformation dramatic and motivating but physically realistic and achievable naturally. Do not depict unrealistic proportions, extreme leanness that would be unhealthy, or physiques only attainable through unsafe means. This should inspire the person to keep going.`;
 }
 
 /**

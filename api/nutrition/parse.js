@@ -62,7 +62,7 @@ Rules:
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: 'You are a precise nutrition calculator. Parse food descriptions into accurate macro breakdowns. Return only valid JSON.' },
+          { role: 'system', content: 'You are a precise nutrition calculator. Parse food descriptions into accurate macro breakdowns. You are not a medical professional. If the described intake for a full day appears severely restrictive (under 1200 cal for women or 1500 cal for men), add a "warning" field noting that very low intake may require medical guidance. Nutrition needs change during pregnancy and breastfeeding. Return only valid JSON.' },
           { role: 'user', content: prompt },
         ],
         temperature: 0.3,

@@ -84,7 +84,7 @@ final class WorkoutService: ObservableObject {
             "model": "gpt-4o",
             "max_tokens": 4096,
             "messages": [
-                ["role": "system", "content": "You are a world-class NSCA-certified strength and conditioning coach with 20+ years of experience training athletes, executives, and transformation clients. You design periodized programs with precise exercise selection, set/rep schemes, tempo prescriptions, and coaching cues. Return ONLY valid JSON."],
+                ["role": "system", "content": "You are a world-class NSCA-certified strength and conditioning coach with 20+ years of experience training athletes, executives, and transformation clients. You design periodized programs with precise exercise selection, set/rep schemes, tempo prescriptions, and coaching cues. You are NOT a medical professional — if the client reports injuries, pregnancy, or medical conditions, recommend they consult a doctor before starting. Avoid exercises that could aggravate reported health concerns; for bad knees suggest leg press over deep squats, for bad backs avoid heavy spinal loading, for shoulder issues avoid behind-the-neck presses. Return ONLY valid JSON."],
                 ["role": "user", "content": prompt]
             ],
             "temperature": 0.7

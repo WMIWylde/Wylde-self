@@ -29,22 +29,25 @@ class AppState: ObservableObject {
     // assume a gender. The user can set this explicitly during onboarding.
     // Existing users who already chose "Male"/"Female" keep their value
     // because loadFromDefaults reads the persisted string.
-    @Published var gender: String = ""                              { didSet { defaults.set(gender, forKey: "wylde_gender") } }
+    //
+    // Sensitive fields (gender, age, weight, height, health, diet) use
+    // SecureStorage (Keychain) instead of UserDefaults.
+    @Published var gender: String = ""                              { didSet { guard !isLoading else { return }; secure.set(gender, forKey: "wylde_gender") } }
     @Published var goals: [String] = []                             { didSet { defaults.set(goals, forKey: "wylde_goals") } }
     @Published var gymName: String = ""                             { didSet { defaults.set(gymName, forKey: "wylde_gym") } }
     @Published var onboardingComplete: Bool = false                  { didSet { defaults.set(onboardingComplete, forKey: "wylde_onboarded") } }
-    @Published var ageRange: String = ""                             { didSet { defaults.set(ageRange, forKey: "wylde_age") } }
+    @Published var ageRange: String = ""                             { didSet { guard !isLoading else { return }; secure.set(ageRange, forKey: "wylde_age") } }
     @Published var fitnessLevel: String = ""                         { didSet { defaults.set(fitnessLevel, forKey: "wylde_level") } }
     @Published var trainingDays: String = ""                         { didSet { defaults.set(trainingDays, forKey: "wylde_days") } }
     @Published var equipment: String = ""                            { didSet { defaults.set(equipment, forKey: "wylde_equipment") } }
     @Published var gymAccess: String = ""                            { didSet { defaults.set(gymAccess, forKey: "wylde_gym_access") } }
-    @Published var heightRange: String = ""                          { didSet { defaults.set(heightRange, forKey: "wylde_height") } }
-    @Published var weight: String = ""                               { didSet { defaults.set(weight, forKey: "wylde_weight") } }
+    @Published var heightRange: String = ""                          { didSet { guard !isLoading else { return }; secure.set(heightRange, forKey: "wylde_height") } }
+    @Published var weight: String = ""                               { didSet { guard !isLoading else { return }; secure.set(weight, forKey: "wylde_weight") } }
     @Published var weightUnit: String = "lbs"                        { didSet { defaults.set(weightUnit, forKey: "wylde_weight_unit") } }
-    @Published var healthConcerns: [String] = []                     { didSet { defaults.set(healthConcerns, forKey: "wylde_health") } }
-    @Published var healthNotes: String = ""                          { didSet { defaults.set(healthNotes, forKey: "wylde_health_notes") } }
-    @Published var dietaryPrefs: [String] = []                       { didSet { defaults.set(dietaryPrefs, forKey: "wylde_diet") } }
-    @Published var dietNotes: String = ""                            { didSet { defaults.set(dietNotes, forKey: "wylde_diet_notes") } }
+    @Published var healthConcerns: [String] = []                     { didSet { guard !isLoading else { return }; secure.setCodable(healthConcerns, forKey: "wylde_health") } }
+    @Published var healthNotes: String = ""                          { didSet { guard !isLoading else { return }; secure.set(healthNotes, forKey: "wylde_health_notes") } }
+    @Published var dietaryPrefs: [String] = []                       { didSet { guard !isLoading else { return }; secure.setCodable(dietaryPrefs, forKey: "wylde_diet") } }
+    @Published var dietNotes: String = ""                            { didSet { guard !isLoading else { return }; secure.set(dietNotes, forKey: "wylde_diet_notes") } }
     @Published var classPreferences: [String] = []                   { didSet { defaults.set(classPreferences, forKey: "wylde_classes") } }
     @Published var currentBook: String = ""                            { didSet { defaults.set(currentBook, forKey: "wylde_book") } }
     @Published var pagesReadToday: Int = 0                             { didSet { defaults.set(pagesReadToday, forKey: dayKey("wylde_pages")) } }
@@ -67,7 +70,7 @@ class AppState: ObservableObject {
     // /api/identity-analyze endpoint). Persisted as encoded JSON so the
     // result screen renders instantly on cold launch.
     @Published var identityProfile: IdentityProfile? {
-        didSet { saveCodable(identityProfile, key: "wylde_identity_profile") }
+        didSet { guard !isLoading else { return }; secure.setCodable(identityProfile, forKey: "wylde_identity_profile") }
     }
     var hasIdentityProfile: Bool { identityProfile != nil }
 
@@ -92,6 +95,7 @@ class AppState: ObservableObject {
     @Published var fatLogged: Int = 0                                { didSet { defaults.set(fatLogged, forKey: dayKey("wylde_fat_logged")) } }
     @Published var fatGoal: Int = 80                                 { didSet { defaults.set(fatGoal, forKey: "wylde_fat_goal") } }
     @Published var caloriesBurned: Int = 0                           { didSet { defaults.set(caloriesBurned, forKey: dayKey("wylde_calories_burned")) } }
+    @Published var eveningReflectionDone: Bool = false               { didSet { defaults.set(eveningReflectionDone, forKey: dayKey("wylde_reflection_done")) } }
 
     enum Tab: String, CaseIterable {
         case today     = "Today"
@@ -122,6 +126,7 @@ class AppState: ObservableObject {
     // MARK: - Persistence
 
     private let defaults = UserDefaults.standard
+    private let secure = SecureStorage.shared
     // Suspend didSet writes during the initial load so we don't write the
     // defaults back over themselves (also avoids redundant disk hits).
     private var isLoading = true
@@ -176,25 +181,28 @@ class AppState: ObservableObject {
         if currentDay == 0 { currentDay = 1 }
         streak = defaults.integer(forKey: "wylde_streak")
         xp = defaults.integer(forKey: "wylde_xp")
-        gender = defaults.string(forKey: "wylde_gender") ?? ""
+        // Sensitive fields — read from Keychain (SecureStorage), falling
+        // back to UserDefaults for migration from pre-encryption installs.
+        gender = secure.get(forKey: "wylde_gender") ?? defaults.string(forKey: "wylde_gender") ?? ""
         goals = defaults.stringArray(forKey: "wylde_goals") ?? []
         gymName = defaults.string(forKey: "wylde_gym") ?? ""
         onboardingComplete = defaults.bool(forKey: "wylde_onboarded")
-        ageRange = defaults.string(forKey: "wylde_age") ?? ""
+        ageRange = secure.get(forKey: "wylde_age") ?? defaults.string(forKey: "wylde_age") ?? ""
         fitnessLevel = defaults.string(forKey: "wylde_level") ?? ""
         trainingDays = defaults.string(forKey: "wylde_days") ?? ""
         equipment = defaults.string(forKey: "wylde_equipment") ?? ""
         gymAccess = defaults.string(forKey: "wylde_gym_access") ?? ""
-        heightRange = defaults.string(forKey: "wylde_height") ?? ""
-        weight = defaults.string(forKey: "wylde_weight") ?? ""
+        heightRange = secure.get(forKey: "wylde_height") ?? defaults.string(forKey: "wylde_height") ?? ""
+        weight = secure.get(forKey: "wylde_weight") ?? defaults.string(forKey: "wylde_weight") ?? ""
         weightUnit = defaults.string(forKey: "wylde_weight_unit") ?? "lbs"
-        healthConcerns = defaults.stringArray(forKey: "wylde_health") ?? []
-        healthNotes = defaults.string(forKey: "wylde_health_notes") ?? ""
-        dietaryPrefs = defaults.stringArray(forKey: "wylde_diet") ?? []
-        dietNotes = defaults.string(forKey: "wylde_diet_notes") ?? ""
+        healthConcerns = secure.getCodable([String].self, forKey: "wylde_health") ?? defaults.stringArray(forKey: "wylde_health") ?? []
+        healthNotes = secure.get(forKey: "wylde_health_notes") ?? defaults.string(forKey: "wylde_health_notes") ?? ""
+        dietaryPrefs = secure.getCodable([String].self, forKey: "wylde_diet") ?? defaults.stringArray(forKey: "wylde_diet") ?? []
+        dietNotes = secure.get(forKey: "wylde_diet_notes") ?? defaults.string(forKey: "wylde_diet_notes") ?? ""
         classPreferences = defaults.stringArray(forKey: "wylde_classes") ?? []
         currentBook = defaults.string(forKey: "wylde_book") ?? ""
         pagesReadToday = defaults.integer(forKey: dayKey("wylde_pages"))
+        eveningReflectionDone = defaults.bool(forKey: dayKey("wylde_reflection_done"))
 
         // Pro entitlement — cached locally for instant UI on launch.
         // Source of truth is RevenueCat / Supabase; this is just the
@@ -203,8 +211,10 @@ class AppState: ObservableObject {
         foundingMemberNumber = defaults.integer(forKey: "wylde_founder_number")
         proProvider = defaults.string(forKey: "wylde_pro_provider") ?? ""
 
-        // Identity profile — cached locally for instant render on cold launch
-        identityProfile = loadCodable(IdentityProfile.self, key: "wylde_identity_profile")
+        // Identity profile — cached in Keychain for instant render on cold launch.
+        // Falls back to UserDefaults for migration from pre-encryption installs.
+        identityProfile = secure.getCodable(IdentityProfile.self, forKey: "wylde_identity_profile")
+            ?? loadCodable(IdentityProfile.self, key: "wylde_identity_profile")
 
         // Morning protocol — load any persisted state, but reconcile against
         // the canonical 3 practices so old multi-action protocols collapse
@@ -254,12 +264,16 @@ class AppState: ObservableObject {
     func resetAllData() {
         let keys = [
             "wylde_authed", "wylde_name", "wylde_day", "wylde_streak", "wylde_xp",
-            "wylde_gender", "wylde_goals", "wylde_gym", "wylde_onboarded",
-            "wylde_age", "wylde_level", "wylde_days", "wylde_equipment",
-            "wylde_gym_access", "wylde_height", "wylde_weight", "wylde_weight_unit",
-            "wylde_health", "wylde_health_notes", "wylde_diet", "wylde_diet_notes", "wylde_classes",
+            "wylde_goals", "wylde_gym", "wylde_onboarded",
+            "wylde_level", "wylde_days", "wylde_equipment",
+            "wylde_gym_access", "wylde_weight_unit",
+            "wylde_classes",
             "wylde_morning_actions", "wylde_morning_done",
-            "wylde_protein_goal", "wylde_calories_goal"
+            "wylde_protein_goal", "wylde_calories_goal",
+            // Legacy keys — remove stale UserDefaults copies of now-secure fields
+            "wylde_gender", "wylde_age", "wylde_height", "wylde_weight",
+            "wylde_health", "wylde_health_notes", "wylde_diet", "wylde_diet_notes",
+            "wylde_identity_profile"
         ]
         for k in keys { defaults.removeObject(forKey: k) }
         // Sweep all date-scoped daily keys
@@ -271,6 +285,8 @@ class AppState: ObservableObject {
                 defaults.removeObject(forKey: key)
             }
         }
+        // Wipe Keychain + file storage (sensitive data + vision images)
+        SecureStorage.shared.deleteAllUserData()
         loadFromDefaults()
     }
 

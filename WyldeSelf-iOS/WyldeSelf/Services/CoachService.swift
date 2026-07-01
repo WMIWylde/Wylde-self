@@ -11,6 +11,7 @@ final class CoachService: ObservableObject {
 
     private let historyKey = "wylde_coach_chat"
     private let maxHistory = 30
+    private let secure = SecureStorage.shared
 
     // MARK: - Send Message
 
@@ -114,6 +115,8 @@ final class CoachService: ObservableObject {
 
         \(contextBlock)
 
+        You are NOT a medical or mental health professional. If someone describes an injury, pregnancy, or medical condition, tell them to see a doctor. If you notice signs of disordered eating, self-harm, or severe restriction, gently suggest professional help — never diagnose. Never shame or guilt anyone about food choices or missed workouts.
+
         They are becoming \(identityPhrase). Remind them of that identity — not with hype, but with quiet certainty.
 
         QUICK ACTIONS — if the user sends one of these exact phrases:
@@ -158,19 +161,25 @@ final class CoachService: ObservableObject {
 
     private func saveHistory() {
         let toSave = Array(messages.suffix(maxHistory))
-        if let data = try? JSONEncoder().encode(toSave) {
-            UserDefaults.standard.set(data, forKey: historyKey)
-        }
+        secure.setCodable(toSave, forKey: historyKey)
     }
 
     private func loadHistory() {
-        guard let data = UserDefaults.standard.data(forKey: historyKey),
-              let saved = try? JSONDecoder().decode([CoachMessage].self, from: data) else { return }
-        messages = saved
+        // Try Keychain first, fall back to UserDefaults for migration
+        if let saved = secure.getCodable([CoachMessage].self, forKey: historyKey) {
+            messages = saved
+        } else if let data = UserDefaults.standard.data(forKey: historyKey),
+                  let saved = try? JSONDecoder().decode([CoachMessage].self, from: data) {
+            messages = saved
+            // Migrate: save to Keychain and remove from UserDefaults
+            secure.setCodable(saved, forKey: historyKey)
+            UserDefaults.standard.removeObject(forKey: historyKey)
+        }
     }
 
     func clearHistory() {
         messages = []
+        secure.remove(forKey: historyKey)
         UserDefaults.standard.removeObject(forKey: historyKey)
     }
 
