@@ -75,6 +75,11 @@ struct TodayView: View {
                     .offset(y: didAppear ? 0 : 12)
                     .animation(.easeOut(duration: 0.6).delay(0.20), value: didAppear)
 
+                waterCard
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 12)
+                    .animation(.easeOut(duration: 0.6).delay(0.22), value: didAppear)
+
                 // Future You strip — calm reminder of what consistency is
                 // building toward. Copy evolves week-by-week via
                 // FutureYouCopy.forWeek so it doesn't read like a
@@ -1094,6 +1099,83 @@ struct TodayView: View {
         healthSteps = defaults.integer(forKey: "wylde_health_steps")
         healthCalories = defaults.integer(forKey: "wylde_health_calories")
         appState.caloriesBurned = healthCalories
+    }
+
+    // MARK: - Water
+
+    private var waterCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "drop.fill")
+                    .foregroundColor(Color(hex: "7FD0FF"))
+                Text("Water")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(Theme.text)
+                Spacer()
+                Text("\(appState.waterLogged) / \(appState.waterGoal) glasses")
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundColor(Theme.muted)
+            }
+
+            // Progress dots
+            HStack(spacing: 6) {
+                ForEach(0..<appState.waterGoal, id: \.self) { i in
+                    Circle()
+                        .fill(i < appState.waterLogged ? Color(hex: "7FD0FF") : Color(hex: "7FD0FF").opacity(0.15))
+                        .frame(width: 28, height: 28)
+                        .overlay(
+                            Image(systemName: "drop.fill")
+                                .font(.system(size: 11))
+                                .foregroundColor(i < appState.waterLogged ? .white : Color(hex: "7FD0FF").opacity(0.3))
+                        )
+                        .onTapGesture {
+                            HapticManager.shared.impact(.light)
+                            if appState.waterLogged == i + 1 {
+                                appState.waterLogged = i
+                            } else {
+                                appState.waterLogged = i + 1
+                            }
+                        }
+                }
+                Spacer()
+            }
+
+            // Quick add buttons
+            HStack(spacing: 8) {
+                Button {
+                    HapticManager.shared.impact(.light)
+                    if appState.waterLogged < appState.waterGoal {
+                        appState.waterLogged += 1
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 11))
+                        Text("Add glass")
+                            .font(.system(size: 12, weight: .medium))
+                    }
+                    .foregroundColor(Color(hex: "7FD0FF"))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(Color(hex: "7FD0FF").opacity(0.10))
+                    .clipShape(Capsule())
+                }
+
+                if appState.waterLogged >= appState.waterGoal {
+                    HStack(spacing: 4) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 12))
+                        Text("Goal reached")
+                            .font(.system(size: 12, weight: .medium))
+                    }
+                    .foregroundColor(Theme.sage)
+                }
+            }
+        }
+        .padding(Theme.cardPadding)
+        .background(Theme.surface)
+        .cornerRadius(Theme.cardRadius)
+        .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
     }
 
     // MARK: - Evening Reflection

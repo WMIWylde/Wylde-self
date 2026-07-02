@@ -96,6 +96,8 @@ class AppState: ObservableObject {
     @Published var fatLogged: Int = 0                                { didSet { defaults.set(fatLogged, forKey: dayKey("wylde_fat_logged")) } }
     @Published var fatGoal: Int = 80                                 { didSet { defaults.set(fatGoal, forKey: "wylde_fat_goal") } }
     @Published var caloriesBurned: Int = 0                           { didSet { defaults.set(caloriesBurned, forKey: dayKey("wylde_calories_burned")) } }
+    @Published var waterLogged: Int = 0                              { didSet { defaults.set(waterLogged, forKey: dayKey("wylde_water_logged")) } }
+    @Published var waterGoal: Int = 8                                { didSet { defaults.set(waterGoal, forKey: "wylde_water_goal") } }
     @Published var eveningReflectionDone: Bool = false               { didSet { defaults.set(eveningReflectionDone, forKey: dayKey("wylde_reflection_done")) } }
 
     enum Tab: String, CaseIterable {
@@ -260,6 +262,7 @@ class AppState: ObservableObject {
         carbsLogged = defaults.integer(forKey: dayKey("wylde_carbs_logged"))
         fatLogged = defaults.integer(forKey: dayKey("wylde_fat_logged"))
         caloriesBurned = defaults.integer(forKey: dayKey("wylde_calories_burned"))
+        waterLogged = defaults.integer(forKey: dayKey("wylde_water_logged"))
 
         // Goals carry over day-to-day, only reset when user changes them
         let pg = defaults.integer(forKey: "wylde_protein_goal")
@@ -270,6 +273,8 @@ class AppState: ObservableObject {
         if cbg > 0 { carbsGoal = cbg }
         let fg = defaults.integer(forKey: "wylde_fat_goal")
         if fg > 0 { fatGoal = fg }
+        let wg = defaults.integer(forKey: "wylde_water_goal")
+        if wg > 0 { waterGoal = wg }
 
         // Auth: prefer explicit flag, fall back to "did the user set a name"
         if defaults.object(forKey: "wylde_authed") != nil {
