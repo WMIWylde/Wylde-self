@@ -69,6 +69,12 @@ struct StartTodayFlow: View {
     @EnvironmentObject var appState: AppState
     @Binding var isPresented: Bool
     @StateObject private var flow = StartTodayFlowState()
+    @ObservedObject private var workoutService = WorkoutService.shared
+
+    @State private var showQiGong = false
+    @State private var showMeditation = false
+    @State private var showJournaling = false
+    @State private var showWorkout = false
 
     // Step 6 final-state visibility — once Close-the-Loop fires we replace
     // the checks with a calm completion message until the user dismisses.
@@ -90,14 +96,25 @@ struct StartTodayFlow: View {
         .background(Theme.surface)
         .onAppear {
             flow.load()
-            // If the day has already been closed, jump straight to the
-            // already-done state on step 6 so the user doesn't replay it.
             let today = StartTodayFlowState.todayKey()
             if let last = UserDefaults.standard.string(forKey: "wylde_last_completed_day"),
                last == today {
                 flow.step = StartTodayFlowState.totalSteps
                 showFinal = true
             }
+        }
+        .fullScreenCover(isPresented: $showQiGong) {
+            QiGongFlowView()
+        }
+        .fullScreenCover(isPresented: $showMeditation) {
+            GuidedMeditationView()
+        }
+        .fullScreenCover(isPresented: $showJournaling) {
+            JournalingTimerView()
+        }
+        .fullScreenCover(isPresented: $showWorkout) {
+            WorkoutContainerView()
+                .environmentObject(appState)
         }
     }
 
@@ -328,6 +345,7 @@ struct StartTodayFlow: View {
 
     private func ritualRow(idx: Int, action: MorningAction) -> some View {
         HStack(spacing: 12) {
+            // Checkbox
             ZStack {
                 Circle()
                     .fill(action.completed ? Theme.sage : Color.clear)
@@ -341,10 +359,45 @@ struct StartTodayFlow: View {
                         .foregroundColor(Color(hex: "0B0B0B"))
                 }
             }
-            Text(action.name)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(Theme.text)
+            .onTapGesture {
+                HapticManager.shared.impact(.light)
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) {
+                    appState.morningProtocolActions[idx].completed.toggle()
+                }
+                if appState.morningProtocolActions.allSatisfy({ $0.completed }) {
+                    HapticManager.shared.notification(.success)
+                    appState.morningProtocolCompleted = true
+                    appState.awardXP(25, reason: "Morning Protocol complete")
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(action.name)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(action.completed ? Theme.muted : Theme.text)
+                    .strikethrough(action.completed, color: Theme.muted)
+                Text(action.desc)
+                    .font(.system(size: 11))
+                    .foregroundColor(Theme.muted)
+                    .lineLimit(1)
+            }
+
             Spacer()
+
+            // Launch button for activities that have a dedicated screen
+            if !action.completed, let icon = ritualLaunchIcon(action.id) {
+                Button {
+                    launchRitualActivity(action.id, idx: idx)
+                } label: {
+                    Image(systemName: icon)
+                        .font(.system(size: 13))
+                        .foregroundColor(Theme.gold)
+                        .frame(width: 34, height: 34)
+                        .background(Theme.gold.opacity(0.10))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+                .buttonStyle(.plain)
+            }
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 14)
@@ -356,20 +409,32 @@ struct StartTodayFlow: View {
                         .stroke(action.completed ? Theme.sage.opacity(0.4) : Theme.border, lineWidth: 1)
                 )
         )
-        .contentShape(Rectangle())
-        .onTapGesture {
-            HapticManager.shared.impact(.light)
-            withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) {
-                appState.morningProtocolActions[idx].completed.toggle()
-            }
-            // If all completed, mirror TodayView's success haptic + flag set.
-            if appState.morningProtocolActions.allSatisfy({ $0.completed }) {
-                HapticManager.shared.notification(.success)
-                appState.morningProtocolCompleted = true
-                appState.awardXP(25, reason: "Morning Protocol complete")
-            }
-        }
         .padding(.bottom, 8)
+    }
+
+    private func ritualLaunchIcon(_ id: String) -> String? {
+        switch id {
+        case "qigong": return "play.fill"
+        case "meditation": return "play.fill"
+        case "journaling": return "play.fill"
+        default: return nil
+        }
+    }
+
+    private func launchRitualActivity(_ id: String, idx: Int) {
+        HapticManager.shared.impact(.medium)
+        switch id {
+        case "qigong":
+            showQiGong = true
+            withAnimation { appState.morningProtocolActions[idx].completed = true }
+        case "meditation":
+            showMeditation = true
+            withAnimation { appState.morningProtocolActions[idx].completed = true }
+        case "journaling":
+            showJournaling = true
+            withAnimation { appState.morningProtocolActions[idx].completed = true }
+        default: break
+        }
     }
 
     // MARK: - Step 3: Training
@@ -380,12 +445,98 @@ struct StartTodayFlow: View {
             Text("Today\u{2019}s session")
                 .font(.system(size: 24, weight: .semibold))
                 .foregroundColor(Theme.text)
-            Text(appState.workoutCompleted
-                 ? "You already trained today. Recovery counts too."
-                 : "A short, focused block. Show up, do the reps, leave.")
-                .font(.system(size: 14))
-                .foregroundColor(Theme.muted)
-                .padding(.bottom, 8)
+
+            if appState.workoutCompleted {
+                HStack(spacing: 10) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(Theme.sage)
+                    Text("You already trained today. Recovery counts too.")
+                        .font(.system(size: 14))
+                        .foregroundColor(Theme.muted)
+                }
+                .padding(.top, 4)
+            } else if let day = workoutService.todaysWorkout(day: appState.currentDay) {
+                // Show today's workout summary
+                VStack(alignment: .leading, spacing: 14) {
+                    Text(day.focus)
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(Theme.text)
+                    Text("\(day.exercises.count) exercises")
+                        .font(.system(size: 12))
+                        .foregroundColor(Theme.muted)
+
+                    // Exercise list preview
+                    ForEach(day.exercises.prefix(8)) { ex in
+                        HStack(spacing: 10) {
+                            Circle()
+                                .fill(ex.isWarmup ? Theme.gold.opacity(0.15) : (ex.isCardio ? Color(hex: "7FD0FF").opacity(0.15) : Theme.sage.opacity(0.15)))
+                                .frame(width: 8, height: 8)
+                            Text(ex.name)
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundColor(Theme.text)
+                                .lineLimit(1)
+                            Spacer()
+                            Text(ex.setsReps)
+                                .font(.system(size: 11, design: .monospaced))
+                                .foregroundColor(Theme.muted)
+                        }
+                        .padding(.vertical, 4)
+                    }
+
+                    if day.exercises.count > 8 {
+                        Text("+ \(day.exercises.count - 8) more")
+                            .font(.system(size: 12))
+                            .foregroundColor(Theme.muted)
+                    }
+
+                    // Start workout button
+                    Button { showWorkout = true } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "play.fill")
+                                .font(.system(size: 12))
+                            Text("Start Workout")
+                                .font(.system(size: 14, weight: .bold))
+                        }
+                        .foregroundColor(Color(hex: "1A1816"))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            LinearGradient(
+                                colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                                startPoint: .top, endPoint: .bottom
+                            )
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .shadow(color: .black.opacity(0.15), radius: 6, x: 0, y: 3)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.top, 4)
+                }
+                .padding(16)
+                .background(Theme.surface)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(Theme.border, lineWidth: 1)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+            } else {
+                // No program generated yet
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("No workout program yet.")
+                        .font(.system(size: 14))
+                        .foregroundColor(Theme.muted)
+                    Button { showWorkout = true } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 12))
+                            Text("Generate Program")
+                                .font(.system(size: 14, weight: .semibold))
+                        }
+                        .foregroundColor(Theme.gold)
+                    }
+                }
+            }
         }
     }
 
