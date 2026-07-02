@@ -50,6 +50,7 @@
     "api/clinic/templates.js": { "maxDuration": 10 },
     "api/clinic/dashboard.js": { "maxDuration": 15 },
     "api/nutrition/search.js": { "maxDuration": 15 },
+    "api/exercises-search.js": { "maxDuration": 10 },
     "api/nutrition/parse.js": { "maxDuration": 30 }
   },
   "crons": [

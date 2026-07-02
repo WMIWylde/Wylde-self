@@ -16,10 +16,27 @@ struct Exercise: Identifiable, Codable, Hashable {
     let secondaryMuscles: [String]
     let instructions: [String]
     let images: [String]           // remote URLs to GitHub raw
+    let gifUrl: String?            // animated GIF from ExerciseDB (online exercises)
 
     var primaryMuscle: String { primaryMuscles.first ?? "" }
     var displayEquipment: String { equipment == "none" ? "Bodyweight" : equipment.capitalized }
     var displayLevel: String { level.capitalized }
+
+    // Init for creating from ExerciseDB API results
+    init(id: String, name: String, equipment: String, primaryMuscles: [String], secondaryMuscles: [String], instructions: [String], gifUrl: String?) {
+        self.id = id
+        self.name = name
+        self.category = "strength"
+        self.level = "intermediate"
+        self.force = nil
+        self.mechanic = nil
+        self.equipment = equipment
+        self.primaryMuscles = primaryMuscles
+        self.secondaryMuscles = secondaryMuscles
+        self.instructions = instructions
+        self.images = []
+        self.gifUrl = gifUrl
+    }
 }
 
 // MARK: - Repository
@@ -88,6 +105,53 @@ final class ExerciseRepository: ObservableObject {
             if let l = level, ex.level.lowercased() != l.lowercased() { return false }
             if !q.isEmpty, !ex.name.lowercased().contains(q) { return false }
             return true
+        }
+    }
+
+    // MARK: - Online Search (ExerciseDB — 1,500 exercises with GIFs)
+
+    @Published var onlineResults: [Exercise] = []
+    @Published var isSearchingOnline = false
+
+    func searchOnline(query: String) async {
+        guard !query.trimmingCharacters(in: .whitespaces).isEmpty else { onlineResults = []; return }
+        isSearchingOnline = true
+        defer { isSearchingOnline = false }
+
+        guard let url = URL(string: "https://www.wyldeself.com/api/exercises-search?q=\(query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query)&limit=20") else { return }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            struct Resp: Codable {
+                let exercises: [OnlineExercise]
+                struct OnlineExercise: Codable {
+                    let id: String
+                    let name: String
+                    let gifUrl: String?
+                    let bodyParts: [String]?
+                    let equipment: String?
+                    let targetMuscles: [String]?
+                    let secondaryMuscles: [String]?
+                    let instructions: [String]?
+                }
+            }
+            let resp = try JSONDecoder().decode(Resp.self, from: data)
+            onlineResults = resp.exercises.map { e in
+                Exercise(
+                    id: e.id,
+                    name: e.name.capitalized,
+                    equipment: e.equipment ?? "body weight",
+                    primaryMuscles: e.targetMuscles ?? e.bodyParts ?? [],
+                    secondaryMuscles: e.secondaryMuscles ?? [],
+                    instructions: e.instructions ?? [],
+                    gifUrl: e.gifUrl
+                )
+            }
+        } catch {
+            #if DEBUG
+            print("[ExerciseRepo] Online search error: \(error.localizedDescription)")
+            #endif
+            onlineResults = []
         }
     }
 

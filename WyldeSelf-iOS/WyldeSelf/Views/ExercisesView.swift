@@ -12,6 +12,7 @@ struct ExercisesView: View {
     @State private var selectedEquipment: String? = nil
     @State private var selectedLevel: String? = nil
     @State private var detailExercise: Exercise? = nil
+    @State private var onlineSearchTask: Task<Void, Never>?
 
     private var results: [Exercise] {
         repo.search(
@@ -78,9 +79,13 @@ struct ExercisesView: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
                 .font(.system(size: 15))
+            if repo.isSearchingOnline {
+                ProgressView().tint(Theme.gold).scaleEffect(0.7)
+            }
             if !query.isEmpty {
                 Button {
                     query = ""
+                    repo.onlineResults = []
                     HapticManager.shared.impact(.light)
                 } label: {
                     Image(systemName: "xmark.circle.fill")
@@ -97,6 +102,13 @@ struct ExercisesView: View {
         )
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .padding(.horizontal, Theme.screenPadding)
+        .onChange(of: query) {
+            onlineSearchTask?.cancel()
+            onlineSearchTask = Task {
+                try? await Task.sleep(nanoseconds: 500_000_000)
+                if !Task.isCancelled { await repo.searchOnline(query: query) }
+            }
+        }
     }
 
     // MARK: Filter chips
@@ -168,6 +180,30 @@ struct ExercisesView: View {
                     }
                     .buttonStyle(.plain)
                 }
+
+                // Online results from ExerciseDB (1,500 exercises with GIFs)
+                if !repo.onlineResults.isEmpty {
+                    HStack {
+                        Text("FROM EXERCISEDB")
+                            .font(.system(size: 10, weight: .bold))
+                            .tracking(1.5)
+                            .foregroundColor(Theme.gold)
+                        Rectangle().fill(Theme.border).frame(height: 1)
+                    }
+                    .padding(.top, 12)
+
+                    ForEach(repo.onlineResults.filter { online in
+                        !results.contains(where: { $0.name.lowercased() == online.name.lowercased() })
+                    }) { ex in
+                        Button {
+                            detailExercise = ex
+                            HapticManager.shared.impact(.light)
+                        } label: {
+                            ExerciseRow(exercise: ex)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
             }
             .padding(.horizontal, Theme.screenPadding)
             .padding(.bottom, 24)
@@ -177,16 +213,39 @@ struct ExercisesView: View {
     // MARK: States
     private var emptyState: some View {
         VStack(spacing: 12) {
-            Image(systemName: "magnifyingglass")
-                .font(.system(size: 42, weight: .light))
-                .foregroundColor(Theme.muted)
-            Text("No exercises match")
-                .font(.system(size: 15, weight: .semibold))
-                .foregroundColor(Theme.text)
-            Text("Try a different search or clear your filters.")
-                .font(.system(size: 13))
-                .foregroundColor(Theme.muted)
-                .multilineTextAlignment(.center)
+            if repo.isSearchingOnline {
+                ProgressView().tint(Theme.gold)
+                Text("Searching 1,500+ exercises...")
+                    .font(.system(size: 13))
+                    .foregroundColor(Theme.muted)
+            } else if !repo.onlineResults.isEmpty {
+                // Show online results even when local is empty
+                ScrollView {
+                    LazyVStack(spacing: 10) {
+                        ForEach(repo.onlineResults) { ex in
+                            Button {
+                                detailExercise = ex
+                                HapticManager.shared.impact(.light)
+                            } label: {
+                                ExerciseRow(exercise: ex)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.horizontal, Theme.screenPadding)
+                }
+            } else {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 42, weight: .light))
+                    .foregroundColor(Theme.muted)
+                Text("No exercises match")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(Theme.text)
+                Text("Try a different search or clear your filters.")
+                    .font(.system(size: 13))
+                    .foregroundColor(Theme.muted)
+                    .multilineTextAlignment(.center)
+            }
         }
         .padding(.top, 60)
         .frame(maxWidth: .infinity)
@@ -440,29 +499,57 @@ struct ExerciseDetailView: View {
 
     @ViewBuilder
     private var animatedFrames: some View {
-        if exercise.images.isEmpty {
-            VStack(spacing: 8) {
-                Image(systemName: "figure.strengthtraining.traditional")
-                    .font(.system(size: 40))
-                    .foregroundColor(Theme.muted)
-                Text("Demo unavailable")
-                    .font(.system(size: 12))
-                    .foregroundColor(Theme.muted)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else {
-            let url = URL(string: exercise.images[frameIndex % exercise.images.count])
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .success(let img):
-                    img.resizable().aspectRatio(contentMode: .fit)
-                case .empty:
-                    ProgressView()
-                case .failure:
-                    Image(systemName: "exclamationmark.triangle")
+        Group {
+            if let gifUrl = exercise.gifUrl, let url = URL(string: gifUrl) {
+                // ExerciseDB GIF — animated demo
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let img):
+                        img.resizable().aspectRatio(contentMode: .fit)
+                    case .empty:
+                        VStack(spacing: 8) {
+                            ProgressView().tint(Theme.gold)
+                            Text("Loading demo...")
+                                .font(.system(size: 11))
+                                .foregroundColor(Theme.muted)
+                        }
+                    case .failure:
+                        VStack(spacing: 8) {
+                            Image(systemName: "figure.strengthtraining.traditional")
+                                .font(.system(size: 40))
+                                .foregroundColor(Theme.muted)
+                            Text("Demo unavailable")
+                                .font(.system(size: 12))
+                                .foregroundColor(Theme.muted)
+                        }
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+            } else if exercise.images.isEmpty {
+                VStack(spacing: 8) {
+                    Image(systemName: "figure.strengthtraining.traditional")
+                        .font(.system(size: 40))
                         .foregroundColor(Theme.muted)
-                @unknown default:
-                    EmptyView()
+                    Text("Demo unavailable")
+                        .font(.system(size: 12))
+                        .foregroundColor(Theme.muted)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                let url = URL(string: exercise.images[frameIndex % exercise.images.count])
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let img):
+                        img.resizable().aspectRatio(contentMode: .fit)
+                    case .empty:
+                        ProgressView()
+                    case .failure:
+                        Image(systemName: "exclamationmark.triangle")
+                            .foregroundColor(Theme.muted)
+                    @unknown default:
+                        EmptyView()
+                    }
                 }
             }
         }
