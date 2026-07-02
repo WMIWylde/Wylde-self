@@ -2,7 +2,11 @@
   "rewrites": [
     { "source": "/clinical", "destination": "/clinical.html" },
     { "source": "/clinical-dashboard", "destination": "/clinical-dashboard.html" },
-    { "source": "/command-center", "destination": "/command-center.html" }
+    { "source": "/command-center", "destination": "/command-center.html" },
+    { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/terms", "destination": "/terms.html" },
+    { "source": "/hipaa", "destination": "/hipaa-notice.html" },
+    { "source": "/consent", "destination": "/consent.html" }
   ],
   "functions": {
     "api/generate-image.js": {

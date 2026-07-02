@@ -15,6 +15,8 @@ import SwiftUI
 struct CareTeamView: View {
     @StateObject private var vm = CareTeamViewModel()
     @Environment(\.dismiss) private var dismiss
+    @State private var consentAccepted = false
+    @State private var showConsentDetail = false
 
     var body: some View {
         ZStack {
@@ -80,37 +82,115 @@ struct CareTeamView: View {
 
     // ────────── empty / initial ──────────
     @ViewBuilder private var emptyState: some View {
+        // Consent section — must accept before generating code
         WyldeCard {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Generate a code for them")
-                    .font(.system(size: 19, weight: .medium, design: .serif))
-                    .foregroundColor(WyldeStyles.Colors.ink)
-                Text("Create an 8-character code and share it with your clinician. They enter it in their Wylde Self dashboard to connect.")
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(spacing: 8) {
+                    Image(systemName: "shield.checkered")
+                        .font(.system(size: 16))
+                        .foregroundColor(WyldeStyles.Colors.sage)
+                    Text("DATA SHARING CONSENT")
+                        .font(.system(size: 10, weight: .bold))
+                        .tracking(1.5)
+                        .foregroundColor(WyldeStyles.Colors.sage)
+                }
+
+                Text("Before connecting with a clinician, please review what data will be shared.")
                     .font(WyldeStyles.Typography.Body.small)
                     .foregroundColor(WyldeStyles.Colors.stone)
                     .lineSpacing(2)
-                primaryButton("Generate share code", loading: vm.loading) {
-                    Task { await vm.generateCode() }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    consentBullet("Your clinician will see:", items: [
+                        "Daily check-ins (mood, energy, sleep, weight)",
+                        "Protocol adherence and dose logs",
+                        "Wylde Score and progress trends",
+                        "Messages you exchange"
+                    ])
+                    consentBullet("Your clinician will NOT see:", items: [
+                        "AI coach conversations",
+                        "Future vision images",
+                        "Personal journal entries",
+                        "Workout and nutrition details (unless in check-ins)"
+                    ])
                 }
-                .padding(.top, 4)
+
+                Text("You initiate the connection and can revoke access at any time.")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(WyldeStyles.Colors.ink)
+                    .padding(.top, 4)
+
+                HStack(spacing: 8) {
+                    Button { showConsentDetail = true } label: {
+                        Text("Full Consent Form")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(WyldeStyles.Colors.sage)
+                            .underline()
+                    }
+                    Text("·")
+                        .foregroundColor(WyldeStyles.Colors.stone)
+                    Button { showConsentDetail = true } label: {
+                        Text("Privacy Policy")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(WyldeStyles.Colors.sage)
+                            .underline()
+                    }
+                }
+
+                HStack(spacing: 10) {
+                    Button {
+                        consentAccepted.toggle()
+                    } label: {
+                        Image(systemName: consentAccepted ? "checkmark.square.fill" : "square")
+                            .font(.system(size: 22))
+                            .foregroundColor(consentAccepted ? WyldeStyles.Colors.sage : WyldeStyles.Colors.stone)
+                    }
+                    .buttonStyle(.plain)
+
+                    Text("I understand and agree to share my health data with my clinician")
+                        .font(.system(size: 13))
+                        .foregroundColor(WyldeStyles.Colors.ink)
+                }
+                .padding(.top, 6)
             }
         }
+        .sheet(isPresented: $showConsentDetail) {
+            consentWebView
+        }
 
-        divider("or")
-
-        WyldeCard {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Enter a code from them")
-                    .font(.system(size: 19, weight: .medium, design: .serif))
-                    .foregroundColor(WyldeStyles.Colors.ink)
-                Text("Got a code from your clinician? Enter it below to start sharing your data with their practice.")
-                    .font(WyldeStyles.Typography.Body.small)
-                    .foregroundColor(WyldeStyles.Colors.stone)
-                    .lineSpacing(2)
-                ghostButton("I have a code") {
-                    vm.enterCode()
+        if consentAccepted {
+            WyldeCard {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Generate a code for them")
+                        .font(.system(size: 19, weight: .medium, design: .serif))
+                        .foregroundColor(WyldeStyles.Colors.ink)
+                    Text("Create an 8-character code and share it with your clinician. They enter it in their Wylde Self dashboard to connect.")
+                        .font(WyldeStyles.Typography.Body.small)
+                        .foregroundColor(WyldeStyles.Colors.stone)
+                        .lineSpacing(2)
+                    primaryButton("Generate share code", loading: vm.loading) {
+                        Task { await vm.generateCode() }
+                    }
+                    .padding(.top, 4)
                 }
-                .padding(.top, 4)
+            }
+
+            divider("or")
+
+            WyldeCard {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Enter a code from them")
+                        .font(.system(size: 19, weight: .medium, design: .serif))
+                        .foregroundColor(WyldeStyles.Colors.ink)
+                    Text("Got a code from your clinician? Enter it below to start sharing your data with their practice.")
+                        .font(WyldeStyles.Typography.Body.small)
+                        .foregroundColor(WyldeStyles.Colors.stone)
+                        .lineSpacing(2)
+                    ghostButton("I have a code") {
+                        vm.enterCode()
+                    }
+                    .padding(.top, 4)
+                }
             }
         }
 
@@ -401,6 +481,75 @@ struct CareTeamView: View {
             Rectangle().fill(WyldeStyles.Colors.charcoal.opacity(0.08)).frame(height: 1)
         }
         .padding(.vertical, 4)
+    }
+
+    // ────────── consent helpers ──────────
+
+    private func consentBullet(_ title: String, items: [String]) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(WyldeStyles.Colors.ink)
+            ForEach(items, id: \.self) { item in
+                HStack(alignment: .top, spacing: 6) {
+                    Text("•")
+                        .font(.system(size: 12))
+                        .foregroundColor(WyldeStyles.Colors.stone)
+                    Text(item)
+                        .font(.system(size: 12))
+                        .foregroundColor(WyldeStyles.Colors.stone)
+                }
+            }
+        }
+    }
+
+    private var consentWebView: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Health Data Sharing Consent")
+                        .font(.system(size: 22, weight: .medium, design: .serif))
+                        .foregroundColor(WyldeStyles.Colors.ink)
+
+                    Group {
+                        consentSection("What is shared", "When you connect with a clinician, they gain visibility into your daily check-ins (mood, energy, sleep, weight), protocol adherence and dose logs, your Wylde Score and progress trends, and any messages you exchange.")
+
+                        consentSection("What is NOT shared", "Your AI coach conversations, future vision images, personal journal entries, and detailed workout/nutrition logs remain private and are never visible to your clinician.")
+
+                        consentSection("Your control", "You initiate every connection by generating a share code. You can revoke access at any time from the Care Team screen. Revoking access immediately stops your clinician from seeing new data.")
+
+                        consentSection("Data security", "All data is encrypted in transit (TLS) and at rest. Clinical data is protected by row-level security policies. Your clinician can only see data for patients who have explicitly connected with them.")
+
+                        consentSection("Not for emergencies", "This platform is not designed for emergency communications. If you are experiencing a medical emergency, call 911 or your local emergency services.")
+                    }
+
+                    Text("Last updated: July 2026")
+                        .font(.system(size: 11))
+                        .foregroundColor(WyldeStyles.Colors.stone)
+                        .padding(.top, 8)
+                }
+                .padding(24)
+            }
+            .background(WyldeStyles.Colors.paper)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") { showConsentDetail = false }
+                        .foregroundColor(WyldeStyles.Colors.sage)
+                }
+            }
+        }
+    }
+
+    private func consentSection(_ title: String, _ body: String) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundColor(WyldeStyles.Colors.ink)
+            Text(body)
+                .font(.system(size: 13))
+                .foregroundColor(WyldeStyles.Colors.stone)
+                .lineSpacing(3)
+        }
     }
 }
 

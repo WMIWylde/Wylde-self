@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" style="background:#F7F5F0;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#F7F5F0" />
+  <title>Health Data Sharing Consent · Wylde Self</title>
+  <meta name="description" content="Wylde Self Health Data Sharing Consent — understand what connecting to a clinician means." />
+  <link rel="icon" href="/logo-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --paper:#F7F5F0;--white:#FFFFFF;--cream:#FAF8F3;--warmgray:#F0EDE6;
+      --line:rgba(45,42,38,0.08);--line-2:rgba(45,42,38,0.14);
+      --ink:#2A2823;--ink-2:#6B675F;--ink-3:#9A958B;
+      --sage:#6E8A7C;--sage-deep:#5C7A6C;--sage-dim:rgba(110,138,124,0.10);
+      --crit:#B86570;--crit-bg:rgba(184,101,112,0.10);
+      --font:'Inter',system-ui,-apple-system,sans-serif;
+      --serif:'Fraunces',Georgia,serif;
+      --max:820px;--pad:clamp(20px,4vw,64px);
+    }
+    html,body{background:var(--paper);color:var(--ink);font-family:var(--font);font-weight:400;line-height:1.7;-webkit-font-smoothing:antialiased;letter-spacing:-0.005em;overflow-x:hidden}
+    a{color:var(--sage-deep);text-decoration:none;transition:color .2s}
+    a:hover{color:var(--ink)}
+    ::selection{background:rgba(110,138,124,0.18);color:var(--ink)}
+
+    .wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+    .back{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--ink-3);padding:8px 0;transition:color .2s}
+    .back:hover{color:var(--sage-deep)}
+    .page-header{padding:120px 0 48px;border-bottom:1px solid var(--line)}
+    .page-header h1{font-family:var(--serif);font-size:clamp(32px,5vw,48px);font-weight:400;letter-spacing:-0.02em;line-height:1.1;margin-bottom:14px}
+    .page-header .updated{font-size:13px;color:var(--ink-3)}
+    .content{padding:48px 0 96px}
+    .content h2{font-family:var(--serif);font-size:24px;font-weight:400;letter-spacing:-0.01em;margin:40px 0 16px;color:var(--ink);line-height:1.2}
+    .content h2:first-child{margin-top:0}
+    .content h3{font-family:var(--font);font-size:16px;font-weight:600;margin:28px 0 10px;color:var(--ink)}
+    .content p{color:var(--ink-2);font-size:15px;line-height:1.75;margin-bottom:16px}
+    .content ul,.content ol{color:var(--ink-2);font-size:15px;line-height:1.75;margin-bottom:16px;padding-left:24px}
+    .content li{margin-bottom:8px}
+    .content li::marker{color:var(--sage)}
+    .content strong{color:var(--ink);font-weight:500}
+    .card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:24px;margin:20px 0;box-shadow:0 1px 2px rgba(45,42,38,0.04)}
+    .card p:last-child{margin-bottom:0}
+    .shared-box{background:var(--sage-dim);border:1px solid rgba(110,138,124,0.22);border-radius:16px;padding:24px;margin:20px 0}
+    .shared-box h3{margin-top:0}
+    .not-shared-box{background:var(--crit-bg);border:1px solid rgba(184,101,112,0.22);border-radius:16px;padding:24px;margin:20px 0}
+    .not-shared-box h3{margin-top:0;color:var(--crit)}
+    .divider{border:0;border-top:1px solid var(--line);margin:40px 0}
+
+    footer{padding:48px 0 36px;border-top:1px solid var(--line);text-align:center}
+    footer p{font-size:12px;color:var(--ink-3)}
+    footer a{color:var(--sage-deep);font-weight:500}
+    .footer-links{display:flex;justify-content:center;gap:24px;margin-bottom:16px;flex-wrap:wrap}
+    .footer-links a{font-size:13px;color:var(--ink-2);font-weight:500}
+    .footer-links a:hover{color:var(--sage-deep)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="page-header">
+      <a href="/" class="back">&larr; Back to Wylde Self</a>
+      <h1>Health Data Sharing Consent</h1>
+      <p class="updated">Last updated: July 2026</p>
+    </div>
+
+    <div class="content">
+      <h2>Purpose of This Consent</h2>
+      <p>This document explains what happens when you connect your Wylde Self account to a clinician's practice through the Platform. By generating or entering a share code, you consent to the data sharing described below. Please read this carefully before connecting.</p>
+
+      <h2>How the Connection Works</h2>
+      <p>Connecting to a clinician is a patient-initiated process:</p>
+      <ul>
+        <li><strong>You start it:</strong> You generate an 8-character share code in the app and share it with your clinician, or your clinician gives you a code to enter. Either way, the connection only happens with your active participation.</li>
+        <li><strong>You control it:</strong> Once connected, you can revoke access at any time from the Care Team screen in the app. Revoking access stops all future data sharing immediately.</li>
+        <li><strong>It's voluntary:</strong> The Wylde Self app works fully without a clinician connection. All wellness features — workouts, nutrition tracking, AI coaching, habit tracking — remain available whether or not you connect with a provider.</li>
+      </ul>
+
+      <h2>What Your Clinician Can See</h2>
+      <div class="shared-box">
+        <h3>Data shared with your clinician</h3>
+        <p>When connected, your clinician's dashboard displays:</p>
+        <ul>
+          <li><strong>Daily check-ins:</strong> your reported mood, energy, sleep quality, and notes</li>
+          <li><strong>Protocol adherence:</strong> whether you completed assigned protocols (medications, supplements, routines)</li>
+          <li><strong>Wylde Score:</strong> your composite wellness score and its component breakdown</li>
+          <li><strong>Biometric trends:</strong> weight, body metrics, and health data synced from HealthKit</li>
+          <li><strong>Messages:</strong> conversations exchanged between you and your clinician through the Platform</li>
+          <li><strong>Protocol details:</strong> the protocols your clinician has assigned to you and your progress</li>
+        </ul>
+      </div>
+
+      <div class="not-shared-box">
+        <h3>Data NOT shared with your clinician</h3>
+        <p>The following remain private to you, even when connected:</p>
+        <ul>
+          <li><strong>AI coach conversations:</strong> your chats with the Wylde Self AI coach</li>
+          <li><strong>Future vision images:</strong> AI-generated visualization images you create</li>
+          <li><strong>Personal journal entries:</strong> private reflections and notes</li>
+          <li><strong>Detailed workout logs:</strong> individual exercise sets, reps, and workout history</li>
+          <li><strong>Detailed meal logs:</strong> individual food entries and meal photos</li>
+        </ul>
+      </div>
+
+      <h2>Data Security</h2>
+      <p>Data shared with your clinician is protected by the same security measures that protect all Wylde Self data:</p>
+      <ul>
+        <li>Encrypted in transit using TLS</li>
+        <li>Stored in a database with Row Level Security (RLS) — your clinician can only access data from patients who have explicitly connected with them</li>
+        <li>Access is logged and auditable</li>
+        <li>Clinicians authenticate with their own secure accounts</li>
+      </ul>
+
+      <h2>Risks of Electronic Data Transmission</h2>
+      <p>While we implement strong security measures, you should be aware that:</p>
+      <ul>
+        <li>No electronic data transmission or storage system is 100% secure</li>
+        <li>Data transmitted over the internet may be subject to interception, though we use encryption to minimize this risk</li>
+        <li>Unauthorized access, while unlikely given our safeguards, cannot be absolutely guaranteed against</li>
+        <li>Your clinician's use of the data on their end is subject to their own privacy practices and professional obligations</li>
+      </ul>
+
+      <h2>Revoking Consent</h2>
+      <p>You may revoke your consent and disconnect from your clinician at any time:</p>
+      <ol>
+        <li>Open the Wylde Self app</li>
+        <li>Navigate to the Care Team screen (from your profile)</li>
+        <li>Tap "Disconnect" to end the data sharing relationship</li>
+      </ol>
+      <p>When you revoke access:</p>
+      <ul>
+        <li>Your clinician will no longer receive new data from your account</li>
+        <li>Historical data that was previously shared may be retained in your clinician's records in accordance with applicable recordkeeping requirements</li>
+        <li>You can reconnect at any time by generating a new share code</li>
+      </ul>
+
+      <h2>Acknowledgment and Agreement</h2>
+      <div class="card">
+        <p>By generating or entering a share code to connect with a clinician, you acknowledge that:</p>
+        <ul>
+          <li>You have read and understand what data will be shared with your clinician</li>
+          <li>You are voluntarily choosing to share your health data</li>
+          <li>You understand you can revoke access at any time</li>
+          <li>You understand the risks associated with electronic data transmission</li>
+          <li>You understand that the app functions fully without a clinician connection</li>
+        </ul>
+        <p>For questions about data sharing or this consent form, contact us at <a href="mailto:privacy@wyldeself.com">privacy@wyldeself.com</a>.</p>
+      </div>
+
+      <hr class="divider" />
+
+      <p>Related documents: <a href="/privacy">Privacy Policy</a> · <a href="/terms">Terms of Service</a> · <a href="/hipaa">HIPAA Notice of Privacy Practices</a></p>
+    </div>
+
+    <footer>
+      <div class="footer-links">
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="/hipaa">HIPAA Notice</a>
+        <a href="/consent">Consent Form</a>
+      </div>
+      <p>&copy; 2026 Wylde Self. All rights reserved.</p>
+    </footer>
+  </div>
+</body>
+</html>
