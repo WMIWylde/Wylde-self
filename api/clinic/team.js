@@ -1,11 +1,17 @@
-const { applyCors } = require('../../lib/security');
-const { getSupabaseAdmin, getUserFromRequest } = require('../../lib/supabase-admin');
+const { applyCors, rateLimit, clientIp } = require('../../lib/security');
+const { getSupabaseAdmin, requireClinicAccess } = require('../../lib/supabase-admin');
+const { auditLog } = require('../../lib/audit');
 
 module.exports = async function handler(req, res) {
   if (applyCors(req, res, { methods: 'GET, POST, PUT, DELETE, OPTIONS' })) return;
 
-  const user = await getUserFromRequest(req);
-  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+  const auth = await requireClinicAccess(req, res);
+  if (!auth) return;
+  const { user } = auth;
+
+  // Rate limit: 20/min
+  const rl = rateLimit({ key: 'clinic-team', ip: clientIp(req), limit: 20, windowMs: 60000 });
+  if (!rl.ok) return res.status(429).json({ error: 'Rate limit exceeded' });
 
   const supabase = getSupabaseAdmin();
 
@@ -36,6 +42,15 @@ module.exports = async function handler(req, res) {
       .single();
 
     if (error) return res.status(500).json({ error: error.message });
+
+    auditLog(supabase, {
+      clinician_id: user.id,
+      action: 'team_member_changed',
+      target_type: 'team_member',
+      target_id: data.id,
+      details: { operation: 'added', email, role: role || 'staff' },
+    });
+
     return res.status(201).json({ member: data });
   }
 
@@ -57,6 +72,15 @@ module.exports = async function handler(req, res) {
       .single();
 
     if (error) return res.status(500).json({ error: error.message });
+
+    auditLog(supabase, {
+      clinician_id: user.id,
+      action: 'team_member_changed',
+      target_type: 'team_member',
+      target_id: id,
+      details: { operation: 'updated', updates },
+    });
+
     return res.status(200).json({ member: data });
   }
 
@@ -69,6 +93,14 @@ module.exports = async function handler(req, res) {
       .delete()
       .eq('id', id)
       .eq('clinic_id', user.id);
+
+    auditLog(supabase, {
+      clinician_id: user.id,
+      action: 'team_member_changed',
+      target_type: 'team_member',
+      target_id: id,
+      details: { operation: 'removed' },
+    });
 
     return res.status(200).json({ ok: true });
   }

@@ -1,12 +1,13 @@
 const { applyCors, rateLimit, clientIp } = require('../../lib/security');
-const { getSupabaseAdmin, getUserFromRequest } = require('../../lib/supabase-admin');
+const { getSupabaseAdmin, requireClinicAccess } = require('../../lib/supabase-admin');
 
 module.exports = async function handler(req, res) {
   if (applyCors(req, res, { methods: 'POST, OPTIONS' })) return;
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const user = await getUserFromRequest(req);
-  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+  const auth = await requireClinicAccess(req, res);
+  if (!auth) return;
+  const { user } = auth;
 
   const rl = rateLimit({ key: 'clinic-onboard', ip: clientIp(req), limit: 3, windowMs: 60000 });
   if (!rl.ok) return res.status(429).json({ error: 'Rate limit exceeded' });

@@ -1,11 +1,17 @@
-const { applyCors } = require('../../lib/security');
-const { getSupabaseAdmin, getUserFromRequest } = require('../../lib/supabase-admin');
+const { applyCors, rateLimit, clientIp } = require('../../lib/security');
+const { getSupabaseAdmin, requireClinicAccess } = require('../../lib/supabase-admin');
+const { auditLog } = require('../../lib/audit');
 
 module.exports = async function handler(req, res) {
   if (applyCors(req, res, { methods: 'GET, PUT, OPTIONS' })) return;
 
-  const user = await getUserFromRequest(req);
-  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+  const auth = await requireClinicAccess(req, res);
+  if (!auth) return;
+  const { user } = auth;
+
+  // Rate limit: 20/min
+  const rl = rateLimit({ key: 'clinic-reorders', ip: clientIp(req), limit: 20, windowMs: 60000 });
+  if (!rl.ok) return res.status(429).json({ error: 'Rate limit exceeded' });
 
   const supabase = getSupabaseAdmin();
 
@@ -58,6 +64,15 @@ module.exports = async function handler(req, res) {
       .single();
 
     if (error) return res.status(500).json({ error: error.message });
+
+    auditLog(supabase, {
+      clinician_id: user.id,
+      action: 'reorder_status_changed',
+      target_type: 'reorder_request',
+      target_id: id,
+      details: { new_status: status },
+    });
+
     return res.status(200).json({ order: data });
   }
 

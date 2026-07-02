@@ -1,4 +1,4 @@
-const { applyCors } = require('../../lib/security');
+const { applyCors, rateLimit, clientIp } = require('../../lib/security');
 const { getSupabaseAdmin, getUserFromRequest } = require('../../lib/supabase-admin');
 
 module.exports = async function handler(req, res) {
@@ -7,9 +7,13 @@ module.exports = async function handler(req, res) {
   const user = await getUserFromRequest(req);
   if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
+  // Rate limit: 20/min
+  const rl = rateLimit({ key: 'clinic-settings', ip: clientIp(req), limit: 20, windowMs: 60000 });
+  if (!rl.ok) return res.status(429).json({ error: 'Rate limit exceeded' });
+
   const supabase = getSupabaseAdmin();
 
-  // GET — fetch clinic settings
+  // GET — fetch clinic settings (auto-creates on first access)
   if (req.method === 'GET') {
     let { data } = await supabase
       .from('clinic_settings')
@@ -17,11 +21,11 @@ module.exports = async function handler(req, res) {
       .eq('clinician_id', user.id)
       .single();
 
-    // Auto-create if doesn't exist
+    // Auto-create if doesn't exist (new clinician onboarding)
     if (!data) {
       const { data: newSettings } = await supabase
         .from('clinic_settings')
-        .insert({ clinician_id: user.id })
+        .insert({ clinician_id: user.id, status: 'approved' })
         .select()
         .single();
       data = newSettings;
@@ -30,8 +34,19 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({ settings: data });
   }
 
-  // PUT — update clinic settings
+  // PUT — update clinic settings (requires existing approved clinic)
   if (req.method === 'PUT') {
+    // For PUT, verify they have an approved clinic
+    const { data: existing } = await supabase
+      .from('clinic_settings')
+      .select('status')
+      .eq('clinician_id', user.id)
+      .single();
+
+    if (!existing || existing.status === 'suspended') {
+      return res.status(403).json({ error: 'Not an approved clinician' });
+    }
+
     const body = req.body || {};
 
     // Only allow updating specific fields

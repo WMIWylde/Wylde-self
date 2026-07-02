@@ -1,11 +1,13 @@
 const { applyCors, rateLimit, clientIp } = require('../../lib/security');
-const { getSupabaseAdmin, getUserFromRequest } = require('../../lib/supabase-admin');
+const { getSupabaseAdmin, requireClinicAccess } = require('../../lib/supabase-admin');
+const { auditLog } = require('../../lib/audit');
 
 module.exports = async function handler(req, res) {
   if (applyCors(req, res, { methods: 'GET, POST, OPTIONS' })) return;
 
-  const user = await getUserFromRequest(req);
-  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+  const auth = await requireClinicAccess(req, res);
+  if (!auth) return;
+  const { user } = auth;
 
   const supabase = getSupabaseAdmin();
 
@@ -136,6 +138,14 @@ module.exports = async function handler(req, res) {
       .eq('patient_id', patient_id)
       .order('created_at', { ascending: false })
       .limit(20);
+
+    auditLog(supabase, {
+      clinician_id: user.id,
+      action: 'insight_generated',
+      target_type: 'clinical_insight',
+      target_id: patient_id,
+      details: { count: insightRows.length },
+    });
 
     return res.status(200).json({ insights: allInsights || [], generated: insightRows.length });
 

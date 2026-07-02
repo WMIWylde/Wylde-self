@@ -1,5 +1,6 @@
 const { applyCors, rateLimit, clientIp } = require('../../lib/security');
 const { getSupabaseAdmin, getUserFromRequest } = require('../../lib/supabase-admin');
+const { auditLog } = require('../../lib/audit');
 
 module.exports = async function handler(req, res) {
   if (applyCors(req, res, { methods: 'GET, POST, OPTIONS' })) return;
@@ -13,7 +14,7 @@ module.exports = async function handler(req, res) {
 
   const supabase = getSupabaseAdmin();
 
-  // Find active care relationship for this user (as patient or clinician)
+  // Find active care relationships for this user (as patient or clinician)
   const { data: rels } = await supabase
     .from('care_relationships')
     .select('id, patient_id, clinician_id')
@@ -24,9 +25,18 @@ module.exports = async function handler(req, res) {
     return res.status(403).json({ error: 'No active care relationship' });
   }
 
+  // Build set of relationship IDs this user is part of (for IDOR protection)
+  const userRelIds = new Set(rels.map(r => r.id));
+
   // GET — fetch messages
   if (req.method === 'GET') {
     const relId = req.query.relationship_id || rels[0].id;
+
+    // IDOR fix: verify the user is a member of this relationship
+    if (!userRelIds.has(relId)) {
+      return res.status(403).json({ error: 'Access denied to this conversation' });
+    }
+
     const limit = parseInt(req.query.limit) || 50;
 
     const { data: messages } = await supabase
@@ -78,6 +88,15 @@ module.exports = async function handler(req, res) {
       .single();
 
     if (error) return res.status(500).json({ error: error.message });
+
+    auditLog(supabase, {
+      clinician_id: rel.clinician_id,
+      action: 'message_sent',
+      target_type: 'care_message',
+      target_id: data.id,
+      details: { relationship_id: relId, sender_id: user.id },
+    });
+
     return res.status(201).json({ message: data });
   }
 

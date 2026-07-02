@@ -37,9 +37,110 @@
     .modal-overlay { background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); }
     .tab-btn { transition: all 0.15s; }
     .tab-btn.active { color: #5C7A6C; border-bottom: 2px solid #6E8A7C; }
+
+    /* Toast notifications */
+    #toastContainer {
+      position: fixed; top: 16px; right: 16px; z-index: 9999;
+      display: flex; flex-direction: column; gap: 8px;
+      pointer-events: none;
+    }
+    .toast {
+      pointer-events: auto;
+      padding: 12px 20px; border-radius: 12px;
+      font-size: 13px; font-weight: 500;
+      box-shadow: 0 4px 16px rgba(45,42,38,0.12);
+      opacity: 0; transform: translateX(40px);
+      animation: toastIn 0.3s ease forwards;
+      max-width: 360px;
+    }
+    .toast.success { background: #f0faf4; color: #3F7158; border: 1px solid rgba(92,150,120,0.3); }
+    .toast.error { background: #fef2f2; color: #8E4951; border: 1px solid rgba(184,101,112,0.3); }
+    .toast.info { background: #f0f7fc; color: #4a6a85; border: 1px solid rgba(107,137,168,0.3); }
+    .toast.out { animation: toastOut 0.3s ease forwards; }
+    @keyframes toastIn { to { opacity: 1; transform: translateX(0); } }
+    @keyframes toastOut { to { opacity: 0; transform: translateX(40px); } }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    .spinner.dark {
+      border-color: rgba(45,42,38,0.15);
+      border-top-color: #6E8A7C;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Skeleton loading */
+    .skeleton {
+      background: linear-gradient(90deg, #F0EDE6 25%, #FAF8F3 50%, #F0EDE6 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s ease-in-out infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* Mobile hamburger */
+    .hamburger-btn { display: none; }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .hamburger-btn { display: flex; }
+      #dashboardScreen > aside {
+        position: fixed; left: -100%; top: 0; bottom: 0; z-index: 100;
+        width: 260px; transition: left 0.3s ease;
+      }
+      #dashboardScreen > aside.open { left: 0; }
+      .sidebar-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.3);
+        z-index: 99; display: none;
+      }
+      .sidebar-overlay.open { display: block; }
+      #dashboardScreen > main { width: 100%; }
+      .top-bar-link-input { flex-direction: column; gap: 8px; }
+      .top-bar-link-input input { width: 100% !important; }
+      .top-bar-link-input button { width: 100%; }
+    }
+    @media (max-width: 640px) {
+      .stat-grid-4 { grid-template-columns: 1fr 1fr !important; }
+      .grid-cols-3-resp { grid-template-columns: 1fr !important; }
+      .grid-cols-2-resp { grid-template-columns: 1fr !important; }
+      .detail-grid { grid-template-columns: 1fr !important; }
+      .detail-header-stats { flex-direction: column; align-items: stretch; }
+      .detail-header-stats > div { min-width: auto !important; }
+      .patient-row-stats { display: none; }
+      .modal-content { margin: 8px !important; max-height: 95vh !important; }
+      .modal-content input, .modal-content button, .modal-content select {
+        min-height: 44px; font-size: 16px;
+      }
+    }
+    @media (min-width: 641px) and (max-width: 1024px) {
+      .stat-grid-4 { grid-template-columns: 1fr 1fr !important; }
+      .grid-cols-3-resp { grid-template-columns: 1fr 1fr !important; }
+    }
+    /* Tables: horizontal scroll on mobile */
+    .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    /* Touch targets */
+    @media (max-width: 768px) {
+      .nav-item { min-height: 44px; display: flex; align-items: center; padding: 8px 12px; }
+      .patient-row-touch { min-height: 56px; }
+    }
+
+    /* Onboarding overlay */
+    #onboardingOverlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: #F7F5F0;
+      overflow-y: auto;
+    }
   </style>
 </head>
 <body class="bg-paper text-ink min-h-screen">
+
+<!-- Toast container -->
+<div id="toastContainer"></div>
 
 <!-- ═══ AUTH ═══ -->
 <div id="authScreen" class="min-h-screen flex items-center justify-center">
@@ -50,10 +151,10 @@
       <p class="text-ink3 text-sm mt-2">Sign in to your clinician account</p>
     </div>
     <div class="space-y-3">
-      <input id="authEmail" type="email" placeholder="Email" class="w-full px-4 py-3 rounded-xl border border-line2 bg-white text-sm" />
-      <input id="authPassword" type="password" placeholder="Password" class="w-full px-4 py-3 rounded-xl border border-line2 bg-white text-sm" />
-      <button onclick="signIn()" class="w-full py-3 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">Sign In</button>
-      <button onclick="signUp()" class="w-full py-2.5 bg-white border border-line2 text-ink2 rounded-xl text-sm font-medium hover:bg-cream transition">Create Clinician Account</button>
+      <input id="authEmail" type="email" placeholder="Email" class="w-full px-4 py-3 rounded-xl border border-line2 bg-white text-sm" style="min-height:44px" />
+      <input id="authPassword" type="password" placeholder="Password" class="w-full px-4 py-3 rounded-xl border border-line2 bg-white text-sm" style="min-height:44px" />
+      <button onclick="signIn()" id="signInBtn" class="w-full py-3 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition flex items-center justify-center gap-2" style="min-height:44px">Sign In</button>
+      <button onclick="signUp()" class="w-full py-2.5 bg-white border border-line2 text-ink2 rounded-xl text-sm font-medium hover:bg-cream transition" style="min-height:44px">Create Clinician Account</button>
       <p id="authError" class="text-crit text-xs text-center hidden"></p>
     </div>
   </div>
@@ -62,8 +163,11 @@
 <!-- ═══ DASHBOARD ═══ -->
 <div id="dashboardScreen" class="hidden min-h-screen flex">
 
+  <!-- Sidebar overlay for mobile -->
+  <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+
   <!-- Sidebar -->
-  <aside class="w-56 bg-white border-r border-line flex flex-col h-screen sticky top-0 shrink-0">
+  <aside id="sidebar" class="w-56 bg-white border-r border-line flex flex-col h-screen sticky top-0 shrink-0">
     <div class="p-5 border-b border-line">
       <div class="flex items-center gap-2">
         <img src="/logo-icon.png" alt="" class="w-8 h-8 rounded-lg" />
@@ -94,11 +198,16 @@
   <!-- Main -->
   <main class="flex-1 overflow-y-auto min-h-screen">
     <!-- Top Bar -->
-    <div class="sticky top-0 bg-paper/90 backdrop-blur-md border-b border-line z-10 px-6 py-3 flex items-center justify-between">
-      <div id="breadcrumb" class="text-sm"><span class="text-ink3">Dashboard</span></div>
+    <div class="sticky top-0 bg-paper/90 backdrop-blur-md border-b border-line z-10 px-6 py-3 flex items-center justify-between flex-wrap gap-2">
       <div class="flex items-center gap-3">
-        <input id="acceptCodeInput" type="text" placeholder="Enter patient code..." class="px-3 py-1.5 rounded-lg border border-line2 bg-white text-xs w-44" />
-        <button onclick="acceptCode()" class="px-3 py-1.5 bg-sage text-white rounded-lg text-xs font-semibold hover:bg-sageDeep transition">Link Patient</button>
+        <button class="hamburger-btn w-10 h-10 rounded-lg flex items-center justify-center hover:bg-cream" onclick="toggleSidebar()">
+          <svg class="w-5 h-5 text-ink2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div id="breadcrumb" class="text-sm"><span class="text-ink3">Dashboard</span></div>
+      </div>
+      <div class="flex items-center gap-3 top-bar-link-input">
+        <input id="acceptCodeInput" type="text" placeholder="Enter patient code..." class="px-3 py-1.5 rounded-lg border border-line2 bg-white text-xs w-44" style="min-height:36px" />
+        <button onclick="acceptCode()" id="acceptCodeBtn" class="px-3 py-1.5 bg-sage text-white rounded-lg text-xs font-semibold hover:bg-sageDeep transition flex items-center gap-2" style="min-height:36px">Link Patient</button>
       </div>
     </div>
 
@@ -107,13 +216,45 @@
   </main>
 </div>
 
+<!-- ═══ ONBOARDING OVERLAY ═══ -->
+<div id="onboardingOverlay" class="hidden"></div>
+
 <!-- ═══ MODALS ═══ -->
-<div id="modalOverlay" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center">
-  <div id="modalContent" class="bg-white rounded-2xl shadow-card max-w-lg w-full mx-4 max-h-[85vh] overflow-y-auto"></div>
+<div id="modalOverlay" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4">
+  <div id="modalContent" class="modal-content bg-white rounded-2xl shadow-card max-w-lg w-full mx-4 max-h-[85vh] overflow-y-auto"></div>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════
+// XSS Protection
+function escapeHTML(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Toast notification system
+function showToast(message, type = 'info', duration = 4000) {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('out');
+    setTimeout(() => toast.remove(), 300);
+  }, duration);
+}
+
+// Mobile sidebar
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+}
+
 const API = 'https://www.wyldeself.com';
 const sb = supabase.createClient(
   'https://huclolzxzpitdpyogolu.supabase.co',
@@ -129,8 +270,11 @@ let selectedPatient = null;
 async function signIn() {
   const email = el('authEmail').value.trim(), pw = el('authPassword').value;
   const errEl = el('authError'); errEl.classList.add('hidden');
+  const btn = el('signInBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Signing in...';
   const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
-  if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
+  btn.disabled = false; btn.textContent = 'Sign In';
+  if (error) { errEl.textContent = escapeHTML(error.message); errEl.classList.remove('hidden'); return; }
   currentUser = data.user; initDashboard();
 }
 async function signUp() {
@@ -138,7 +282,7 @@ async function signUp() {
   const errEl = el('authError'); errEl.classList.add('hidden');
   if (!email || pw.length < 6) { errEl.textContent = 'Email and password (6+ chars) required'; errEl.classList.remove('hidden'); return; }
   const { data, error } = await sb.auth.signUp({ email, password: pw });
-  if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
+  if (error) { errEl.textContent = escapeHTML(error.message); errEl.classList.remove('hidden'); return; }
   if (data.user) { currentUser = data.user; initDashboard(); }
 }
 async function signOut() { await sb.auth.signOut(); location.reload(); }
@@ -166,8 +310,8 @@ async function initDashboard() {
   }
 
   el('dashboardScreen').classList.remove('hidden');
-  el('sidebarName').textContent = clinicSettings.clinic_name || name;
-  el('sidebarAvatar').textContent = (clinicSettings.clinic_name || name).substring(0,2).toUpperCase();
+  el('sidebarName').textContent = escapeHTML(clinicSettings.clinic_name || name);
+  el('sidebarAvatar').textContent = escapeHTML((clinicSettings.clinic_name || name).substring(0,2).toUpperCase());
   loadPatients();
   loadProducts();
 }
@@ -177,6 +321,7 @@ function navTo(section) {
   currentSection = section;
   selectedPatient = null;
   document.querySelectorAll('.nav-item').forEach(n => { n.classList.toggle('active', n.dataset.section === section); });
+  closeSidebar();
   render();
 }
 
@@ -196,14 +341,51 @@ function render() {
     case 'settings': renderSettings(c); break;
     case 'patientDetail': renderPatientDetail(c); break;
   }
-  el('breadcrumb').innerHTML = currentSection === 'patientDetail' && selectedPatient
-    ? `<span class="text-ink3 cursor-pointer hover:text-ink" onclick="navTo('patients')">Patients</span> <span class="text-ink3 mx-1">›</span> <span class="text-ink font-medium">${selectedPatient.name}</span>`
-    : `<span class="text-ink3">${currentSection.charAt(0).toUpperCase() + currentSection.slice(1)}</span>`;
+  const bc = el('breadcrumb');
+  if (currentSection === 'patientDetail' && selectedPatient) {
+    bc.innerHTML = '<span class="text-ink3 cursor-pointer hover:text-ink" onclick="navTo(\'patients\')">Patients</span> <span class="text-ink3 mx-1">&rsaquo;</span> <span class="text-ink font-medium">' + escapeHTML(selectedPatient.name) + '</span>';
+  } else {
+    bc.innerHTML = '<span class="text-ink3">' + escapeHTML(currentSection.charAt(0).toUpperCase() + currentSection.slice(1)) + '</span>';
+  }
 }
 
-// ─── Load Data ───
+// ─── Load Data (server-side aggregated) ───
 async function loadPatients() {
-  const { data: rels } = await sb.from('care_relationships').select('patient_id, clinic_name, linked_at').eq('clinician_id', currentUser.id).eq('status', 'active');
+  // Show loading state
+  const c = el('content');
+  if (c && currentSection === 'dashboard') {
+    c.innerHTML = '<div class="grid grid-cols-4 stat-grid-4 gap-4 mb-6">' +
+      Array(4).fill('<div class="bg-white rounded-xl p-4 border border-line"><div class="skeleton h-3 w-20 mb-2"></div><div class="skeleton h-7 w-16"></div></div>').join('') +
+      '</div><div class="bg-white rounded-xl border border-line p-6"><div class="skeleton h-4 w-32 mb-4"></div>' +
+      Array(3).fill('<div class="skeleton h-14 w-full mb-3"></div>').join('') + '</div>';
+  }
+
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  if (!token) return;
+
+  try {
+    const resp = await fetch(API + '/api/clinic/dashboard', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+
+    if (resp.ok) {
+      const data = await resp.json();
+      patients = data.patients || [];
+      if (data.clinic_settings) clinicSettings = data.clinic_settings;
+    } else {
+      // Fallback: load from Supabase directly
+      await loadPatientsFallback();
+    }
+  } catch (e) {
+    console.error('Dashboard API failed, using fallback:', e);
+    await loadPatientsFallback();
+  }
+
+  render();
+}
+
+async function loadPatientsFallback() {
+  const { data: rels } = await sb.from('care_relationships').select('id, patient_id, clinician_id, clinic_name, linked_at').eq('clinician_id', currentUser.id).eq('status', 'active');
   patients = [];
   const today = new Date().toISOString().split('T')[0];
   for (const rel of (rels || [])) {
@@ -214,13 +396,10 @@ async function loadPatients() {
     const last7 = (checkins || []).slice(0, 7);
     const adherence = last7.length > 0 ? Math.round(last7.reduce((s, c) => s + (c.doses > 0 ? 1 : 0), 0) / last7.length * 100) : null;
     const pd = profile?.profile_data || {};
-    // Wylde Score
     const { data: scoreData } = await sb.from('wylde_scores').select('*').eq('user_id', rel.patient_id).eq('date', today).single();
-    // Adherence logs (last 14 days)
     const fourteenAgo = new Date(Date.now() - 14 * 86400000).toISOString();
     const { data: adherenceLogs } = await sb.from('protocol_adherence_logs').select('*').eq('user_id', rel.patient_id).gte('created_at', fourteenAgo).order('created_at', { ascending: false });
-    // Unread messages
-    const { data: unreadMsgs } = await sb.from('care_messages').select('id').eq('recipient_id', currentUser.id).is('read_at', null);
+    const { data: unreadMsgs } = await sb.from('care_messages').select('id').eq('relationship_id', rel.id).eq('recipient_id', currentUser.id).is('read_at', null);
 
     patients.push({
       id: rel.patient_id, name: pd.name || profile?.email?.split('@')[0] || 'Patient',
@@ -231,7 +410,6 @@ async function loadPatients() {
       relationshipId: rel.id,
     });
   }
-  render();
 }
 
 async function loadProducts() {
@@ -245,14 +423,17 @@ async function loadProducts() {
 async function acceptCode() {
   const code = el('acceptCodeInput').value.trim();
   if (!code) return;
+  const btn = el('acceptCodeBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Linking...';
   const token = (await sb.auth.getSession()).data?.session?.access_token;
   const resp = await fetch(API + '/api/consumer/care/accept', {
     method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify({ code }),
   });
   const data = await resp.json();
-  if (data.linked) { el('acceptCodeInput').value = ''; alert('Patient linked!'); loadPatients(); }
-  else { alert(data.error || 'Failed to link'); }
+  btn.disabled = false; btn.textContent = 'Link Patient';
+  if (data.linked) { el('acceptCodeInput').value = ''; showToast('Patient linked successfully!', 'success'); loadPatients(); }
+  else { showToast(data.error || 'Failed to link patient', 'error'); }
 }
 
 // ─── Dashboard View ───
@@ -261,31 +442,31 @@ function renderDashboard(c) {
   const avgAdh = patients.filter(p => p.adherence != null);
   const avg = avgAdh.length > 0 ? Math.round(avgAdh.reduce((s, p) => s + p.adherence, 0) / avgAdh.length) : 0;
   c.innerHTML = `
-    <div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-4 stat-grid-4 gap-4 mb-6">
       ${statCard('Active Patients', patients.length, 'ink')}
       ${statCard('Avg Adherence', avg + '%', avg >= 80 ? 'success' : 'warn')}
       ${statCard('Check-ins Today', todayCount + '/' + patients.length, 'ink')}
       ${statCard('Total Protocols', patients.reduce((s,p) => s + p.protocols.length, 0), 'sage')}
     </div>
-    <div class="grid grid-cols-3 gap-6">
+    <div class="grid grid-cols-3 grid-cols-3-resp gap-6">
       <div class="col-span-2">
         <div class="bg-white rounded-xl border border-line shadow-soft">
           <div class="px-5 py-4 border-b border-line flex justify-between items-center">
             <h2 class="text-sm font-semibold">Your Patients</h2>
             <span class="text-xs text-ink3">${patients.length} active</span>
           </div>
-          <div class="divide-y divide-line">${patients.length ? patients.map(p => patientRow(p)).join('') : '<div class="px-5 py-12 text-center text-ink3 text-sm">No patients linked yet. Have them share a code from the Wylde Self app.</div>'}</div>
+          <div class="divide-y divide-line">${patients.length ? patients.map(p => patientRow(p)).join('') : '<div class="px-5 py-12 text-center text-ink3 text-sm"><p class="mb-2">No patients linked yet.</p><p>Share your clinic code or have patients generate an invite code from their Wylde Self app.</p></div>'}</div>
         </div>
       </div>
       <div class="space-y-4">
         <div class="bg-white rounded-xl border border-line shadow-soft p-5">
           <h3 class="text-xs font-semibold text-ink3 uppercase tracking-wide mb-3">Recent Activity</h3>
-          ${patients.flatMap(p => p.checkins.slice(0,2).map(c => `<div class="flex items-start gap-2 py-2"><div class="w-1.5 h-1.5 rounded-full bg-sage mt-1.5 shrink-0"></div><div><div class="text-xs text-ink">${p.name} — ${c.workout > 0 ? 'Workout' : 'Check-in'}</div><div class="text-[10px] text-ink3">${fmtDate(c.date)}</div></div></div>`)).slice(0,8).join('') || '<div class="text-xs text-ink3">No recent activity</div>'}
+          ${patients.flatMap(p => p.checkins.slice(0,2).map(c => '<div class="flex items-start gap-2 py-2"><div class="w-1.5 h-1.5 rounded-full bg-sage mt-1.5 shrink-0"></div><div><div class="text-xs text-ink">' + escapeHTML(p.name) + ' &mdash; ' + (c.workout > 0 ? 'Workout' : 'Check-in') + '</div><div class="text-[10px] text-ink3">' + fmtDate(c.date) + '</div></div></div>')).slice(0,8).join('') || '<div class="text-xs text-ink3">No recent activity</div>'}
         </div>
         <div class="bg-white rounded-xl border border-line shadow-soft p-5">
           <h3 class="text-xs font-semibold text-ink3 uppercase tracking-wide mb-3">Product Library</h3>
           <div class="text-xs text-ink2 mb-2">${products.length} products</div>
-          <button onclick="navTo('library')" class="text-xs text-sage font-medium hover:text-sageDeep">Manage products →</button>
+          <button onclick="navTo('library')" class="text-xs text-sage font-medium hover:text-sageDeep">Manage products &rarr;</button>
         </div>
       </div>
     </div>`;
@@ -305,25 +486,29 @@ function showPatient(id) {
 function renderPatientDetail(c) {
   const p = selectedPatient;
   if (!p) return;
+  const safeId = escapeHTML(p.id);
+  const safeName = escapeHTML(p.name);
+  const safeEmail = escapeHTML(p.email);
+  const safeRelId = escapeHTML(p.relationshipId || '');
   c.innerHTML = `
     <!-- Header -->
     <div class="bg-white rounded-xl border border-line shadow-soft p-6 mb-6">
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between flex-wrap gap-4">
         <div class="flex items-center gap-5">
-          <div class="w-16 h-16 rounded-full bg-sageDim flex items-center justify-center text-sage text-xl font-semibold">${p.name.substring(0,2).toUpperCase()}</div>
+          <div class="w-16 h-16 rounded-full bg-sageDim flex items-center justify-center text-sage text-xl font-semibold">${safeName.substring(0,2).toUpperCase()}</div>
           <div>
-            <h2 class="text-xl font-semibold">${p.name}</h2>
-            <p class="text-sm text-ink3">${p.email}</p>
+            <h2 class="text-xl font-semibold">${safeName}</h2>
+            <p class="text-sm text-ink3">${safeEmail}</p>
             <p class="text-xs text-ink3 mt-1">Linked ${fmtDate(p.linkedAt)}</p>
           </div>
         </div>
-        <div class="flex gap-3">
+        <div class="flex gap-3 detail-header-stats flex-wrap">
           <div class="bg-cream rounded-xl p-4 text-center min-w-[90px]">
-            <div class="text-2xl font-semibold ${p.wyldeScore && p.wyldeScore.total_score >= 75 ? 'text-success' : p.wyldeScore && p.wyldeScore.total_score >= 50 ? 'text-warn' : 'text-ink2'}">${p.wyldeScore ? p.wyldeScore.total_score : '—'}</div>
+            <div class="text-2xl font-semibold ${p.wyldeScore && p.wyldeScore.total_score >= 75 ? 'text-success' : p.wyldeScore && p.wyldeScore.total_score >= 50 ? 'text-warn' : 'text-ink2'}">${p.wyldeScore ? p.wyldeScore.total_score : '&mdash;'}</div>
             <div class="text-xs text-ink3 mt-1">Wylde Score</div>
           </div>
           <div class="bg-cream rounded-xl p-4 text-center min-w-[90px]">
-            <div class="text-2xl font-semibold ${p.adherence >= 80 ? 'text-success' : 'text-warn'}">${p.adherence ?? '—'}%</div>
+            <div class="text-2xl font-semibold ${p.adherence >= 80 ? 'text-success' : 'text-warn'}">${p.adherence != null ? p.adherence + '%' : '&mdash;'}</div>
             <div class="text-xs text-ink3 mt-1">Adherence</div>
           </div>
           <div class="bg-cream rounded-xl p-4 text-center min-w-[90px]">
@@ -332,18 +517,18 @@ function renderPatientDetail(c) {
           </div>
         </div>
       </div>
-      <div class="flex gap-2 mt-4">
-        <button onclick="showAssignProtocol('${p.id}')" class="px-4 py-2 bg-sage text-white rounded-lg text-xs font-semibold hover:bg-sageDeep transition">Assign Protocol</button>
-        <button onclick="generateInsights('${p.id}')" class="px-4 py-2 bg-sky text-white rounded-lg text-xs font-semibold hover:opacity-90 transition" id="insightBtn">Generate Insights</button>
-        <button onclick="showAddNote('${p.id}')" class="px-4 py-2 bg-white border border-line2 text-ink2 rounded-lg text-xs font-medium hover:bg-cream transition">Add Note</button>
+      <div class="flex gap-2 mt-4 flex-wrap">
+        <button onclick="showAssignProtocol('${safeId}')" class="px-4 py-2 bg-sage text-white rounded-lg text-xs font-semibold hover:bg-sageDeep transition" style="min-height:44px">Assign Protocol</button>
+        <button onclick="generateInsights('${safeId}')" class="px-4 py-2 bg-sky text-white rounded-lg text-xs font-semibold hover:opacity-90 transition" id="insightBtn" style="min-height:44px">Generate Insights</button>
+        <button onclick="showAddNote('${safeId}')" class="px-4 py-2 bg-white border border-line2 text-ink2 rounded-lg text-xs font-medium hover:bg-cream transition" style="min-height:44px">Add Note</button>
       </div>
     </div>
 
-    <div class="grid grid-cols-3 gap-6">
+    <div class="grid grid-cols-3 detail-grid gap-6">
       <!-- Check-in History -->
       <div class="col-span-2 bg-white rounded-xl border border-line shadow-soft">
         <div class="px-5 py-4 border-b border-line"><h3 class="text-sm font-semibold">Check-in History</h3></div>
-        <div class="overflow-x-auto">
+        <div class="table-responsive">
           <table class="w-full text-sm">
             <thead><tr class="text-ink3 text-xs border-b border-line">
               <th class="px-5 py-3 text-left font-medium">Date</th>
@@ -355,15 +540,15 @@ function renderPatientDetail(c) {
               <th class="px-3 py-3 text-left font-medium">Notes</th>
             </tr></thead>
             <tbody class="divide-y divide-line">
-              ${p.checkins.slice(0,21).map(ch => `<tr class="hover:bg-cream transition">
-                <td class="px-5 py-3">${fmtDate(ch.date)}</td>
-                <td class="px-3 py-3 text-center">${scoreIcon(ch.doses)}</td>
-                <td class="px-3 py-3 text-center">${scoreIcon(ch.workout)}</td>
-                <td class="px-3 py-3 text-center">${scoreIcon(ch.nutrition)}</td>
-                <td class="px-3 py-3 text-center">${ch.mood != null ? moodDot(ch.mood) : '<span class="text-ink3">—</span>'}</td>
-                <td class="px-3 py-3 text-center text-ink2">${ch.weight ? ch.weight + 'lb' : '—'}</td>
-                <td class="px-3 py-3 text-ink3 text-xs max-w-[160px] truncate">${ch.notes || '—'}</td>
-              </tr>`).join('')}
+              ${p.checkins.length > 0 ? p.checkins.slice(0,21).map(ch => '<tr class="hover:bg-cream transition">' +
+                '<td class="px-5 py-3">' + fmtDate(ch.date) + '</td>' +
+                '<td class="px-3 py-3 text-center">' + scoreIcon(ch.doses) + '</td>' +
+                '<td class="px-3 py-3 text-center">' + scoreIcon(ch.workout) + '</td>' +
+                '<td class="px-3 py-3 text-center">' + scoreIcon(ch.nutrition) + '</td>' +
+                '<td class="px-3 py-3 text-center">' + (ch.mood != null ? moodDot(ch.mood) : '<span class="text-ink3">&mdash;</span>') + '</td>' +
+                '<td class="px-3 py-3 text-center text-ink2">' + (ch.weight ? escapeHTML(String(ch.weight)) + 'lb' : '&mdash;') + '</td>' +
+                '<td class="px-3 py-3 text-ink3 text-xs max-w-[160px] truncate">' + escapeHTML(ch.notes || '') + '</td>' +
+              '</tr>').join('') : '<tr><td colspan="7" class="px-5 py-8 text-center text-ink3 text-sm">No check-ins recorded yet. The patient will see them once they start tracking in the app.</td></tr>'}
             </tbody>
           </table>
         </div>
@@ -375,11 +560,11 @@ function renderPatientDetail(c) {
         <div class="bg-white rounded-xl border border-line shadow-soft">
           <div class="px-5 py-4 border-b border-line"><h3 class="text-sm font-semibold">Current Protocols</h3></div>
           <div class="p-5 space-y-3">
-            ${p.protocols.length ? p.protocols.map(pr => `
-              <div class="flex items-center gap-3">
-                <div class="w-2 h-2 rounded-full bg-success"></div>
-                <div><div class="text-sm font-medium">${pr.name}</div><div class="text-xs text-ink3">${pr.phase || 'Active'} · Started ${fmtDate(pr.started_at)}</div></div>
-              </div>`).join('') : '<div class="text-sm text-ink3">No active protocols</div>'}
+            ${p.protocols.length ? p.protocols.map(pr =>
+              '<div class="flex items-center gap-3">' +
+                '<div class="w-2 h-2 rounded-full bg-success"></div>' +
+                '<div><div class="text-sm font-medium">' + escapeHTML(pr.name) + '</div><div class="text-xs text-ink3">' + escapeHTML(pr.phase || 'Active') + ' &middot; Started ' + fmtDate(pr.started_at) + '</div></div>' +
+              '</div>').join('') : '<div class="text-sm text-ink3">No active protocols. Assign one using the button above.</div>'}
           </div>
         </div>
 
@@ -387,11 +572,11 @@ function renderPatientDetail(c) {
         <div class="bg-white rounded-xl border border-line shadow-soft">
           <div class="px-5 py-4 border-b border-line"><h3 class="text-sm font-semibold">Active Prescriptions</h3></div>
           <div class="p-5 space-y-2">
-            ${p.prescriptions.length ? p.prescriptions.map(rx => `
-              <div class="flex justify-between items-center py-1">
-                <div><div class="text-sm font-medium">${rx.drug}</div><div class="text-xs text-ink3">${rx.dose} · ${rx.frequency}</div></div>
-                <span class="text-[10px] px-2 py-0.5 rounded-full ${rx.status === 'active' ? 'bg-successbg text-success' : 'bg-warnbg text-warn'}">${rx.status}</span>
-              </div>`).join('') : '<div class="text-sm text-ink3">No prescriptions</div>'}
+            ${p.prescriptions.length ? p.prescriptions.map(rx =>
+              '<div class="flex justify-between items-center py-1">' +
+                '<div><div class="text-sm font-medium">' + escapeHTML(rx.drug) + '</div><div class="text-xs text-ink3">' + escapeHTML(rx.dose) + ' &middot; ' + escapeHTML(rx.frequency) + '</div></div>' +
+                '<span class="text-[10px] px-2 py-0.5 rounded-full ' + (rx.status === 'active' ? 'bg-successbg text-success' : 'bg-warnbg text-warn') + '">' + escapeHTML(rx.status) + '</span>' +
+              '</div>').join('') : '<div class="text-sm text-ink3">No active prescriptions.</div>'}
           </div>
         </div>
 
@@ -399,10 +584,13 @@ function renderPatientDetail(c) {
         <div class="bg-white rounded-xl border border-line shadow-soft">
           <div class="px-5 py-4 border-b border-line flex justify-between items-center">
             <h3 class="text-sm font-semibold">AI Insights</h3>
-            <button onclick="generateInsights('${p.id}')" class="text-xs text-sky font-medium hover:text-ink">Generate</button>
+            <button onclick="generateInsights('${safeId}')" class="text-xs text-sky font-medium hover:text-ink">Generate</button>
           </div>
           <div class="p-5 space-y-3" id="patientInsights">
             <div class="text-xs text-ink3">Click "Generate Insights" to analyze patient data.</div>
+          </div>
+          <div class="px-5 pb-3">
+            <p class="text-[10px] text-ink3 italic">AI-generated insights are decision support tools. All clinical decisions should be made by the treating clinician.</p>
           </div>
         </div>
 
@@ -411,12 +599,12 @@ function renderPatientDetail(c) {
         <div class="bg-white rounded-xl border border-line shadow-soft">
           <div class="px-5 py-4 border-b border-line"><h3 class="text-sm font-semibold">Protocol Adherence</h3></div>
           <div class="p-5 space-y-2">
-            ${p.adherenceLogs.slice(0, 10).map(l => `
-              <div class="flex items-center gap-3 py-1">
-                <span class="w-5 h-5 rounded-full ${l.status === 'taken' ? 'bg-successbg text-success' : 'bg-critbg text-crit'} text-xs flex items-center justify-center">${l.status === 'taken' ? '✓' : '✗'}</span>
-                <div class="flex-1"><div class="text-xs text-ink">${l.dose || 'Dose'}</div><div class="text-[10px] text-ink3">${fmtDate(l.created_at)}</div></div>
-                ${l.side_effects ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-warnbg text-warn">Side effect</span>' : ''}
-              </div>`).join('')}
+            ${p.adherenceLogs.slice(0, 10).map(l =>
+              '<div class="flex items-center gap-3 py-1">' +
+                '<span class="w-5 h-5 rounded-full ' + (l.status === 'taken' ? 'bg-successbg text-success' : 'bg-critbg text-crit') + ' text-xs flex items-center justify-center">' + (l.status === 'taken' ? '&#10003;' : '&#10007;') + '</span>' +
+                '<div class="flex-1"><div class="text-xs text-ink">' + escapeHTML(l.dose || 'Dose') + '</div><div class="text-[10px] text-ink3">' + fmtDate(l.created_at) + '</div></div>' +
+                (l.side_effects ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-warnbg text-warn">Side effect</span>' : '') +
+              '</div>').join('')}
           </div>
         </div>` : ''}
 
@@ -429,9 +617,12 @@ function renderPatientDetail(c) {
           <div class="p-4" id="patientMessages" style="max-height:300px;overflow-y:auto;">
             <div class="text-xs text-ink3">Loading...</div>
           </div>
-          <div class="px-4 pb-4 flex gap-2">
-            <input id="msgInput" type="text" placeholder="Send a message..." class="flex-1 px-3 py-2 rounded-lg border border-line2 text-sm" onkeydown="if(event.key==='Enter')sendPatientMsg('${p.id}','${p.relationshipId}')" />
-            <button onclick="sendPatientMsg('${p.id}','${p.relationshipId}')" class="px-3 py-2 bg-sage text-white rounded-lg text-xs font-semibold hover:bg-sageDeep">Send</button>
+          <div class="px-4 py-2 bg-warnbg rounded-b-none">
+            <p class="text-[10px] text-warn">Not for emergencies. If a patient is in crisis, direct them to 911 or their local emergency services.</p>
+          </div>
+          <div class="px-4 pb-4 pt-2 flex gap-2">
+            <input id="msgInput" type="text" placeholder="Send a message..." class="flex-1 px-3 py-2 rounded-lg border border-line2 text-sm" style="min-height:44px" onkeydown="if(event.key==='Enter')sendPatientMsg('${safeId}','${safeRelId}')" />
+            <button onclick="sendPatientMsg('${safeId}','${safeRelId}')" class="px-3 py-2 bg-sage text-white rounded-lg text-xs font-semibold hover:bg-sageDeep" style="min-height:44px">Send</button>
           </div>
         </div>
 
@@ -439,7 +630,7 @@ function renderPatientDetail(c) {
         <div class="bg-white rounded-xl border border-line shadow-soft">
           <div class="px-5 py-4 border-b border-line flex justify-between items-center">
             <h3 class="text-sm font-semibold">Notes</h3>
-            <button onclick="showAddNote('${p.id}')" class="text-xs text-sage font-medium">+ Add</button>
+            <button onclick="showAddNote('${safeId}')" class="text-xs text-sage font-medium">+ Add</button>
           </div>
           <div class="p-5" id="patientNotes">
             <div class="text-xs text-ink3">Loading...</div>
@@ -447,7 +638,7 @@ function renderPatientDetail(c) {
         </div>
       </div>
     </div>
-    <button onclick="navTo('dashboard')" class="mt-6 text-sm text-ink3 hover:text-ink">← Back</button>`;
+    <button onclick="navTo('dashboard')" class="mt-6 text-sm text-ink3 hover:text-ink">&larr; Back</button>`;
 
   loadPatientNotes(p.id);
   if (p.relationshipId) loadPatientMessages(p.id, p.relationshipId);
@@ -460,32 +651,32 @@ async function loadPatientNotes(patientId) {
   const notesEl = el('patientNotes');
   if (resp.ok) {
     const { notes } = await resp.json();
-    notesEl.innerHTML = notes.length ? notes.map(n => `<div class="py-2 border-b border-line last:border-0"><div class="text-sm text-ink">${n.content}</div><div class="text-[10px] text-ink3 mt-1">${fmtDate(n.created_at)} · ${n.note_type}</div></div>`).join('') : '<div class="text-xs text-ink3">No notes yet</div>';
+    notesEl.innerHTML = notes.length ? notes.map(n => '<div class="py-2 border-b border-line last:border-0"><div class="text-sm text-ink">' + escapeHTML(n.content) + '</div><div class="text-[10px] text-ink3 mt-1">' + fmtDate(n.created_at) + ' &middot; ' + escapeHTML(n.note_type) + '</div></div>').join('') : '<div class="text-xs text-ink3">No notes yet. Use "Add Note" to record observations.</div>';
   }
 }
 
 // ─── Library View ───
 function renderLibrary(c) {
-  const cats = { peptide: '💉', supplement: '💊', medication: '💊', service: '🩺', lab_test: '🧪' };
+  const cats = { peptide: '&#x1F489;', supplement: '&#x1F48A;', medication: '&#x1F48A;', service: '&#x1FA7A;', lab_test: '&#x1F9EA;' };
   c.innerHTML = `
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
       <div><h2 class="text-lg font-semibold">Product Library</h2><p class="text-sm text-ink3">Peptides, supplements, medications, and services</p></div>
-      <button onclick="showAddProduct()" class="px-4 py-2 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep transition">+ Add Product</button>
+      <button onclick="showAddProduct()" class="px-4 py-2 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep transition" style="min-height:44px">+ Add Product</button>
     </div>
-    <div class="grid grid-cols-3 gap-4">
-      ${products.map(p => `
-        <div class="bg-white rounded-xl border border-line shadow-soft p-5 hover:shadow-card transition cursor-pointer" onclick="showEditProduct('${p.id}')">
-          <div class="flex justify-between items-start mb-3">
-            <span class="text-lg">${cats[p.category] || '📦'}</span>
-            <span class="text-[10px] px-2 py-0.5 rounded-full ${p.in_stock ? 'bg-successbg text-success' : 'bg-critbg text-crit'}">${p.in_stock ? 'In Stock' : 'Out'}</span>
-          </div>
-          <h3 class="text-sm font-semibold mb-1">${p.name}</h3>
-          <p class="text-xs text-ink3 mb-2">${p.category} · ${p.method || '—'}</p>
-          <div class="flex justify-between items-end">
-            <div><div class="text-xs text-ink3">Dose</div><div class="text-sm font-medium">${p.typical_dose || '—'}</div></div>
-            <div class="text-right"><div class="text-xs text-ink3">Price</div><div class="text-sm font-semibold text-sage">$${p.price ? Number(p.price).toFixed(2) : '—'}</div></div>
-          </div>
-        </div>`).join('') || '<div class="col-span-3 text-center py-12 text-ink3">No products yet. Add your first peptide, supplement, or service.</div>'}
+    <div class="grid grid-cols-3 grid-cols-3-resp gap-4">
+      ${products.map(p =>
+        '<div class="bg-white rounded-xl border border-line shadow-soft p-5 hover:shadow-card transition cursor-pointer" onclick="showEditProduct(\'' + escapeHTML(p.id) + '\')">' +
+          '<div class="flex justify-between items-start mb-3">' +
+            '<span class="text-lg">' + (cats[p.category] || '&#x1F4E6;') + '</span>' +
+            '<span class="text-[10px] px-2 py-0.5 rounded-full ' + (p.in_stock ? 'bg-successbg text-success' : 'bg-critbg text-crit') + '">' + (p.in_stock ? 'In Stock' : 'Out') + '</span>' +
+          '</div>' +
+          '<h3 class="text-sm font-semibold mb-1">' + escapeHTML(p.name) + '</h3>' +
+          '<p class="text-xs text-ink3 mb-2">' + escapeHTML(p.category) + ' &middot; ' + escapeHTML(p.method || '&mdash;') + '</p>' +
+          '<div class="flex justify-between items-end">' +
+            '<div><div class="text-xs text-ink3">Dose</div><div class="text-sm font-medium">' + escapeHTML(p.typical_dose || '&mdash;') + '</div></div>' +
+            '<div class="text-right"><div class="text-xs text-ink3">Price</div><div class="text-sm font-semibold text-sage">$' + (p.price ? Number(p.price).toFixed(2) : '&mdash;') + '</div></div>' +
+          '</div>' +
+        '</div>').join('') || '<div class="col-span-3 text-center py-12 text-ink3">No products yet. Add your first peptide, supplement, or service.</div>'}
     </div>`;
 }
 
@@ -498,14 +689,14 @@ function renderProtocols(c) {
     </div>
     <div class="bg-white rounded-xl border border-line shadow-soft">
       <div class="divide-y divide-line">
-        ${allProtocols.length ? allProtocols.map(pr => `
-          <div class="px-5 py-4 flex items-center justify-between hover:bg-cream transition cursor-pointer" onclick="showPatient('${pr.patientId}')">
-            <div class="flex items-center gap-4">
-              <div class="w-2 h-2 rounded-full bg-success"></div>
-              <div><div class="text-sm font-medium">${pr.name}</div><div class="text-xs text-ink3">${pr.patientName} · ${pr.phase || 'Active'}</div></div>
-            </div>
-            <div class="text-xs text-ink3">Started ${fmtDate(pr.started_at)}</div>
-          </div>`).join('') : '<div class="px-5 py-12 text-center text-ink3 text-sm">No active protocols. Assign one from a patient\'s detail page.</div>'}
+        ${allProtocols.length ? allProtocols.map(pr =>
+          '<div class="px-5 py-4 flex items-center justify-between hover:bg-cream transition cursor-pointer patient-row-touch" onclick="showPatient(\'' + escapeHTML(pr.patientId) + '\')">' +
+            '<div class="flex items-center gap-4">' +
+              '<div class="w-2 h-2 rounded-full bg-success"></div>' +
+              '<div><div class="text-sm font-medium">' + escapeHTML(pr.name) + '</div><div class="text-xs text-ink3">' + escapeHTML(pr.patientName) + ' &middot; ' + escapeHTML(pr.phase || 'Active') + '</div></div>' +
+            '</div>' +
+            '<div class="text-xs text-ink3">Started ' + fmtDate(pr.started_at) + '</div>' +
+          '</div>').join('') : '<div class="px-5 py-12 text-center text-ink3 text-sm">No active protocols. Assign one from a patient\'s detail page.</div>'}
       </div>
     </div>`;
 }
@@ -543,14 +734,16 @@ function showAddProduct() {
         </div>
         <textarea id="pMech" placeholder="Mechanism of action" rows="2" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm"></textarea>
         <div class="flex gap-2 pt-2">
-          <button onclick="saveProduct()" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Save Product</button>
-          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+          <button onclick="saveProduct()" id="saveProductBtn" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep" style="min-height:44px">Save Product</button>
+          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2" style="min-height:44px">Cancel</button>
         </div>
       </div>
     </div>`);
 }
 
 async function saveProduct() {
+  const btn = el('saveProductBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Saving...';
   const token = (await sb.auth.getSession()).data?.session?.access_token;
   const body = {
     name: el('pName').value, category: el('pCategory').value, description: el('pDesc').value,
@@ -562,8 +755,8 @@ async function saveProduct() {
     method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify(body),
   });
-  if (resp.ok) { closeModal(); await loadProducts(); render(); }
-  else { alert('Failed to save'); }
+  if (resp.ok) { closeModal(); await loadProducts(); render(); showToast('Product saved!', 'success'); }
+  else { btn.disabled = false; btn.textContent = 'Save Product'; showToast('Failed to save product', 'error'); }
 }
 
 function showEditProduct(id) {
@@ -571,18 +764,18 @@ function showEditProduct(id) {
   if (!p) return;
   openModal(`
     <div class="p-6">
-      <h2 class="text-lg font-semibold mb-2">${p.name}</h2>
-      <p class="text-xs text-ink3 mb-4">${p.category} · ${p.method || '—'}</p>
+      <h2 class="text-lg font-semibold mb-2">${escapeHTML(p.name)}</h2>
+      <p class="text-xs text-ink3 mb-4">${escapeHTML(p.category)} &middot; ${escapeHTML(p.method || '')}</p>
       <div class="space-y-3 text-sm">
-        <div><span class="text-ink3">Description:</span> <span class="text-ink">${p.description || '—'}</span></div>
-        <div><span class="text-ink3">Mechanism:</span> <span class="text-ink">${p.mechanism || '—'}</span></div>
-        <div><span class="text-ink3">Dose:</span> <span class="text-ink">${p.typical_dose || '—'}</span></div>
-        <div><span class="text-ink3">Frequency:</span> <span class="text-ink">${p.frequency || '—'}</span></div>
-        <div><span class="text-ink3">Cycle:</span> <span class="text-ink">${p.cycle_length || '—'}</span></div>
-        <div><span class="text-ink3">Price:</span> <span class="text-ink font-semibold text-sage">$${p.price ? Number(p.price).toFixed(2) : '—'} ${p.price_unit}</span></div>
+        <div><span class="text-ink3">Description:</span> <span class="text-ink">${escapeHTML(p.description || '&mdash;')}</span></div>
+        <div><span class="text-ink3">Mechanism:</span> <span class="text-ink">${escapeHTML(p.mechanism || '&mdash;')}</span></div>
+        <div><span class="text-ink3">Dose:</span> <span class="text-ink">${escapeHTML(p.typical_dose || '&mdash;')}</span></div>
+        <div><span class="text-ink3">Frequency:</span> <span class="text-ink">${escapeHTML(p.frequency || '&mdash;')}</span></div>
+        <div><span class="text-ink3">Cycle:</span> <span class="text-ink">${escapeHTML(p.cycle_length || '&mdash;')}</span></div>
+        <div><span class="text-ink3">Price:</span> <span class="text-ink font-semibold text-sage">$${p.price ? Number(p.price).toFixed(2) : '&mdash;'} ${escapeHTML(p.price_unit || '')}</span></div>
         <div class="flex gap-2 pt-3">
-          <button onclick="deleteProduct('${p.id}')" class="px-4 py-2 bg-critbg text-crit rounded-lg text-xs font-medium">Remove</button>
-          <button onclick="closeModal()" class="px-4 py-2 border border-line2 rounded-lg text-xs text-ink2">Close</button>
+          <button onclick="deleteProduct('${escapeHTML(p.id)}')" class="px-4 py-2 bg-critbg text-crit rounded-lg text-xs font-medium" style="min-height:44px">Remove</button>
+          <button onclick="closeModal()" class="px-4 py-2 border border-line2 rounded-lg text-xs text-ink2" style="min-height:44px">Close</button>
         </div>
       </div>
     </div>`);
@@ -595,6 +788,7 @@ async function deleteProduct(id) {
     body: JSON.stringify({ id }),
   });
   closeModal(); await loadProducts(); render();
+  showToast('Product removed', 'info');
 }
 
 function showAssignProtocol(patientId) {
@@ -606,22 +800,24 @@ function showAssignProtocol(patientId) {
         <input id="protoPhase" placeholder="Phase (e.g. Loading, Maintenance)" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
         <div class="border border-line rounded-lg p-3">
           <div class="text-xs font-medium text-ink3 mb-2">Select products to include:</div>
-          ${products.map(p => `
-            <label class="flex items-center gap-2 py-1.5 cursor-pointer">
-              <input type="checkbox" class="proto-rx" value="${p.id}" data-name="${p.name}" data-dose="${p.typical_dose || ''}" data-freq="${p.frequency || 'daily'}" data-method="${p.method || ''}" />
-              <span class="text-sm">${p.name}</span>
-              <span class="text-xs text-ink3 ml-auto">${p.typical_dose || ''}</span>
-            </label>`).join('') || '<div class="text-xs text-ink3">No products in library. Add some first.</div>'}
+          ${products.map(p =>
+            '<label class="flex items-center gap-2 py-1.5 cursor-pointer" style="min-height:44px">' +
+              '<input type="checkbox" class="proto-rx" value="' + escapeHTML(p.id) + '" data-name="' + escapeHTML(p.name) + '" data-dose="' + escapeHTML(p.typical_dose || '') + '" data-freq="' + escapeHTML(p.frequency || 'daily') + '" data-method="' + escapeHTML(p.method || '') + '" />' +
+              '<span class="text-sm">' + escapeHTML(p.name) + '</span>' +
+              '<span class="text-xs text-ink3 ml-auto">' + escapeHTML(p.typical_dose || '') + '</span>' +
+            '</label>').join('') || '<div class="text-xs text-ink3">No products in library. Add some first.</div>'}
         </div>
         <div class="flex gap-2 pt-2">
-          <button onclick="assignProtocol('${patientId}')" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Assign</button>
-          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+          <button onclick="assignProtocol('${escapeHTML(patientId)}')" id="assignProtoBtn" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep" style="min-height:44px">Assign</button>
+          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2" style="min-height:44px">Cancel</button>
         </div>
       </div>
     </div>`);
 }
 
 async function assignProtocol(patientId) {
+  const btn = el('assignProtoBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Assigning...';
   const token = (await sb.auth.getSession()).data?.session?.access_token;
   const checked = document.querySelectorAll('.proto-rx:checked');
   const prescriptions = Array.from(checked).map(cb => ({
@@ -631,8 +827,8 @@ async function assignProtocol(patientId) {
     method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify({ patient_id: patientId, protocol_name: el('protoName').value, phase: el('protoPhase').value, prescriptions }),
   });
-  if (resp.ok) { closeModal(); await loadPatients(); currentSection = 'patientDetail'; render(); }
-  else { const d = await resp.json(); alert(d.error || 'Failed'); }
+  if (resp.ok) { closeModal(); await loadPatients(); currentSection = 'patientDetail'; render(); showToast('Protocol assigned!', 'success'); }
+  else { const d = await resp.json(); btn.disabled = false; btn.textContent = 'Assign'; showToast(d.error || 'Failed to assign protocol', 'error'); }
 }
 
 function showAddNote(patientId) {
@@ -644,44 +840,47 @@ function showAddNote(patientId) {
         <option value="general">General</option><option value="protocol">Protocol</option><option value="lab">Lab Result</option><option value="follow_up">Follow-up</option>
       </select>
       <div class="flex gap-2">
-        <button onclick="saveNote('${patientId}')" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Save Note</button>
-        <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+        <button onclick="saveNote('${escapeHTML(patientId)}')" id="saveNoteBtn" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep" style="min-height:44px">Save Note</button>
+        <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2" style="min-height:44px">Cancel</button>
       </div>
     </div>`);
 }
 
 async function saveNote(patientId) {
+  const btn = el('saveNoteBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Saving...';
   const token = (await sb.auth.getSession()).data?.session?.access_token;
   const resp = await fetch(API + '/api/clinic/notes', {
     method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify({ patient_id: patientId, content: el('noteContent').value, note_type: el('noteType').value }),
   });
-  if (resp.ok) { closeModal(); loadPatientNotes(patientId); }
+  if (resp.ok) { closeModal(); loadPatientNotes(patientId); showToast('Note saved', 'success'); }
+  else { btn.disabled = false; btn.textContent = 'Save Note'; showToast('Failed to save note', 'error'); }
 }
 
 // ─── Helpers ───
 function el(id) { return document.getElementById(id); }
-function fmtDate(d) { if (!d) return '—'; const dt = new Date(d.includes('T') ? d : d + 'T00:00:00'); return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
-function scoreIcon(s) { return s >= 3 ? '<span class="inline-flex w-5 h-5 rounded-full bg-successbg text-success text-xs items-center justify-center">✓</span>' : s > 0 ? '<span class="inline-flex w-5 h-5 rounded-full bg-warnbg text-warn text-xs items-center justify-center">~</span>' : '<span class="inline-flex w-5 h-5 rounded-full bg-warmgray text-ink3 text-xs items-center justify-center">—</span>'; }
-function moodDot(m) { return m >= 4 ? '<span class="text-success">●</span>' : m >= 2 ? '<span class="text-warn">●</span>' : '<span class="text-crit">●</span>'; }
-function statCard(label, value, color) { return `<div class="stat-card bg-white rounded-xl p-4 border border-line shadow-soft"><div class="text-ink3 text-xs mb-1">${label}</div><div class="text-2xl font-semibold text-${color}">${value}</div></div>`; }
+function fmtDate(d) { if (!d) return '&mdash;'; const dt = new Date(d.includes('T') ? d : d + 'T00:00:00'); return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
+function scoreIcon(s) { return s >= 3 ? '<span class="inline-flex w-5 h-5 rounded-full bg-successbg text-success text-xs items-center justify-center">&#10003;</span>' : s > 0 ? '<span class="inline-flex w-5 h-5 rounded-full bg-warnbg text-warn text-xs items-center justify-center">~</span>' : '<span class="inline-flex w-5 h-5 rounded-full bg-warmgray text-ink3 text-xs items-center justify-center">&mdash;</span>'; }
+function moodDot(m) { return m >= 4 ? '<span class="text-success">&#9679;</span>' : m >= 2 ? '<span class="text-warn">&#9679;</span>' : '<span class="text-crit">&#9679;</span>'; }
+function statCard(label, value, color) { return '<div class="stat-card bg-white rounded-xl p-4 border border-line shadow-soft"><div class="text-ink3 text-xs mb-1">' + escapeHTML(label) + '</div><div class="text-2xl font-semibold text-' + color + '">' + escapeHTML(String(value)) + '</div></div>'; }
 function patientRow(p) {
   const ws = p.wyldeScore;
-  return `<div class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-cream transition" onclick="showPatient('${p.id}')">
-    <div class="flex items-center gap-4">
-      <div class="w-10 h-10 rounded-full bg-sageDim flex items-center justify-center text-sage text-sm font-semibold">${p.name.substring(0,2).toUpperCase()}</div>
-      <div><div class="text-sm font-medium">${p.name}</div><div class="text-xs text-ink3">${p.protocols.length > 0 ? p.protocols[0].name : 'No protocol'}</div></div>
-    </div>
-    <div class="flex items-center gap-5">
-      <div class="text-right"><div class="text-xs text-ink3">Wylde Score</div><div class="text-sm font-semibold ${ws && ws.total_score >= 75 ? 'text-success' : ws && ws.total_score >= 50 ? 'text-warn' : 'text-ink2'}">${ws ? ws.total_score : '—'}</div></div>
-      <div class="text-right"><div class="text-xs text-ink3">Adherence</div><div class="text-sm font-semibold ${p.adherence >= 80 ? 'text-success' : p.adherence >= 50 ? 'text-warn' : 'text-crit'}">${p.adherence != null ? p.adherence + '%' : '—'}</div></div>
-      <div class="text-right"><div class="text-xs text-ink3">Today</div><div class="text-sm ${p.todayCheckin ? 'text-success' : 'text-ink3'}">${p.todayCheckin ? '✓' : '—'}</div></div>
-      ${p.unreadMessages > 0 ? '<span class="w-2 h-2 rounded-full bg-crit"></span>' : ''}
-      <svg class="w-4 h-4 text-ink3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
-    </div>
-  </div>`;
+  return '<div class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-cream transition patient-row-touch" onclick="showPatient(\'' + escapeHTML(p.id) + '\')">' +
+    '<div class="flex items-center gap-4">' +
+      '<div class="w-10 h-10 rounded-full bg-sageDim flex items-center justify-center text-sage text-sm font-semibold">' + escapeHTML(p.name.substring(0,2).toUpperCase()) + '</div>' +
+      '<div><div class="text-sm font-medium">' + escapeHTML(p.name) + '</div><div class="text-xs text-ink3">' + (p.protocols.length > 0 ? escapeHTML(p.protocols[0].name) : 'No protocol') + '</div></div>' +
+    '</div>' +
+    '<div class="flex items-center gap-5 patient-row-stats">' +
+      '<div class="text-right"><div class="text-xs text-ink3">Wylde Score</div><div class="text-sm font-semibold ' + (ws && ws.total_score >= 75 ? 'text-success' : ws && ws.total_score >= 50 ? 'text-warn' : 'text-ink2') + '">' + (ws ? ws.total_score : '&mdash;') + '</div></div>' +
+      '<div class="text-right"><div class="text-xs text-ink3">Adherence</div><div class="text-sm font-semibold ' + (p.adherence >= 80 ? 'text-success' : p.adherence >= 50 ? 'text-warn' : 'text-crit') + '">' + (p.adherence != null ? p.adherence + '%' : '&mdash;') + '</div></div>' +
+      '<div class="text-right"><div class="text-xs text-ink3">Today</div><div class="text-sm ' + (p.todayCheckin ? 'text-success' : 'text-ink3') + '">' + (p.todayCheckin ? '&#10003;' : '&mdash;') + '</div></div>' +
+      (p.unreadMessages > 0 ? '<span class="w-2 h-2 rounded-full bg-crit"></span>' : '') +
+      '<svg class="w-4 h-4 text-ink3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>' +
+    '</div>' +
+  '</div>';
 }
-function comingSoon(title) { return `<div class="flex items-center justify-center h-64"><div class="text-center"><div class="text-ink3 text-lg font-serif mb-2">${title}</div><div class="text-ink3 text-sm">Coming soon</div></div></div>`; }
+function comingSoon(title) { return '<div class="flex items-center justify-center h-64"><div class="text-center"><div class="text-ink3 text-lg font-serif mb-2">' + escapeHTML(title) + '</div><div class="text-ink3 text-sm">Coming soon</div></div></div>'; }
 
 // ─── Messages ───
 
@@ -696,13 +895,13 @@ async function loadPatientMessages(patientId, relationshipId) {
     const { messages } = await resp.json();
     msgEl.innerHTML = messages.length ? messages.map(m => {
       const isMe = m.sender_id === currentUser.id;
-      return `<div class="flex ${isMe ? 'justify-end' : 'justify-start'} mb-2">
-        <div class="max-w-[80%] px-3 py-2 rounded-xl text-sm ${isMe ? 'bg-sageDim text-ink' : 'bg-warmgray text-ink'}">
-          ${m.body}
-          <div class="text-[9px] text-ink3 mt-1">${fmtDate(m.created_at)}</div>
-        </div>
-      </div>`;
-    }).join('') : '<div class="text-xs text-ink3 text-center py-4">No messages yet</div>';
+      return '<div class="flex ' + (isMe ? 'justify-end' : 'justify-start') + ' mb-2">' +
+        '<div class="max-w-[80%] px-3 py-2 rounded-xl text-sm ' + (isMe ? 'bg-sageDim text-ink' : 'bg-warmgray text-ink') + '">' +
+          escapeHTML(m.body) +
+          '<div class="text-[9px] text-ink3 mt-1">' + fmtDate(m.created_at) + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('') : '<div class="text-xs text-ink3 text-center py-4">No messages yet. Send one to start the conversation.</div>';
     msgEl.scrollTop = msgEl.scrollHeight;
   }
 }
@@ -727,18 +926,21 @@ function renderMessages(c) {
   const allUnread = patients.reduce((s, p) => s + (p.unreadMessages || 0), 0);
   c.innerHTML = `
     <div class="mb-6"><h2 class="text-lg font-semibold">Messages</h2><p class="text-sm text-ink3">${allUnread} unread</p></div>
+    <div class="bg-warnbg rounded-xl p-4 mb-4">
+      <p class="text-xs text-warn font-medium">Not for emergencies. If a patient is in crisis, direct them to 911 or their local emergency services.</p>
+    </div>
     <div class="bg-white rounded-xl border border-line shadow-soft divide-y divide-line">
-      ${patients.map(p => `
-        <div class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-cream transition" onclick="showPatient('${p.id}')">
-          <div class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-full bg-sageDim flex items-center justify-center text-sage text-sm font-semibold">${p.name.substring(0,2).toUpperCase()}</div>
-            <div><div class="text-sm font-medium">${p.name}</div><div class="text-xs text-ink3">${p.protocols.length > 0 ? p.protocols[0].name : '—'}</div></div>
-          </div>
-          <div class="flex items-center gap-3">
-            ${p.unreadMessages > 0 ? `<span class="px-2 py-0.5 rounded-full bg-critbg text-crit text-xs font-semibold">${p.unreadMessages}</span>` : '<span class="text-xs text-ink3">—</span>'}
-            <svg class="w-4 h-4 text-ink3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
-          </div>
-        </div>`).join('') || '<div class="px-5 py-12 text-center text-ink3 text-sm">No patients</div>'}
+      ${patients.length ? patients.map(p =>
+        '<div class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-cream transition patient-row-touch" onclick="showPatient(\'' + escapeHTML(p.id) + '\')">' +
+          '<div class="flex items-center gap-4">' +
+            '<div class="w-10 h-10 rounded-full bg-sageDim flex items-center justify-center text-sage text-sm font-semibold">' + escapeHTML(p.name.substring(0,2).toUpperCase()) + '</div>' +
+            '<div><div class="text-sm font-medium">' + escapeHTML(p.name) + '</div><div class="text-xs text-ink3">' + (p.protocols.length > 0 ? escapeHTML(p.protocols[0].name) : '&mdash;') + '</div></div>' +
+          '</div>' +
+          '<div class="flex items-center gap-3">' +
+            (p.unreadMessages > 0 ? '<span class="px-2 py-0.5 rounded-full bg-critbg text-crit text-xs font-semibold">' + p.unreadMessages + '</span>' : '<span class="text-xs text-ink3">&mdash;</span>') +
+            '<svg class="w-4 h-4 text-ink3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>' +
+          '</div>' +
+        '</div>').join('') : '<div class="px-5 py-12 text-center text-ink3 text-sm">No patients linked yet.</div>'}
     </div>`;
 }
 
@@ -759,6 +961,7 @@ function renderReorders(c) {
     c.innerHTML = `
       <div class="mb-6"><h2 class="text-lg font-semibold">Reorder Requests</h2><p class="text-sm text-ink3">${reordersList.filter(o => o.status === 'requested').length} pending</p></div>
       <div class="bg-white rounded-xl border border-line shadow-soft">
+        <div class="table-responsive">
         <table class="w-full text-sm">
           <thead><tr class="text-ink3 text-xs border-b border-line">
             <th class="px-5 py-3 text-left font-medium">Patient</th>
@@ -770,25 +973,26 @@ function renderReorders(c) {
             <th class="px-3 py-3 text-center font-medium">Actions</th>
           </tr></thead>
           <tbody class="divide-y divide-line">
-            ${reordersList.length ? reordersList.map(o => `
-              <tr class="hover:bg-cream transition">
-                <td class="px-5 py-3 font-medium">${o.patient_name || 'Patient'}</td>
-                <td class="px-3 py-3">${o.clinic_products?.name || '—'}</td>
-                <td class="px-3 py-3 text-center">${o.quantity}</td>
-                <td class="px-3 py-3 text-center">$${o.amount_cents ? (o.amount_cents / 100).toFixed(2) : '—'}</td>
-                <td class="px-3 py-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-${statusColors[o.status] || 'ink3'}bg text-${statusColors[o.status] || 'ink3'}">${o.status}</span></td>
-                <td class="px-3 py-3 text-ink3">${fmtDate(o.created_at)}</td>
-                <td class="px-3 py-3 text-center">
-                  ${o.status === 'requested' ? `
-                    <button onclick="updateReorder('${o.id}','approved')" class="px-2 py-1 bg-successbg text-success rounded text-[10px] font-semibold mr-1">Approve</button>
-                    <button onclick="updateReorder('${o.id}','rejected')" class="px-2 py-1 bg-critbg text-crit rounded text-[10px] font-semibold">Reject</button>
-                  ` : o.status === 'approved' ? `
-                    <button onclick="updateReorder('${o.id}','fulfilled')" class="px-2 py-1 bg-successbg text-success rounded text-[10px] font-semibold">Mark Fulfilled</button>
-                  ` : '—'}
-                </td>
-              </tr>`).join('') : '<tr><td colspan="7" class="px-5 py-12 text-center text-ink3">No reorder requests</td></tr>'}
+            ${reordersList.length ? reordersList.map(o =>
+              '<tr class="hover:bg-cream transition">' +
+                '<td class="px-5 py-3 font-medium">' + escapeHTML(o.patient_name || 'Patient') + '</td>' +
+                '<td class="px-3 py-3">' + escapeHTML(o.clinic_products?.name || '&mdash;') + '</td>' +
+                '<td class="px-3 py-3 text-center">' + escapeHTML(String(o.quantity)) + '</td>' +
+                '<td class="px-3 py-3 text-center">$' + (o.amount_cents ? (o.amount_cents / 100).toFixed(2) : '&mdash;') + '</td>' +
+                '<td class="px-3 py-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-' + (statusColors[o.status] || 'ink3') + 'bg text-' + (statusColors[o.status] || 'ink3') + '">' + escapeHTML(o.status) + '</span></td>' +
+                '<td class="px-3 py-3 text-ink3">' + fmtDate(o.created_at) + '</td>' +
+                '<td class="px-3 py-3 text-center">' +
+                  (o.status === 'requested' ?
+                    '<button onclick="updateReorder(\'' + escapeHTML(o.id) + '\',\'approved\')" class="px-2 py-1 bg-successbg text-success rounded text-[10px] font-semibold mr-1" style="min-height:36px">Approve</button>' +
+                    '<button onclick="updateReorder(\'' + escapeHTML(o.id) + '\',\'rejected\')" class="px-2 py-1 bg-critbg text-crit rounded text-[10px] font-semibold" style="min-height:36px">Reject</button>'
+                  : o.status === 'approved' ?
+                    '<button onclick="updateReorder(\'' + escapeHTML(o.id) + '\',\'fulfilled\')" class="px-2 py-1 bg-successbg text-success rounded text-[10px] font-semibold" style="min-height:36px">Mark Fulfilled</button>'
+                  : '&mdash;') +
+                '</td>' +
+              '</tr>').join('') : '<tr><td colspan="7" class="px-5 py-12 text-center text-ink3">No reorder requests</td></tr>'}
           </tbody>
         </table>
+        </div>
       </div>`;
   });
 }
@@ -800,6 +1004,7 @@ async function updateReorder(id, status) {
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify({ id, status }),
   });
+  showToast('Reorder ' + status, 'success');
   renderReorders(el('content'));
 }
 
@@ -807,7 +1012,7 @@ async function updateReorder(id, status) {
 
 async function generateInsights(patientId) {
   const btn = el('insightBtn');
-  if (btn) { btn.textContent = 'Analyzing...'; btn.disabled = true; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Analyzing...'; }
 
   const token = (await sb.auth.getSession()).data?.session?.access_token;
   const resp = await fetch(API + '/api/clinic/insights', {
@@ -816,14 +1021,14 @@ async function generateInsights(patientId) {
     body: JSON.stringify({ patient_id: patientId }),
   });
 
-  if (btn) { btn.textContent = 'Generate Insights'; btn.disabled = false; }
+  if (btn) { btn.disabled = false; btn.textContent = 'Generate Insights'; }
 
   if (resp.ok) {
     const { insights } = await resp.json();
     renderInsightsPanel(insights);
   } else {
     const err = await resp.json();
-    alert(err.error || 'Insight generation failed');
+    showToast(err.error || 'Insight generation failed', 'error');
   }
 }
 
@@ -842,37 +1047,43 @@ function renderInsightsPanel(insights) {
   const container = el('patientInsights');
   if (!container) return;
   if (!insights || insights.length === 0) {
-    container.innerHTML = '<div class="text-xs text-ink3">No insights yet.</div>';
+    container.innerHTML = '<div class="text-xs text-ink3">No insights yet. Click "Generate" to analyze patient data.</div>';
     return;
   }
   const sevColors = { high: 'crit', medium: 'warn', low: 'success' };
-  container.innerHTML = insights.map(i => `
-    <div class="border-l-2 border-${sevColors[i.severity] || 'ink3'} pl-3 py-2">
-      <div class="flex items-center gap-2 mb-1">
-        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-${sevColors[i.severity] || 'ink3'}bg text-${sevColors[i.severity] || 'ink3'}">${i.severity}</span>
-        <span class="text-sm font-medium text-ink">${i.title}</span>
-      </div>
-      <p class="text-xs text-ink2 leading-relaxed">${i.summary}</p>
-      <p class="text-xs text-sage mt-1 font-medium">→ ${i.recommended_action}</p>
-      ${i.status !== 'new' ? `<span class="text-[9px] text-ink3 mt-1 inline-block">${i.status}</span>` : ''}
-    </div>`).join('');
+  container.innerHTML = insights.map(i =>
+    '<div class="border-l-2 border-' + (sevColors[i.severity] || 'ink3') + ' pl-3 py-2">' +
+      '<div class="flex items-center gap-2 mb-1">' +
+        '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-' + (sevColors[i.severity] || 'ink3') + 'bg text-' + (sevColors[i.severity] || 'ink3') + '">' + escapeHTML(i.severity) + '</span>' +
+        '<span class="text-sm font-medium text-ink">' + escapeHTML(i.title) + '</span>' +
+      '</div>' +
+      '<p class="text-xs text-ink2 leading-relaxed">' + escapeHTML(i.summary) + '</p>' +
+      '<p class="text-xs text-sage mt-1 font-medium">&rarr; ' + escapeHTML(i.recommended_action) + '</p>' +
+      (i.status !== 'new' ? '<span class="text-[9px] text-ink3 mt-1 inline-block">' + escapeHTML(i.status) + '</span>' : '') +
+    '</div>').join('');
 }
 
 function renderInsightsPage(c) {
   c.innerHTML = `
-    <div class="mb-6"><h2 class="text-lg font-semibold">Clinical Insights</h2><p class="text-sm text-ink3">AI-generated signals across your patients</p></div>
+    <div class="mb-6">
+      <h2 class="text-lg font-semibold">Clinical Insights</h2>
+      <p class="text-sm text-ink3">AI-generated signals across your patients</p>
+    </div>
+    <div class="bg-skybg rounded-xl p-4 mb-4">
+      <p class="text-xs text-sky font-medium">AI-generated insights are decision support tools. All clinical decisions should be made by the treating clinician.</p>
+    </div>
     <div class="grid grid-cols-1 gap-4">
-      ${patients.map(p => `
-        <div class="bg-white rounded-xl border border-line shadow-soft p-5">
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-full bg-sageDim flex items-center justify-center text-sage text-xs font-semibold">${p.name.substring(0,2).toUpperCase()}</div>
-              <div><div class="text-sm font-medium">${p.name}</div><div class="text-xs text-ink3">${p.protocols.length > 0 ? p.protocols[0].name : '—'}</div></div>
-            </div>
-            <button onclick="generateInsightsFromPage('${p.id}', this)" class="px-3 py-1.5 bg-skybg text-sky rounded-lg text-xs font-semibold hover:bg-sky hover:text-white transition">Analyze</button>
-          </div>
-          <div id="insights_${p.id}" class="text-xs text-ink3">Click Analyze to generate insights</div>
-        </div>`).join('') || '<div class="text-center py-12 text-ink3">No patients</div>'}
+      ${patients.length ? patients.map(p =>
+        '<div class="bg-white rounded-xl border border-line shadow-soft p-5">' +
+          '<div class="flex items-center justify-between mb-3 flex-wrap gap-2">' +
+            '<div class="flex items-center gap-3">' +
+              '<div class="w-8 h-8 rounded-full bg-sageDim flex items-center justify-center text-sage text-xs font-semibold">' + escapeHTML(p.name.substring(0,2).toUpperCase()) + '</div>' +
+              '<div><div class="text-sm font-medium">' + escapeHTML(p.name) + '</div><div class="text-xs text-ink3">' + (p.protocols.length > 0 ? escapeHTML(p.protocols[0].name) : '&mdash;') + '</div></div>' +
+            '</div>' +
+            '<button onclick="generateInsightsFromPage(\'' + escapeHTML(p.id) + '\', this)" class="px-3 py-1.5 bg-skybg text-sky rounded-lg text-xs font-semibold hover:bg-sky hover:text-white transition" style="min-height:44px">Analyze</button>' +
+          '</div>' +
+          '<div id="insights_' + escapeHTML(p.id) + '" class="text-xs text-ink3">Click Analyze to generate insights</div>' +
+        '</div>').join('') : '<div class="text-center py-12 text-ink3">No patients linked yet.</div>'}
     </div>`;
 }
 
@@ -890,14 +1101,14 @@ async function generateInsightsFromPage(patientId, btn) {
     const container = document.getElementById('insights_' + patientId);
     if (container && insights.length > 0) {
       const sevColors = { high: 'crit', medium: 'warn', low: 'success' };
-      container.innerHTML = insights.slice(0, 5).map(i => `
-        <div class="border-l-2 border-${sevColors[i.severity] || 'ink3'} pl-3 py-1.5 mt-2">
-          <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-${sevColors[i.severity] || 'ink3'}bg text-${sevColors[i.severity] || 'ink3'}">${i.severity}</span>
-          <span class="text-xs font-medium text-ink ml-1">${i.title}</span>
-          <p class="text-xs text-ink2 mt-0.5">${i.summary}</p>
-        </div>`).join('');
-    } else {
-      container.textContent = 'No signals detected — patient is on track.';
+      container.innerHTML = insights.slice(0, 5).map(i =>
+        '<div class="border-l-2 border-' + (sevColors[i.severity] || 'ink3') + ' pl-3 py-1.5 mt-2">' +
+          '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-' + (sevColors[i.severity] || 'ink3') + 'bg text-' + (sevColors[i.severity] || 'ink3') + '">' + escapeHTML(i.severity) + '</span>' +
+          '<span class="text-xs font-medium text-ink ml-1">' + escapeHTML(i.title) + '</span>' +
+          '<p class="text-xs text-ink2 mt-0.5">' + escapeHTML(i.summary) + '</p>' +
+        '</div>').join('');
+    } else if (container) {
+      container.textContent = 'No signals detected \u2014 patient is on track.';
     }
   }
 }
@@ -919,84 +1130,87 @@ function renderTherapyLibrary(c) {
   loadTherapies().then(() => {
     const types = ['peptide','hormone','medication','supplement'];
     const evColors = { A: 'success', B: 'sky', C: 'warn', D: 'warn', X: 'crit' };
-    const evLabels = { A: 'Strong evidence', B: 'Moderate evidence', C: 'Limited evidence', D: 'Preclinical', X: 'Insufficient' };
 
     c.innerHTML = `
-      <div class="flex justify-between items-center mb-4">
+      <div class="flex justify-between items-center mb-4 flex-wrap gap-3">
         <div><h2 class="text-lg font-semibold">Research Library</h2><p class="text-sm text-ink3">Peptides, hormones, medications, supplements</p></div>
       </div>
 
       <!-- Search + Filters -->
-      <div class="flex gap-3 mb-4">
-        <input id="therapySearch" type="text" placeholder="Search therapies..." value="${therapyFilter.search}" class="flex-1 px-3 py-2 rounded-lg border border-line2 bg-white text-sm" oninput="therapyFilter.search=this.value; renderTherapyLibrary(el('content'))" />
-        <div class="flex gap-2">
-          <button onclick="therapyFilter.type=null; renderTherapyLibrary(el('content'))" class="px-3 py-1.5 rounded-lg text-xs font-medium ${!therapyFilter.type ? 'bg-sage text-white' : 'bg-white border border-line2 text-ink2'}">All</button>
-          ${types.map(t => `<button onclick="therapyFilter.type='${t}'; renderTherapyLibrary(el('content'))" class="px-3 py-1.5 rounded-lg text-xs font-medium ${therapyFilter.type === t ? 'bg-sage text-white' : 'bg-white border border-line2 text-ink2'}">${t.charAt(0).toUpperCase() + t.slice(1)}s</button>`).join('')}
+      <div class="flex gap-3 mb-4 flex-wrap">
+        <input id="therapySearch" type="text" placeholder="Search therapies..." value="${escapeHTML(therapyFilter.search)}" class="flex-1 px-3 py-2 rounded-lg border border-line2 bg-white text-sm" style="min-width:200px" oninput="therapyFilter.search=this.value; renderTherapyLibrary(el('content'))" />
+        <div class="flex gap-2 flex-wrap">
+          <button onclick="therapyFilter.type=null; renderTherapyLibrary(el('content'))" class="px-3 py-1.5 rounded-lg text-xs font-medium ${!therapyFilter.type ? 'bg-sage text-white' : 'bg-white border border-line2 text-ink2'}" style="min-height:36px">All</button>
+          ${types.map(t => '<button onclick="therapyFilter.type=\'' + t + '\'; renderTherapyLibrary(el(\'content\'))" class="px-3 py-1.5 rounded-lg text-xs font-medium ' + (therapyFilter.type === t ? 'bg-sage text-white' : 'bg-white border border-line2 text-ink2') + '" style="min-height:36px">' + t.charAt(0).toUpperCase() + t.slice(1) + 's</button>').join('')}
         </div>
       </div>
 
       <!-- Therapies Grid -->
-      <div class="grid grid-cols-2 gap-4">
-        ${allTherapies.map(t => `
-          <div class="bg-white rounded-xl border border-line shadow-soft p-5 hover:shadow-card transition cursor-pointer" onclick="showTherapyDetail('${t.slug}')">
-            <div class="flex items-start justify-between mb-2">
-              <h3 class="text-sm font-semibold text-ink">${t.name}</h3>
-              <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-${evColors[t.evidence_rating] || 'ink3'}bg text-${evColors[t.evidence_rating] || 'ink3'}">${t.evidence_rating || '—'}</span>
-            </div>
-            <p class="text-xs text-ink3 mb-3 leading-relaxed">${t.short_description || ''}</p>
-            <div class="flex flex-wrap gap-1">
-              <span class="text-[9px] px-2 py-0.5 rounded-full bg-sageDim text-sage">${t.therapy_type}</span>
-              ${t.prescription_required ? '<span class="text-[9px] px-2 py-0.5 rounded-full bg-warnbg text-warn">Rx required</span>' : ''}
-              ${t.requires_provider_review ? '<span class="text-[9px] px-2 py-0.5 rounded-full bg-skybg text-sky">Provider review</span>' : ''}
-            </div>
-          </div>`).join('') || '<div class="col-span-2 text-center py-12 text-ink3 text-sm">No therapies found</div>'}
+      <div class="grid grid-cols-2 grid-cols-2-resp gap-4">
+        ${allTherapies.length ? allTherapies.map(t =>
+          '<div class="bg-white rounded-xl border border-line shadow-soft p-5 hover:shadow-card transition cursor-pointer" onclick="showTherapyDetail(\'' + escapeHTML(t.slug) + '\')">' +
+            '<div class="flex items-start justify-between mb-2">' +
+              '<h3 class="text-sm font-semibold text-ink">' + escapeHTML(t.name) + '</h3>' +
+              '<span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-' + (evColors[t.evidence_rating] || 'ink3') + 'bg text-' + (evColors[t.evidence_rating] || 'ink3') + '">' + escapeHTML(t.evidence_rating || '&mdash;') + '</span>' +
+            '</div>' +
+            '<p class="text-xs text-ink3 mb-3 leading-relaxed">' + escapeHTML(t.short_description || '') + '</p>' +
+            '<div class="flex flex-wrap gap-1">' +
+              '<span class="text-[9px] px-2 py-0.5 rounded-full bg-sageDim text-sage">' + escapeHTML(t.therapy_type) + '</span>' +
+              (t.prescription_required ? '<span class="text-[9px] px-2 py-0.5 rounded-full bg-warnbg text-warn">Rx required</span>' : '') +
+              (t.requires_provider_review ? '<span class="text-[9px] px-2 py-0.5 rounded-full bg-skybg text-sky">Provider review</span>' : '') +
+            '</div>' +
+          '</div>').join('') : '<div class="col-span-2 text-center py-12 text-ink3 text-sm">No therapies found</div>'}
       </div>`;
   });
 }
 
 async function showTherapyDetail(slug) {
-  const resp = await fetch(API + '/api/library/therapies?slug=' + slug);
+  const resp = await fetch(API + '/api/library/therapies?slug=' + encodeURIComponent(slug));
   if (!resp.ok) return;
   const { therapy: t } = await resp.json();
 
   const evLabels = { A: 'Strong human clinical evidence', B: 'Moderate human evidence', C: 'Limited human evidence', D: 'Preclinical / animal / theoretical', X: 'Not enough reliable evidence' };
   const evColors = { A: 'success', B: 'sky', C: 'warn', D: 'warn', X: 'crit' };
 
+  const safeArrayItems = function(arr, colorClass) {
+    return (arr || []).map(item => '<div class="flex items-center gap-2 py-1"><div class="w-1.5 h-1.5 rounded-full bg-' + colorClass + '"></div><span class="text-sm text-ink2">' + escapeHTML(item) + '</span></div>').join('');
+  };
+
   openModal(`
     <div class="p-6 max-h-[80vh] overflow-y-auto">
       <div class="flex justify-between items-start mb-4">
         <div>
-          <h2 class="text-xl font-semibold text-ink">${t.name}</h2>
-          <div class="flex gap-2 mt-2">
-            <span class="text-[10px] px-2 py-0.5 rounded-full bg-sageDim text-sage">${t.therapy_type}</span>
-            <span class="text-[10px] px-2 py-0.5 rounded-full bg-${evColors[t.evidence_rating] || 'ink3'}bg text-${evColors[t.evidence_rating] || 'ink3'}">${t.evidence_rating}: ${evLabels[t.evidence_rating] || 'Not rated'}</span>
-            ${t.fda_status ? `<span class="text-[10px] px-2 py-0.5 rounded-full bg-warmgray text-ink3">${t.fda_status}</span>` : ''}
+          <h2 class="text-xl font-semibold text-ink">${escapeHTML(t.name)}</h2>
+          <div class="flex gap-2 mt-2 flex-wrap">
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-sageDim text-sage">${escapeHTML(t.therapy_type)}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-${evColors[t.evidence_rating] || 'ink3'}bg text-${evColors[t.evidence_rating] || 'ink3'}">${escapeHTML(t.evidence_rating || '')}: ${escapeHTML(evLabels[t.evidence_rating] || 'Not rated')}</span>
+            ${t.fda_status ? '<span class="text-[10px] px-2 py-0.5 rounded-full bg-warmgray text-ink3">' + escapeHTML(t.fda_status) + '</span>' : ''}
           </div>
         </div>
-        <button onclick="closeModal()" class="text-ink3 hover:text-ink">✕</button>
+        <button onclick="closeModal()" class="text-ink3 hover:text-ink text-lg">&times;</button>
       </div>
 
-      <p class="text-sm text-ink2 mb-4 leading-relaxed">${t.short_description || ''}</p>
+      <p class="text-sm text-ink2 mb-4 leading-relaxed">${escapeHTML(t.short_description || '')}</p>
 
-      ${t.mechanism_clinical ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">Clinical Mechanism</div><p class="text-sm text-ink2 leading-relaxed">${t.mechanism_clinical}</p></div>` : ''}
-      ${t.mechanism_plain_english ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">How It Works</div><p class="text-sm text-ink2 leading-relaxed">${t.mechanism_plain_english}</p></div>` : ''}
+      ${t.mechanism_clinical ? '<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">Clinical Mechanism</div><p class="text-sm text-ink2 leading-relaxed">' + escapeHTML(t.mechanism_clinical) + '</p></div>' : ''}
+      ${t.mechanism_plain_english ? '<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">How It Works</div><p class="text-sm text-ink2 leading-relaxed">' + escapeHTML(t.mechanism_plain_english) + '</p></div>' : ''}
 
-      ${t.common_uses?.length ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-2">Common Uses</div>${t.common_uses.map(u => `<div class="flex items-center gap-2 py-1"><div class="w-1.5 h-1.5 rounded-full bg-sage"></div><span class="text-sm text-ink2">${u}</span></div>`).join('')}</div>` : ''}
-      ${t.potential_benefits?.length ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-2">Potential Benefits</div>${t.potential_benefits.map(b => `<div class="flex items-center gap-2 py-1"><div class="w-1.5 h-1.5 rounded-full bg-success"></div><span class="text-sm text-ink2">${b}</span></div>`).join('')}</div>` : ''}
-      ${t.potential_risks?.length ? `<div class="mb-4"><div class="text-[10px] font-bold text-crit uppercase tracking-wide mb-2">Potential Risks</div>${t.potential_risks.map(r => `<div class="flex items-center gap-2 py-1"><div class="w-1.5 h-1.5 rounded-full bg-crit"></div><span class="text-sm text-ink2">${r}</span></div>`).join('')}</div>` : ''}
-      ${t.contraindications?.length ? `<div class="mb-4"><div class="text-[10px] font-bold text-crit uppercase tracking-wide mb-2">Contraindications</div>${t.contraindications.map(c => `<div class="flex items-center gap-2 py-1"><div class="w-1.5 h-1.5 rounded-full bg-crit"></div><span class="text-sm text-ink2">${c}</span></div>`).join('')}</div>` : ''}
+      ${t.common_uses?.length ? '<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-2">Common Uses</div>' + safeArrayItems(t.common_uses, 'sage') + '</div>' : ''}
+      ${t.potential_benefits?.length ? '<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-2">Potential Benefits</div>' + safeArrayItems(t.potential_benefits, 'success') + '</div>' : ''}
+      ${t.potential_risks?.length ? '<div class="mb-4"><div class="text-[10px] font-bold text-crit uppercase tracking-wide mb-2">Potential Risks</div>' + safeArrayItems(t.potential_risks, 'crit') + '</div>' : ''}
+      ${t.contraindications?.length ? '<div class="mb-4"><div class="text-[10px] font-bold text-crit uppercase tracking-wide mb-2">Contraindications</div>' + safeArrayItems(t.contraindications, 'crit') + '</div>' : ''}
 
-      ${t.administration_routes?.length ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">Administration</div><p class="text-sm text-ink2">${t.administration_routes.join(' · ')}</p></div>` : ''}
-      ${t.typical_dosing_educational ? `<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">Educational Dosing</div><p class="text-sm text-ink2">${t.typical_dosing_educational}</p></div>` : ''}
+      ${t.administration_routes?.length ? '<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">Administration</div><p class="text-sm text-ink2">' + t.administration_routes.map(r => escapeHTML(r)).join(' &middot; ') + '</p></div>' : ''}
+      ${t.typical_dosing_educational ? '<div class="mb-4"><div class="text-[10px] font-bold text-ink3 uppercase tracking-wide mb-1">Educational Dosing</div><p class="text-sm text-ink2">' + escapeHTML(t.typical_dosing_educational) + '</p></div>' : ''}
 
       <div class="bg-warnbg rounded-lg p-4 mb-4">
-        <div class="flex items-center gap-2 mb-2"><span class="text-warn text-xs font-bold">⚠ IMPORTANT</span></div>
-        <p class="text-xs text-ink2 leading-relaxed">${t.safety_disclaimer || 'This information is for education only and is not medical advice.'}</p>
+        <div class="flex items-center gap-2 mb-2"><span class="text-warn text-xs font-bold">IMPORTANT</span></div>
+        <p class="text-xs text-ink2 leading-relaxed">${escapeHTML(t.safety_disclaimer || 'This information is for education only and is not medical advice.')}</p>
       </div>
 
       <div class="flex gap-2">
-        <button onclick="addTherapyToClinic('${t.id}','${t.name}')" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Add to Clinic Products</button>
-        <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Close</button>
+        <button onclick="addTherapyToClinic('${escapeHTML(t.id)}','${escapeHTML(t.name)}')" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep" style="min-height:44px">Add to Clinic Products</button>
+        <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2" style="min-height:44px">Close</button>
       </div>
     </div>`);
 }
@@ -1005,9 +1219,9 @@ function addTherapyToClinic(therapyId, therapyName) {
   closeModal();
   openModal(`
     <div class="p-6">
-      <h2 class="text-lg font-semibold mb-4">Add ${therapyName} to Clinic</h2>
+      <h2 class="text-lg font-semibold mb-4">Add ${escapeHTML(therapyName)} to Clinic</h2>
       <div class="space-y-3">
-        <input id="ctpName" value="${therapyName}" placeholder="Product name" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
+        <input id="ctpName" value="${escapeHTML(therapyName)}" placeholder="Product name" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" />
         <div class="grid grid-cols-2 gap-3">
           <input id="ctpFormulation" placeholder="Formulation" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
           <input id="ctpConcentration" placeholder="Concentration" class="px-3 py-2 rounded-lg border border-line2 text-sm" />
@@ -1020,15 +1234,16 @@ function addTherapyToClinic(therapyId, therapyName) {
         </div>
         <textarea id="ctpNotes" placeholder="Clinic notes..." rows="2" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm"></textarea>
         <div class="flex gap-2 pt-2">
-          <button onclick="saveClinicTherapyProduct('${therapyId}')" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Save</button>
-          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+          <button onclick="saveClinicTherapyProduct('${escapeHTML(therapyId)}')" id="saveCtpBtn" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep" style="min-height:44px">Save</button>
+          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2" style="min-height:44px">Cancel</button>
         </div>
       </div>
     </div>`);
 }
 
 async function saveClinicTherapyProduct(therapyId) {
-  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  const btn = el('saveCtpBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Saving...';
   const body = {
     therapy_id: therapyId,
     product_name: el('ctpName').value,
@@ -1039,7 +1254,6 @@ async function saveClinicTherapyProduct(therapyId) {
     clinic_notes: el('ctpNotes').value,
   };
 
-  // Use Supabase directly since clinic_therapy_products has RLS
   const { error } = await sb.from('clinic_therapy_products').insert({
     clinic_id: currentUser.id,
     ...body,
@@ -1047,9 +1261,9 @@ async function saveClinicTherapyProduct(therapyId) {
     requires_consult: true,
   });
 
-  if (error) { alert(error.message); return; }
+  if (error) { btn.disabled = false; btn.textContent = 'Save'; showToast(escapeHTML(error.message), 'error'); return; }
   closeModal();
-  alert('Product added to your clinic!');
+  showToast('Product added to your clinic!', 'success');
 }
 
 // ─── AI Onboard ───
@@ -1059,7 +1273,7 @@ function renderOnboard(c) {
     <div class="max-w-2xl">
       <div class="mb-6">
         <h2 class="text-lg font-semibold">AI Clinic Setup</h2>
-        <p class="text-sm text-ink3">Drop a file or paste your clinic's product list, pricing, protocols — the AI will structure everything into your dashboard.</p>
+        <p class="text-sm text-ink3">Drop a file or paste your clinic's product list, pricing, protocols -- the AI will structure everything into your dashboard.</p>
       </div>
 
       <!-- Drop zone -->
@@ -1070,14 +1284,14 @@ function renderOnboard(c) {
            ondrop="handleDrop(event)">
         <svg class="w-10 h-10 mx-auto mb-3 text-ink3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
         <p class="text-sm font-medium text-ink">Drop a file here or click to upload</p>
-        <p class="text-xs text-ink3 mt-1">PDF, CSV, TXT, or any document with your clinic info</p>
-        <input type="file" id="fileInput" class="hidden" accept=".txt,.csv,.pdf,.doc,.docx,.xls,.xlsx" onchange="handleFileSelect(event)" />
+        <p class="text-xs text-ink3 mt-1">TXT or CSV files accepted</p>
+        <input type="file" id="fileInput" class="hidden" accept=".txt,.csv" onchange="handleFileSelect(event)" />
       </div>
 
-      <div class="text-center text-xs text-ink3 mb-4">— or paste your information below —</div>
+      <div class="text-center text-xs text-ink3 mb-4">&mdash; or paste your information below &mdash;</div>
 
       <!-- Text input -->
-      <textarea id="onboardText" rows="10" placeholder="Paste your product list, pricing sheet, protocol descriptions, clinic info — anything. The AI will structure it.
+      <textarea id="onboardText" rows="10" placeholder="Paste your product list, pricing sheet, protocol descriptions, clinic info -- anything. The AI will structure it.
 
 Example:
 Our clinic offers:
@@ -1090,7 +1304,7 @@ Protocols:
 - Recovery Stack: BPC-157 + TB-500, 4 weeks
 - Metabolic Reset: Semaglutide + B12 + coaching" class="w-full px-4 py-3 rounded-xl border border-line2 bg-white text-sm resize-vertical"></textarea>
 
-      <button onclick="processOnboard()" id="onboardBtn" class="w-full mt-4 py-3 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">
+      <button onclick="processOnboard()" id="onboardBtn" class="w-full mt-4 py-3 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition flex items-center justify-center gap-2" style="min-height:44px">
         Process with AI
       </button>
 
@@ -1109,7 +1323,13 @@ async function handleDrop(event) {
   event.preventDefault();
   event.currentTarget.classList.remove('border-sage', 'bg-sageDim');
   const file = event.dataTransfer?.files?.[0];
-  if (file) readFile(file);
+  if (file) {
+    if (!file.name.match(/\.(txt|csv)$/i)) {
+      showToast('Only .txt and .csv files are accepted for MVP', 'error');
+      return;
+    }
+    readFile(file);
+  }
 }
 
 function handleFileSelect(event) {
@@ -1122,17 +1342,17 @@ function readFile(file) {
   reader.onload = function(e) {
     const text = e.target.result;
     el('onboardText').value = typeof text === 'string' ? text : 'File loaded: ' + file.name;
-    el('dropZone').innerHTML = '<p class="text-sm font-medium text-success">✓ ' + file.name + ' loaded</p><p class="text-xs text-ink3 mt-1">Click "Process with AI" to continue</p>';
+    el('dropZone').innerHTML = '<p class="text-sm font-medium text-success">&#10003; ' + escapeHTML(file.name) + ' loaded</p><p class="text-xs text-ink3 mt-1">Click "Process with AI" to continue</p>';
   };
   reader.readAsText(file);
 }
 
 async function processOnboard() {
   const text = el('onboardText').value.trim();
-  if (!text || text.length < 20) { alert('Please provide more information about your clinic.'); return; }
+  if (!text || text.length < 20) { showToast('Please provide more information about your clinic.', 'error'); return; }
 
   const btn = el('onboardBtn');
-  btn.textContent = 'Processing...'; btn.disabled = true;
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Processing...';
 
   const token = (await sb.auth.getSession()).data?.session?.access_token;
   const resp = await fetch(API + '/api/clinic/onboard', {
@@ -1141,41 +1361,40 @@ async function processOnboard() {
     body: JSON.stringify({ content: text }),
   });
 
-  btn.textContent = 'Process with AI'; btn.disabled = false;
+  btn.disabled = false; btn.textContent = 'Process with AI';
 
   if (resp.ok) {
     const data = await resp.json();
     if (data.success) {
       el('onboardResults').classList.remove('hidden');
-      el('onboardSummary').innerHTML = `
-        ${data.clinic_name ? '<p>Clinic: <strong>' + data.clinic_name + '</strong></p>' : ''}
-        <p>${data.products_added} products added to your catalog</p>
-        <p>${data.protocols_added} protocols created</p>
-      `;
+      el('onboardSummary').innerHTML =
+        (data.clinic_name ? '<p>Clinic: <strong>' + escapeHTML(data.clinic_name) + '</strong></p>' : '') +
+        '<p>' + escapeHTML(String(data.products_added)) + ' products added to your catalog</p>' +
+        '<p>' + escapeHTML(String(data.protocols_added)) + ' protocols created</p>';
 
       // Show parsed products
       if (data.parsed_data?.products?.length) {
-        el('onboardDetails').innerHTML = `
-          <div class="bg-white rounded-xl border border-line shadow-soft p-5">
-            <h3 class="text-sm font-semibold mb-3">Products Added</h3>
-            <div class="space-y-2">
-              ${data.parsed_data.products.map(p => `
-                <div class="flex justify-between items-center py-2 border-b border-line last:border-0">
-                  <div><div class="text-sm font-medium">${p.name}</div><div class="text-xs text-ink3">${p.category || ''} · ${p.method || ''}</div></div>
-                  <div class="text-sm font-semibold text-sage">${p.price ? '$' + Number(p.price).toFixed(2) : '—'}</div>
-                </div>`).join('')}
-            </div>
-          </div>`;
+        el('onboardDetails').innerHTML =
+          '<div class="bg-white rounded-xl border border-line shadow-soft p-5">' +
+            '<h3 class="text-sm font-semibold mb-3">Products Added</h3>' +
+            '<div class="space-y-2">' +
+              data.parsed_data.products.map(p =>
+                '<div class="flex justify-between items-center py-2 border-b border-line last:border-0">' +
+                  '<div><div class="text-sm font-medium">' + escapeHTML(p.name) + '</div><div class="text-xs text-ink3">' + escapeHTML(p.category || '') + ' &middot; ' + escapeHTML(p.method || '') + '</div></div>' +
+                  '<div class="text-sm font-semibold text-sage">' + (p.price ? '$' + Number(p.price).toFixed(2) : '&mdash;') + '</div>' +
+                '</div>').join('') +
+            '</div>' +
+          '</div>';
       }
 
-      // Refresh products
       await loadProducts();
+      showToast('Clinic setup complete!', 'success');
     } else {
-      alert(data.error || 'Processing failed — try providing more detail.');
+      showToast(data.error || 'Processing failed. Try providing more detail.', 'error');
     }
   } else {
     const err = await resp.json();
-    alert(err.error || 'Processing failed');
+    showToast(err.error || 'Processing failed', 'error');
   }
 }
 
@@ -1188,27 +1407,27 @@ let msgTemplates = [];
 
 function renderSettings(c) {
   const tabs = [
-    { id: 'profile', label: 'Clinic Profile', icon: '🏥' },
-    { id: 'team', label: 'Team & Permissions', icon: '👥' },
-    { id: 'products', label: 'Products', icon: '📦' },
-    { id: 'features', label: 'Patient Experience', icon: '✨' },
-    { id: 'comms', label: 'Communications', icon: '💬' },
+    { id: 'profile', label: 'Clinic Profile', icon: '&#x1F3E5;' },
+    { id: 'team', label: 'Team & Permissions', icon: '&#x1F465;' },
+    { id: 'products', label: 'Products', icon: '&#x1F4E6;' },
+    { id: 'features', label: 'Patient Experience', icon: '&#x2728;' },
+    { id: 'comms', label: 'Communications', icon: '&#x1F4AC;' },
   ];
 
   c.innerHTML = `
-    <div class="flex gap-6">
+    <div class="flex gap-6 flex-wrap">
       <!-- Settings Sidebar -->
       <div class="w-48 shrink-0">
         <h2 class="text-lg font-semibold mb-4">Settings</h2>
         <div class="space-y-1">
-          ${tabs.map(t => `
-            <button onclick="settingsTab='${t.id}'; renderSettingsContent()" class="settings-tab w-full text-left px-3 py-2 rounded-lg text-sm ${settingsTab === t.id ? 'bg-sageDim text-sageDeep font-medium' : 'text-ink2 hover:bg-cream'} transition" data-tab="${t.id}">
-              ${t.icon} ${t.label}
-            </button>`).join('')}
+          ${tabs.map(t =>
+            '<button onclick="settingsTab=\'' + t.id + '\'; renderSettingsContent()" class="settings-tab w-full text-left px-3 py-2 rounded-lg text-sm ' + (settingsTab === t.id ? 'bg-sageDim text-sageDeep font-medium' : 'text-ink2 hover:bg-cream') + ' transition" data-tab="' + t.id + '" style="min-height:44px">' +
+              t.icon + ' ' + escapeHTML(t.label) +
+            '</button>').join('')}
         </div>
       </div>
       <!-- Settings Content -->
-      <div class="flex-1" id="settingsContent"></div>
+      <div class="flex-1 min-w-0" id="settingsContent"></div>
     </div>`;
 
   renderSettingsContent();
@@ -1225,7 +1444,7 @@ async function renderSettingsContent() {
   switch (settingsTab) {
     case 'profile': await renderProfileSettings(c); break;
     case 'team': await renderTeamSettings(c); break;
-    case 'products': renderLibrary(c); break; // reuse existing
+    case 'products': renderLibrary(c); break;
     case 'features': await renderFeatureSettings(c); break;
     case 'comms': await renderCommsSettings(c); break;
   }
@@ -1251,7 +1470,7 @@ async function renderProfileSettings(c) {
           ${settingsInput('sp_email', 'Email', s.email)}
         </div>
         ${settingsInput('sp_website', 'Website', s.website)}
-        <div><label class="text-xs font-medium text-ink3 block mb-1">Description</label><textarea id="sp_description" rows="3" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm">${s.description || ''}</textarea></div>
+        <div><label class="text-xs font-medium text-ink3 block mb-1">Description</label><textarea id="sp_description" rows="3" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm">${escapeHTML(s.description || '')}</textarea></div>
       </div>
 
       <div class="bg-white rounded-xl border border-line shadow-soft p-6 space-y-4 mb-6">
@@ -1268,21 +1487,23 @@ async function renderProfileSettings(c) {
         <h4 class="text-xs font-bold text-ink3 uppercase tracking-wide">Branding</h4>
         ${settingsInput('sp_tagline', 'Tagline', s.tagline)}
         <div class="grid grid-cols-2 gap-3">
-          <div><label class="text-xs font-medium text-ink3 block mb-1">Primary Color</label><input type="color" id="sp_brand_color_primary" value="${s.brand_color_primary || '#6E8A7C'}" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>
-          <div><label class="text-xs font-medium text-ink3 block mb-1">Secondary Color</label><input type="color" id="sp_brand_color_secondary" value="${s.brand_color_secondary || '#C8A96E'}" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>
+          <div><label class="text-xs font-medium text-ink3 block mb-1">Primary Color</label><input type="color" id="sp_brand_color_primary" value="${escapeHTML(s.brand_color_primary || '#6E8A7C')}" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>
+          <div><label class="text-xs font-medium text-ink3 block mb-1">Secondary Color</label><input type="color" id="sp_brand_color_secondary" value="${escapeHTML(s.brand_color_secondary || '#C8A96E')}" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>
         </div>
-        <div><label class="text-xs font-medium text-ink3 block mb-1">Patient Welcome Message</label><textarea id="sp_patient_welcome_message" rows="2" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm">${s.patient_welcome_message || ''}</textarea></div>
+        <div><label class="text-xs font-medium text-ink3 block mb-1">Patient Welcome Message</label><textarea id="sp_patient_welcome_message" rows="2" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm">${escapeHTML(s.patient_welcome_message || '')}</textarea></div>
       </div>
 
-      <button onclick="saveProfileSettings()" class="px-6 py-2.5 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">Save Changes</button>
+      <button onclick="saveProfileSettings()" id="saveProfileBtn" class="px-6 py-2.5 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition flex items-center gap-2" style="min-height:44px">Save Changes</button>
     </div>`;
 }
 
 function settingsInput(id, label, value) {
-  return `<div><label class="text-xs font-medium text-ink3 block mb-1">${label}</label><input id="${id}" value="${value || ''}" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" /></div>`;
+  return '<div><label class="text-xs font-medium text-ink3 block mb-1">' + escapeHTML(label) + '</label><input id="' + id + '" value="' + escapeHTML(value || '') + '" class="w-full px-3 py-2 rounded-lg border border-line2 text-sm" /></div>';
 }
 
 async function saveProfileSettings() {
+  const btn = el('saveProfileBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Saving...';
   const token = (await sb.auth.getSession()).data?.session?.access_token;
   const body = {};
   ['clinic_name','clinic_type','phone','email','website','description','address_line1','city','state','zip','tagline','brand_color_primary','brand_color_secondary','patient_welcome_message'].forEach(k => {
@@ -1295,8 +1516,9 @@ async function saveProfileSettings() {
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify(body),
   });
-  if (resp.ok) alert('Settings saved!');
-  else alert('Failed to save');
+  btn.disabled = false; btn.textContent = 'Save Changes';
+  if (resp.ok) showToast('Settings saved!', 'success');
+  else showToast('Failed to save settings', 'error');
 }
 
 // ─── Team Settings ───
@@ -1309,12 +1531,13 @@ async function renderTeamSettings(c) {
 
   c.innerHTML = `
     <div>
-      <div class="flex justify-between items-center mb-6">
+      <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
         <div><h3 class="text-lg font-semibold">Team & Permissions</h3><p class="text-sm text-ink3">Manage who has access to your clinic dashboard.</p></div>
-        <button onclick="showInviteTeamMember()" class="px-4 py-2 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep transition">+ Invite Member</button>
+        <button onclick="showInviteTeamMember()" class="px-4 py-2 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep transition" style="min-height:44px">+ Invite Member</button>
       </div>
 
       <div class="bg-white rounded-xl border border-line shadow-soft">
+        <div class="table-responsive">
         <table class="w-full text-sm">
           <thead><tr class="text-ink3 text-xs border-b border-line">
             <th class="px-5 py-3 text-left font-medium">Member</th>
@@ -1323,15 +1546,16 @@ async function renderTeamSettings(c) {
             <th class="px-3 py-3 text-center font-medium">Actions</th>
           </tr></thead>
           <tbody class="divide-y divide-line">
-            ${teamMembers.length ? teamMembers.map(m => `
-              <tr class="hover:bg-cream transition">
-                <td class="px-5 py-3"><div class="font-medium">${m.name || m.email.split('@')[0]}</div><div class="text-xs text-ink3">${m.email}</div></td>
-                <td class="px-3 py-3"><select onchange="updateTeamRole('${m.id}', this.value)" class="text-xs px-2 py-1 rounded border border-line2 bg-white">${roles.map(r => `<option value="${r}" ${m.role === r ? 'selected' : ''}>${r.replace(/_/g,' ')}</option>`).join('')}</select></td>
-                <td class="px-3 py-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold ${m.status === 'active' ? 'bg-successbg text-success' : m.status === 'disabled' ? 'bg-critbg text-crit' : 'bg-warnbg text-warn'}">${m.status}</span></td>
-                <td class="px-3 py-3 text-center"><button onclick="removeTeamMember('${m.id}')" class="text-xs text-crit hover:text-ink">Remove</button></td>
-              </tr>`).join('') : '<tr><td colspan="4" class="px-5 py-12 text-center text-ink3">No team members yet</td></tr>'}
+            ${teamMembers.length ? teamMembers.map(m =>
+              '<tr class="hover:bg-cream transition">' +
+                '<td class="px-5 py-3"><div class="font-medium">' + escapeHTML(m.name || m.email.split('@')[0]) + '</div><div class="text-xs text-ink3">' + escapeHTML(m.email) + '</div></td>' +
+                '<td class="px-3 py-3"><select onchange="updateTeamRole(\'' + escapeHTML(m.id) + '\', this.value)" class="text-xs px-2 py-1 rounded border border-line2 bg-white">' + roles.map(r => '<option value="' + r + '" ' + (m.role === r ? 'selected' : '') + '>' + r.replace(/_/g,' ') + '</option>').join('') + '</select></td>' +
+                '<td class="px-3 py-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold ' + (m.status === 'active' ? 'bg-successbg text-success' : m.status === 'disabled' ? 'bg-critbg text-crit' : 'bg-warnbg text-warn') + '">' + escapeHTML(m.status) + '</span></td>' +
+                '<td class="px-3 py-3 text-center"><button onclick="removeTeamMember(\'' + escapeHTML(m.id) + '\')" class="text-xs text-crit hover:text-ink">Remove</button></td>' +
+              '</tr>').join('') : '<tr><td colspan="4" class="px-5 py-12 text-center text-ink3">No team members yet. Invite someone to get started.</td></tr>'}
           </tbody>
         </table>
+        </div>
       </div>
     </div>`;
 }
@@ -1347,22 +1571,24 @@ function showInviteTeamMember() {
           <option value="staff">Staff</option><option value="physician">Physician</option><option value="nurse_practitioner">Nurse Practitioner</option><option value="nurse">Nurse</option><option value="health_coach">Health Coach</option><option value="trainer">Trainer</option><option value="nutrition_coach">Nutrition Coach</option><option value="front_desk">Front Desk</option><option value="billing">Billing</option><option value="admin">Admin</option>
         </select>
         <div class="flex gap-2 pt-2">
-          <button onclick="inviteTeamMember()" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Send Invite</button>
-          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+          <button onclick="inviteTeamMember()" id="inviteTeamBtn" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep" style="min-height:44px">Send Invite</button>
+          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2" style="min-height:44px">Cancel</button>
         </div>
       </div>
     </div>`);
 }
 
 async function inviteTeamMember() {
+  const btn = el('inviteTeamBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Sending...';
   const token = (await sb.auth.getSession()).data?.session?.access_token;
   const resp = await fetch(API + '/api/clinic/team', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify({ email: el('tm_email').value, name: el('tm_name').value, role: el('tm_role').value }),
   });
-  if (resp.ok) { closeModal(); renderSettingsContent(); }
-  else alert('Failed to invite');
+  if (resp.ok) { closeModal(); renderSettingsContent(); showToast('Invite sent!', 'success'); }
+  else { btn.disabled = false; btn.textContent = 'Send Invite'; showToast('Failed to invite member', 'error'); }
 }
 
 async function updateTeamRole(id, role) {
@@ -1372,6 +1598,7 @@ async function updateTeamRole(id, role) {
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify({ id, role }),
   });
+  showToast('Role updated', 'info');
 }
 
 async function removeTeamMember(id) {
@@ -1383,6 +1610,7 @@ async function removeTeamMember(id) {
     body: JSON.stringify({ id }),
   });
   renderSettingsContent();
+  showToast('Team member removed', 'info');
 }
 
 // ─── Feature Toggles ───
@@ -1412,17 +1640,17 @@ async function renderFeatureSettings(c) {
       <p class="text-sm text-ink3 mb-6">Control which Wylde features are available to your patients.</p>
 
       <div class="bg-white rounded-xl border border-line shadow-soft divide-y divide-line">
-        ${features.map(f => `
-          <div class="px-6 py-4 flex items-center justify-between">
-            <div>
-              <div class="text-sm font-medium text-ink">${f.label}</div>
-              <div class="text-xs text-ink3">${f.desc}</div>
-            </div>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" class="sr-only peer" ${featureToggles[f.key] !== false ? 'checked' : ''} onchange="toggleFeature('${f.key}', this.checked)" />
-              <div class="w-9 h-5 bg-line2 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sage"></div>
-            </label>
-          </div>`).join('')}
+        ${features.map(f =>
+          '<div class="px-6 py-4 flex items-center justify-between">' +
+            '<div>' +
+              '<div class="text-sm font-medium text-ink">' + escapeHTML(f.label) + '</div>' +
+              '<div class="text-xs text-ink3">' + escapeHTML(f.desc) + '</div>' +
+            '</div>' +
+            '<label class="relative inline-flex items-center cursor-pointer">' +
+              '<input type="checkbox" class="sr-only peer" ' + (featureToggles[f.key] !== false ? 'checked' : '') + ' onchange="toggleFeature(\'' + f.key + '\', this.checked)" />' +
+              '<div class="w-9 h-5 bg-line2 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sage"></div>' +
+            '</label>' +
+          '</div>').join('')}
       </div>
     </div>`;
 }
@@ -1443,40 +1671,38 @@ async function renderCommsSettings(c) {
   const resp = await fetch(API + '/api/clinic/templates', { headers: { 'Authorization': 'Bearer ' + token } });
   msgTemplates = resp.ok ? (await resp.json()).templates : [];
 
-  const categories = ['welcome','protocol','lab_results','refill','missed_checkin','follow_up','general'];
-
   c.innerHTML = `
     <div>
-      <div class="flex justify-between items-center mb-6">
+      <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
         <div><h3 class="text-lg font-semibold">Communications</h3><p class="text-sm text-ink3">Message templates and notification preferences.</p></div>
-        <button onclick="showAddTemplate()" class="px-4 py-2 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep transition">+ New Template</button>
+        <button onclick="showAddTemplate()" class="px-4 py-2 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep transition" style="min-height:44px">+ New Template</button>
       </div>
 
       <div class="bg-white rounded-xl border border-line shadow-soft divide-y divide-line">
-        ${msgTemplates.length ? msgTemplates.map(t => `
-          <div class="px-5 py-4 flex items-center justify-between">
-            <div>
-              <div class="text-sm font-medium text-ink">${t.name}</div>
-              <div class="text-xs text-ink3">${t.category.replace(/_/g,' ')} · ${t.body.substring(0, 60)}${t.body.length > 60 ? '...' : ''}</div>
-            </div>
-            <div class="flex gap-2">
-              <button onclick="editTemplate('${t.id}')" class="text-xs text-sage hover:text-sageDeep">Edit</button>
-              <button onclick="deleteTemplate('${t.id}')" class="text-xs text-crit hover:text-ink">Delete</button>
-            </div>
-          </div>`).join('') : '<div class="px-5 py-12 text-center text-ink3 text-sm">No templates yet. Create templates for common patient communications.</div>'}
+        ${msgTemplates.length ? msgTemplates.map(t =>
+          '<div class="px-5 py-4 flex items-center justify-between">' +
+            '<div>' +
+              '<div class="text-sm font-medium text-ink">' + escapeHTML(t.name) + '</div>' +
+              '<div class="text-xs text-ink3">' + escapeHTML(t.category.replace(/_/g,' ')) + ' &middot; ' + escapeHTML(t.body.substring(0, 60)) + (t.body.length > 60 ? '...' : '') + '</div>' +
+            '</div>' +
+            '<div class="flex gap-2">' +
+              '<button onclick="editTemplate(\'' + escapeHTML(t.id) + '\')" class="text-xs text-sage hover:text-sageDeep">Edit</button>' +
+              '<button onclick="deleteTemplate(\'' + escapeHTML(t.id) + '\')" class="text-xs text-crit hover:text-ink">Delete</button>' +
+            '</div>' +
+          '</div>').join('') : '<div class="px-5 py-12 text-center text-ink3 text-sm">No templates yet. Create templates for common patient communications.</div>'}
       </div>
 
       <div class="mt-6 bg-white rounded-xl border border-line shadow-soft p-6">
         <h4 class="text-xs font-bold text-ink3 uppercase tracking-wide mb-3">Suggested Templates</h4>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 grid-cols-2-resp gap-3">
           ${[
-            { name: 'Welcome', cat: 'welcome', body: 'Welcome to our clinic! We\'re excited to support your health journey. Your care team is here for you.' },
+            { name: 'Welcome', cat: 'welcome', body: 'Welcome to our clinic! We are excited to support your health journey. Your care team is here for you.' },
             { name: 'Protocol Assigned', cat: 'protocol', body: 'Your new protocol has been assigned. You can view it in your Wylde Self app under Protocol Tracker.' },
-            { name: 'Lab Results Ready', cat: 'lab_results', body: 'Your lab results are ready for review. We\'ll discuss them at your next appointment.' },
+            { name: 'Lab Results Ready', cat: 'lab_results', body: 'Your lab results are ready for review. We will discuss them at your next appointment.' },
             { name: 'Refill Reminder', cat: 'refill', body: 'Your current supply will need a refill soon. You can request a refill through the app.' },
-            { name: 'Missed Check-In', cat: 'missed_checkin', body: 'We noticed you haven\'t checked in recently. How are you feeling? Let us know if you need any adjustments.' },
+            { name: 'Missed Check-In', cat: 'missed_checkin', body: 'We noticed you have not checked in recently. How are you feeling? Let us know if you need any adjustments.' },
             { name: 'Follow-Up', cat: 'follow_up', body: 'Just checking in on your progress. How are things going with your current protocol?' },
-          ].map(t => `<button onclick="quickCreateTemplate('${t.name}','${t.cat}',\`${t.body}\`)" class="text-left px-4 py-3 rounded-lg border border-line2 hover:bg-cream transition"><div class="text-sm font-medium text-ink">${t.name}</div><div class="text-xs text-ink3">${t.cat.replace(/_/g,' ')}</div></button>`).join('')}
+          ].map(t => '<button onclick="quickCreateTemplate(\'' + escapeHTML(t.name) + '\',\'' + escapeHTML(t.cat) + '\',\'' + escapeHTML(t.body).replace(/'/g, '\\&#39;') + '\')" class="text-left px-4 py-3 rounded-lg border border-line2 hover:bg-cream transition" style="min-height:44px"><div class="text-sm font-medium text-ink">' + escapeHTML(t.name) + '</div><div class="text-xs text-ink3">' + escapeHTML(t.cat.replace(/_/g,' ')) + '</div></button>').join('')}
         </div>
       </div>
     </div>`;
@@ -1493,21 +1719,24 @@ function showAddTemplate() {
         </select>
         <textarea id="tpl_body" rows="4" placeholder="Message body..." class="w-full px-3 py-2 rounded-lg border border-line2 text-sm"></textarea>
         <div class="flex gap-2 pt-2">
-          <button onclick="saveTemplate()" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep">Save</button>
-          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2">Cancel</button>
+          <button onclick="saveTemplate()" id="saveTplBtn" class="flex-1 py-2.5 bg-sage text-white rounded-lg text-sm font-semibold hover:bg-sageDeep" style="min-height:44px">Save</button>
+          <button onclick="closeModal()" class="px-4 py-2.5 border border-line2 rounded-lg text-sm text-ink2" style="min-height:44px">Cancel</button>
         </div>
       </div>
     </div>`);
 }
 
 async function saveTemplate() {
+  const btn = el('saveTplBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Saving...';
   const token = (await sb.auth.getSession()).data?.session?.access_token;
   const resp = await fetch(API + '/api/clinic/templates', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify({ name: el('tpl_name').value, category: el('tpl_category').value, body: el('tpl_body').value }),
   });
-  if (resp.ok) { closeModal(); renderSettingsContent(); }
+  if (resp.ok) { closeModal(); renderSettingsContent(); showToast('Template saved!', 'success'); }
+  else { btn.disabled = false; btn.textContent = 'Save'; showToast('Failed to save template', 'error'); }
 }
 
 async function quickCreateTemplate(name, category, body) {
@@ -1518,6 +1747,7 @@ async function quickCreateTemplate(name, category, body) {
     body: JSON.stringify({ name, category, body }),
   });
   renderSettingsContent();
+  showToast('Template created!', 'success');
 }
 
 async function deleteTemplate(id) {
@@ -1529,6 +1759,7 @@ async function deleteTemplate(id) {
     body: JSON.stringify({ id }),
   });
   renderSettingsContent();
+  showToast('Template deleted', 'info');
 }
 
 // ─── Clinic Onboarding Wizard ───
@@ -1539,7 +1770,11 @@ let obData = {};
 function renderClinicOnboarding(existing) {
   obData = existing || {};
   obStep = obData.onboarding_step || 0;
-  document.body.innerHTML = `
+
+  // Use overlay instead of replacing document.body
+  const overlay = el('onboardingOverlay');
+  overlay.classList.remove('hidden');
+  overlay.innerHTML = `
   <div class="min-h-screen bg-paper flex items-center justify-center p-6">
     <div class="w-full max-w-xl">
       <div class="text-center mb-8">
@@ -1556,6 +1791,11 @@ function renderClinicOnboarding(existing) {
 
       <!-- Nav -->
       <div class="flex justify-between mt-6" id="obNav"></div>
+
+      <!-- Sign out -->
+      <div class="text-center mt-6">
+        <button onclick="signOut()" class="text-xs text-ink3 hover:text-crit">Sign out</button>
+      </div>
     </div>
   </div>`;
   renderObStep();
@@ -1571,11 +1811,10 @@ const OB_STEPS = [
 
 function renderObStep() {
   const total = OB_STEPS.length;
-  // Progress
-  el('obProgress').innerHTML = OB_STEPS.map((s, i) => `<div class="flex-1 h-1.5 rounded-full ${i <= obStep ? 'bg-sage' : 'bg-line2'}"></div>`).join('');
+  el('obProgress').innerHTML = OB_STEPS.map((s, i) => '<div class="flex-1 h-1.5 rounded-full ' + (i <= obStep ? 'bg-sage' : 'bg-line2') + '"></div>').join('');
 
   const step = OB_STEPS[obStep];
-  let html = `<h2 class="text-lg font-semibold mb-1">${step.title}</h2><p class="text-sm text-ink3 mb-6">Step ${obStep + 1} of ${total}</p><div class="space-y-4">`;
+  let html = '<h2 class="text-lg font-semibold mb-1">' + escapeHTML(step.title) + '</h2><p class="text-sm text-ink3 mb-6">Step ' + (obStep + 1) + ' of ' + total + '</p><div class="space-y-4">';
 
   if (obStep === 0) {
     html += obInput('clinic_name', 'Clinic Name', 'text', 'e.g. Wylde Wellness Clinic');
@@ -1588,63 +1827,58 @@ function renderObStep() {
   } else if (obStep === 1) {
     html += obInput('address_line1', 'Address', 'text', 'Street address');
     html += obInput('address_line2', 'Suite/Unit', 'text', 'Optional');
-    html += `<div class="grid grid-cols-3 gap-3">`;
+    html += '<div class="grid grid-cols-3 gap-3">';
     html += obInput('city', 'City', 'text', 'City');
     html += obInput('state', 'State', 'text', 'CA');
     html += obInput('zip', 'ZIP', 'text', '90210');
-    html += `</div>`;
+    html += '</div>';
   } else if (obStep === 2) {
     html += obInput('medical_license_number', 'Medical License #', 'text', 'License number');
     html += obInput('license_state', 'License State', 'text', 'e.g. CA');
     html += obInput('npi_number', 'NPI Number', 'text', 'National Provider Identifier');
     html += obInput('liability_insurance_carrier', 'Liability Insurance Carrier', 'text', 'Insurance company');
-    html += `<label class="flex items-start gap-3 py-3 cursor-pointer">
-      <input type="checkbox" id="ob_compliance_hipaa_acknowledged" ${obData.compliance_hipaa_acknowledged ? 'checked' : ''} class="mt-1" />
-      <span class="text-sm text-ink2">I acknowledge HIPAA compliance requirements and will maintain appropriate safeguards for patient data on this platform.</span>
-    </label>`;
-    html += `<label class="flex items-start gap-3 py-3 cursor-pointer">
-      <input type="checkbox" id="ob_compliance_terms_accepted" ${obData.compliance_terms_accepted ? 'checked' : ''} class="mt-1" />
-      <span class="text-sm text-ink2">I accept the <strong>Wylde Self Platform Terms</strong> for clinical providers and agree to maintain current licensing and insurance.</span>
-    </label>`;
+    html += '<label class="flex items-start gap-3 py-3 cursor-pointer">' +
+      '<input type="checkbox" id="ob_compliance_hipaa_acknowledged" ' + (obData.compliance_hipaa_acknowledged ? 'checked' : '') + ' class="mt-1" style="min-width:20px;min-height:20px" />' +
+      '<span class="text-sm text-ink2">I acknowledge HIPAA compliance requirements and will maintain appropriate safeguards for patient data on this platform.</span>' +
+    '</label>';
+    html += '<label class="flex items-start gap-3 py-3 cursor-pointer">' +
+      '<input type="checkbox" id="ob_compliance_terms_accepted" ' + (obData.compliance_terms_accepted ? 'checked' : '') + ' class="mt-1" style="min-width:20px;min-height:20px" />' +
+      '<span class="text-sm text-ink2">I accept the <strong>Wylde Self Platform Terms</strong> for clinical providers and agree to maintain current licensing and insurance.</span>' +
+    '</label>';
   } else if (obStep === 3) {
     html += obInput('tagline', 'Clinic Tagline', 'text', 'e.g. Optimizing human performance');
-    html += `<div class="grid grid-cols-2 gap-3">`;
-    html += `<div><label class="text-xs font-medium text-ink3 block mb-1">Primary Color</label><input type="color" id="ob_brand_color_primary" value="${obData.brand_color_primary || '#6E8A7C'}" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>`;
-    html += `<div><label class="text-xs font-medium text-ink3 block mb-1">Secondary Color</label><input type="color" id="ob_brand_color_secondary" value="${obData.brand_color_secondary || '#C8A96E'}" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>`;
-    html += `</div>`;
+    html += '<div class="grid grid-cols-2 gap-3">';
+    html += '<div><label class="text-xs font-medium text-ink3 block mb-1">Primary Color</label><input type="color" id="ob_brand_color_primary" value="' + escapeHTML(obData.brand_color_primary || '#6E8A7C') + '" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>';
+    html += '<div><label class="text-xs font-medium text-ink3 block mb-1">Secondary Color</label><input type="color" id="ob_brand_color_secondary" value="' + escapeHTML(obData.brand_color_secondary || '#C8A96E') + '" class="w-full h-10 rounded-lg border border-line2 cursor-pointer" /></div>';
+    html += '</div>';
     html += obTextarea('patient_welcome_message', 'Patient Welcome Message', 'Message patients see when they connect with your clinic...');
   } else if (obStep === 4) {
-    html += `<p class="text-sm text-ink2 mb-4">Upload or paste your product list, pricing, protocols. The AI will structure everything into your dashboard.</p>`;
-    html += `<textarea id="ob_ai_content" rows="8" placeholder="Paste your product list, pricing sheet, protocol descriptions...
-
-Example:
-- BPC-157 5mg vial - $150
-- Semaglutide 2.5mg weekly - $350/month
-- Recovery Stack: BPC-157 + TB-500, 4 weeks" class="w-full px-4 py-3 rounded-xl border border-line2 bg-paper text-sm resize-vertical"></textarea>`;
-    html += `<p class="text-xs text-ink3 mt-2">This step is optional — you can add products manually later.</p>`;
+    html += '<p class="text-sm text-ink2 mb-4">Upload or paste your product list, pricing, protocols. The AI will structure everything into your dashboard.</p>';
+    html += '<textarea id="ob_ai_content" rows="8" placeholder="Paste your product list, pricing sheet, protocol descriptions...\n\nExample:\n- BPC-157 5mg vial - $150\n- Semaglutide 2.5mg weekly - $350/month\n- Recovery Stack: BPC-157 + TB-500, 4 weeks" class="w-full px-4 py-3 rounded-xl border border-line2 bg-paper text-sm resize-vertical"></textarea>';
+    html += '<p class="text-xs text-ink3 mt-2">This step is optional -- you can add products manually later.</p>';
   }
 
-  html += `</div>`;
+  html += '</div>';
   el('obContent').innerHTML = html;
 
   // Nav buttons
   let nav = '';
-  if (obStep > 0) nav += `<button onclick="obBack()" class="px-6 py-2.5 border border-line2 rounded-xl text-sm text-ink2 hover:bg-cream transition">Back</button>`;
+  if (obStep > 0) nav += '<button onclick="obBack()" class="px-6 py-2.5 border border-line2 rounded-xl text-sm text-ink2 hover:bg-cream transition" style="min-height:44px">Back</button>';
   else nav += '<div></div>';
 
-  if (obStep < total - 1) nav += `<button onclick="obNext()" class="px-6 py-2.5 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">Continue</button>`;
-  else nav += `<button onclick="obFinish()" id="obFinishBtn" class="px-6 py-2.5 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition">Complete Setup</button>`;
+  if (obStep < total - 1) nav += '<button onclick="obNext()" class="px-6 py-2.5 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition" style="min-height:44px">Continue</button>';
+  else nav += '<button onclick="obFinish()" id="obFinishBtn" class="px-6 py-2.5 bg-sage text-white rounded-xl text-sm font-semibold hover:bg-sageDeep transition flex items-center justify-center gap-2" style="min-height:44px">Complete Setup</button>';
   el('obNav').innerHTML = nav;
 }
 
 function obInput(key, label, type, placeholder) {
-  return `<div><label class="text-xs font-medium text-ink3 block mb-1">${label}</label><input type="${type}" id="ob_${key}" value="${obData[key] || ''}" placeholder="${placeholder}" class="w-full px-3 py-2.5 rounded-lg border border-line2 text-sm" /></div>`;
+  return '<div><label class="text-xs font-medium text-ink3 block mb-1">' + escapeHTML(label) + '</label><input type="' + type + '" id="ob_' + key + '" value="' + escapeHTML(obData[key] || '') + '" placeholder="' + escapeHTML(placeholder) + '" class="w-full px-3 py-2.5 rounded-lg border border-line2 text-sm" style="min-height:44px" /></div>';
 }
 function obSelect(key, label, options) {
-  return `<div><label class="text-xs font-medium text-ink3 block mb-1">${label}</label><select id="ob_${key}" class="w-full px-3 py-2.5 rounded-lg border border-line2 text-sm bg-white"><option value="">Select...</option>${options.map(o => `<option value="${o}" ${obData[key] === o ? 'selected' : ''}>${o.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase())}</option>`).join('')}</select></div>`;
+  return '<div><label class="text-xs font-medium text-ink3 block mb-1">' + escapeHTML(label) + '</label><select id="ob_' + key + '" class="w-full px-3 py-2.5 rounded-lg border border-line2 text-sm bg-white" style="min-height:44px"><option value="">Select...</option>' + options.map(o => '<option value="' + o + '" ' + (obData[key] === o ? 'selected' : '') + '>' + o.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase()) + '</option>').join('') + '</select></div>';
 }
 function obTextarea(key, label, placeholder) {
-  return `<div><label class="text-xs font-medium text-ink3 block mb-1">${label}</label><textarea id="ob_${key}" rows="3" placeholder="${placeholder}" class="w-full px-3 py-2.5 rounded-lg border border-line2 text-sm resize-vertical">${obData[key] || ''}</textarea></div>`;
+  return '<div><label class="text-xs font-medium text-ink3 block mb-1">' + escapeHTML(label) + '</label><textarea id="ob_' + key + '" rows="3" placeholder="' + escapeHTML(placeholder) + '" class="w-full px-3 py-2.5 rounded-lg border border-line2 text-sm resize-vertical">' + escapeHTML(obData[key] || '') + '</textarea></div>';
 }
 
 function collectStepData() {
@@ -1691,7 +1925,7 @@ async function obFinish() {
   collectStepData();
 
   const btn = document.getElementById('obFinishBtn');
-  btn.textContent = 'Setting up...'; btn.disabled = true;
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Setting up...';
 
   // Process AI content if provided
   const aiContent = document.getElementById('ob_ai_content')?.value?.trim();

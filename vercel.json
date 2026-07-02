@@ -1,4 +1,9 @@
 {
+  "rewrites": [
+    { "source": "/clinical", "destination": "/clinical.html" },
+    { "source": "/clinical-dashboard", "destination": "/clinical-dashboard.html" },
+    { "source": "/command-center", "destination": "/command-center.html" }
+  ],
   "functions": {
     "api/generate-image.js": {
       "maxDuration": 90
@@ -39,7 +44,9 @@
     "api/clinic/team.js": { "maxDuration": 10 },
     "api/clinic/features.js": { "maxDuration": 10 },
     "api/clinic/templates.js": { "maxDuration": 10 },
-    "api/nutrition/search.js": { "maxDuration": 15 }
+    "api/clinic/dashboard.js": { "maxDuration": 15 },
+    "api/nutrition/search.js": { "maxDuration": 15 },
+    "api/nutrition/parse.js": { "maxDuration": 30 }
   },
   "crons": [
     {
