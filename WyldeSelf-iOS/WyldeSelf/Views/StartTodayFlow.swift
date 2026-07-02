@@ -574,8 +574,9 @@ struct StartTodayFlow: View {
         let defaults = UserDefaults.standard
         defaults.set(today, forKey: "wylde_last_completed_day")
 
-        // Increment day counter
-        appState.currentDay += 1
+        // Day counter is now automatic (computed from start date).
+        // Just refresh it so the UI updates immediately.
+        appState.refreshCurrentDay()
 
         // Update streak — if last completed day was yesterday, increment;
         // otherwise reset to 1. Matches the web logic.

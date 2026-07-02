@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS clinic_products (
   method TEXT,  -- injection, oral, topical, sublingual, etc.
   price DECIMAL(10,2),
   price_unit TEXT DEFAULT 'per unit',  -- per unit, per month, per cycle, per session
-  in_stock BOOLEAN DEFAULT true,
+  is_in_stock BOOLEAN DEFAULT true,
   image_url TEXT,
   notes TEXT,
   sort_order INT DEFAULT 0,

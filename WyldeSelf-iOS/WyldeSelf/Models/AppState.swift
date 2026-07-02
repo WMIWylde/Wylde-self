@@ -18,7 +18,8 @@ class AppState: ObservableObject {
     // Auth / profile — persisted
     @Published var isAuthenticated = false                          { didSet { defaults.set(isAuthenticated, forKey: "wylde_authed") } }
     @Published var userName: String = ""                            { didSet { defaults.set(userName, forKey: "wylde_name") } }
-    @Published var currentDay: Int = 1                              { didSet { defaults.set(currentDay, forKey: "wylde_day") } }
+    /// Current day in the transformation — calculated from start date, auto-advances daily.
+    @Published var currentDay: Int = 1
     @Published var streak: Int = 0                                  { didSet { defaults.set(streak, forKey: "wylde_streak") } }
     // XP is now a silent internal counter — used for analytics + future
     // identity-driven badges, never surfaced as a level/rank.
@@ -133,6 +134,7 @@ class AppState: ObservableObject {
 
     init() {
         loadFromDefaults()
+        refreshCurrentDay()
         isLoading = false
         // Listen for purchase state changes from PurchaseManager so we
         // can update the cached Pro fields + push to Supabase.
@@ -160,6 +162,23 @@ class AppState: ObservableObject {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
         return base + "_" + f.string(from: Date())
+    }
+
+    /// Compute current day from start date. Called on every app launch
+    /// and foreground return so the day counter advances automatically.
+    func refreshCurrentDay() {
+        // Set start date on first run (when onboarding completes)
+        let key = "wylde_start_date"
+        let startDate: Date
+        if let stored = defaults.object(forKey: key) as? Date {
+            startDate = stored
+        } else {
+            // First time — set today as day 1
+            startDate = Calendar.current.startOfDay(for: Date())
+            defaults.set(startDate, forKey: key)
+        }
+        let days = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: startDate), to: Calendar.current.startOfDay(for: Date())).day ?? 0
+        currentDay = max(1, days + 1)
     }
 
     private func saveCodable<T: Encodable>(_ value: T, key: String) {

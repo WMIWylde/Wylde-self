@@ -35,6 +35,11 @@ struct WyldeSelfApp: App {
                     // /api/consumer/checkin (debounced).
                     CheckinSync.shared.start(appState: appState)
                 }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                    // Refresh day counter + daily state when returning from background
+                    appState.refreshCurrentDay()
+                    appState.loadFromDefaults()
+                }
         }
     }
 
