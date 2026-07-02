@@ -23,7 +23,8 @@ class HealthKitManager {
         ]
 
         let writeTypes: Set<HKSampleType> = [
-            HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!
+            HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
+            HKObjectType.workoutType()
         ]
 
         do {
@@ -87,6 +88,70 @@ class HealthKitManager {
             }
             store.execute(query)
         }
+    }
+
+    // MARK: - Workout Session (activates Apple Watch + Activity rings)
+
+    private var workoutStartDate: Date?
+    private(set) var isWorkoutActive = false
+
+    /// Start an HKWorkout session — this activates the Apple Watch sensors
+    /// and begins tracking active energy, heart rate, and exercise minutes.
+    func startWorkoutSession() {
+        guard isAvailable else { return }
+        workoutStartDate = Date()
+        isWorkoutActive = true
+        #if DEBUG
+        print("[HealthKit] Workout session started")
+        #endif
+    }
+
+    /// End the workout session and save it to HealthKit as a strength training workout.
+    /// This shows up in the Activity app, Health app, and on the Apple Watch rings.
+    func endWorkoutSession() async {
+        guard isAvailable, let start = workoutStartDate else { return }
+        let end = Date()
+        isWorkoutActive = false
+        workoutStartDate = nil
+
+        // Calculate active calories during the workout window
+        let calories = await fetchSum(.activeEnergyBurned, from: start, to: end)
+
+        // Build and save the workout using HKWorkoutBuilder
+        let config = HKWorkoutConfiguration()
+        config.activityType = .traditionalStrengthTraining
+        config.locationType = .indoor
+
+        let builder = HKWorkoutBuilder(healthStore: store, configuration: config, device: .local())
+
+        do {
+            try await builder.beginCollection(at: start)
+
+            // Add active energy burned sample
+            if calories > 0, let energyType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned) {
+                let energySample = HKQuantitySample(
+                    type: energyType,
+                    quantity: HKQuantity(unit: .kilocalorie(), doubleValue: calories),
+                    start: start,
+                    end: end
+                )
+                try await builder.addSamples([energySample])
+            }
+
+            try await builder.endCollection(at: end)
+            try await builder.finishWorkout()
+
+            #if DEBUG
+            print("[HealthKit] Workout saved: \(Int(end.timeIntervalSince(start) / 60))min, \(Int(calories)) cal")
+            #endif
+        } catch {
+            #if DEBUG
+            print("[HealthKit] Failed to save workout: \(error.localizedDescription)")
+            #endif
+        }
+
+        // Sync updated totals
+        await syncTodayData()
     }
 
     func fetchSleepHours(for date: Date) async -> Double {

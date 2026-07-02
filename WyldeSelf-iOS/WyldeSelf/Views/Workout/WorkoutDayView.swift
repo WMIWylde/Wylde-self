@@ -9,6 +9,9 @@ struct WorkoutDayView: View {
     @State private var showRestTimer = false
     @State private var restDuration = 90
     @State private var showWarmup = false
+    @State private var workoutSessionActive = false
+    @State private var workoutElapsed = 0
+    @State private var workoutTimer: Timer?
 
     private var day: WorkoutDay? {
         service.program?.days.indices.contains(dayIndex) == true ? service.program?.days[dayIndex] : nil
@@ -52,14 +55,41 @@ struct WorkoutDayView: View {
                             )
                         }
 
-                        // Complete Workout button
+                        // Workout timer + complete button
                         if !appState.workoutCompleted {
-                            GoldButton(label: "Complete Workout") {
-                                HapticManager.shared.notification(.success)
-                                withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                                    appState.workoutCompleted = true
+                            VStack(spacing: 12) {
+                                // Live workout timer
+                                if workoutSessionActive {
+                                    HStack(spacing: 10) {
+                                        Circle()
+                                            .fill(Color.red)
+                                            .frame(width: 8, height: 8)
+                                        Text("WORKOUT ACTIVE")
+                                            .font(.system(size: 10, weight: .bold))
+                                            .tracking(2)
+                                            .foregroundColor(Color(hex: "F4F1E8"))
+                                        Spacer()
+                                        Text(formatElapsed(workoutElapsed))
+                                            .font(.system(size: 16, weight: .bold, design: .monospaced))
+                                            .foregroundColor(Color(hex: "C8A96E"))
+                                            .contentTransition(.numericText())
+                                            .animation(.easeInOut(duration: 0.3), value: workoutElapsed)
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 12)
+                                    .background(Color(hex: "111111"))
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
                                 }
-                                dismiss()
+
+                                GoldButton(label: "Complete Workout") {
+                                    HapticManager.shared.notification(.success)
+                                    stopWorkoutTimer()
+                                    Task { await HealthKitManager.shared.endWorkoutSession() }
+                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                                        appState.workoutCompleted = true
+                                    }
+                                    dismiss()
+                                }
                             }
                             .padding(.top, 8)
                         }
@@ -87,12 +117,58 @@ struct WorkoutDayView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button { dismiss() } label: {
+                Button {
+                    // If workout is active and user goes back, keep session running
+                    dismiss()
+                } label: {
                     Image(systemName: "chevron.left")
                         .foregroundColor(Color(hex: "F4F1E8"))
                 }
             }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if workoutSessionActive {
+                    HStack(spacing: 4) {
+                        Circle().fill(Color.red).frame(width: 6, height: 6)
+                        Text(formatElapsed(workoutElapsed))
+                            .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                            .foregroundColor(Color(hex: "C8A96E"))
+                    }
+                }
+            }
         }
+        .onAppear {
+            if !appState.workoutCompleted && !workoutSessionActive {
+                startWorkoutSession()
+            }
+        }
+        .onDisappear {
+            // Don't stop the HealthKit session on disappear — only on Complete
+            stopWorkoutTimer()
+        }
+    }
+
+    // MARK: - Workout Session
+
+    private func startWorkoutSession() {
+        HealthKitManager.shared.startWorkoutSession()
+        workoutSessionActive = true
+        workoutElapsed = 0
+        workoutTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            DispatchQueue.main.async {
+                workoutElapsed += 1
+            }
+        }
+    }
+
+    private func stopWorkoutTimer() {
+        workoutTimer?.invalidate()
+        workoutTimer = nil
+    }
+
+    private func formatElapsed(_ seconds: Int) -> String {
+        let m = seconds / 60
+        let s = seconds % 60
+        return String(format: "%d:%02d", m, s)
     }
 
     private func header(_ day: WorkoutDay) -> some View {
