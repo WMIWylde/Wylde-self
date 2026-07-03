@@ -34,11 +34,19 @@ struct WyldeSelfApp: App {
                     // CheckinSync — observes AppState toggles, posts to
                     // /api/consumer/checkin (debounced).
                     CheckinSync.shared.start(appState: appState)
+                    // WatchSync — sends daily state to Apple Watch companion
+                    WatchSync.shared.start(appState: appState)
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                    // Refresh day counter + daily state when returning from background
-                    appState.refreshCurrentDay()
+                    // Refresh daily state, then recompute the day counter.
+                    // Order matters: loadFromDefaults() reads the persisted
+                    // "wylde_day" value, so it must run BEFORE
+                    // refreshCurrentDay() overwrites it with the fresh
+                    // calendar-math result. Reversing this order (the
+                    // previous bug) meant every foreground return
+                    // clobbered today's day back to yesterday's.
                     appState.loadFromDefaults()
+                    appState.refreshCurrentDay()
                 }
         }
     }
