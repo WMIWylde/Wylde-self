@@ -652,13 +652,15 @@ struct StartTodayFlow: View {
 
     // MARK: - Step 6: Close the Loop
 
+    @State private var showCloseDay = false
+
     private var closeoutStep: some View {
         VStack(alignment: .leading, spacing: 14) {
             eyebrow("Close the Loop")
             Text(showFinal ? "Day complete." : "Lock it in.")
                 .font(.system(size: 24, weight: .semibold))
                 .foregroundColor(Theme.text)
-            Text(showFinal ? CoachLine.get(.closeout) : "Mark what you completed today.")
+            Text(showFinal ? CoachLine.get(.closeout) : "Review your day, reflect, and close the loop.")
                 .font(.system(size: 14))
                 .foregroundColor(Theme.muted)
                 .padding(.bottom, 8)
@@ -668,19 +670,71 @@ struct StartTodayFlow: View {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 28))
                         .foregroundColor(Theme.sage)
-                    Text("Momentum logged.")
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundColor(Theme.text)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Day closed.")
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundColor(Theme.text)
+                        Text("Momentum logged. Rest well.")
+                            .font(.system(size: 12))
+                            .foregroundColor(Theme.muted)
+                    }
                 }
                 .padding(.top, 8)
             } else {
-                HStack(spacing: 14) {
-                    closeoutCheck(label: "Protocol",  done: appState.morningProtocolCompleted)
-                    closeoutCheck(label: "Workout",   done: appState.workoutCompleted)
-                    closeoutCheck(label: "Walk",      done: appState.dailyWalkCompleted)
-                    closeoutCheck(label: "Nutrition", done: appState.proteinLogged > 0 || appState.caloriesLogged > 0)
+                // Today's summary
+                VStack(spacing: 10) {
+                    HStack(spacing: 14) {
+                        closeoutCheck(label: "Ritual",    done: appState.morningProtocolCompleted)
+                        closeoutCheck(label: "Workout",   done: appState.workoutCompleted)
+                        closeoutCheck(label: "Walk",      done: appState.dailyWalkCompleted)
+                        closeoutCheck(label: "Nutrition", done: appState.proteinLogged > 0 || appState.caloriesLogged > 0)
+                    }
+
+                    // Water progress
+                    HStack(spacing: 6) {
+                        Image(systemName: "drop.fill")
+                            .font(.system(size: 11))
+                            .foregroundColor(Color(hex: "7FD0FF"))
+                        Text("\(appState.waterLogged)/\(appState.waterGoal) glasses")
+                            .font(.system(size: 12))
+                            .foregroundColor(Theme.muted)
+                        Spacer()
+                    }
                 }
                 .padding(.top, 4)
+
+                // Close the Day button → launches reflection
+                Button { showCloseDay = true } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "moon.stars.fill")
+                            .font(.system(size: 14))
+                        Text("Close the Day")
+                            .font(.system(size: 15, weight: .bold))
+                    }
+                    .foregroundColor(Color(hex: "1A1816"))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(
+                        LinearGradient(
+                            colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                            startPoint: .top, endPoint: .bottom
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .shadow(color: .black.opacity(0.15), radius: 6, x: 0, y: 3)
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 8)
+                .fullScreenCover(isPresented: $showCloseDay) {
+                    EveningReflectionView()
+                        .environmentObject(appState)
+                        .onDisappear {
+                            if appState.eveningReflectionDone {
+                                completeDay()
+                                showFinal = true
+                            }
+                        }
+                }
             }
         }
     }

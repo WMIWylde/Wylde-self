@@ -28,6 +28,14 @@ struct TodayView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
+                // Cinematic hero — photo rotates with hour of day
+                // (morning / midday / evening / night). Sits above the
+                // functional header (profile chip + streak).
+                todayHero
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 10)
+                    .animation(.easeOut(duration: 0.55), value: didAppear)
+
                 // Header
                 headerSection
                     .opacity(didAppear ? 1 : 0)
@@ -130,8 +138,8 @@ struct TodayView: View {
                     .offset(y: didAppear ? 0 : 12)
                     .animation(.easeOut(duration: 0.6).delay(0.30), value: didAppear)
 
-                // Evening Reflection — shows after 5 PM if not done today
-                if isEveningTime && !appState.eveningReflectionDone {
+                // Close the Day — always visible until completed
+                if !appState.eveningReflectionDone {
                     reflectionCard
                         .opacity(didAppear ? 1 : 0)
                         .offset(y: didAppear ? 0 : 12)
@@ -270,6 +278,37 @@ struct TodayView: View {
         .buttonStyle(.plain)
     }
 
+    // MARK: - Today Hero (hourly rotation)
+
+    /// Cinematic photo hero that rotates 4×/day. Uses `TodayHero.current`
+    /// to select morning / midday / evening / night, so the app "breathes"
+    /// with the user's day instead of feeling static.
+    private var todayHero: some View {
+        ZStack(alignment: .bottomLeading) {
+            Image.wylde(TodayHero.current)
+                .aspectRatio(contentMode: .fill)
+                .frame(height: 180)
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+            LinearGradient(
+                colors: [.clear, .black.opacity(0.55)],
+                startPoint: .top, endPoint: .bottom
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 18))
+            VStack(alignment: .leading, spacing: 4) {
+                Text(greeting.uppercased())
+                    .font(.system(size: 10, weight: .bold))
+                    .tracking(2.5)
+                    .foregroundColor(Color(hex: "C8A96E"))
+                Text(appState.userName.isEmpty ? "Today, presence." : "Today, \(appState.userName).")
+                    .font(.system(size: 24, weight: .medium, design: .serif))
+                    .foregroundColor(.white)
+            }
+            .padding(20)
+        }
+        .frame(height: 180)
+    }
+
     // MARK: - Header
 
     private var futureSelfImage: UIImage? {
@@ -368,9 +407,18 @@ struct TodayView: View {
                     .font(.system(size: 38, weight: .bold))
                     .foregroundColor(.white)
 
+                // "X of N closed" — the honest progress meter. `completedDays`
+                // increments only when the user submits their Evening
+                // Reflection (per markLoopClosed()), so this reads as
+                // adherence, not just calendar drift.
+                Text("\(appState.completedDays) of \(appState.currentDay) closed")
+                    .font(.system(size: 13, weight: .semibold))
+                    .tracking(1.2)
+                    .foregroundColor(Color(hex: "E6C886"))
+
                 Text("of becoming who you said you'd be")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.white.opacity(0.7))
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(.white.opacity(0.65))
 
                 // Primary CTA
                 Button {
@@ -1187,18 +1235,18 @@ struct TodayView: View {
     private var reflectionCard: some View {
         Button { showReflection = true } label: {
             HStack(spacing: 14) {
-                Image(systemName: "moon.stars.fill")
+                Image(systemName: isEveningTime ? "moon.stars.fill" : "checkmark.circle")
                     .font(.system(size: 18))
                     .foregroundColor(Color(hex: "B68BFF"))
                     .frame(width: 44, height: 44)
                     .background(Color(hex: "B68BFF").opacity(0.10))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("EVENING REFLECTION")
+                    Text("CLOSE THE DAY")
                         .font(.system(size: 10, weight: .bold))
                         .tracking(1.6)
                         .foregroundColor(Color(hex: "B68BFF"))
-                    Text("Close the day with clarity")
+                    Text("Reflect, reset, and close the loop")
                         .font(.system(size: 13))
                         .foregroundColor(Color(hex: "A6A29A"))
                 }
