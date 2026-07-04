@@ -62,10 +62,9 @@ struct FutureTabView: View {
                     // CTA in a calm hero so the page doesn't feel blank.
                     if service.visions.isEmpty {
                         Image.wylde(.emptyStateCalm)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(maxWidth: .infinity)
+                            .aspectRatio(contentMode: .fill)
                             .frame(height: 140)
+                            .frame(maxWidth: .infinity)
                             .clipped()
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                             .opacity(0.85)

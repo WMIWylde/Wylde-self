@@ -7,14 +7,12 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        // Request notification permissions
-        NotificationManager.shared.requestPermission()
+        // Notification delegate only — permission is requested contextually
+        // when the user sets up reminders (e.g. WorkoutCalendarView).
         UNUserNotificationCenter.current().delegate = self
 
-        // Initialize HealthKit (async — fire and forget)
-        Task {
-            _ = await HealthKitManager.shared.requestAuthorization()
-        }
+        // HealthKit auth is requested contextually when the user first
+        // interacts with health features (health card, workout start, etc.).
 
         return true
     }

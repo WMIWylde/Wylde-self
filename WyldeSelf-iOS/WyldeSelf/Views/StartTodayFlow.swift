@@ -75,6 +75,10 @@ struct StartTodayFlow: View {
     @State private var showMeditation = false
     @State private var showJournaling = false
     @State private var showWorkout = false
+    @State private var showFoodSearch = false
+    @State private var showFoodScanner = false
+    @State private var showMealPlan = false
+    @State private var showCoach = false
 
     // Step 6 final-state visibility — once Close-the-Loop fires we replace
     // the checks with a calm completion message until the user dismisses.
@@ -114,6 +118,22 @@ struct StartTodayFlow: View {
         }
         .fullScreenCover(isPresented: $showWorkout) {
             WorkoutContainerView()
+                .environmentObject(appState)
+        }
+        .fullScreenCover(isPresented: $showFoodSearch) {
+            NavigationStack { FoodSearchView() }
+                .environmentObject(appState)
+        }
+        .fullScreenCover(isPresented: $showFoodScanner) {
+            NavigationStack { FoodScannerView() }
+                .environmentObject(appState)
+        }
+        .fullScreenCover(isPresented: $showMealPlan) {
+            NavigationStack { MealPlanView() }
+                .environmentObject(appState)
+        }
+        .fullScreenCover(isPresented: $showCoach) {
+            CoachChatView()
                 .environmentObject(appState)
         }
     }
@@ -295,32 +315,42 @@ struct StartTodayFlow: View {
     private var anchorStep: some View {
         let phase = JourneyPhase.forDay(appState.currentDay)
         let day = appState.currentDay
-        let titles = [
-            "Let\u{2019}s build momentum.",
-            "Today sets the standard.",
-            "One clear day. One honest step.",
-            "Quiet work. Real progress."
-        ]
-        let subs = [
-            "The work today is small, repeatable, and yours.",
-            "No hype. Just the next aligned action.",
-            "You don\u{2019}t need intensity today. You need consistency.",
-            "Keep it simple: ritual, training, fuel, follow-through."
-        ]
-        let title = titles[day % titles.count]
-        let sub = subs[day % subs.count]
+        let identity = appState.identityStatement.isEmpty ? nil : appState.identityStatement
 
-        return VStack(alignment: .leading, spacing: 10) {
+        return VStack(alignment: .leading, spacing: 14) {
             eyebrow("Day \(day) \u{00B7} \(phase.name)")
-            Text(title)
-                .font(.system(size: 24, weight: .semibold))
-                .foregroundColor(Theme.text)
-                .fixedSize(horizontal: false, vertical: true)
-            Text(sub)
-                .font(.system(size: 14))
-                .foregroundColor(Theme.muted)
-                .lineSpacing(3)
-                .padding(.top, 4)
+
+            if let identity = identity {
+                // Personalized anchor — tied to their identity
+                Text("I am becoming")
+                    .font(.system(size: 13))
+                    .foregroundColor(Theme.muted)
+                Text(identity)
+                    .font(.system(size: 22, weight: .medium, design: .serif))
+                    .foregroundColor(Theme.text)
+                    .lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.bottom, 4)
+                Text("Today\u{2019}s actions are evidence of that.")
+                    .font(.system(size: 14))
+                    .foregroundColor(Theme.muted)
+            } else {
+                // Fallback for users without identity statement
+                let titles = [
+                    "Today sets the standard.",
+                    "One clear day. One honest step.",
+                    "Quiet work. Real progress.",
+                    "Show up. Follow through."
+                ]
+                Text(titles[day % titles.count])
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundColor(Theme.text)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text("Keep it simple: ritual, training, fuel, follow-through.")
+                    .font(.system(size: 14))
+                    .foregroundColor(Theme.muted)
+                    .lineSpacing(3)
+            }
         }
     }
 
@@ -553,13 +583,9 @@ struct StartTodayFlow: View {
                 .foregroundColor(Theme.muted)
                 .padding(.bottom, 14)
 
-            // The three options the web flow exposes. iOS doesn't yet have
-            // a native nutrition surface, so tapping any option dismisses
-            // the flow as an honest "go act on it" signal. Native nutrition
-            // is on the Phase Later port list.
-            optionRow(label: "Log a meal")
-            optionRow(label: "Snap a meal photo")
-            optionRow(label: "View today\u{2019}s meal plan")
+            nutritionOptionRow(label: "Log a meal") { showFoodSearch = true }
+            nutritionOptionRow(label: "Snap a meal photo") { showFoodScanner = true }
+            nutritionOptionRow(label: "View today\u{2019}s meal plan") { showMealPlan = true }
 
             Text("Your next meal doesn\u{2019}t need to be perfect. It needs to be aligned.")
                 .font(.system(size: 13, weight: .regular))
@@ -573,6 +599,35 @@ struct StartTodayFlow: View {
         Button {
             HapticManager.shared.impact(.light)
             isPresented = false
+        } label: {
+            HStack {
+                Text(label)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(Theme.text)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14))
+                    .foregroundColor(Theme.muted)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(Color.black.opacity(0.02))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(Theme.border, lineWidth: 1)
+                    )
+            )
+        }
+        .buttonStyle(.plain)
+        .padding(.bottom, 8)
+    }
+
+    private func nutritionOptionRow(label: String, action: @escaping () -> Void) -> some View {
+        Button {
+            HapticManager.shared.impact(.light)
+            action()
         } label: {
             HStack {
                 Text(label)
@@ -614,12 +669,7 @@ struct StartTodayFlow: View {
 
             Button {
                 HapticManager.shared.impact(.light)
-                isPresented = false
-                NotificationCenter.default.post(
-                    name: .navigateToScreen,
-                    object: nil,
-                    userInfo: ["screen": "coach"]
-                )
+                showCoach = true
             } label: {
                 HStack {
                     Text("Talk to your future self")

@@ -30,6 +30,7 @@ struct ExercisesView: View {
 
                 VStack(spacing: 0) {
                     header
+                    categoryStrip
                     searchBar
                     filterRow
                     countLabel
@@ -66,6 +67,54 @@ struct ExercisesView: View {
         .padding(.horizontal, Theme.screenPadding)
         .padding(.top, 16)
         .padding(.bottom, 16)
+    }
+
+    // MARK: Category strip — brand imagery for the four library pillars.
+    // Purely visual for v1: taps focus the search on the pillar keyword so
+    // the row still feels tap-active. Later we can wire these to true
+    // category views.
+    private var categoryStrip: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                categoryCard(image: .libraryStrength,     title: "Strength",     hint: "Move heavy things",     tapKeyword: "strength")
+                categoryCard(image: .libraryMobility,     title: "Mobility",     hint: "Move through range",    tapKeyword: "mobility")
+                categoryCard(image: .libraryConditioning, title: "Conditioning", hint: "Move under load",       tapKeyword: "cardio")
+                categoryCard(image: .libraryRecovery,     title: "Recovery",     hint: "Slow down on purpose",  tapKeyword: "stretching")
+            }
+            .padding(.horizontal, Theme.screenPadding)
+        }
+        .padding(.bottom, 12)
+    }
+
+    private func categoryCard(image: WyldeImage, title: String, hint: String, tapKeyword: String) -> some View {
+        Button {
+            query = tapKeyword
+            HapticManager.shared.impact(.light)
+        } label: {
+            ZStack(alignment: .bottomLeading) {
+                Image.wylde(image)
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 220, height: 130)
+                    .clipped()
+                LinearGradient(
+                    colors: [.clear, .black.opacity(0.65)],
+                    startPoint: .top, endPoint: .bottom
+                )
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title.uppercased())
+                        .font(.system(size: 10, weight: .bold))
+                        .tracking(2)
+                        .foregroundColor(Theme.gold)
+                    Text(hint)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.white)
+                }
+                .padding(12)
+            }
+            .frame(width: 220, height: 130)
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: Search bar

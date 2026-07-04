@@ -26,6 +26,7 @@ struct SettingsDrawer: View {
     @State private var showPaywall = false
     @State private var showResetConfirm = false
     @State private var showIdentityImport = false
+    @State private var showExercises = false
 
     /// Centralized dismiss — calls custom onClose if provided, otherwise
     /// falls back to SwiftUI sheet dismiss.
@@ -74,15 +75,19 @@ struct SettingsDrawer: View {
             .padding(.bottom, 24)
 
             // ── Founder CTA (or badge if Pro) ───────────────────
-            if !appState.isPro {
-                founderCTA
-            } else if appState.isFoundingMember {
-                founderBadge
-            }
+            // HIDDEN for TestFlight — no purchase entry points until IAP is approved
+            // if !appState.isPro {
+            //     founderCTA
+            // } else if appState.isFoundingMember {
+            //     founderBadge
+            // }
 
             // ── Nav links — flat list ──────────────────────────
-            DrawerLink(icon: "books.vertical.fill",     label: "Exercise Library",   action: { openWebScreen("library") })
-            DrawerLink(icon: "fork.knife",              label: "Nutrition",          action: { openWebScreen("nutrition") })
+            DrawerLink(icon: "books.vertical.fill",     label: "Exercise Library",   action: {
+                HapticManager.shared.impact(.light)
+                showExercises = true
+            })
+            DrawerLink(icon: "fork.knife",              label: "Nutrition",          action: openNutritionTab)
             DrawerLink(icon: "brain.head.profile",      label: "Identity Import",    action: {
                 HapticManager.shared.impact(.light)
                 showIdentityImport = true
@@ -113,6 +118,9 @@ struct SettingsDrawer: View {
         }
         .sheet(isPresented: $showIdentityImport) {
             IdentityImportView().environmentObject(appState)
+        }
+        .fullScreenCover(isPresented: $showExercises) {
+            NavigationStack { ExercisesView() }
         }
         .alert("Reset profile?", isPresented: $showResetConfirm) {
             Button("Cancel", role: .cancel) { }
@@ -203,31 +211,18 @@ struct SettingsDrawer: View {
 
     // MARK: - Actions
 
-    /// Switches the active tab to a WebView tab and asks the web app to
-    /// route to the given screen. Nutrition/Library aren't tabs in the
-    /// reduced 4-tab nav, so they go through the Coach WebView with a
-    /// showScreen() call. (Future enhancement: dedicated routing.)
-    private func openWebScreen(_ screenId: String) {
+    /// Switches to the Nutrition tab. Previously this went through
+    /// `openWebScreen("nutrition")`, which unrecognized-fell-through to
+    /// the Future tab (bug). Now it routes directly.
+    private func openNutritionTab() {
         HapticManager.shared.impact(.light)
-        // For now, library has its own native tab — switch to it directly
-        if screenId == "library" {
-            appState.selectedTab = .nutrition
-            dismiss()
-            return
-        }
-        // Other web screens — switch to Future tab + post navigate notification
-        appState.selectedTab = .future
-        NotificationCenter.default.post(
-            name: .navigateToScreen,
-            object: nil,
-            userInfo: ["screen": screenId]
-        )
+        appState.selectedTab = .nutrition
         dismiss()
     }
 
-
     private func signOutAndDismiss() {
         HapticManager.shared.notification(.warning)
+        Task { await AuthService.shared.signOut() }
         appState.isAuthenticated = false
         appState.resetAllData()
         dismiss()

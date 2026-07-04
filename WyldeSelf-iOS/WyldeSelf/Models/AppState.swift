@@ -21,6 +21,17 @@ class AppState: ObservableObject {
     /// Current day in the transformation — calculated from start date, auto-advances daily.
     @Published var currentDay: Int = 1
     @Published var streak: Int = 0                                  { didSet { defaults.set(streak, forKey: "wylde_streak") } }
+
+    /// Dates ("yyyy-MM-dd") on which the user has "closed the loop"
+    /// (completed Evening Reflection). Set-like semantics — a date is
+    /// only recorded once no matter how many times the reflection is
+    /// re-opened. Used to display "N of M closed" progress.
+    @Published private(set) var completedDates: [String] = []       { didSet { defaults.set(completedDates, forKey: "wylde_days_completed") } }
+
+    /// Total days the user has closed the loop, lifetime.
+    /// Always ≤ currentDay. Used as the numerator of the "closed / started"
+    /// progress display in the Today hero and You profile chip.
+    var completedDays: Int { completedDates.count }
     // XP is now a silent internal counter — used for analytics + future
     // identity-driven badges, never surfaced as a level/rank.
     @Published var xp: Int = 0                                      { didSet { defaults.set(xp, forKey: "wylde_xp") } }
@@ -35,6 +46,10 @@ class AppState: ObservableObject {
     // SecureStorage (Keychain) instead of UserDefaults.
     @Published var gender: String = ""                              { didSet { guard !isLoading else { return }; secure.set(gender, forKey: "wylde_gender") } }
     @Published var goals: [String] = []                             { didSet { defaults.set(goals, forKey: "wylde_goals") } }
+    /// The user's identity statement — who they are becoming. Set during
+    /// onboarding or editable in You tab. This is the emotional anchor
+    /// that every daily action ties back to.
+    @Published var identityStatement: String = ""                    { didSet { defaults.set(identityStatement, forKey: "wylde_identity_statement") } }
     @Published var gymName: String = ""                             { didSet { defaults.set(gymName, forKey: "wylde_gym") } }
     @Published var onboardingComplete: Bool = false                  { didSet { defaults.set(onboardingComplete, forKey: "wylde_onboarded") } }
     @Published var ageRange: String = ""                             { didSet { guard !isLoading else { return }; secure.set(ageRange, forKey: "wylde_age") } }
@@ -157,6 +172,17 @@ class AppState: ObservableObject {
                 }
             }
         }
+        // Roll the day counter forward automatically at midnight — even
+        // when the app has been open all day. iOS posts
+        // NSCalendarDayChanged whenever the calendar day flips (including
+        // on timezone changes).
+        NotificationCenter.default.addObserver(
+            forName: .NSCalendarDayChanged,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.refreshCurrentDay()
+        }
     }
 
     /// Date-scoped key so daily counters reset automatically at midnight
@@ -166,8 +192,14 @@ class AppState: ObservableObject {
         return base + "_" + f.string(from: Date())
     }
 
-    /// Compute current day from start date. Called on every app launch
-    /// and foreground return so the day counter advances automatically.
+    /// Compute current day from start date. Called on every app launch,
+    /// foreground return, AND at midnight (via NSCalendarDayChanged
+    /// observer set up in init) so the counter advances even if the app
+    /// is open across the day boundary.
+    ///
+    /// The computed value is persisted back to defaults so
+    /// loadFromDefaults() doesn't read a stale "yesterday" value the next
+    /// time it runs.
     func refreshCurrentDay() {
         // Set start date on first run (when onboarding completes)
         let key = "wylde_start_date"
@@ -179,8 +211,18 @@ class AppState: ObservableObject {
             startDate = Calendar.current.startOfDay(for: Date())
             defaults.set(startDate, forKey: key)
         }
-        let days = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: startDate), to: Calendar.current.startOfDay(for: Date())).day ?? 0
-        currentDay = max(1, days + 1)
+        let days = Calendar.current.dateComponents(
+            [.day],
+            from: Calendar.current.startOfDay(for: startDate),
+            to: Calendar.current.startOfDay(for: Date())
+        ).day ?? 0
+        let computed = max(1, days + 1)
+        if computed != currentDay {
+            currentDay = computed
+        }
+        // Persist even if unchanged, so loadFromDefaults() always sees the
+        // freshest value on next launch (there's no didSet on currentDay).
+        defaults.set(computed, forKey: "wylde_day")
     }
 
     private func saveCodable<T: Encodable>(_ value: T, key: String) {
@@ -195,17 +237,31 @@ class AppState: ObservableObject {
         return try? JSONDecoder().decode(type, from: data)
     }
 
+    /// Marks today as a day where the user closed the loop. Called from
+    /// EveningReflectionView when the reflection is submitted. Idempotent
+    /// — re-opening + re-submitting the reflection on the same day does
+    /// not double-count.
+    func markLoopClosed() {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        let today = f.string(from: Date())
+        guard !completedDates.contains(today) else { return }
+        completedDates.append(today)
+    }
+
     func loadFromDefaults() {
         appearanceMode = defaults.string(forKey: "wylde_appearance") ?? "dark"
         userName = defaults.string(forKey: "wylde_name") ?? ""
         currentDay = defaults.integer(forKey: "wylde_day")
         if currentDay == 0 { currentDay = 1 }
         streak = defaults.integer(forKey: "wylde_streak")
+        completedDates = defaults.stringArray(forKey: "wylde_days_completed") ?? []
         xp = defaults.integer(forKey: "wylde_xp")
         // Sensitive fields — read from Keychain (SecureStorage), falling
         // back to UserDefaults for migration from pre-encryption installs.
         gender = secure.get(forKey: "wylde_gender") ?? defaults.string(forKey: "wylde_gender") ?? ""
         goals = defaults.stringArray(forKey: "wylde_goals") ?? []
+        identityStatement = defaults.string(forKey: "wylde_identity_statement") ?? ""
         gymName = defaults.string(forKey: "wylde_gym") ?? ""
         onboardingComplete = defaults.bool(forKey: "wylde_onboarded")
         ageRange = secure.get(forKey: "wylde_age") ?? defaults.string(forKey: "wylde_age") ?? ""

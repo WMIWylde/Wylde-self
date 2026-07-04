@@ -102,6 +102,18 @@ final class CheckinSync {
     // MARK: - Helpers
 
     func refreshRelationshipFlag() async {
+        // Guard: don't hit the server before AuthService has restored a session
+        // on cold launch. Without this we'd fire a Bearer-nil request that always
+        // 401s. The .wyldeAuthChanged observer above will call us again once
+        // AuthService.restore() completes and has a real token to attach.
+        guard await AuthService.shared.accessToken != nil else {
+            hasActiveCareRelationship = false
+            #if DEBUG
+            print("[CheckinSync] Skipping relationship check — auth not ready")
+            #endif
+            return
+        }
+
         do {
             let r = try await ClinicalAPI.careRelationships()
             hasActiveCareRelationship = (r.active_relationship != nil)

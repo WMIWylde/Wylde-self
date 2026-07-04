@@ -82,6 +82,16 @@ struct CareTeamView: View {
 
     // ────────── empty / initial ──────────
     @ViewBuilder private var emptyState: some View {
+        // Soft imagery above the consent so the "before you connect" flow
+        // doesn't lead with a wall of legal copy.
+        Image.wylde(.emptyStateCalm)
+            .aspectRatio(contentMode: .fill)
+            .frame(height: 120)
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .opacity(0.85)
+            .padding(.bottom, 4)
+
         // Consent section — must accept before generating code
         WyldeCard {
             VStack(alignment: .leading, spacing: 14) {
@@ -250,6 +260,20 @@ struct CareTeamView: View {
 
     // ────────── connected ──────────
     @ViewBuilder private var connectedState: some View {
+        // Cinematic hero — signals the shift from "empty / setup" to
+        // "you're connected to real clinical care." Only renders in the
+        // connected state.
+        Image.wylde(.careTeamHero)
+            .aspectRatio(contentMode: .fill)
+            .frame(height: 160)
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(WyldeStyles.Colors.charcoal.opacity(0.06), lineWidth: 1)
+            )
+            .padding(.bottom, 4)
+
         WyldeCard {
             VStack(alignment: .leading, spacing: 10) {
                 Text("CURRENTLY SHARING WITH")

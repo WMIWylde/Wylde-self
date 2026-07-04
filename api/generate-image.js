@@ -89,15 +89,15 @@ function buildPhysiquePrompt(timeline, goalList, gender, hasImage) {
       styleNote = 'Show a strong, toned, confident physique — visible definition in arms, shoulders, core, and legs. Healthy and athletic.';
   } else {
     if (wantsBulk && !wantsCut)
-      styleNote = 'Prioritize muscle SIZE — bigger arms, wider shoulders, thicker chest. Some body fat is fine.';
+      styleNote = 'Prioritize athletic muscle — broader shoulders, fuller arms and chest, strong build. Healthy and powerful.';
     else if (wantsCut && !wantsBulk)
-      styleNote = 'Prioritize being SHREDDED — very low body fat, every muscle visible, veins showing.';
+      styleNote = 'Prioritize a lean, defined physique — visible muscle tone, strong and healthy body fat level.';
     else if (wantsEndurance)
       styleNote = 'Show an endurance athlete build — lean, wiry muscle, low body fat, strong legs and core. Think triathlete or distance runner.';
     else if (wantsFlexibility)
       styleNote = 'Show a balanced, flexible physique — lean muscle, excellent posture, functional strength. Think martial artist or gymnast.';
     else
-      styleNote = 'Balance muscle gain and fat loss — bigger AND leaner.';
+      styleNote = 'Balance muscle gain and fat loss — stronger and leaner with confident posture.';
   }
 
   const identity = hasImage
@@ -112,13 +112,13 @@ Think: Instagram before/after that makes people say "what program is that?" This
 ${styleNote}`,
 
     '6months': `6-MONTH TRANSFORMATION. This person trained 5x/week for half a year with zero breaks.
-Show: DRAMATIC muscle gain — thick arms with bicep peak, capped round shoulders, full squared chest, visible lats. Body fat 12-15%. Defined 4-6 pack abs. Veins on forearms and biceps. Sharp jawline. V-taper is dramatic.
-Think: Men's Health cover. The kind of transformation people call "insane." The body looks COMPLETELY DIFFERENT.
+Show: strong, naturally athletic build — fuller arms and shoulders, broader chest, visible lats. Healthy body fat. Defined abs emerging. Sharp jawline. V-taper forming. Confident posture radiating vitality.
+Think: Men's Health cover. A transformation that inspires. The body looks noticeably stronger and healthier.
 ${styleNote}`,
 
     '1year': `1-YEAR PEAK TRANSFORMATION. 365 days of disciplined training, strict nutrition, full dedication.
-Show: ELITE natural physique. Thick vascular arms, striated cannonball shoulders, full chest with visible striations, wide lat spread, carved 6-pack with obliques, V-lines. Veins everywhere — forearms, biceps, delts. Every muscle group shows separation. This body is COMPETITION READY.
-Think: natural bodybuilder or fitness model at peak condition. Magazine cover physique. Unrecognizable from the original.
+Show: PEAK natural physique. Strong defined arms, capped shoulders, full chest, wide back, visible 6-pack with obliques. Every muscle group shows healthy definition and separation. Confident posture, vitality, and strength radiate from the image.
+Think: naturally athletic fitness model at peak condition. Magazine cover physique. A powerful transformation from the original.
 ${styleNote}`,
   };
 
@@ -135,7 +135,7 @@ ${styleNote}`,
 
     '1year': `1-YEAR PEAK TRANSFORMATION. 365 days of disciplined training, strict nutrition, full dedication.
 Show: PEAK athletic physique. Sculpted shoulders with visible caps, defined arms, visible abs with oblique lines, strong back, powerful legs with quad definition, round lifted glutes. Every muscle group shows tone and separation. This body moves with power and grace.
-Think: elite fitness athlete or bikini competitor at peak condition. Magazine cover physique. Unrecognizable from the original.
+Think: elite fitness athlete at peak condition. Magazine cover physique. A powerful transformation from the original.
 ${styleNote}`,
   };
 

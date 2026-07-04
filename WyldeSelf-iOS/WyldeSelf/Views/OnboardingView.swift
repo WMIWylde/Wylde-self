@@ -5,6 +5,7 @@ struct OnboardingView: View {
     @State private var step = 1
     @State private var name = ""
     @State private var gender = ""
+    @State private var identityInput = ""
     @State private var goals: Set<String> = []
     @State private var level = ""
     @State private var days = ""
@@ -138,6 +139,7 @@ struct OnboardingView: View {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         appState.userName = trimmed
         appState.gender = gender
+        appState.identityStatement = identityInput.trimmingCharacters(in: .whitespacesAndNewlines)
         appState.goals = Array(goals)
         appState.fitnessLevel = level
         appState.trainingDays = days
@@ -168,6 +170,34 @@ struct OnboardingView: View {
 
     private var step1: some View {
         VStack(alignment: .leading, spacing: 28) {
+            // Cinematic opener — grounds the flow in imagery before asking
+            // the first question. Only shows on the welcome step so the
+            // subsequent form steps stay clean.
+            ZStack(alignment: .bottomLeading) {
+                Image.wylde(.onboardingHero)
+                    .aspectRatio(contentMode: .fill)
+                    .frame(height: 220)
+                    .clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                LinearGradient(
+                    colors: [.clear, .black.opacity(0.5)],
+                    startPoint: .top, endPoint: .bottom
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("WELCOME TO WYLDE SELF")
+                        .font(.system(size: 10, weight: .bold))
+                        .tracking(2.5)
+                        .foregroundColor(Color(hex: "C8A96E"))
+                    Text("Become the version of\nyou already following through.")
+                        .font(.system(size: 20, weight: .medium, design: .serif))
+                        .foregroundColor(.white)
+                        .lineSpacing(2)
+                }
+                .padding(20)
+            }
+            .frame(height: 220)
+
             stepHeader("What should we call you?", sub: "This is your journey. Let's make it personal.")
 
             fieldGroup("First name") {
@@ -186,7 +216,25 @@ struct OnboardingView: View {
             }
 
             fieldGroup("I identify as") {
-                singleSelect(options: ["Male", "Female"], selection: $gender)
+                singleSelect(options: ["Male", "Female", "Prefer not to say"], selection: $gender)
+            }
+
+            fieldGroup("Who are you becoming?", optional: true) {
+                TextField("e.g. Someone who keeps every promise to themselves", text: $identityInput, axis: .vertical)
+                    .lineLimit(2...4)
+                    .font(.system(size: 15))
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                    .background(WyldeStyles.Colors.paper)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(WyldeStyles.Colors.charcoal.opacity(0.10), lineWidth: 1)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .foregroundColor(WyldeStyles.Colors.ink)
+                Text("This anchors your daily experience. You can change it anytime.")
+                    .font(.system(size: 11))
+                    .foregroundColor(WyldeStyles.Colors.stone)
             }
         }
     }

@@ -24,7 +24,20 @@ struct IdentityImportView: View {
 
     var body: some View {
         ZStack {
+            // Cinematic identity-anchor photo as a subtle textural backdrop.
+            // Heavy scrim so the dark UI stays legible; the photo just adds
+            // depth so the screen doesn't read as a solid black wall.
             Color(hex: "070707").ignoresSafeArea()
+            Image.wylde(.identityAnchor)
+                .aspectRatio(contentMode: .fill)
+                .ignoresSafeArea()
+                .blur(radius: 20)
+                .opacity(0.25)
+            LinearGradient(
+                colors: [.black.opacity(0.55), .black.opacity(0.9)],
+                startPoint: .top, endPoint: .bottom
+            )
+            .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {

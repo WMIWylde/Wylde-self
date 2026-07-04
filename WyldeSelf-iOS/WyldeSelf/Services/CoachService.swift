@@ -132,11 +132,14 @@ final class CoachService: ObservableObject {
 
         if !appState.userName.isEmpty { lines.append("Name: \(appState.userName)") }
         if !appState.gender.isEmpty { lines.append("Gender: \(appState.gender)") }
+        if !appState.identityStatement.isEmpty {
+            lines.append("Identity: \"\(appState.identityStatement)\" — this is who they are becoming. Weave this into your responses. Reference it when they need motivation or when celebrating follow-through.")
+        }
         if !appState.fitnessLevel.isEmpty { lines.append("Level: \(appState.fitnessLevel)") }
         if !appState.goals.isEmpty { lines.append("Goals: \(appState.goals.joined(separator: ", "))") }
         if !appState.trainingDays.isEmpty { lines.append("Training: \(appState.trainingDays)/week") }
 
-        lines.append("Day: \(appState.currentDay)")
+        lines.append("Day: \(appState.currentDay) (\(appState.completedDays) closed out of \(appState.currentDay) started)")
         lines.append("Streak: \(appState.streak) days")
 
         // Today's state

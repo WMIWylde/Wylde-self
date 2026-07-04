@@ -18,17 +18,20 @@ struct VisionCard: View {
                             .frame(width: geo.size.width, height: geo.size.height)
                             .clipped()
                     } else {
-                        // Placeholder gradient
-                        LinearGradient(
-                            colors: [VisionTheme.surfaceElevated, VisionTheme.surface],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                        .overlay(
-                            Image(systemName: vision.categoryInfo?.icon ?? "sparkles")
-                                .font(.system(size: 40))
-                                .foregroundColor(VisionTheme.textFaint)
-                        )
+                        // Cinematic future-placeholder photo (used until the
+                        // user's Gemini-generated hero image is ready or if
+                        // they haven't set one). Feels intentional instead
+                        // of empty.
+                        Image.wylde(.futurePlaceholder)
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: geo.size.width, height: geo.size.height)
+                            .clipped()
+                            .overlay(
+                                LinearGradient(
+                                    colors: [.clear, .black.opacity(0.35)],
+                                    startPoint: .top, endPoint: .bottom
+                                )
+                            )
                     }
 
                     // Bottom gradient overlay

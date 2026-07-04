@@ -35,8 +35,9 @@ struct YouView: View {
                     profileCard
                     identityCard
                     careTeamCard
-                    if !appState.isPro { founderCTA }
-                    if appState.isFoundingMember { founderBadge }
+                    // HIDDEN for TestFlight — no purchase entry points until IAP is approved
+                    // if !appState.isPro { founderCTA }
+                    // if appState.isFoundingMember { founderBadge }
                     quickLinks
                     destructiveLinks
                     Spacer().frame(height: 96)  // breathing room above tab bar
@@ -112,7 +113,11 @@ struct YouView: View {
                         .font(.system(size: 18, weight: .medium, design: .serif))
                         .foregroundColor(WyldeStyles.Colors.ink)
                     HStack(spacing: 6) {
-                        statChip("Day \(appState.currentDay)")
+                        // "N of M closed" — completed loops out of days the
+                        // journey has been running. Reads as adherence, not
+                        // just calendar age. `completedDays` bumps only on
+                        // Evening Reflection submit.
+                        statChip("\(appState.completedDays) of \(appState.currentDay) closed")
                         statChip("\(appState.streak)-day streak", muted: appState.streak == 0)
                     }
                 }
@@ -169,27 +174,42 @@ struct YouView: View {
             HapticManager.shared.impact(.light)
         } label: {
             SurfaceCard {
-                VStack(alignment: .leading, spacing: 8) {
-                    SectionLabel("IDENTITY ANCHOR")
-                    Text(appState.hasIdentityProfile ? "You are becoming."
-                                                     : "Tell us who you're becoming.")
-                        .font(.system(size: 20, weight: .medium, design: .serif))
-                        .foregroundColor(WyldeStyles.Colors.ink)
-                        .multilineTextAlignment(.leading)
-                    Text(appState.hasIdentityProfile
-                         ? "Review or refresh how your guide reads you."
-                         : "Paste a few links + a paragraph. Your guide adapts to who you actually are.")
-                        .font(.system(size: 13.5))
-                        .foregroundColor(WyldeStyles.Colors.stone)
-                        .lineSpacing(2)
-                    HStack(spacing: 6) {
-                        Text(appState.hasIdentityProfile ? "Refresh" : "Start now")
-                            .font(.system(size: 13, weight: .semibold))
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 11, weight: .semibold))
+                HStack(alignment: .top, spacing: 14) {
+                    // Small identity-anchor thumbnail so the card doesn't
+                    // read as text-only. Rounded, warm — same register as
+                    // the Care Team hero one tier below.
+                    Image.wylde(.identityAnchor)
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 68, height: 68)
+                        .clipped()
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(WyldeStyles.Colors.charcoal.opacity(0.06), lineWidth: 1)
+                        )
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        SectionLabel("IDENTITY ANCHOR")
+                        Text(appState.hasIdentityProfile ? "You are becoming."
+                                                         : "Tell us who you're becoming.")
+                            .font(.system(size: 20, weight: .medium, design: .serif))
+                            .foregroundColor(WyldeStyles.Colors.ink)
+                            .multilineTextAlignment(.leading)
+                        Text(appState.hasIdentityProfile
+                             ? "Review or refresh how your guide reads you."
+                             : "Paste a few links + a paragraph. Your guide adapts to who you actually are.")
+                            .font(.system(size: 13.5))
+                            .foregroundColor(WyldeStyles.Colors.stone)
+                            .lineSpacing(2)
+                        HStack(spacing: 6) {
+                            Text(appState.hasIdentityProfile ? "Refresh" : "Start now")
+                                .font(.system(size: 13, weight: .semibold))
+                            Image(systemName: "arrow.right")
+                                .font(.system(size: 11, weight: .semibold))
+                        }
+                        .foregroundColor(WyldeStyles.Colors.bronze)
+                        .padding(.top, 4)
                     }
-                    .foregroundColor(WyldeStyles.Colors.bronze)
-                    .padding(.top, 4)
                 }
             }
         }

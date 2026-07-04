@@ -81,12 +81,35 @@ Provide @1x at one-third the @3x dimension, @2x at two-thirds.
 
 ## How to add a photo
 
-1. Open `Assets.xcassets` in Xcode
-2. Right-click → New Image Set
-3. Name it exactly as listed above (e.g. `today-morning`)
-4. Drag @1x / @2x / @3x JPEGs/PNGs into the three slots
-5. Confirm Render As is `Default` (we apply our own overlays in code)
-6. Build & run — the gradient placeholder is replaced automatically
+The 16 image sets already exist as empty scaffolds under `Assets.xcassets/`. To activate any of them:
+
+1. Rename the source PNG to match the slot name — e.g. the Higgsfield download for the sign-in hero becomes `sign-in-hero.png`
+2. Drop it into the matching folder inside `Assets.xcassets/` — e.g. `Assets.xcassets/sign-in-hero.imageset/sign-in-hero.png`
+3. Xcode picks it up automatically on next build; the gradient placeholder disappears
+4. (Optional) Also drop `@2x` / `@3x` variants — Contents.json already reserves the slots
+
+To confirm a slot's `Contents.json` shape, open any existing `*.imageset/Contents.json` — they all follow the same `1x/2x/3x` universal-idiom pattern.
+
+### Current asset status
+
+| Slot                       | Higgsfield PNG ready | Notes |
+|----------------------------|:--:|:--:|
+| today-morning              | ✅ |    |
+| today-midday               | ✅ |    |
+| today-evening              | ✅ |    |
+| today-night                | ✅ |    |
+| future-hero                | ✅ |    |
+| future-placeholder         | ✅ |    |
+| library-strength           | ✅ |    |
+| library-mobility           | ✅ |    |
+| library-conditioning       | ✅ |    |
+| library-recovery           | ❌ | NSFW filter blocked — regen w/ no figure or use original |
+| you-hero                   | ✅ |    |
+| identity-anchor            | ✅ |    |
+| care-team-hero             | ✅ |    |
+| sign-in-hero               | ✅ |    |
+| onboarding-hero            | ✅ |    |
+| empty-state-calm           | ✅ |    |
 
 ## Future work
 

@@ -28,33 +28,17 @@ struct TodayView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
-                // Cinematic hero — photo rotates with hour of day
-                // (morning / midday / evening / night). Sits above the
-                // functional header (profile chip + streak).
-                todayHero
+                // ─── Future Self Identity Hero ─────────────────────────
+                // The emotional center of the app. Shows who you're
+                // becoming, today's day count, and the Start Today CTA.
+                identityHero
                     .opacity(didAppear ? 1 : 0)
                     .offset(y: didAppear ? 0 : 10)
                     .animation(.easeOut(duration: 0.55), value: didAppear)
 
-                // Header
-                headerSection
-                    .opacity(didAppear ? 1 : 0)
-                    .offset(y: didAppear ? 0 : 8)
-                    .animation(.easeOut(duration: 0.5), value: didAppear)
-
-                // Hero card — day + Start Today CTA. (Level/XP stripped —
-                // brand is about transforming your relationship with
-                // yourself, not climbing a ladder.)
-                heroCard
-                    .opacity(didAppear ? 1 : 0)
-                    .offset(y: didAppear ? 0 : 12)
-                    .animation(.easeOut(duration: 0.6).delay(0.05), value: didAppear)
-
-                // ─── Today's Path: required actions first ───────────────
-                // Order mirrors the web brief: Today's Path (training,
-                // walk) → Nutrition → Future You → Morning Routine →
-                // Health. Reduces cognitive load so the user knows what
-                // to do next, not everything at once.
+                // ─── Today's Evidence ──────────────────────────────────
+                // Each card is framed as evidence of identity change,
+                // not a generic tracker.
 
                 // Wylde Score
                 WyldeScoreCard(score: scoreService.todayScore)
@@ -62,7 +46,7 @@ struct TodayView: View {
                     .offset(y: didAppear ? 0 : 12)
                     .animation(.easeOut(duration: 0.6).delay(0.08), value: didAppear)
 
-                // Morning Ritual — first thing in the day
+                // Morning Ritual — identity reps
                 morningProtocolCard
                     .opacity(didAppear ? 1 : 0)
                     .offset(y: didAppear ? 0 : 12)
@@ -87,15 +71,6 @@ struct TodayView: View {
                     .opacity(didAppear ? 1 : 0)
                     .offset(y: didAppear ? 0 : 12)
                     .animation(.easeOut(duration: 0.6).delay(0.22), value: didAppear)
-
-                // Future You strip — calm reminder of what consistency is
-                // building toward. Copy evolves week-by-week via
-                // FutureYouCopy.forWeek so it doesn't read like a
-                // template. Tap routes to the Future tab.
-                futureYouCard
-                    .opacity(didAppear ? 1 : 0)
-                    .offset(y: didAppear ? 0 : 12)
-                    .animation(.easeOut(duration: 0.6).delay(0.25), value: didAppear)
 
                 // Protocol Tracker — only shows when connected to a clinic
                 if CheckinSync.shared.hasActiveCareRelationship {
@@ -309,7 +284,176 @@ struct TodayView: View {
         .frame(height: 180)
     }
 
-    // MARK: - Header
+    // MARK: - Future Self Mirror
+
+    /// Daily progress: how many of today's 5 core actions are done
+    private var mirrorProgress: CGFloat {
+        var done: CGFloat = 0
+        let total: CGFloat = 5
+        if appState.morningProtocolCompleted { done += 1 }
+        if appState.workoutCompleted { done += 1 }
+        if appState.dailyWalkCompleted { done += 1 }
+        if appState.proteinLogged > 0 || appState.caloriesLogged > 0 { done += 1 }
+        if appState.eveningReflectionDone { done += 1 }
+        return done / total
+    }
+
+    private var identityHero: some View {
+        VStack(spacing: 16) {
+            // ── Future Self Mirror ──
+            HStack(spacing: 18) {
+                // Progress ring around the future self image
+                ZStack {
+                    // Track
+                    Circle()
+                        .stroke(Color(hex: "C8A96E").opacity(0.12), lineWidth: 3.5)
+                        .frame(width: 90, height: 90)
+                    // Fill — glows as actions complete
+                    Circle()
+                        .trim(from: 0, to: mirrorProgress)
+                        .stroke(
+                            LinearGradient(
+                                colors: [Color(hex: "C8A96E"), Color(hex: "E6C886")],
+                                startPoint: .topLeading, endPoint: .bottomTrailing
+                            ),
+                            style: StrokeStyle(lineWidth: 3.5, lineCap: .round)
+                        )
+                        .frame(width: 90, height: 90)
+                        .rotationEffect(.degrees(-90))
+                        .animation(.easeOut(duration: 0.6), value: mirrorProgress)
+
+                    // Image
+                    if let img = futureSelfImage {
+                        Image(uiImage: img)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 80, height: 80)
+                            .clipShape(Circle())
+                    } else {
+                        Circle()
+                            .fill(Color(hex: "C8A96E").opacity(0.10))
+                            .frame(width: 80, height: 80)
+                            .overlay(
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: 28))
+                                    .foregroundColor(Color(hex: "C8A96E").opacity(0.4))
+                            )
+                    }
+                }
+
+                // Identity text
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Day \(appState.currentDay)")
+                        .font(.system(size: 11, weight: .bold))
+                        .tracking(1.5)
+                        .foregroundColor(Color(hex: "C8A96E"))
+
+                    let identity = appState.identityStatement.isEmpty ? derivedIdentity : appState.identityStatement
+                    Text(identity)
+                        .font(.system(size: 16, weight: .medium, design: .serif))
+                        .foregroundColor(Theme.text)
+                        .lineSpacing(2)
+                        .lineLimit(3)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    // Streak
+                    if appState.streak > 0 {
+                        HStack(spacing: 4) {
+                            Image(systemName: "flame.fill")
+                                .font(.system(size: 10))
+                            Text("\(appState.streak) day streak")
+                                .font(.system(size: 11, weight: .medium))
+                        }
+                        .foregroundColor(Theme.sage)
+                    }
+                }
+            }
+            .padding(18)
+            .background(
+                RoundedRectangle(cornerRadius: 18)
+                    .fill(Theme.surface)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 18)
+                            .stroke(Color(hex: "C8A96E").opacity(0.10), lineWidth: 1)
+                    )
+            )
+
+            // ── Today's proof ──
+            let todayActions = todayProofText
+            Text(todayActions)
+                .font(.system(size: 13))
+                .foregroundColor(Theme.muted)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            // Start Today CTA
+            Button {
+                HapticManager.shared.impact(.medium)
+                showStartToday = true
+            } label: {
+                HStack(spacing: 8) {
+                    Text("Start Today")
+                        .font(.system(size: 14, weight: .bold))
+                        .tracking(0.5)
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 12, weight: .bold))
+                }
+                .foregroundColor(Color(hex: "1A1816"))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(
+                    LinearGradient(
+                        colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                        startPoint: .top, endPoint: .bottom
+                    )
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    /// Contextual proof text that changes as the user completes actions
+    private var todayProofText: String {
+        let done = [
+            appState.morningProtocolCompleted ? "ritual" : nil,
+            appState.workoutCompleted ? "training" : nil,
+            appState.dailyWalkCompleted ? "walk" : nil,
+            (appState.proteinLogged > 0 || appState.caloriesLogged > 0) ? "nutrition" : nil,
+            appState.eveningReflectionDone ? "reflection" : nil,
+        ].compactMap { $0 }
+
+        if done.isEmpty {
+            return "Today, prove it with: ritual, training, walk, nutrition, close the loop."
+        } else if done.count >= 5 {
+            return "All actions complete. This is who you are now."
+        } else {
+            let remaining = ["ritual", "training", "walk", "nutrition", "reflection"].filter { !done.contains($0) }
+            return "Evidence so far: \(done.joined(separator: ", ")). Still ahead: \(remaining.joined(separator: ", "))."
+        }
+    }
+
+    /// Derive an identity statement from the user's goals when they haven't
+    /// written a custom one. Keeps the hero from feeling empty.
+    private var derivedIdentity: String {
+        let goals = appState.goals
+        if goals.isEmpty {
+            return "The person who shows up every day."
+        }
+        // Map fitness goals to identity language
+        let phrases: [String: String] = [
+            "Burn fat": "Someone who moves with power and eats with purpose.",
+            "Build muscle": "Someone who trains deliberately and grows stronger.",
+            "Get lean & athletic": "Someone who is lean, capable, and built for life.",
+            "Build confidence": "Someone who trusts themselves because they keep promises.",
+            "Improve endurance": "Someone who doesn't quit — in the gym or in life.",
+            "Increase flexibility": "Someone who moves freely and recovers fully.",
+        ]
+        if let first = goals.first, let phrase = phrases[first] {
+            return phrase
+        }
+        return "Someone who follows through on what they said they'd do."
+    }
 
     private var futureSelfImage: UIImage? {
         guard let base64 = UserDefaults.standard.string(forKey: "wylde_future_rendering"),

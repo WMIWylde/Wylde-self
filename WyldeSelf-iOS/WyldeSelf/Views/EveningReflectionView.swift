@@ -292,6 +292,10 @@ struct EveningReflectionView: View {
             UserDefaults.standard.set(encoded, forKey: key)
         }
         appState.eveningReflectionDone = true
+        // Record today as a "closed" day for the N-of-M progress meter
+        // shown in the Today hero and You profile chip. Idempotent —
+        // re-submitting the reflection today is a no-op.
+        appState.markLoopClosed()
     }
 
     private func dayKey() -> String {
