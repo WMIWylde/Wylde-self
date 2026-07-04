@@ -30,9 +30,9 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
 	<key>CLINICAL_API_BASE</key>
-	<string>https://www.wyldeself.com</string>
+	<string>https://clinical.wyldeself.com</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
