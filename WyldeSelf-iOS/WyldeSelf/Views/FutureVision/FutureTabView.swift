@@ -57,6 +57,20 @@ struct FutureTabView: View {
                         }
                     }
 
+                    // Empty-state imagery — when the user hasn't created any
+                    // visions yet, ground the "Create Your Future Vision"
+                    // CTA in a calm hero so the page doesn't feel blank.
+                    if service.visions.isEmpty {
+                        Image.wylde(.emptyStateCalm)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 140)
+                            .clipped()
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .opacity(0.85)
+                    }
+
                     // Create vision button
                     Button { showCreationFlow = true } label: {
                         HStack(spacing: 10) {
@@ -101,53 +115,59 @@ struct FutureTabView: View {
                 .foregroundColor(VisionTheme.accent)
 
             // Before / After
-            HStack(spacing: 12) {
-                // Before
-                VStack(spacing: 6) {
-                    if let before = beforePhoto {
-                        Image(uiImage: before)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(height: 220)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                    } else {
-                        RoundedRectangle(cornerRadius: 14)
-                            .fill(VisionTheme.surface)
-                            .frame(height: 220)
-                            .overlay(
-                                Image(systemName: "person.fill")
-                                    .font(.system(size: 32))
-                                    .foregroundColor(VisionTheme.textFaint)
-                            )
-                    }
-                    Text("Now")
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(VisionTheme.textMuted)
-                }
-
-                // After
-                VStack(spacing: 6) {
-                    Image(uiImage: rendered)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(height: 220)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                        .overlay(
+            GeometryReader { geo in
+                let halfWidth = (geo.size.width - 12) / 2
+                HStack(spacing: 12) {
+                    // Before
+                    VStack(spacing: 6) {
+                        if let before = beforePhoto {
+                            Image(uiImage: before)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: halfWidth, height: 200)
+                                .clipped()
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
+                        } else {
                             RoundedRectangle(cornerRadius: 14)
-                                .stroke(
-                                    LinearGradient(
-                                        colors: [Color(hex: "C8A96E").opacity(0.4), Color(hex: "C8A96E").opacity(0.1)],
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    ),
-                                    lineWidth: 1.5
+                                .fill(VisionTheme.surface)
+                                .frame(width: halfWidth, height: 200)
+                                .overlay(
+                                    Image(systemName: "person.fill")
+                                        .font(.system(size: 32))
+                                        .foregroundColor(VisionTheme.textFaint)
                                 )
-                        )
-                    Text("Future You")
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        }
+                        Text("Now")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(VisionTheme.textMuted)
+                    }
+
+                    // After
+                    VStack(spacing: 6) {
+                        Image(uiImage: rendered)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: halfWidth, height: 200)
+                            .clipped()
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(
+                                        LinearGradient(
+                                            colors: [Color(hex: "C8A96E").opacity(0.4), Color(hex: "C8A96E").opacity(0.1)],
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        ),
+                                        lineWidth: 1.5
+                                    )
+                            )
+                        Text("Future You")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(Color(hex: "C8A96E"))
+                    }
                 }
             }
+            .frame(height: 230)
         }
         .padding(16)
         .background(VisionTheme.surface)
