@@ -4,6 +4,7 @@ struct WorkoutGeneratorView: View {
     @EnvironmentObject var appState: AppState
     @StateObject private var service = WorkoutService.shared
     @State private var showEquipmentPicker = false
+    @State private var showWyldeWorkout = false
     @State private var pendingAction: ((Set<String>) -> Void)?
 
     var body: some View {
@@ -48,6 +49,15 @@ struct WorkoutGeneratorView: View {
 
                         // Program options
                         VStack(spacing: 12) {
+                            // Wylde Workout — freeform with voice logging
+                            programOption(
+                                icon: "bolt.heart.fill",
+                                title: "Wylde Workout",
+                                subtitle: "No plan. Just move. Record what you did with voice notes.",
+                                accent: Color(hex: "FF6B6B"),
+                                action: { showWyldeWorkout = true }
+                            )
+
                             programOption(
                                 icon: "sparkles",
                                 title: "AI-Built Program",
@@ -99,6 +109,10 @@ struct WorkoutGeneratorView: View {
                 }
                 .padding(.horizontal, 28)
             }
+        }
+        .fullScreenCover(isPresented: $showWyldeWorkout) {
+            WyldeWorkoutView()
+                .environmentObject(appState)
         }
         .sheet(isPresented: $showEquipmentPicker) {
             EquipmentPickerView { equipment in

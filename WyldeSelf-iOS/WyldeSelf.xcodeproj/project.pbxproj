@@ -97,6 +97,7 @@
 		N10003 /* EveningReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20003 /* EveningReflectionView.swift */; };
 		N10004 /* VoiceFoodLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20004 /* VoiceFoodLogView.swift */; };
 		N10005 /* EquipmentPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20005 /* EquipmentPickerView.swift */; };
+		N10006 /* WyldeWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20006 /* WyldeWorkoutView.swift */; };
 		T10001 /* AppStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20001 /* AppStateTests.swift */; };
 		T10002 /* SecureStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20002 /* SecureStorageTests.swift */; };
 		T10003 /* FileStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20003 /* FileStorageTests.swift */; };
@@ -241,6 +242,7 @@
 		N20003 /* EveningReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EveningReflectionView.swift; sourceTree = "<group>"; };
 		N20004 /* VoiceFoodLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceFoodLogView.swift; sourceTree = "<group>"; };
 		N20005 /* EquipmentPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EquipmentPickerView.swift; sourceTree = "<group>"; };
+		N20006 /* WyldeWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WyldeWorkoutView.swift; sourceTree = "<group>"; };
 		T20001 /* AppStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateTests.swift; sourceTree = "<group>"; };
 		T20002 /* SecureStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureStorageTests.swift; sourceTree = "<group>"; };
 		T20003 /* FileStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileStorageTests.swift; sourceTree = "<group>"; };
@@ -466,6 +468,7 @@
 				CC61017E88572D0AF4662A7C /* GuidedMeditationView.swift */,
 				F9B457E960389780C1D7432D /* JournalingTimerView.swift */,
 				N20005 /* EquipmentPickerView.swift */,
+				N20006 /* WyldeWorkoutView.swift */,
 			);
 			path = Workout;
 			sourceTree = "<group>";
@@ -785,6 +788,7 @@
 				N10003 /* EveningReflectionView.swift in Sources */,
 				N10004 /* VoiceFoodLogView.swift in Sources */,
 				N10005 /* EquipmentPickerView.swift in Sources */,
+				N10006 /* WyldeWorkoutView.swift in Sources */,
 				W10001 /* WatchSync.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
