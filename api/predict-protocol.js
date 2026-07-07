@@ -1,21 +1,27 @@
-import { createClient } from '@supabase/supabase-js';
+// Authentication: requires a valid Supabase JWT in the Authorization header.
+// userId is always derived from the verified token — never from client input.
+const { applyCors, rateLimit, clientIp } = require('../lib/security');
+const { getSupabaseAdmin, getUserFromRequest } = require('../lib/supabase-admin');
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
-
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') return res.status(200).end();
+module.exports = async function handler(req, res) {
+  if (applyCors(req, res, { methods: 'POST, OPTIONS' })) return;
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { protocol, userProfile, userId } = req.body;
+  const user = await getUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+  // Rate limit — this makes a paid Anthropic call
+  const limit = rateLimit({ key: 'predict-protocol', ip: clientIp(req), limit: 15, windowMs: 60_000 });
+  if (!limit.ok) {
+    res.setHeader('Retry-After', String(limit.retryAfter));
+    return res.status(429).json({ error: 'Rate limit exceeded' });
+  }
+
+  const supabase = getSupabaseAdmin();
+  const userId = user.id;
+  const { protocol, userProfile } = req.body;
 
   try {
     const { data: knowledge } = await supabase
@@ -156,6 +162,6 @@ Return this exact JSON structure:
     console.error('Predict error:', error);
     return res.status(500).json({ error: error.message });
   }
-}
+};
 
-export const config = { maxDuration: 30 };
+module.exports.config = { maxDuration: 30 };

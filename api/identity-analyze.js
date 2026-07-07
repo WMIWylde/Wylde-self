@@ -13,6 +13,7 @@
 // ────────────────────────────────────────────────────────────────────
 
 const { applyCors, rateLimit, clientIp } = require('../lib/security');
+const { getUserFromRequest } = require('../lib/supabase-admin');
 
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY || '';
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -28,6 +29,10 @@ module.exports = async function handler(req, res) {
   if (applyCors(req, res, { methods: 'POST, OPTIONS' })) return;
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+  // Verify Supabase JWT — reject unauthenticated requests
+  const user = await getUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
   const ip = clientIp(req);
   const limit = rateLimit({ key: 'identity-analyze', ip, limit: 10, windowMs: 60_000 });
   if (!limit.ok) {
@@ -41,11 +46,10 @@ module.exports = async function handler(req, res) {
 
   // ─── Parse inputs ────────────────────────────────────────────────
   const body = req.body || {};
-  const userId = String(body.user_id || '').trim();
+  const userId = user.id; // derived from verified token, never from client input
   const urls = Array.isArray(body.urls) ? body.urls.slice(0, MAX_URLS).map(String) : [];
   const rawText = String(body.raw_text || '').slice(0, MAX_TEXT_LEN);
 
-  if (!userId) return res.status(400).json({ error: 'user_id required' });
   if (urls.length === 0 && !rawText.trim()) {
     return res.status(400).json({ error: 'Provide at least one URL or paste content.' });
   }
