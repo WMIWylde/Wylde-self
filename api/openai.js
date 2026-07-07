@@ -32,18 +32,28 @@ module.exports = async function handler(req, res) {
     const allowedModels = ['gpt-4o', 'gpt-4o-mini', 'gpt-4.1', 'gpt-4.1-mini', 'o3-mini'];
     const requestedModel = allowedModels.includes(model) ? model : 'gpt-4o';
 
+    // Reasoning models (o3*/o1*) reject max_tokens + custom temperature:
+    // they use max_completion_tokens and only support the default temperature.
+    const isReasoningModel = requestedModel.startsWith('o3') || requestedModel.startsWith('o1');
+
+    const payload = {
+      model: requestedModel,
+      messages: messages || []
+    };
+    if (isReasoningModel) {
+      payload.max_completion_tokens = max_tokens || 4096;
+    } else {
+      payload.max_tokens = max_tokens || 4096;
+      payload.temperature = temperature !== undefined ? temperature : 0.7;
+    }
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
       },
-      body: JSON.stringify({
-        model: requestedModel,
-        max_tokens: max_tokens || 4096,
-        temperature: temperature !== undefined ? temperature : 0.7,
-        messages: messages || []
-      })
+      body: JSON.stringify(payload)
     });
 
     const data = await response.json();

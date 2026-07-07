@@ -51,12 +51,16 @@
     "api/clinic/dashboard.js": { "maxDuration": 15 },
     "api/nutrition/search.js": { "maxDuration": 15 },
     "api/exercises-search.js": { "maxDuration": 10 },
-    "api/nutrition/parse.js": { "maxDuration": 30 }
+    "api/nutrition/parse.js": { "maxDuration": 30 },
+    "api/anthropic.js": { "maxDuration": 30 },
+    "api/openai.js": { "maxDuration": 30 },
+    "api/identity-analyze.js": { "maxDuration": 30 },
+    "api/admin/ai-health.js": { "maxDuration": 30 }
   },
   "crons": [
     {
       "path": "/api/cron-push",
-      "schedule": "0 8 * * *"
+      "schedule": "0 * * * *"
     }
   ]
 }

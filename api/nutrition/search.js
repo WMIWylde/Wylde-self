@@ -1,9 +1,13 @@
-const { applyCors } = require('../../lib/security');
-const { getSupabaseAdmin } = require('../../lib/supabase-admin');
+const { applyCors, rateLimit, clientIp } = require('../../lib/security');
+const { getSupabaseAdmin, getUserFromRequest } = require('../../lib/supabase-admin');
 
 module.exports = async function handler(req, res) {
   if (applyCors(req, res, { methods: 'GET, OPTIONS' })) return;
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+
+  // Verify Supabase JWT — reject unauthenticated requests
+  const user = await getUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
   const { q, barcode } = req.query;
   if (!q && !barcode) return res.status(400).json({ error: 'q or barcode required' });
@@ -48,7 +52,7 @@ module.exports = async function handler(req, res) {
     let usdaUrl;
 
     if (barcode) {
-      usdaUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${usdaKey}&query=${barcode}&dataType=Branded&pageSize=5`;
+      usdaUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${usdaKey}&query=${encodeURIComponent(barcode)}&dataType=Branded&pageSize=5`;
     } else {
       usdaUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${usdaKey}&query=${encodeURIComponent(q)}&pageSize=20&dataType=Foundation,SR Legacy,Branded`;
     }
@@ -99,13 +103,19 @@ module.exports = async function handler(req, res) {
     console.error('[nutrition] OFF error:', e.message);
   }
 
-  // 4. If still low on results and not a barcode search, use AI as last resort
+  // 4. If still low on results and not a barcode search, use AI as last resort.
+  //    Rate-limit the paid AI path separately from the free DB/USDA/OFF lookups.
   if (!barcode && results.length < 5 && q && process.env.OPENAI_API_KEY) {
-    try {
-      const aiFood = await aiLookup(q);
-      if (aiFood) results.push(aiFood);
-    } catch (e) {
-      console.log('[nutrition] AI lookup failed:', e.message);
+    const aiLimit = rateLimit({ key: 'nutrition-ai', ip: clientIp(req), limit: 20, windowMs: 60_000 });
+    if (aiLimit.ok) {
+      try {
+        const aiFood = await aiLookup(q);
+        if (aiFood) results.push(aiFood);
+      } catch (e) {
+        console.log('[nutrition] AI lookup failed:', e.message);
+      }
+    } else {
+      console.log('[nutrition] AI lookup rate-limited');
     }
   }
 

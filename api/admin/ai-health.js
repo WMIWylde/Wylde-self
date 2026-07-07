@@ -1,14 +1,27 @@
 // AI Health Check — /api/admin/ai-health
 // Tests all AI providers and returns status
 
+const crypto = require('crypto');
+
+// Constant-time secret comparison — avoids timing side channels and never
+// throws on length mismatch.
+function secretMatches(provided, expected) {
+  if (!expected || typeof provided !== 'string') return false;
+  const a = Buffer.from(provided);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'GET only' });
 
-  // Require admin secret to prevent public config leakage
-  const secret = req.headers['x-admin-secret'] || req.query.secret;
-  if (!process.env.ADMIN_SECRET || secret !== process.env.ADMIN_SECRET) {
+  // Require admin secret via header only (never query string) to prevent
+  // public config leakage and secret exposure in logs/referrers.
+  const secret = req.headers['x-admin-secret'];
+  if (!process.env.ADMIN_SECRET || !secretMatches(secret, process.env.ADMIN_SECRET)) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 

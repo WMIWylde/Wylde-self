@@ -20,9 +20,20 @@
 //   We verify it against REVENUECAT_WEBHOOK_SECRET env var.
 // ────────────────────────────────────────────────────────────────────
 
+const crypto = require('crypto');
+
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || ''; // service_role key required for writes
 const REVENUECAT_WEBHOOK_SECRET = process.env.REVENUECAT_WEBHOOK_SECRET || '';
+
+// Constant-time comparison to avoid timing side channels on the shared secret.
+function secretMatches(provided, expected) {
+  if (!expected || typeof provided !== 'string') return false;
+  const a = Buffer.from(provided);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
+}
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -33,7 +44,8 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Server misconfigured' });
   }
   const authHeader = req.headers['authorization'] || '';
-  if (authHeader !== 'Bearer ' + REVENUECAT_WEBHOOK_SECRET) {
+  const provided = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+  if (!secretMatches(provided, REVENUECAT_WEBHOOK_SECRET)) {
     console.warn('[rc-webhook] Bad auth header');
     return res.status(401).json({ error: 'Unauthorized' });
   }
