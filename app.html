@@ -3388,30 +3388,32 @@
        9. Secondary strip (coach + nutrition links)   — secondary
       10. Streak pill (.ov-streak-wrap)               — secondary
   */
-  .ov-shell .ov-hero            { order: 2; }
-  .ov-shell .ov-complete        { order: 3; }
-  .ov-shell .ov-stack           { order: 4; }
-  .ov-shell .ov-nutrition-card  { order: 5; }
-  .ov-shell .ov-future-strip    { order: 6; }
-  .ov-shell .mp-card            { order: 1; }
-  .ov-shell #completeDayCard    { order: 7; }
-  .ov-shell .ov-path-card       { order: 8; }
-  .ov-shell .ov-secondary       { order: 9; }
-  .ov-shell .ov-streak-wrap     { order: 10; }
+  .ov-shell .ov-hero            { order: 1; }
+  .ov-shell .ov-complete        { order: 4; }
+  .ov-shell .ov-stack           { order: 5; }
+  .ov-shell .ov-nutrition-card  { order: 6; }
+  .ov-shell .ov-future-strip    { order: 7; }
+  .ov-shell .mp-card            { order: 2; }
+  .ov-shell #completeDayCard    { order: 9; }
+  .ov-shell .ov-path-card       { order: 10; }
+  .ov-shell .ov-secondary       { order: 11; }
+  .ov-shell .ov-streak-wrap     { order: 12; }
 
   /* ═══════════════════════════════════════════════════════════════
-     IDENTITY STATEMENT + MORNING ROUTINE (now hosts Mindset inline).
-     Identity anchor stays at the top. Morning Routine moved to order: 1
-     so it's the first thing you see — it's the first thing you do.
-     Mindset is now folded inside the Morning Routine card.
+     IDENTITY STATEMENT + TODAY HERO + MORNING ROUTINE.
+     Identity anchor at order:0 (hidden until user claims it).
+     Hero (Today's framing) at order:1 — context first.
+     Morning Routine at order:2 — paired with hero, "in sync".
+     Mindset is folded inside the Morning Routine card.
      ═══════════════════════════════════════════════════════════════ */
   .ov-shell .ws-identity-anchor   { order: 0; }
-  .ov-shell .mp-card              { order: 1 !important; }
+  .ov-shell .ov-hero              { order: 1 !important; }
+  .ov-shell .mp-card              { order: 2 !important; margin-top: -4px; }
   .ov-shell .ws-mindset-card      { display: none !important; }
-  .ov-shell #completeDayCard      { order: 7 !important; }
-  .ov-shell .ov-path-card         { order: 8 !important; }
-  .ov-shell .ov-secondary         { order: 9 !important; }
-  .ov-shell .ov-streak-wrap       { order: 10 !important; }
+  .ov-shell #completeDayCard      { order: 9 !important; }
+  .ov-shell .ov-path-card         { order: 10 !important; }
+  .ov-shell .ov-secondary         { order: 11 !important; }
+  .ov-shell .ov-streak-wrap       { order: 12 !important; }
 
   /* ── Identity Statement anchor — subtle, muted, present ── */
   .ws-identity-anchor {
@@ -3588,7 +3590,7 @@
      Future Self photo prompt — sits on Today screen below the
      Future Self strip when the user skipped the onboarding photo.
      ═══════════════════════════════════════════════════════════════ */
-  .ov-shell .fs-photo-prompt { order: 6; }
+  .ov-shell .fs-photo-prompt { order: 8; }
   .fs-photo-prompt {
     margin: 0 0 18px;
     padding: 18px 20px 16px;
