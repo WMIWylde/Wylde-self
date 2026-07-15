@@ -31,35 +31,35 @@ import RevenueCat
 /// These must match exactly. Standard tier is shipped at v1.0; founder
 /// tier is shipped now and disappears after the first 1,000 purchases.
 enum WyldeProduct: String, CaseIterable {
-    case lifetimeFounder = "com.wylde.self.lifetime.founder"
-    case annualFounder   = "com.wylde.self.annual.founder"
-    case monthlyFounder  = "com.wylde.self.monthly.founder"
-    // Standard pricing (post-founder) — uncomment when you ship 1.0:
-    // case lifetime  = "com.wylde.self.lifetime"
-    // case annual    = "com.wylde.self.annual"
-    // case monthly   = "com.wylde.self.monthly"
+    // Standard consumer tiers (available to everyone).
+    case monthly         = "com.wylde.self.monthly"           // $14.99 / month
+    case annual          = "com.wylde.self.annual"            // $119.99 / year (~$9.99/mo)
+    // Founding-member tier: one-time lifetime, founders only, limited run.
+    case lifetimeFounder = "com.wylde.self.lifetime.founder"  // $199 one-time
 
     /// The display price hard-coded as a fallback (RevenueCat returns
     /// localized prices, but we want UI to render even before fetch).
+    /// Real prices are set in App Store Connect / RevenueCat — these are
+    /// only pre-fetch placeholders and must be kept roughly in sync.
     var fallbackPriceString: String {
         switch self {
-        case .lifetimeFounder: return "$149"
-        case .annualFounder:   return "$79"
-        case .monthlyFounder:  return "$9.99"
+        case .monthly:         return "$14.99"
+        case .annual:          return "$119.99"
+        case .lifetimeFounder: return "$199"
         }
     }
     var displayName: String {
         switch self {
-        case .lifetimeFounder: return "Lifetime"
-        case .annualFounder:   return "Annual"
-        case .monthlyFounder:  return "Monthly"
+        case .monthly:         return "Monthly"
+        case .annual:          return "Annual"
+        case .lifetimeFounder: return "Founding Member"
         }
     }
     var billingNote: String {
         switch self {
-        case .lifetimeFounder: return "one-time, yours forever"
-        case .annualFounder:   return "billed yearly · founder price locked"
-        case .monthlyFounder:  return "billed monthly · founder price locked"
+        case .monthly:         return "billed monthly"
+        case .annual:          return "billed yearly · about $10/mo"
+        case .lifetimeFounder: return "one-time · yours forever · limited"
         }
     }
 }
@@ -212,16 +212,16 @@ final class PurchaseManager: ObservableObject {
             let status: ProEntitlement.Status = {
                 switch product {
                 case .lifetimeFounder: return .lifetime
-                case .annualFounder:   return .annual
-                case .monthlyFounder:  return .monthly
+                case .annual:          return .annual
+                case .monthly:         return .monthly
                 }
             }()
             let now = Date()
             let exp: Date? = {
                 switch product {
                 case .lifetimeFounder: return nil
-                case .annualFounder:   return Calendar.current.date(byAdding: .year, value: 1, to: now)
-                case .monthlyFounder:  return Calendar.current.date(byAdding: .month, value: 1, to: now)
+                case .annual:          return Calendar.current.date(byAdding: .year, value: 1, to: now)
+                case .monthly:         return Calendar.current.date(byAdding: .month, value: 1, to: now)
                 }
             }()
             self.entitlement = ProEntitlement(

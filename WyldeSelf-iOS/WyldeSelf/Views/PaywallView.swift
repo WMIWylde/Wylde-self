@@ -147,7 +147,7 @@ struct PaywallView: View {
 
     private var priceTiles: some View {
         VStack(spacing: 10) {
-            ForEach([WyldeProduct.lifetimeFounder, .annualFounder, .monthlyFounder], id: \.rawValue) { product in
+            ForEach([WyldeProduct.lifetimeFounder, .annual, .monthly], id: \.rawValue) { product in
                 priceTile(for: product)
             }
         }
