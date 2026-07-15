@@ -10,7 +10,7 @@ struct CareMessagingView: View {
     @State private var relationshipId: String?
     @FocusState private var inputFocused: Bool
 
-    private let baseURL = "https://www.wyldeself.com"
+    private let baseURL = ClinicalAPI.host
     private let templates = [
         "I missed a dose",
         "I'm having a side effect",

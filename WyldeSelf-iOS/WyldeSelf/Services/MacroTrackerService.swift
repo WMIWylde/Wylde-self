@@ -174,6 +174,8 @@ final class MacroTrackerService: ObservableObject {
 
     private func dayKey() -> String {
         let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.calendar = Calendar(identifier: .gregorian)
         f.dateFormat = "yyyy-MM-dd"
         return mealsKey + "_" + f.string(from: Date())
     }
@@ -188,6 +190,8 @@ final class MacroTrackerService: ObservableObject {
 
     func mealsForDate(_ date: Date) -> [MealEntry] {
         let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.calendar = Calendar(identifier: .gregorian)
         f.dateFormat = "yyyy-MM-dd"
         let key = mealsKey + "_" + f.string(from: date)
         guard let data = UserDefaults.standard.data(forKey: key),
@@ -197,6 +201,8 @@ final class MacroTrackerService: ObservableObject {
 
     func datesWithData(last days: Int = 30) -> [Date] {
         let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.calendar = Calendar(identifier: .gregorian)
         f.dateFormat = "yyyy-MM-dd"
         var dates: [Date] = []
         for i in 0..<days {

@@ -53,7 +53,10 @@ class WatchSync: NSObject, ObservableObject {
         let context: [String: Any] = [
             "currentDay": state.currentDay,
             "userName": state.userName,
-            "wyldeScore": WyldeScoreService.shared.todayScore,
+            // Send the plain Int total — a WyldeScore? struct is not a
+            // property-list type and would make updateApplicationContext throw
+            // (silently, via try?), so the watch would never get a score.
+            "wyldeScore": WyldeScoreService.shared.todayScore?.totalScore ?? 0,
             "ritualDone": ritualDone,
             "ritualTotal": state.morningProtocolActions.count,
             "workoutCompleted": state.workoutCompleted,
@@ -88,6 +91,11 @@ extension WatchSync: WCSessionDelegate {
             case "workout_end":
                 state.workoutCompleted = true
                 Task { await HealthKitManager.shared.endWorkoutSession() }
+            case "walk_start":
+                // Walk started on the watch. There is no in-progress walk
+                // state to persist on the phone yet — the loop closes on
+                // "walk_end" (below). Handled explicitly so it isn't dropped.
+                break
             case "walk_end":
                 state.dailyWalkCompleted = true
             default: break

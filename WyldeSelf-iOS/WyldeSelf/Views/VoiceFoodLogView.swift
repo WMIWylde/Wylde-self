@@ -346,11 +346,15 @@ struct VoiceFoodLogView: View {
         request.shouldReportPartialResults = true
 
         recognitionTask = recognizer.recognitionTask(with: request) { result, error in
-            if let result = result {
-                transcribedText = result.bestTranscription.formattedString
-            }
-            if error != nil || (result?.isFinal ?? false) {
-                stopRecording()
+            // This callback fires on an arbitrary queue; @State mutations and
+            // stopRecording() must run on the main thread.
+            DispatchQueue.main.async {
+                if let result = result {
+                    transcribedText = result.bestTranscription.formattedString
+                }
+                if error != nil || (result?.isFinal ?? false) {
+                    stopRecording()
+                }
             }
         }
 
@@ -382,6 +386,15 @@ struct VoiceFoodLogView: View {
         recognitionTask?.cancel()
         recognitionTask = nil
         isRecording = false
+        // Release the audio session so other audio (music, podcasts) can
+        // resume and the mic indicator clears.
+        do {
+            try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        } catch {
+            #if DEBUG
+            print("[VoiceLog] Audio session deactivate error: \(error)")
+            #endif
+        }
     }
 
     // MARK: - Parse

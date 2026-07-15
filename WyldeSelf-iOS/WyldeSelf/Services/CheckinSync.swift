@@ -131,6 +131,8 @@ final class CheckinSync {
     private static func buildPayload(from appState: AppState) -> CheckinPayload {
         let dateStr: String = {
             let f = DateFormatter()
+            f.locale = Locale(identifier: "en_US_POSIX")
+            f.calendar = Calendar(identifier: .gregorian)
             f.dateFormat = "yyyy-MM-dd"
             return f.string(from: Date())
         }()

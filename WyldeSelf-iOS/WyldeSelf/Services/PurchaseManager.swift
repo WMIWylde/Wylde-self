@@ -7,28 +7,25 @@ import StoreKit
 //  This file uses the RevenueCat SDK (`Purchases`) but is written so it
 //  compiles and runs in two modes:
 //
-//    1. With RevenueCat installed (recommended):
+//    1. With RevenueCat installed (real mode — NOW ACTIVE):
 //       - Add `RevenueCat` via Xcode → File → Add Package Dependencies
 //         and paste:  https://github.com/RevenueCat/purchases-ios
-//       - Set `useRealRevenueCat = true` below
-//       - Set the API key in Info.plist (key: WyldeRevenueCatAPIKey)
+//       - `useRealRevenueCat = true` (set below)
+//       - Set the API key in Info.plist (key: REVENUECAT_API_KEY)
 //
-//    2. Stub mode (for now, while RevenueCat is being set up):
+//    2. Stub mode (legacy, kept behind the flag):
 //       - useRealRevenueCat = false
-//       - Purchases will simulate success after a 1.2s delay so the
-//         UI can be developed against this without the SDK installed.
+//       - Purchases simulate success after a 1.2s delay.
 //
-//  When you're ready to switch to real:
-//    1. Add the RevenueCat package
-//    2. Uncomment the `import RevenueCat` line
-//    3. Uncomment the // REAL: blocks
-//    4. Comment out the // STUB: blocks
-//    5. Set useRealRevenueCat = true
+//  ⚠️ BUILD REQUIREMENT: real mode is now enabled and `import RevenueCat`
+//  is active below. The project will NOT compile until the RevenueCat
+//  Swift Package is added in Xcode (File → Add Package Dependencies →
+//  https://github.com/RevenueCat/purchases-ios). See the handoff notes.
 //
 //  The PaywallView + AppState do not need to change.
 // ════════════════════════════════════════════════════════════════════
 
-// import RevenueCat   // ← uncomment after adding the SwiftPM dependency
+import RevenueCat
 
 /// Product IDs as configured in App Store Connect + RevenueCat.
 /// These must match exactly. Standard tier is shipped at v1.0; founder
@@ -101,9 +98,9 @@ final class PurchaseManager: ObservableObject {
     private init() {}
 
     // MARK: - Mode toggle
-    /// Flip to true once RevenueCat SDK is added + API key is in Info.plist.
-    /// Until then, runs in STUB mode (simulated purchase, dev-friendly).
-    private let useRealRevenueCat = false
+    /// Real RevenueCat integration. Requires the RevenueCat Swift Package to
+    /// be added in Xcode and a valid REVENUECAT_API_KEY in Info.plist.
+    private let useRealRevenueCat = true
 
     // MARK: - Published state (Views observe these)
     @Published var entitlement: ProEntitlement = .free
@@ -121,14 +118,17 @@ final class PurchaseManager: ObservableObject {
     func configure(supabaseUserID: String?) {
         if useRealRevenueCat {
             // REAL: configure RevenueCat with API key + log in user
-            // guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "WyldeRevenueCatAPIKey") as? String,
-            //       !apiKey.isEmpty else {
-            //     print("[Purchases] Missing WyldeRevenueCatAPIKey in Info.plist")
-            //     return
-            // }
-            // Purchases.logLevel = .info
-            // Purchases.configure(withAPIKey: apiKey, appUserID: supabaseUserID)
-            // refreshEntitlement()
+            guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "REVENUECAT_API_KEY") as? String,
+                  !apiKey.isEmpty,
+                  apiKey != "REPLACE_WITH_REVENUECAT_PUBLIC_SDK_KEY" else {
+                #if DEBUG
+                print("[Purchases] Missing/placeholder REVENUECAT_API_KEY in Info.plist — RevenueCat not configured")
+                #endif
+                return
+            }
+            Purchases.logLevel = .info
+            Purchases.configure(withAPIKey: apiKey, appUserID: supabaseUserID)
+            refreshEntitlement()
         } else {
             // STUB: pretend everyone is free until they "buy"
             self.entitlement = .free
@@ -143,13 +143,13 @@ final class PurchaseManager: ObservableObject {
     func refreshEntitlement() {
         if useRealRevenueCat {
             // REAL:
-            // Purchases.shared.getCustomerInfo { [weak self] info, error in
-            //     guard let self = self, let info = info else { return }
-            //     Task { @MainActor in
-            //         self.entitlement = self.entitlementFrom(info)
-            //         self.notifyChange()
-            //     }
-            // }
+            Purchases.shared.getCustomerInfo { [weak self] info, error in
+                guard let self = self, let info = info else { return }
+                Task { @MainActor in
+                    self.entitlement = self.entitlementFrom(info)
+                    self.notifyChange()
+                }
+            }
         }
     }
 
@@ -160,15 +160,15 @@ final class PurchaseManager: ObservableObject {
 
         if useRealRevenueCat {
             // REAL:
-            // do {
-            //     let offerings = try await Purchases.shared.offerings()
-            //     guard let current = offerings.current else { return }
-            //     for package in current.availablePackages {
-            //         localizedPrices[package.storeProduct.productIdentifier] = package.storeProduct.localizedPriceString
-            //     }
-            // } catch {
-            //     lastError = "Couldn't load products: \(error.localizedDescription)"
-            // }
+            do {
+                let offerings = try await Purchases.shared.offerings()
+                guard let current = offerings.current else { return }
+                for package in current.availablePackages {
+                    localizedPrices[package.storeProduct.productIdentifier] = package.storeProduct.localizedPriceString
+                }
+            } catch {
+                lastError = "Couldn't load products: \(error.localizedDescription)"
+            }
         } else {
             // STUB: populate fallback prices immediately
             try? await Task.sleep(nanoseconds: 300_000_000)
@@ -186,27 +186,26 @@ final class PurchaseManager: ObservableObject {
 
         if useRealRevenueCat {
             // REAL:
-            // do {
-            //     let offerings = try await Purchases.shared.offerings()
-            //     guard let pkg = offerings.current?.availablePackages.first(where: {
-            //         $0.storeProduct.productIdentifier == product.rawValue
-            //     }) else {
-            //         lastError = "Product unavailable"
-            //         return false
-            //     }
-            //     let result = try await Purchases.shared.purchase(package: pkg)
-            //     if !result.userCancelled {
-            //         self.entitlement = self.entitlementFrom(result.customerInfo)
-            //         await assignFoundingMemberNumberIfEligible()
-            //         self.notifyChange()
-            //         return true
-            //     }
-            //     return false
-            // } catch {
-            //     lastError = "Purchase failed: \(error.localizedDescription)"
-            //     return false
-            // }
-            return false
+            do {
+                let offerings = try await Purchases.shared.offerings()
+                guard let pkg = offerings.current?.availablePackages.first(where: {
+                    $0.storeProduct.productIdentifier == product.rawValue
+                }) else {
+                    lastError = "Product unavailable"
+                    return false
+                }
+                let result = try await Purchases.shared.purchase(package: pkg)
+                if !result.userCancelled {
+                    self.entitlement = self.entitlementFrom(result.customerInfo)
+                    await assignFoundingMemberNumberIfEligible()
+                    self.notifyChange()
+                    return true
+                }
+                return false
+            } catch {
+                lastError = "Purchase failed: \(error.localizedDescription)"
+                return false
+            }
         } else {
             // STUB: simulate a 1.2s purchase, then mark as Pro
             try? await Task.sleep(nanoseconds: 1_200_000_000)
@@ -241,16 +240,15 @@ final class PurchaseManager: ObservableObject {
     func restorePurchases() async -> Bool {
         if useRealRevenueCat {
             // REAL:
-            // do {
-            //     let info = try await Purchases.shared.restorePurchases()
-            //     self.entitlement = self.entitlementFrom(info)
-            //     self.notifyChange()
-            //     return self.entitlement.isActive
-            // } catch {
-            //     lastError = "Restore failed: \(error.localizedDescription)"
-            //     return false
-            // }
-            return false
+            do {
+                let info = try await Purchases.shared.restorePurchases()
+                self.entitlement = self.entitlementFrom(info)
+                self.notifyChange()
+                return self.entitlement.isActive
+            } catch {
+                lastError = "Restore failed: \(error.localizedDescription)"
+                return false
+            }
         } else {
             // STUB: no-op
             return entitlement.isActive
@@ -260,8 +258,6 @@ final class PurchaseManager: ObservableObject {
     // MARK: - Internal helpers
 
     /// Translates a RevenueCat CustomerInfo into our ProEntitlement.
-    /// Uncomment when RevenueCat is wired.
-    /*
     private func entitlementFrom(_ info: CustomerInfo) -> ProEntitlement {
         guard let entitlement = info.entitlements["wylde_pro"], entitlement.isActive else {
             return .free
@@ -282,7 +278,6 @@ final class PurchaseManager: ObservableObject {
             provider: "apple"
         )
     }
-    */
 
     /// After a successful purchase, ask Supabase to assign this user a
     /// founding_member_number atomically. Webhook does this server-side

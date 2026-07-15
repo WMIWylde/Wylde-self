@@ -12,7 +12,7 @@ struct ReorderView: View {
     @State private var showConfirm = false
     @State private var checkoutURL: URL?
 
-    private let baseURL = "https://www.wyldeself.com"
+    private let baseURL = ClinicalAPI.host
 
     var body: some View {
         ZStack {

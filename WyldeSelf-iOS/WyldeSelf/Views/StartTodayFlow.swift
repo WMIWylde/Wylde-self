@@ -53,6 +53,8 @@ final class StartTodayFlowState: ObservableObject {
 
     static func todayKey() -> String {
         let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.calendar = Calendar(identifier: .gregorian)
         f.dateFormat = "yyyy-MM-dd"
         return f.string(from: Date())
     }
@@ -819,11 +821,12 @@ struct StartTodayFlow: View {
             .foregroundColor(Theme.gold)
     }
 
-    // MARK: - completeDay (mirror of web app's window.completeDay)
+    // MARK: - completeDay
 
-    /// Mirrors `window.completeDay` in app.html line ~3815.
-    /// Writes the same UserDefaults keys the web uses so a user moving
-    /// between web and iOS sees consistent state.
+    /// Marks today complete and updates the streak. This is iOS-LOCAL state
+    /// (UserDefaults on this device). The web app keeps its own equivalent
+    /// state in localStorage; there is NO cross-device sync between web and
+    /// iOS, so these values do not round-trip between the two surfaces.
     private func completeDay() {
         let today = StartTodayFlowState.todayKey()
         let defaults = UserDefaults.standard
@@ -834,10 +837,15 @@ struct StartTodayFlow: View {
         appState.refreshCurrentDay()
 
         // Update streak — if last completed day was yesterday, increment;
-        // otherwise reset to 1. Matches the web logic.
+        // otherwise reset to 1.
         let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.calendar = Calendar(identifier: .gregorian)
         f.dateFormat = "yyyy-MM-dd"
-        let yesterday = f.string(from: Date().addingTimeInterval(-86_400))
+        // Use calendar day arithmetic (not a fixed 86 400s subtraction) so a
+        // DST transition doesn't shift "yesterday" by an hour into the wrong day.
+        let yesterdayDate = Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date()
+        let yesterday = f.string(from: yesterdayDate)
         let lastDayKey = defaults.string(forKey: "wylde_last_day_key") ?? ""
         if lastDayKey == yesterday {
             appState.streak += 1
