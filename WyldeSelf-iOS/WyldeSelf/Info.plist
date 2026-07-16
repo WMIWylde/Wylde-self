@@ -36,7 +36,7 @@
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>REVENUECAT_API_KEY</key>
-	<string>REPLACE_WITH_REVENUECAT_PUBLIC_SDK_KEY</string>
+	<string>appl_iJyjqPDCjsBsSmavnKgOxtkaWni</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
@@ -55,8 +55,6 @@
 	<string>sb_publishable_VFZOYd0PhqAh3AgZF1TcXQ_cX4ElGkl</string>
 	<key>SUPABASE_URL</key>
 	<string>https://huclolzxzpitdpyogolu.supabase.co</string>
-	<key>WyldeRevenueCatAPIKey</key>
-	<string></string>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
