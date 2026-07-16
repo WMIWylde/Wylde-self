@@ -28,6 +28,14 @@ struct TodayView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
+                // ─── Today Hero (cinematic, rotates by time of day) ────
+                // Photographic banner that shifts morning → midday →
+                // evening → night so the surface breathes with the day.
+                todayHero
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 10)
+                    .animation(.easeOut(duration: 0.5), value: didAppear)
+
                 // ─── Future Self Identity Hero ─────────────────────────
                 // The emotional center of the app. Shows who you're
                 // becoming, today's day count, and the Start Today CTA.
