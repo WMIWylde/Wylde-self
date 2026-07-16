@@ -18,7 +18,6 @@
 		497DB2330828280086695940 /* CheckinSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED05833A5593DE8DE9080106 /* CheckinSync.swift */; };
 		49D46F732FF73CE20044000E /* WyldeSelfWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 49D46F532FF73CE00044000E /* WyldeSelfWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		49E9488F2FE1C51C007FD50D /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 49E9488E2FE1C51C007FD50D /* Supabase */; };
-		F8218F47300813FB0094074F /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = F8218F48300813FB0094074F /* RevenueCat */; };
 		4A507556A9AAD62894AFF6F1 /* VisionCreationFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7439DFCD26DABDF020845D2E /* VisionCreationFlow.swift */; };
 		4B100DC73EEAC2641D5878FF /* CareTeamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCDBF19CEB09C8382410A612 /* CareTeamView.swift */; };
 		4DB67C730EDC228B7B9498A7 /* DynamicWarmupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C111ECD9FD92B6838B1A2F28 /* DynamicWarmupView.swift */; };
@@ -92,6 +91,7 @@
 		F01C427D255E073C74CC7611 /* FutureVision.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07F46ED130E8FA952F7BE9A /* FutureVision.swift */; };
 		F6F60DD2FAF8EF8AA596BF42 /* ImageLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F09EC6B89EAABB04C9E946F /* ImageLibrary.swift */; };
 		F70AA43BF26D80A2976420EB /* ProtocolTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADAB00E2228BCBC88233AD1C /* ProtocolTrackerView.swift */; };
+		F8218F47300813FB0094074F /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = F8218F48300813FB0094074F /* RevenueCat */; };
 		N10001 /* SecureStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20001 /* SecureStorage.swift */; };
 		N10002 /* FileStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20002 /* FileStorage.swift */; };
 		N10003 /* EveningReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20003 /* EveningReflectionView.swift */; };
@@ -1136,6 +1136,7 @@
 				CODE_SIGN_ENTITLEMENTS = WyldeSelf/WyldeSelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WyldeSelf/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Wylde Self";
@@ -1166,6 +1167,7 @@
 				CODE_SIGN_ENTITLEMENTS = WyldeSelf/WyldeSelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WyldeSelf/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Wylde Self";
