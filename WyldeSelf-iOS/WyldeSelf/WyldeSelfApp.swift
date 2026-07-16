@@ -29,7 +29,8 @@ struct WyldeSelfApp: App {
                 .onAppear {
                     configureAppearance()
                     scheduleDailyReminders()
-                    // Purchase SDK — stub mode until RevenueCat is wired.
+                    // Purchase SDK — real RevenueCat (requires the SPM package
+                    // + REVENUECAT_API_KEY in Info.plist).
                     PurchaseManager.shared.configure(supabaseUserID: nil as String?)
                     // CheckinSync — observes AppState toggles, posts to
                     // /api/consumer/checkin (debounced).
@@ -54,11 +55,16 @@ struct WyldeSelfApp: App {
     /// Set up the daily walk reminder once per launch. iOS de-dupes by
     /// identifier (`daily_13_0`), so re-registering is idempotent.
     private func scheduleDailyReminders() {
-        NotificationManager.shared.scheduleDailyReminder(
-            hour: 13, minute: 0,
-            title: "Time for your walk",
-            body: "30+ minutes outside. Phone in your pocket. Your body needs the reset."
-        )
+        // Ask for notification authorization first — iOS silently drops any
+        // scheduled local notifications if the user was never prompted.
+        NotificationManager.shared.requestPermission { granted in
+            guard granted else { return }
+            NotificationManager.shared.scheduleDailyReminder(
+                hour: 13, minute: 0,
+                title: "Time for your walk",
+                body: "30+ minutes outside. Phone in your pocket. Your body needs the reset."
+            )
+        }
     }
 
     private func configureAppearance() {

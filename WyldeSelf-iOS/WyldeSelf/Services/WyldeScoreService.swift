@@ -9,7 +9,7 @@ final class WyldeScoreService: ObservableObject {
     @Published var scoreHistory: [WyldeScore] = []
     @Published var isLoading = false
 
-    private let baseURL = "https://www.wyldeself.com"
+    private let baseURL = ClinicalAPI.host
 
     // MARK: - Calculate and update today's score
 

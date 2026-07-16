@@ -147,7 +147,7 @@ struct PaywallView: View {
 
     private var priceTiles: some View {
         VStack(spacing: 10) {
-            ForEach([WyldeProduct.lifetimeFounder, .annualFounder, .monthlyFounder], id: \.rawValue) { product in
+            ForEach([WyldeProduct.lifetimeFounder, .annual, .monthly], id: \.rawValue) { product in
                 priceTile(for: product)
             }
         }
@@ -289,7 +289,7 @@ struct PaywallView: View {
 
     private func loadFounderCount() async {
         defer { isLoadingCount = false }
-        guard let url = URL(string: "https://wyldeself.com/api/founder-count") else { return }
+        guard let url = URL(string: "\(ClinicalAPI.host)/api/founder-count") else { return }
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {

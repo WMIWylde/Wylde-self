@@ -1,17 +1,13 @@
-//
-//  WyldeSelfWatchApp.swift
-//  WyldeSelfWatch Watch App
-//
-//  Created by Wilke Itzin on 7/2/26.
-//
-
 import SwiftUI
 
 @main
-struct WyldeSelfWatch_Watch_AppApp: App {
+struct WyldeSelfWatchApp: App {
+    @StateObject private var connector = PhoneConnector()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            WatchHomeView()
+                .environmentObject(connector)
         }
     }
 }

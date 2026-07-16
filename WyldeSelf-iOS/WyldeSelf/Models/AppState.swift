@@ -93,9 +93,9 @@ class AppState: ObservableObject {
     // Morning Protocol — three fixed practices, persisted as completion flags
     // per day. No more "user picks 3-5" — the protocol IS the practice.
     @Published var morningProtocolActions: [MorningAction] = AppState.defaultMorningActions {
-        didSet { saveCodable(morningProtocolActions, key: "wylde_morning_actions") }
+        didSet { saveCodable(morningProtocolActions, key: dayKey("wylde_morning_actions")) }
     }
-    @Published var morningProtocolCompleted: Bool = false           { didSet { defaults.set(morningProtocolCompleted, forKey: "wylde_morning_done") } }
+    @Published var morningProtocolCompleted: Bool = false           { didSet { defaults.set(morningProtocolCompleted, forKey: dayKey("wylde_morning_done")) } }
 
     // Daily long walk — separate from training, mid-day movement
     @Published var dailyWalkCompleted: Bool = false                 { didSet { defaults.set(dailyWalkCompleted, forKey: dayKey("wylde_walk_done")) } }
@@ -150,6 +150,9 @@ class AppState: ObservableObject {
     private var isLoading = true
 
     init() {
+        // Must run before loadFromDefaults() so any stub-persisted Pro is
+        // wiped before the cached values are read back into memory.
+        clearStubProIfNeeded()
         loadFromDefaults()
         refreshCurrentDay()
         isLoading = false
@@ -182,12 +185,35 @@ class AppState: ObservableObject {
             queue: .main
         ) { [weak self] _ in
             self?.refreshCurrentDay()
+            // Reload day-scoped state so in-memory daily counters reset to
+            // the new day's (empty) values instead of persisting yesterday's
+            // numbers under today's key.
+            self?.loadFromDefaults()
         }
     }
 
-    /// Date-scoped key so daily counters reset automatically at midnight
+    /// One-time cleanup for testers who were on the stub PurchaseManager.
+    /// Earlier builds ran with `useRealRevenueCat = false`, which persisted a
+    /// fake `wylde_pro_status = "lifetime"` + `wylde_founder_number = 1`. Now
+    /// that entitlement comes ONLY from RevenueCat, clear those stub values a
+    /// single time so previously-faked testers don't keep fake Pro.
+    /// RevenueCat's refreshEntitlement() re-populates the real value on launch.
+    private func clearStubProIfNeeded() {
+        let flag = "wylde_stub_pro_cleared_v1"
+        guard !defaults.bool(forKey: flag) else { return }
+        defaults.removeObject(forKey: "wylde_pro_status")
+        defaults.removeObject(forKey: "wylde_founder_number")
+        defaults.removeObject(forKey: "wylde_pro_provider")
+        defaults.set(true, forKey: flag)
+    }
+
+    /// Date-scoped key so daily counters reset automatically at midnight.
+    /// Pins locale + calendar so the "yyyy-MM-dd" string is always Gregorian
+    /// regardless of the device's regional calendar setting.
     private func dayKey(_ base: String) -> String {
         let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.calendar = Calendar(identifier: .gregorian)
         f.dateFormat = "yyyy-MM-dd"
         return base + "_" + f.string(from: Date())
     }
@@ -243,6 +269,8 @@ class AppState: ObservableObject {
     /// not double-count.
     func markLoopClosed() {
         let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.calendar = Calendar(identifier: .gregorian)
         f.dateFormat = "yyyy-MM-dd"
         let today = f.string(from: Date())
         guard !completedDates.contains(today) else { return }
@@ -293,20 +321,23 @@ class AppState: ObservableObject {
         identityProfile = secure.getCodable(IdentityProfile.self, forKey: "wylde_identity_profile")
             ?? loadCodable(IdentityProfile.self, key: "wylde_identity_profile")
 
-        // Morning protocol — load any persisted state, but reconcile against
-        // the canonical 3 practices so old multi-action protocols collapse
-        // down to the new shape automatically on next launch.
-        let saved = loadCodable([MorningAction].self, key: "wylde_morning_actions") ?? []
+        // Morning protocol — date-scoped so it resets each day. Load any
+        // state persisted under TODAY's key; a fresh day has no entry, so
+        // loadCodable returns nil → the canonical defaults (all completed=false)
+        // are used, which is the daily reset. Also reconcile against the
+        // canonical 3 practices so old multi-action protocols collapse down.
+        let saved = loadCodable([MorningAction].self, key: dayKey("wylde_morning_actions")) ?? []
         let canonicalIds = Set(AppState.defaultMorningActions.map { $0.id })
         let savedIds = Set(saved.map { $0.id })
         if savedIds == canonicalIds {
-            // Same set — keep their completion state
+            // Same set, saved earlier today — keep their completion state
             morningProtocolActions = saved
         } else {
-            // Stale set — wipe to canonical defaults
+            // Fresh day (nil) or stale set — reset to canonical defaults
             morningProtocolActions = AppState.defaultMorningActions
         }
-        morningProtocolCompleted = defaults.bool(forKey: "wylde_morning_done")
+        // Fresh day has no entry under today's key → defaults to false (reset).
+        morningProtocolCompleted = defaults.bool(forKey: dayKey("wylde_morning_done"))
 
         // Daily walk — date-scoped
         dailyWalkCompleted = defaults.bool(forKey: dayKey("wylde_walk_done"))
@@ -356,12 +387,26 @@ class AppState: ObservableObject {
             "wylde_identity_profile"
         ]
         for k in keys { defaults.removeObject(forKey: k) }
-        // Sweep all date-scoped daily keys
+        // Sweep all date-scoped daily keys (every "wylde_*_<yyyy-MM-dd>" key)
+        let dailyPrefixes = [
+            "wylde_workout_done_",
+            "wylde_protein_logged_",
+            "wylde_calories_logged_",
+            "wylde_walk_done_",
+            "wylde_pages_",
+            "wylde_carbs_logged_",
+            "wylde_fat_logged_",
+            "wylde_calories_burned_",
+            "wylde_water_logged_",
+            "wylde_reflection_done_",
+            "wylde_reflection_",
+            "wylde_meals_",
+            // Morning ritual keys are now day-scoped (see dayKey usage above)
+            "wylde_morning_done_",
+            "wylde_morning_actions_"
+        ]
         for key in defaults.dictionaryRepresentation().keys {
-            if key.hasPrefix("wylde_workout_done_") ||
-               key.hasPrefix("wylde_protein_logged_") ||
-               key.hasPrefix("wylde_calories_logged_") ||
-               key.hasPrefix("wylde_walk_done_") {
+            if dailyPrefixes.contains(where: { key.hasPrefix($0) }) {
                 defaults.removeObject(forKey: key)
             }
         }
