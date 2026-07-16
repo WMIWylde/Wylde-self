@@ -18,6 +18,7 @@
 		497DB2330828280086695940 /* CheckinSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED05833A5593DE8DE9080106 /* CheckinSync.swift */; };
 		49D46F732FF73CE20044000E /* WyldeSelfWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 49D46F532FF73CE00044000E /* WyldeSelfWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		49E9488F2FE1C51C007FD50D /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 49E9488E2FE1C51C007FD50D /* Supabase */; };
+		F8218F47300813FB0094074F /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = F8218F48300813FB0094074F /* RevenueCat */; };
 		4A507556A9AAD62894AFF6F1 /* VisionCreationFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7439DFCD26DABDF020845D2E /* VisionCreationFlow.swift */; };
 		4B100DC73EEAC2641D5878FF /* CareTeamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCDBF19CEB09C8382410A612 /* CareTeamView.swift */; };
 		4DB67C730EDC228B7B9498A7 /* DynamicWarmupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C111ECD9FD92B6838B1A2F28 /* DynamicWarmupView.swift */; };
@@ -91,7 +92,6 @@
 		F01C427D255E073C74CC7611 /* FutureVision.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07F46ED130E8FA952F7BE9A /* FutureVision.swift */; };
 		F6F60DD2FAF8EF8AA596BF42 /* ImageLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F09EC6B89EAABB04C9E946F /* ImageLibrary.swift */; };
 		F70AA43BF26D80A2976420EB /* ProtocolTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADAB00E2228BCBC88233AD1C /* ProtocolTrackerView.swift */; };
-		W10001 /* WatchSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20001 /* WatchSync.swift */; };
 		N10001 /* SecureStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20001 /* SecureStorage.swift */; };
 		N10002 /* FileStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20002 /* FileStorage.swift */; };
 		N10003 /* EveningReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20003 /* EveningReflectionView.swift */; };
@@ -101,6 +101,7 @@
 		T10001 /* AppStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20001 /* AppStateTests.swift */; };
 		T10002 /* SecureStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20002 /* SecureStorageTests.swift */; };
 		T10003 /* FileStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20003 /* FileStorageTests.swift */; };
+		W10001 /* WatchSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20001 /* WatchSync.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -236,7 +237,6 @@
 		FCDBF19CEB09C8382410A612 /* CareTeamView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CareTeamView.swift; sourceTree = "<group>"; };
 		FD6EAA094DE1A417B99DD349 /* VisionTheme.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VisionTheme.swift; sourceTree = "<group>"; };
 		FF420548325F72C353160DF2 /* AuthService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
-		W20001 /* WatchSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSync.swift; sourceTree = "<group>"; };
 		N20001 /* SecureStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureStorage.swift; sourceTree = "<group>"; };
 		N20002 /* FileStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileStorage.swift; sourceTree = "<group>"; };
 		N20003 /* EveningReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EveningReflectionView.swift; sourceTree = "<group>"; };
@@ -247,6 +247,7 @@
 		T20002 /* SecureStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureStorageTests.swift; sourceTree = "<group>"; };
 		T20003 /* FileStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileStorageTests.swift; sourceTree = "<group>"; };
 		T30001 /* WyldeSelfTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WyldeSelfTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		W20001 /* WatchSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSync.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -282,6 +283,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49E9488F2FE1C51C007FD50D /* Supabase in Frameworks */,
+				F8218F47300813FB0094074F /* RevenueCat in Frameworks */,
 				A10014 /* HealthKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -631,6 +633,7 @@
 			mainGroup = D10001;
 			packageReferences = (
 				4945466D2FE1C3B000AB1CE4 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				F8218F46300813FB0094074F /* XCRemoteSwiftPackageReference "purchases-ios" */,
 			);
 			productRefGroup = D10099 /* Products */;
 			projectDirPath = "";
@@ -1291,6 +1294,14 @@
 				minimumVersion = 2.5.1;
 			};
 		};
+		F8218F46300813FB0094074F /* XCRemoteSwiftPackageReference "purchases-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.80.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1298,6 +1309,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4945466D2FE1C3B000AB1CE4 /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Supabase;
+		};
+		F8218F48300813FB0094074F /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F8218F46300813FB0094074F /* XCRemoteSwiftPackageReference "purchases-ios" */;
+			productName = RevenueCat;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

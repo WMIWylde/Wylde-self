@@ -16,7 +16,7 @@ struct ReorderView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            Theme.appBG.ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
@@ -29,15 +29,15 @@ struct ReorderView: View {
                                 .foregroundColor(Color(hex: "C8A96E"))
                             Text("Your clinic's products")
                                 .font(.system(size: 22, weight: .bold, design: .serif))
-                                .foregroundColor(Color(hex: "F4F1E8"))
+                                .foregroundColor(Theme.primaryText)
                         }
                         Spacer()
                         Button { dismiss() } label: {
                             Image(systemName: "xmark")
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(Color(hex: "A6A29A"))
+                                .foregroundColor(Theme.secondaryText)
                                 .frame(width: 36, height: 36)
-                                .background(Color(hex: "111111"))
+                                .background(Theme.elevatedBG)
                                 .clipShape(Circle())
                         }
                     }
@@ -50,7 +50,7 @@ struct ReorderView: View {
                         if !products.isEmpty {
                             Text("Available")
                                 .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(Color(hex: "A6A29A"))
+                                .foregroundColor(Theme.secondaryText)
 
                             ForEach(products) { product in
                                 productCard(product)
@@ -59,13 +59,13 @@ struct ReorderView: View {
                             VStack(spacing: 12) {
                                 Image(systemName: "shippingbox")
                                     .font(.system(size: 32))
-                                    .foregroundColor(Color(hex: "6E6B65"))
+                                    .foregroundColor(Theme.tertiaryText)
                                 Text("No products available")
                                     .font(.system(size: 14))
-                                    .foregroundColor(Color(hex: "A6A29A"))
+                                    .foregroundColor(Theme.secondaryText)
                                 Text("Your clinician hasn't added products yet.")
                                     .font(.system(size: 12))
-                                    .foregroundColor(Color(hex: "6E6B65"))
+                                    .foregroundColor(Theme.tertiaryText)
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 40)
@@ -75,7 +75,7 @@ struct ReorderView: View {
                         if !orders.isEmpty {
                             Text("Order History")
                                 .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(Color(hex: "A6A29A"))
+                                .foregroundColor(Theme.secondaryText)
                                 .padding(.top, 12)
 
                             ForEach(orders) { order in
@@ -90,7 +90,6 @@ struct ReorderView: View {
                 .padding(.top, 16)
             }
         }
-        .preferredColorScheme(.dark)
         .task { await loadData() }
         .sheet(isPresented: $showConfirm) { confirmSheet }
         .sheet(item: $checkoutURL) { url in
@@ -114,10 +113,10 @@ struct ReorderView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(product.name)
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                     Text("\(product.typicalDose ?? "") · \(product.frequency ?? "")")
                         .font(.system(size: 12))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                 }
                 Spacer()
                 if let price = product.price {
@@ -127,8 +126,8 @@ struct ReorderView: View {
                 }
             }
             .padding(16)
-            .background(Color(hex: "111111"))
-            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1))
+            .background(Theme.elevatedBG)
+            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Theme.primaryText.opacity(0.06), lineWidth: 1))
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
         .buttonStyle(.plain)
@@ -143,7 +142,7 @@ struct ReorderView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(order.productName ?? "Product")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(Color(hex: "F4F1E8"))
+                    .foregroundColor(Theme.primaryText)
                 Text(order.status.capitalized)
                     .font(.system(size: 11))
                     .foregroundColor(statusColor(order.status))
@@ -152,37 +151,37 @@ struct ReorderView: View {
             if let cents = order.amountCents, cents > 0 {
                 Text("$\(String(format: "%.2f", Double(cents) / 100))")
                     .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(Theme.secondaryText)
             }
         }
         .padding(14)
-        .background(Color(hex: "111111"))
+        .background(Theme.elevatedBG)
         .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 
     private var confirmSheet: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "070707").ignoresSafeArea()
+                Theme.appBG.ignoresSafeArea()
                 VStack(alignment: .leading, spacing: 16) {
                     if let p = selectedProduct {
                         Text(p.name)
                             .font(.system(size: 20, weight: .bold, design: .serif))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(Theme.primaryText)
 
-                        if let desc = p.description { Text(desc).font(.system(size: 13)).foregroundColor(Color(hex: "A6A29A")).lineSpacing(2) }
+                        if let desc = p.description { Text(desc).font(.system(size: 13)).foregroundColor(Theme.secondaryText).lineSpacing(2) }
 
                         HStack(spacing: 16) {
-                            VStack { Text("Dose").font(.system(size: 10)).foregroundColor(Color(hex: "6E6B65")); Text(p.typicalDose ?? "—").font(.system(size: 14, weight: .medium)).foregroundColor(Color(hex: "F4F1E8")) }
-                            VStack { Text("Price").font(.system(size: 10)).foregroundColor(Color(hex: "6E6B65")); Text(p.price != nil ? "$\(String(format: "%.2f", p.price!))" : "—").font(.system(size: 14, weight: .semibold)).foregroundColor(Color(hex: "C8A96E")) }
+                            VStack { Text("Dose").font(.system(size: 10)).foregroundColor(Theme.tertiaryText); Text(p.typicalDose ?? "—").font(.system(size: 14, weight: .medium)).foregroundColor(Theme.primaryText) }
+                            VStack { Text("Price").font(.system(size: 10)).foregroundColor(Theme.tertiaryText); Text(p.price != nil ? "$\(String(format: "%.2f", p.price!))" : "—").font(.system(size: 14, weight: .semibold)).foregroundColor(Color(hex: "C8A96E")) }
                         }
 
                         TextField("Add a note for your clinician...", text: $orderNote, axis: .vertical)
                             .lineLimit(2...4)
                             .font(.system(size: 14))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(Theme.primaryText)
                             .padding(14)
-                            .background(Color(hex: "111111"))
+                            .background(Theme.elevatedBG)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                             .tint(Color(hex: "C8A96E"))
 
@@ -196,11 +195,10 @@ struct ReorderView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") { showConfirm = false }.foregroundColor(Color(hex: "A6A29A"))
+                    Button("Cancel") { showConfirm = false }.foregroundColor(Theme.secondaryText)
                 }
             }
         }
-        .preferredColorScheme(.dark)
     }
 
     // MARK: - Data
@@ -311,7 +309,7 @@ struct ReorderView: View {
         case "fulfilled": return Color(hex: "7A8771")
         case "approved": return Color(hex: "C8A96E")
         case "rejected", "cancelled": return Color(hex: "C26B5A")
-        default: return Color(hex: "A6A29A")
+        default: return Theme.secondaryText
         }
     }
 }

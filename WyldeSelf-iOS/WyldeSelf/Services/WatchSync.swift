@@ -53,7 +53,7 @@ class WatchSync: NSObject, ObservableObject {
         let context: [String: Any] = [
             "currentDay": state.currentDay,
             "userName": state.userName,
-            "wyldeScore": WyldeScoreService.shared.todayScore,
+            "wyldeScore": WyldeScoreService.shared.todayScore?.totalScore ?? 0,
             "ritualDone": ritualDone,
             "ritualTotal": state.morningProtocolActions.count,
             "workoutCompleted": state.workoutCompleted,

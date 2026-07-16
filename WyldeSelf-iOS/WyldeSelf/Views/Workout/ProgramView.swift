@@ -8,7 +8,7 @@ struct ProgramView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "070707").ignoresSafeArea()
+                Theme.appBG.ignoresSafeArea()
 
                 if let program = service.program {
                     ScrollView(showsIndicators: false) {
@@ -22,11 +22,11 @@ struct ProgramView: View {
 
                                 Text(program.goal)
                                     .font(.system(size: 24, weight: .bold, design: .serif))
-                                    .foregroundColor(Color(hex: "F4F1E8"))
+                                    .foregroundColor(Theme.primaryText)
 
                                 Text("\(program.days.count)-day split")
                                     .font(.system(size: 13))
-                                    .foregroundColor(Color(hex: "A6A29A"))
+                                    .foregroundColor(Theme.secondaryText)
                             }
                             .padding(.top, 20)
 
@@ -46,7 +46,7 @@ struct ProgramView: View {
                                     Text("Generate new program")
                                         .font(.system(size: 13, weight: .medium))
                                 }
-                                .foregroundColor(Color(hex: "A6A29A"))
+                                .foregroundColor(Theme.secondaryText)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
                             }
@@ -75,10 +75,10 @@ struct ProgramView: View {
                 // Day badge
                 ZStack {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(isToday ? Color(hex: "C8A96E").opacity(0.12) : Color(hex: "1A1A1A"))
+                        .fill(isToday ? Color(hex: "C8A96E").opacity(0.12) : Theme.chipBG)
                     Text("D\(day.dayNumber)")
                         .font(.system(size: 16, weight: .bold, design: .monospaced))
-                        .foregroundColor(isToday ? Color(hex: "C8A96E") : Color(hex: "6E6B65"))
+                        .foregroundColor(isToday ? Color(hex: "C8A96E") : Theme.tertiaryText)
                 }
                 .frame(width: 48, height: 48)
 
@@ -86,7 +86,7 @@ struct ProgramView: View {
                     HStack {
                         Text(day.focus)
                             .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(Theme.primaryText)
                         if isToday {
                             Text("TODAY")
                                 .font(.system(size: 8, weight: .bold))
@@ -100,7 +100,7 @@ struct ProgramView: View {
                     }
                     Text("\(day.exercises.count) exercises")
                         .font(.system(size: 12))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                 }
 
                 Spacer()
@@ -111,14 +111,14 @@ struct ProgramView: View {
                 } else {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 12))
-                        .foregroundColor(Color(hex: "6E6B65"))
+                        .foregroundColor(Theme.tertiaryText)
                 }
             }
             .padding(16)
-            .background(Color(hex: "111111"))
+            .background(Theme.elevatedBG)
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(isToday ? Color(hex: "C8A96E").opacity(0.2) : Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1)
+                    .stroke(isToday ? Color(hex: "C8A96E").opacity(0.2) : Theme.primaryText.opacity(0.06), lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }

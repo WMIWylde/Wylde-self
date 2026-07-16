@@ -157,14 +157,14 @@ struct HamburgerButton: View {
         }) {
             Image(systemName: "line.3.horizontal")
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(Theme.primaryText)
                 .frame(width: 42, height: 42)
                 .background(
                     Circle()
-                        .fill(Color(hex: "111111").opacity(0.85))
+                        .fill(Theme.elevatedBG.opacity(0.85))
                         .overlay(
                             Circle()
-                                .stroke(Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1)
+                                .stroke(Theme.primaryText.opacity(0.06), lineWidth: 1)
                         )
                 )
         }

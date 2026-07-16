@@ -20,7 +20,7 @@ struct WyldeScoreCard: View {
                 if let s = score {
                     Text("\(s.totalScore)")
                         .font(.system(size: 16, weight: .bold, design: .monospaced))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                         .contentTransition(.numericText())
                     Text(s.grade)
                         .font(.system(size: 11, weight: .semibold))
@@ -32,7 +32,7 @@ struct WyldeScoreCard: View {
                 }
                 Image(systemName: expanded ? "chevron.up" : "chevron.down")
                     .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(Color(hex: "6E6B65"))
+                    .foregroundColor(Theme.tertiaryText)
             }
             } // close Button label
             .buttonStyle(.plain)
@@ -43,12 +43,12 @@ struct WyldeScoreCard: View {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text("\(s.totalScore)")
                         .font(.system(size: 42, weight: .bold, design: .monospaced))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                         .contentTransition(.numericText())
                         .animation(.easeInOut(duration: 0.4), value: s.totalScore)
                     Text("/ 100")
                         .font(.system(size: 14))
-                        .foregroundColor(Color(hex: "6E6B65"))
+                        .foregroundColor(Theme.tertiaryText)
                 }
 
                 // Component bars
@@ -64,19 +64,19 @@ struct WyldeScoreCard: View {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text("—")
                         .font(.system(size: 42, weight: .bold, design: .monospaced))
-                        .foregroundColor(Color(hex: "6E6B65"))
+                        .foregroundColor(Theme.tertiaryText)
                     Text("/ 100")
                         .font(.system(size: 14))
-                        .foregroundColor(Color(hex: "6E6B65"))
+                        .foregroundColor(Theme.tertiaryText)
                 }
                 Text("Complete today's actions to build your score")
                     .font(.system(size: 12))
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(Theme.secondaryText)
             }
             } // if expanded
         }
         .padding(20)
-        .background(Color(hex: "111111"))
+        .background(Theme.elevatedBG)
         .overlay(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .stroke(Color(hex: "C8A96E").opacity(0.15), lineWidth: 1)
@@ -89,7 +89,7 @@ struct WyldeScoreCard: View {
         HStack(spacing: 8) {
             Text(label)
                 .font(.system(size: 10, weight: .medium))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(Theme.secondaryText)
                 .frame(width: 60, alignment: .leading)
 
             GeometryReader { geo in
@@ -118,7 +118,7 @@ struct WyldeScoreCard: View {
         case 75..<90: return Color(hex: "5EE6D6")
         case 55..<75: return Color(hex: "7A8771")
         case 35..<55: return Color(hex: "FF9A3C")
-        default: return Color(hex: "A6A29A")
+        default: return Theme.secondaryText
         }
     }
 }

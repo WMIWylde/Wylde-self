@@ -71,9 +71,9 @@ struct IdentityImportView: View {
             Button { dismiss() } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(Theme.secondaryText)
                     .frame(width: 36, height: 36)
-                    .background(Color(hex: "111111"))
+                    .background(Theme.elevatedBG)
                     .clipShape(Circle())
             }
             .padding(.bottom, 12)
@@ -131,12 +131,12 @@ struct IdentityImportView: View {
                 }
                 Text("Unlock how Wylde sees you — and become who you're meant to be.")
                     .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(Color(hex: "F4F1E8"))
+                    .foregroundColor(Theme.primaryText)
                     .multilineTextAlignment(.center)
                     .lineSpacing(2)
                 Text("Identity Import analyzes your real voice and tunes every coaching surface to match.")
                     .font(.system(size: 13))
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(Theme.secondaryText)
                     .multilineTextAlignment(.center)
                     .lineSpacing(3)
                 Button {
@@ -174,14 +174,14 @@ struct IdentityImportView: View {
             Text(label.uppercased())
                 .font(.system(size: 10, weight: .semibold))
                 .tracking(2.0)
-                .foregroundColor(accent ? Color(hex: "C8A96E") : Color(hex: "A6A29A"))
+                .foregroundColor(accent ? Color(hex: "C8A96E") : Theme.secondaryText)
             Text(title)
                 .font(.system(size: accent ? 22 : 14, weight: accent ? .bold : .regular))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(Theme.primaryText)
             if let s = sub {
                 Text(s)
                     .font(.system(size: 12))
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(Theme.secondaryText)
                     .italic()
             }
         }
@@ -191,10 +191,10 @@ struct IdentityImportView: View {
             RoundedRectangle(cornerRadius: 14)
                 .fill(accent
                       ? AnyShapeStyle(LinearGradient(colors: [Color(hex: "C8A96E").opacity(0.10), Color(hex: "7D9275").opacity(0.06)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                      : AnyShapeStyle(Color(hex: "111111")))
+                      : AnyShapeStyle(Theme.elevatedBG))
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
-                        .stroke(accent ? Color(hex: "C8A96E").opacity(0.35) : Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1)
+                        .stroke(accent ? Color(hex: "C8A96E").opacity(0.35) : Theme.primaryText.opacity(0.06), lineWidth: 1)
                 )
         )
     }
@@ -206,12 +206,12 @@ struct IdentityImportView: View {
             // Privacy
             Text("Wylde only uses this data to personalize your coaching. We never post on your behalf. You can edit or delete this anytime.")
                 .font(.system(size: 12))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(Theme.secondaryText)
                 .lineSpacing(2)
                 .padding(14)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
-                    RoundedRectangle(cornerRadius: 12).fill(Color(hex: "161616"))
+                    RoundedRectangle(cornerRadius: 12).fill(Theme.chipBG)
                 )
 
             // Coming Soon platforms
@@ -238,14 +238,14 @@ struct IdentityImportView: View {
                             .autocorrectionDisabled()
                             .keyboardType(.URL)
                             .font(.system(size: 14))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(Theme.primaryText)
                             .padding(.horizontal, 14).padding(.vertical, 12)
                             .background(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color(hex: "161616"))
+                                    .fill(Theme.chipBG)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 10)
-                                            .stroke(Color(hex: "F4F1E8").opacity(0.08), lineWidth: 1)
+                                            .stroke(Theme.primaryText.opacity(0.08), lineWidth: 1)
                                     )
                             )
                         if idx > 0 {
@@ -284,16 +284,16 @@ struct IdentityImportView: View {
                     .foregroundColor(Color(hex: "A6A29A"))
                 TextEditor(text: $rawText)
                     .font(.system(size: 14))
-                    .foregroundColor(Color(hex: "F4F1E8"))
+                    .foregroundColor(Theme.primaryText)
                     .scrollContentBackground(.hidden)
                     .padding(8)
                     .frame(minHeight: 160)
                     .background(
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(hex: "161616"))
+                            .fill(Theme.chipBG)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color(hex: "F4F1E8").opacity(0.08), lineWidth: 1)
+                                    .stroke(Theme.primaryText.opacity(0.08), lineWidth: 1)
                             )
                     )
             }
@@ -425,11 +425,11 @@ struct IdentityImportView: View {
                 .foregroundColor(Color(hex: "C8A96E"))
             Text(p.identityArchetype)
                 .font(.system(size: 24, weight: .bold))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(Theme.primaryText)
                 .lineSpacing(1)
             Text("\(p.confidenceLevel.uppercased()) confidence · \(p.communicationTone)")
                 .font(.system(size: 12))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(Theme.secondaryText)
                 .italic()
         }
         .padding(20)
@@ -452,20 +452,20 @@ struct IdentityImportView: View {
             Text(label.uppercased())
                 .font(.system(size: 10, weight: .semibold))
                 .tracking(1.8)
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(Theme.secondaryText)
             Text(body)
                 .font(.system(size: 14))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(Theme.primaryText)
                 .lineSpacing(3)
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 14)
-                .fill(Color(hex: "111111"))
+                .fill(Theme.elevatedBG)
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
-                        .stroke(Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1)
+                        .stroke(Theme.primaryText.opacity(0.06), lineWidth: 1)
                 )
         )
     }
@@ -475,7 +475,7 @@ struct IdentityImportView: View {
             Text(label.uppercased())
                 .font(.system(size: 10, weight: .semibold))
                 .tracking(1.8)
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(Theme.secondaryText)
             VStack(alignment: .leading, spacing: 6) {
                 ForEach(items, id: \.self) { item in
                     HStack(alignment: .top, spacing: 8) {
@@ -483,7 +483,7 @@ struct IdentityImportView: View {
                             .foregroundColor(Color(hex: "C8A96E"))
                         Text(item)
                             .font(.system(size: 14))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(Theme.primaryText)
                             .lineSpacing(2)
                     }
                 }
@@ -493,10 +493,10 @@ struct IdentityImportView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 14)
-                .fill(Color(hex: "111111"))
+                .fill(Theme.elevatedBG)
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
-                        .stroke(Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1)
+                        .stroke(Theme.primaryText.opacity(0.06), lineWidth: 1)
                 )
         )
     }
@@ -528,15 +528,15 @@ struct IdentityImportView: View {
             HStack(spacing: 10) {
                 Image(systemName: icon)
                     .font(.system(size: 16))
-                    .foregroundColor(Color(hex: "F4F1E8"))
+                    .foregroundColor(Theme.primaryText)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(name)
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                     Text("COMING SOON")
                         .font(.system(size: 9, weight: .semibold))
                         .tracking(1.4)
-                        .foregroundColor(Color(hex: "6E6B65"))
+                        .foregroundColor(Theme.tertiaryText)
                 }
                 Spacer()
             }
@@ -544,10 +544,10 @@ struct IdentityImportView: View {
             .frame(maxWidth: .infinity)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(hex: "111111"))
+                    .fill(Theme.elevatedBG)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1)
+                            .stroke(Theme.primaryText.opacity(0.06), lineWidth: 1)
                     )
             )
         }

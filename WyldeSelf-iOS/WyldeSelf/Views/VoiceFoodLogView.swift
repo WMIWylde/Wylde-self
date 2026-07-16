@@ -26,7 +26,7 @@ struct VoiceFoodLogView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            Theme.appBG.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header
@@ -39,9 +39,9 @@ struct VoiceFoodLogView: View {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
                             .frame(width: 36, height: 36)
-                            .background(Color(hex: "111111"))
+                            .background(Theme.elevatedBG)
                             .clipShape(Circle())
                     }
                 }
@@ -55,10 +55,10 @@ struct VoiceFoodLogView: View {
                             Button { selectedMealType = type } label: {
                                 Text(type.rawValue)
                                     .font(.system(size: 12, weight: .semibold))
-                                    .foregroundColor(selectedMealType == type ? Color(hex: "070707") : Color(hex: "A6A29A"))
+                                    .foregroundColor(selectedMealType == type ? Theme.onAccent : Theme.secondaryText)
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 7)
-                                    .background(selectedMealType == type ? Color(hex: "C8A96E") : Color(hex: "1A1A1A"))
+                                    .background(selectedMealType == type ? Color(hex: "C8A96E") : Theme.chipBG)
                                     .clipShape(Capsule())
                             }
                         }
@@ -81,7 +81,6 @@ struct VoiceFoodLogView: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
         .onAppear { requestSpeechAuth() }
         .onDisappear { stopRecording() }
     }
@@ -118,12 +117,12 @@ struct VoiceFoodLogView: View {
 
                 Text(isRecording ? "Listening..." : (speechAuthorized ? "Tap to speak" : "Microphone access needed"))
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(isRecording ? .red : Color(hex: "A6A29A"))
+                    .foregroundColor(isRecording ? .red : Theme.secondaryText)
 
                 if !speechAuthorized {
                     Text("Go to Settings → Wylde Self → Speech Recognition")
                         .font(.system(size: 11))
-                        .foregroundColor(Color(hex: "6E6B65"))
+                        .foregroundColor(Theme.tertiaryText)
                 }
             }
 
@@ -133,14 +132,14 @@ struct VoiceFoodLogView: View {
                     Text("I HEARD:")
                         .font(.system(size: 10, weight: .bold))
                         .tracking(2)
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
 
                     Text(transcribedText)
                         .font(.system(size: 15))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                         .padding(14)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color(hex: "111111"))
+                        .background(Theme.elevatedBG)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
             }
@@ -150,20 +149,20 @@ struct VoiceFoodLogView: View {
                 Text("OR TYPE IT")
                     .font(.system(size: 10, weight: .bold))
                     .tracking(2)
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(Theme.secondaryText)
 
                 HStack(spacing: 8) {
                     TextField("e.g. 2 eggs, toast with butter, black coffee", text: $manualText, axis: .vertical)
                         .lineLimit(1...4)
                         .font(.system(size: 14))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 12)
-                        .background(Color(hex: "111111"))
+                        .background(Theme.elevatedBG)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1)
+                                .stroke(Theme.primaryText.opacity(0.06), lineWidth: 1)
                         )
                         .tint(Color(hex: "C8A96E"))
                 }
@@ -216,7 +215,7 @@ struct VoiceFoodLogView: View {
                     Text("TOTAL")
                         .font(.system(size: 10, weight: .bold))
                         .tracking(2)
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
 
                     HStack(spacing: 0) {
                         macroStat("Calories", "\(total.calories)", Color(hex: "C8A96E"))
@@ -226,7 +225,7 @@ struct VoiceFoodLogView: View {
                     }
                 }
                 .padding(16)
-                .background(Color(hex: "111111"))
+                .background(Theme.elevatedBG)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
             }
 
@@ -234,18 +233,18 @@ struct VoiceFoodLogView: View {
             Text("BREAKDOWN")
                 .font(.system(size: 10, weight: .bold))
                 .tracking(2)
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(Theme.secondaryText)
 
             ForEach(parsedMeals) { item in
                 HStack(spacing: 12) {
                     VStack(alignment: .leading, spacing: 3) {
                         Text(item.name)
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(Theme.primaryText)
                         if let qty = item.quantity {
                             Text(qty)
                                 .font(.system(size: 11))
-                                .foregroundColor(Color(hex: "6E6B65"))
+                                .foregroundColor(Theme.tertiaryText)
                         }
                     }
                     Spacer()
@@ -259,7 +258,7 @@ struct VoiceFoodLogView: View {
                     }
                 }
                 .padding(14)
-                .background(Color(hex: "111111"))
+                .background(Theme.elevatedBG)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             }
 
@@ -274,11 +273,11 @@ struct VoiceFoodLogView: View {
                 } label: {
                     Text("Redo")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
-                        .background(Color(hex: "111111"))
-                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1))
+                        .background(Theme.elevatedBG)
+                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.primaryText.opacity(0.06), lineWidth: 1))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
 
@@ -309,7 +308,7 @@ struct VoiceFoodLogView: View {
                 .foregroundColor(color)
             Text(label)
                 .font(.system(size: 10, weight: .medium))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(Theme.secondaryText)
         }
         .frame(maxWidth: .infinity)
     }

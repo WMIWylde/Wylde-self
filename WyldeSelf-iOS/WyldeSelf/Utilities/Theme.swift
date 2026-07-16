@@ -32,6 +32,36 @@ enum Theme {
         })
     }
 
+    // ── Adaptive semantic tokens ────────────────────────────────
+    // Migration targets for the hardcoded dark-only hex scattered across
+    // views. Each flips to a considered light value so the appearance
+    // toggle produces a designed light mode, not inverted dark.
+    private static func adaptive(dark: String, light: String) -> Color {
+        Color(UIColor { $0.userInterfaceStyle == .dark
+            ? UIColor(wyldeHex: dark) : UIColor(wyldeHex: light) })
+    }
+    /// App background (was hardcoded 0B0B0B/070707).
+    static var appBG: Color { adaptive(dark: "0B0B0B", light: "F4F1EC") }
+    /// Raised surface — cards, sheets (was 111111).
+    static var elevatedBG: Color { adaptive(dark: "111111", light: "FFFFFF") }
+    /// Chip / control fill (was 161616/1A1A1A).
+    static var chipBG: Color { adaptive(dark: "161616", light: "ECE7DB") }
+    /// Primary text (was F4F1E8).
+    static var primaryText: Color { adaptive(dark: "F4F1E8", light: "1A1A1A") }
+    /// Secondary / muted text (was A6A29A).
+    static var secondaryText: Color { adaptive(dark: "A6A29A", light: "6E6B65") }
+    /// Tertiary text — chevrons, small labels (was 6E6B65).
+    static var tertiaryText: Color { adaptive(dark: "6E6B65", light: "A6A29A") }
+    /// Hairline dividers.
+    static var hairline: Color {
+        Color(UIColor { $0.userInterfaceStyle == .dark
+            ? UIColor(white: 1, alpha: 0.06) : UIColor(white: 0, alpha: 0.08) })
+    }
+    /// Text/icons sitting ON a fixed accent fill (gold, sage, colored chips/
+    /// buttons/bubbles). FIXED dark in both modes — the accent fill never
+    /// changes, so this must NOT be adaptive or it flips light in light mode.
+    static var onAccent: Color { Color(hex: "0B0B0B") }
+
     /// For `UITabBarAppearance` / `UINavigationBarAppearance` alongside SwiftUI chrome.
     static var paperUIColor: UIColor {
         UIColor { tc in

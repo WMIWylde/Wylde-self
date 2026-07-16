@@ -12,7 +12,7 @@ struct EveningReflectionView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            Theme.appBG.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header
@@ -21,9 +21,9 @@ struct EveningReflectionView: View {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
                             .frame(width: 36, height: 36)
-                            .background(Color(hex: "111111"))
+                            .background(Theme.elevatedBG)
                             .clipShape(Circle())
                     }
                 }
@@ -41,7 +41,7 @@ struct EveningReflectionView: View {
 
                             Text("Close the day with clarity.")
                                 .font(.system(size: 24, weight: .bold, design: .serif))
-                                .foregroundColor(Color(hex: "F4F1E8"))
+                                .foregroundColor(Theme.primaryText)
                         }
 
                         // Today's summary
@@ -75,7 +75,7 @@ struct EveningReflectionView: View {
                                     ProgressView().tint(Color(hex: "C8A96E"))
                                     Text("Reflecting...")
                                         .font(.system(size: 14))
-                                        .foregroundColor(Color(hex: "A6A29A"))
+                                        .foregroundColor(Theme.secondaryText)
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 40)
@@ -91,7 +91,6 @@ struct EveningReflectionView: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
     }
 
     // MARK: - Today's Summary
@@ -102,12 +101,12 @@ struct EveningReflectionView: View {
 
         return HStack(spacing: 16) {
             summaryPill(icon: "sunrise.fill", label: "Ritual", value: "\(ritualDone)/\(ritualTotal)", color: Color(hex: "C8A96E"))
-            summaryPill(icon: "dumbbell.fill", label: "Workout", value: appState.workoutCompleted ? "Done" : "Skipped", color: appState.workoutCompleted ? Color(hex: "5EE6D6") : Color(hex: "6E6B65"))
-            summaryPill(icon: "figure.walk", label: "Walk", value: appState.dailyWalkCompleted ? "Done" : "Skipped", color: appState.dailyWalkCompleted ? Color(hex: "7FD0FF") : Color(hex: "6E6B65"))
+            summaryPill(icon: "dumbbell.fill", label: "Workout", value: appState.workoutCompleted ? "Done" : "Skipped", color: appState.workoutCompleted ? Color(hex: "5EE6D6") : Theme.tertiaryText)
+            summaryPill(icon: "figure.walk", label: "Walk", value: appState.dailyWalkCompleted ? "Done" : "Skipped", color: appState.dailyWalkCompleted ? Color(hex: "7FD0FF") : Theme.tertiaryText)
             summaryPill(icon: "fork.knife", label: "Nutrition", value: "\(appState.caloriesLogged) cal", color: Color(hex: "FF9A3C"))
         }
         .padding(14)
-        .background(Color(hex: "111111"))
+        .background(Theme.elevatedBG)
         .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 
@@ -118,10 +117,10 @@ struct EveningReflectionView: View {
                 .foregroundColor(color)
             Text(value)
                 .font(.system(size: 10, weight: .semibold, design: .monospaced))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(Theme.primaryText)
             Text(label)
                 .font(.system(size: 8, weight: .medium))
-                .foregroundColor(Color(hex: "6E6B65"))
+                .foregroundColor(Theme.tertiaryText)
         }
         .frame(maxWidth: .infinity)
     }
@@ -132,22 +131,22 @@ struct EveningReflectionView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(prompt)
                 .font(.system(size: 18, weight: .bold, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(Theme.primaryText)
 
             Text(hint)
                 .font(.system(size: 13))
-                .foregroundColor(Color(hex: "6E6B65"))
+                .foregroundColor(Theme.tertiaryText)
 
             TextField("", text: text, axis: .vertical)
                 .lineLimit(3...8)
                 .font(.system(size: 15))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(Theme.primaryText)
                 .padding(14)
-                .background(Color(hex: "111111"))
+                .background(Theme.elevatedBG)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1)
+                        .stroke(Theme.primaryText.opacity(0.06), lineWidth: 1)
                 )
                 .tint(Color(hex: "C8A96E"))
 
@@ -185,7 +184,7 @@ struct EveningReflectionView: View {
 
             Text(text)
                 .font(.system(size: 15))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(Theme.primaryText)
                 .lineSpacing(4)
 
             Button {
@@ -207,7 +206,7 @@ struct EveningReflectionView: View {
             }
         }
         .padding(18)
-        .background(Color(hex: "111111"))
+        .background(Theme.elevatedBG)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color(hex: "C8A96E").opacity(0.15), lineWidth: 1)

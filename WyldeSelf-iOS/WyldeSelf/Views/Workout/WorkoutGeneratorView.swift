@@ -148,7 +148,7 @@ struct WorkoutGeneratorView: View {
                     .foregroundColor(Color(hex: "6E6B65"))
             }
             .padding(16)
-            .background(Color(hex: "111111"))
+            .background(Theme.elevatedBG)
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .stroke(accent.opacity(0.15), lineWidth: 1)

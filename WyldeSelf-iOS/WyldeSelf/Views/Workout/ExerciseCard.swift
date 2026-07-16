@@ -38,10 +38,10 @@ struct ExerciseCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(exercise.name)
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                     Text(exercise.cue)
                         .font(.system(size: 12))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                         .lineLimit(2)
                 }
                 Spacer()
@@ -52,7 +52,7 @@ struct ExerciseCard: View {
                     } label: {
                         Image(systemName: "arrow.triangle.2.circlepath")
                             .font(.system(size: 11))
-                            .foregroundColor(Color(hex: "6E6B65"))
+                            .foregroundColor(Theme.tertiaryText)
                     }
                 }
                 Text(exercise.setsReps)
@@ -67,11 +67,11 @@ struct ExerciseCard: View {
                     Text("ALTERNATIVES")
                         .font(.system(size: 9, weight: .bold))
                         .tracking(1.5)
-                        .foregroundColor(Color(hex: "6E6B65"))
+                        .foregroundColor(Theme.tertiaryText)
                     ForEach(alternatives, id: \.self) { alt in
                         Text("→ \(alt)")
                             .font(.system(size: 12))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -122,19 +122,19 @@ struct ExerciseCard: View {
 
                         Text("\(intervalRemaining)")
                             .font(.system(size: 48, weight: .bold, design: .monospaced))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(Theme.primaryText)
                             .contentTransition(.numericText())
                             .animation(.easeInOut(duration: 0.2), value: intervalRemaining)
 
                         Text("Round \(currentRound) of \(intervalRounds)")
                             .font(.system(size: 12, design: .monospaced))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
 
                         // Progress dots
                         HStack(spacing: 4) {
                             ForEach(1...intervalRounds, id: \.self) { r in
                                 Circle()
-                                    .fill(r < currentRound ? Color(hex: "7A8771") : (r == currentRound ? (isWorkPhase ? Color(hex: "FF6B8B") : Color(hex: "5EE6D6")) : Color(hex: "1A1A1A")))
+                                    .fill(r < currentRound ? Color(hex: "7A8771") : (r == currentRound ? (isWorkPhase ? Color(hex: "FF6B8B") : Color(hex: "5EE6D6")) : Theme.chipBG))
                                     .frame(width: 8, height: 8)
                             }
                         }
@@ -146,7 +146,7 @@ struct ExerciseCard: View {
                         } label: {
                             Text("Complete")
                                 .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(Color(hex: "070707"))
+                                .foregroundColor(Theme.onAccent)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 10)
                                 .background(Color(hex: "7A8771"))
@@ -159,7 +159,7 @@ struct ExerciseCard: View {
                         let secs = cardioRemaining % 60
                         Text(String(format: "%d:%02d", mins, secs))
                             .font(.system(size: 32, weight: .bold, design: .monospaced))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(Theme.primaryText)
                             .contentTransition(.numericText())
 
                         HStack(spacing: 12) {
@@ -169,10 +169,10 @@ struct ExerciseCard: View {
                             } label: {
                                 Text("Pause")
                                     .font(.system(size: 13, weight: .medium))
-                                    .foregroundColor(Color(hex: "A6A29A"))
+                                    .foregroundColor(Theme.secondaryText)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 10)
-                                    .background(Color(hex: "1A1A1A"))
+                                    .background(Theme.chipBG)
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
                             }
                             Button {
@@ -182,7 +182,7 @@ struct ExerciseCard: View {
                             } label: {
                                 Text("Complete")
                                     .font(.system(size: 13, weight: .semibold))
-                                    .foregroundColor(Color(hex: "070707"))
+                                    .foregroundColor(Theme.onAccent)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 10)
                                     .background(Color(hex: "7A8771"))
@@ -201,7 +201,7 @@ struct ExerciseCard: View {
                                     Text("Start Intervals")
                                         .font(.system(size: 14, weight: .semibold))
                                 }
-                                .foregroundColor(Color(hex: "070707"))
+                                .foregroundColor(Theme.onAccent)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
                                 .background(Color(hex: "FF6B8B"))
@@ -216,10 +216,10 @@ struct ExerciseCard: View {
                                 Text("Start \(exercise.timerMinutes) min")
                                     .font(.system(size: 14, weight: .semibold))
                             }
-                            .foregroundColor(hasInterval ? Color(hex: "A6A29A") : Color(hex: "070707"))
+                            .foregroundColor(hasInterval ? Theme.secondaryText : Theme.onAccent)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
-                            .background(hasInterval ? Color(hex: "1A1A1A") : Color(hex: "5EE6D6"))
+                            .background(hasInterval ? Theme.chipBG : Color(hex: "5EE6D6"))
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                     }
@@ -245,7 +245,7 @@ struct ExerciseCard: View {
                 if pr == nil {
                     Text(suggestion.note)
                         .font(.system(size: 11))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                         .padding(.horizontal, 4)
                 }
 
@@ -293,10 +293,10 @@ struct ExerciseCard: View {
             }
             } // close else
         }
-        .background(Color(hex: "111111"))
+        .background(Theme.elevatedBG)
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1)
+                .stroke(Theme.primaryText.opacity(0.06), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .onAppear { initState() }
@@ -307,7 +307,7 @@ struct ExerciseCard: View {
             // Set number
             Text("\(setIndex + 1)")
                 .font(.system(size: 12, weight: .bold, design: .monospaced))
-                .foregroundColor(setLog.completed ? Color(hex: "C8A96E") : Color(hex: "6E6B65"))
+                .foregroundColor(setLog.completed ? Color(hex: "C8A96E") : Theme.tertiaryText)
                 .frame(width: 18)
 
             // Reps stepper
@@ -343,7 +343,7 @@ struct ExerciseCard: View {
             } label: {
                 Image(systemName: setLog.completed ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 22))
-                    .foregroundColor(setLog.completed ? Color(hex: "C8A96E") : Color(hex: "6E6B65"))
+                    .foregroundColor(setLog.completed ? Color(hex: "C8A96E") : Theme.tertiaryText)
             }
             .disabled(setLog.completed)
         }
@@ -355,19 +355,19 @@ struct ExerciseCard: View {
     private func stepper(value: Binding<Double>, step: Double, label: String) -> some View {
         HStack(spacing: 0) {
             Button { value.wrappedValue = max(0, value.wrappedValue - step) } label: {
-                Text("−").font(.system(size: 14, weight: .medium)).foregroundColor(Color(hex: "A6A29A"))
+                Text("−").font(.system(size: 14, weight: .medium)).foregroundColor(Theme.secondaryText)
                     .frame(width: 24, height: 30)
             }
             Text("\(Int(value.wrappedValue))")
                 .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(Theme.primaryText)
                 .frame(minWidth: 30)
             Button { value.wrappedValue += step } label: {
-                Text("+").font(.system(size: 14, weight: .medium)).foregroundColor(Color(hex: "A6A29A"))
+                Text("+").font(.system(size: 14, weight: .medium)).foregroundColor(Theme.secondaryText)
                     .frame(width: 24, height: 30)
             }
         }
-        .background(Color(hex: "1A1A1A"))
+        .background(Theme.chipBG)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
@@ -389,16 +389,16 @@ struct ExerciseCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(concept.title)
                         .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                     Text(concept.explanation)
                         .font(.system(size: 11))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                         .lineSpacing(2)
                 }
             }
         }
         .padding(14)
-        .background(Color(hex: "0B0B0B"))
+        .background(Theme.appBG)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .padding(.horizontal, 4)
     }

@@ -89,15 +89,15 @@ struct TodayView: View {
                                 .foregroundColor(Color(hex: "B68BFF"))
                             Text("View prescriptions and log doses")
                                 .font(.system(size: 13))
-                                .foregroundColor(Color(hex: "A6A29A"))
+                                .foregroundColor(Theme.secondaryText)
                         }
                         Spacer()
                         Image(systemName: "chevron.right")
                             .font(.system(size: 12))
-                            .foregroundColor(Color(hex: "6E6B65"))
+                            .foregroundColor(Theme.tertiaryText)
                     }
                     .padding(16)
-                    .background(Color(hex: "111111"))
+                    .background(Theme.elevatedBG)
                     .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color(hex: "B68BFF").opacity(0.15), lineWidth: 1))
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
@@ -1250,15 +1250,15 @@ struct TodayView: View {
                         .foregroundColor(Color(hex: "C8A96E"))
                     Text("The version of you that already did it.")
                         .font(.system(size: 13))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12))
-                    .foregroundColor(Color(hex: "6E6B65"))
+                    .foregroundColor(Theme.tertiaryText)
             }
             .padding(16)
-            .background(Color(hex: "111111"))
+            .background(Theme.elevatedBG)
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .stroke(Color(hex: "C8A96E").opacity(0.15), lineWidth: 1)
@@ -1392,15 +1392,15 @@ struct TodayView: View {
                         .foregroundColor(Color(hex: "B68BFF"))
                     Text("Reflect, reset, and close the loop")
                         .font(.system(size: 13))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12))
-                    .foregroundColor(Color(hex: "6E6B65"))
+                    .foregroundColor(Theme.tertiaryText)
             }
             .padding(16)
-            .background(Color(hex: "111111"))
+            .background(Theme.elevatedBG)
             .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color(hex: "B68BFF").opacity(0.15), lineWidth: 1))
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }

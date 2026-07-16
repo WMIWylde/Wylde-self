@@ -243,7 +243,7 @@ struct StartTodayFlow: View {
                 Text(primaryLabel)
                     .font(.system(size: 13, weight: .bold))
                     .tracking(1.0)
-                    .foregroundColor(Color(hex: "0B0B0B"))
+                    .foregroundColor(Theme.onAccent)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(
@@ -386,7 +386,7 @@ struct StartTodayFlow: View {
                 if action.completed {
                     Image(systemName: "checkmark")
                         .font(.system(size: 11, weight: .bold))
-                        .foregroundColor(Color(hex: "0B0B0B"))
+                        .foregroundColor(Theme.onAccent)
                 }
             }
             .onTapGesture {
@@ -801,7 +801,7 @@ struct StartTodayFlow: View {
                 if done {
                     Image(systemName: "checkmark")
                         .font(.system(size: 8, weight: .bold))
-                        .foregroundColor(Color(hex: "0B0B0B"))
+                        .foregroundColor(Theme.onAccent)
                 }
             }
             Text(label)

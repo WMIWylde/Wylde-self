@@ -11,7 +11,7 @@ struct ProtocolTrackerView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            Theme.appBG.ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
@@ -24,15 +24,15 @@ struct ProtocolTrackerView: View {
                                 .foregroundColor(Color(hex: "C8A96E"))
                             Text("Your active protocol")
                                 .font(.system(size: 22, weight: .bold, design: .serif))
-                                .foregroundColor(Color(hex: "F4F1E8"))
+                                .foregroundColor(Theme.primaryText)
                         }
                         Spacer()
                         Button { dismiss() } label: {
                             Image(systemName: "xmark")
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(Color(hex: "A6A29A"))
+                                .foregroundColor(Theme.secondaryText)
                                 .frame(width: 36, height: 36)
-                                .background(Color(hex: "111111"))
+                                .background(Theme.elevatedBG)
                                 .clipShape(Circle())
                         }
                     }
@@ -51,19 +51,19 @@ struct ProtocolTrackerView: View {
                                     .rotationEffect(.degrees(-90))
                                 Text("\(rate)%")
                                     .font(.system(size: 13, weight: .bold, design: .monospaced))
-                                    .foregroundColor(Color(hex: "F4F1E8"))
+                                    .foregroundColor(Theme.primaryText)
                             }
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Protocol Adherence")
                                     .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(Color(hex: "F4F1E8"))
+                                    .foregroundColor(Theme.primaryText)
                                 Text("Last 14 days")
                                     .font(.system(size: 11))
-                                    .foregroundColor(Color(hex: "A6A29A"))
+                                    .foregroundColor(Theme.secondaryText)
                             }
                         }
                         .padding(16)
-                        .background(Color(hex: "111111"))
+                        .background(Theme.elevatedBG)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
 
@@ -72,13 +72,13 @@ struct ProtocolTrackerView: View {
                         VStack(spacing: 12) {
                             Image(systemName: "pills")
                                 .font(.system(size: 32))
-                                .foregroundColor(Color(hex: "6E6B65"))
+                                .foregroundColor(Theme.tertiaryText)
                             Text("No active prescriptions")
                                 .font(.system(size: 14))
-                                .foregroundColor(Color(hex: "A6A29A"))
+                                .foregroundColor(Theme.secondaryText)
                             Text("Your clinician will assign protocols from their dashboard.")
                                 .font(.system(size: 12))
-                                .foregroundColor(Color(hex: "6E6B65"))
+                                .foregroundColor(Theme.tertiaryText)
                                 .multilineTextAlignment(.center)
                         }
                         .frame(maxWidth: .infinity)
@@ -86,7 +86,7 @@ struct ProtocolTrackerView: View {
                     } else {
                         Text("Today's Protocol")
                             .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
 
                         ForEach(service.prescriptions, id: \.id) { rx in
                             prescriptionCard(rx)
@@ -97,7 +97,7 @@ struct ProtocolTrackerView: View {
                     if !service.adherenceLogs.isEmpty {
                         Text("Recent Log")
                             .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
                             .padding(.top, 8)
 
                         ForEach(service.adherenceLogs.prefix(10)) { log in
@@ -108,11 +108,11 @@ struct ProtocolTrackerView: View {
                                 VStack(alignment: .leading, spacing: 1) {
                                     Text(log.dose ?? "Dose logged")
                                         .font(.system(size: 13))
-                                        .foregroundColor(Color(hex: "F4F1E8"))
+                                        .foregroundColor(Theme.primaryText)
                                     if let date = log.createdAt {
                                         Text(date.prefix(10))
                                             .font(.system(size: 10))
-                                            .foregroundColor(Color(hex: "6E6B65"))
+                                            .foregroundColor(Theme.tertiaryText)
                                     }
                                 }
                                 Spacer()
@@ -121,7 +121,7 @@ struct ProtocolTrackerView: View {
                                     .foregroundColor(log.status == "taken" ? Color(hex: "7A8771") : Color(hex: "C26B5A"))
                             }
                             .padding(12)
-                            .background(Color(hex: "111111"))
+                            .background(Theme.elevatedBG)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                     }
@@ -129,7 +129,7 @@ struct ProtocolTrackerView: View {
                     // Disclaimer
                     Text("Protocol changes must be made by your clinician. Contact your care team if you have concerns.")
                         .font(.system(size: 10))
-                        .foregroundColor(Color(hex: "6E6B65"))
+                        .foregroundColor(Theme.tertiaryText)
                         .padding(.top, 12)
 
                     Spacer().frame(height: 40)
@@ -154,10 +154,10 @@ struct ProtocolTrackerView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(rx.drug)
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                     Text("\(rx.dose) · \(rx.frequency)")
                         .font(.system(size: 12))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                 }
                 Spacer()
                 if todayLogged {
@@ -178,7 +178,7 @@ struct ProtocolTrackerView: View {
                             Text("Taken")
                                 .font(.system(size: 13, weight: .semibold))
                         }
-                        .foregroundColor(Color(hex: "070707"))
+                        .foregroundColor(Theme.onAccent)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 11)
                         .background(Color(hex: "7A8771"))
@@ -190,10 +190,10 @@ struct ProtocolTrackerView: View {
                     } label: {
                         Text("Skip")
                             .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 11)
-                            .background(Color(hex: "1A1A1A"))
+                            .background(Theme.chipBG)
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
 
@@ -212,10 +212,10 @@ struct ProtocolTrackerView: View {
             }
         }
         .padding(16)
-        .background(Color(hex: "111111"))
+        .background(Theme.elevatedBG)
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(todayLogged ? Color(hex: "7A8771").opacity(0.2) : Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1)
+                .stroke(todayLogged ? Color(hex: "7A8771").opacity(0.2) : Theme.primaryText.opacity(0.06), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
@@ -225,22 +225,22 @@ struct ProtocolTrackerView: View {
     private var sideEffectSheet: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "070707").ignoresSafeArea()
+                Theme.appBG.ignoresSafeArea()
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Report a side effect")
                         .font(.system(size: 18, weight: .bold, design: .serif))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
 
                     Text("This will be shared with your clinician.")
                         .font(.system(size: 12))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
 
                     TextField("Describe what you're experiencing...", text: $sideEffectNote, axis: .vertical)
                         .lineLimit(3...6)
                         .font(.system(size: 14))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                         .padding(14)
-                        .background(Color(hex: "111111"))
+                        .background(Theme.elevatedBG)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                         .tint(Color(hex: "C8A96E"))
 
@@ -267,11 +267,10 @@ struct ProtocolTrackerView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Cancel") { showSideEffectSheet = false }
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                 }
             }
         }
-        .preferredColorScheme(.dark)
     }
 
     private func adherenceColor(_ rate: Int) -> Color {

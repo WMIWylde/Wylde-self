@@ -15,7 +15,7 @@ struct WorkoutCalendarView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            Theme.appBG.ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
@@ -28,15 +28,15 @@ struct WorkoutCalendarView: View {
                                 .foregroundColor(Color(hex: "C8A96E"))
                             Text("Plan Your Week")
                                 .font(.system(size: 22, weight: .bold, design: .serif))
-                                .foregroundColor(Color(hex: "F4F1E8"))
+                                .foregroundColor(Theme.primaryText)
                         }
                         Spacer()
                         Button { dismiss() } label: {
                             Image(systemName: "xmark")
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(Color(hex: "A6A29A"))
+                                .foregroundColor(Theme.secondaryText)
                                 .frame(width: 36, height: 36)
-                                .background(Color(hex: "111111"))
+                                .background(Theme.elevatedBG)
                                 .clipShape(Circle())
                         }
                     }
@@ -46,10 +46,10 @@ struct WorkoutCalendarView: View {
                         Text("WORKOUT DAYS")
                             .font(.system(size: 10, weight: .bold))
                             .tracking(2)
-                            .foregroundColor(Color(hex: "6E6B65"))
+                            .foregroundColor(Theme.tertiaryText)
                         Text("Which days do you train?")
                             .font(.system(size: 13))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
 
                         HStack(spacing: 8) {
                             ForEach(0..<7, id: \.self) { day in
@@ -58,7 +58,7 @@ struct WorkoutCalendarView: View {
                         }
                     }
                     .padding(20)
-                    .background(Color(hex: "111111"))
+                    .background(Theme.elevatedBG)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
 
                     // Workout Time
@@ -66,19 +66,18 @@ struct WorkoutCalendarView: View {
                         Text("WORKOUT TIME")
                             .font(.system(size: 10, weight: .bold))
                             .tracking(2)
-                            .foregroundColor(Color(hex: "6E6B65"))
+                            .foregroundColor(Theme.tertiaryText)
                         Text("When do you usually train?")
                             .font(.system(size: 13))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
 
                         DatePicker("", selection: $workoutTime, displayedComponents: .hourAndMinute)
                             .datePickerStyle(.wheel)
                             .labelsHidden()
-                            .colorScheme(.dark)
                             .frame(height: 120)
                     }
                     .padding(20)
-                    .background(Color(hex: "111111"))
+                    .background(Theme.elevatedBG)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
 
                     // Reminders
@@ -86,7 +85,7 @@ struct WorkoutCalendarView: View {
                         Text("DAILY REMINDERS")
                             .font(.system(size: 10, weight: .bold))
                             .tracking(2)
-                            .foregroundColor(Color(hex: "6E6B65"))
+                            .foregroundColor(Theme.tertiaryText)
 
                         reminderToggle(
                             icon: "drop.fill",
@@ -105,7 +104,7 @@ struct WorkoutCalendarView: View {
                         )
                     }
                     .padding(20)
-                    .background(Color(hex: "111111"))
+                    .background(Theme.elevatedBG)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
 
                     // Save
@@ -120,7 +119,6 @@ struct WorkoutCalendarView: View {
                 .padding(.top, 16)
             }
         }
-        .preferredColorScheme(.dark)
         .onAppear { loadSchedule() }
     }
 
@@ -135,10 +133,10 @@ struct WorkoutCalendarView: View {
         } label: {
             Text(dayLabels[day])
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(isSelected ? Color(hex: "070707") : Color(hex: "A6A29A"))
+                .foregroundColor(isSelected ? Theme.onAccent : Theme.secondaryText)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-                .background(isSelected ? Color(hex: "C8A96E") : Color(hex: "1A1A1A"))
+                .background(isSelected ? Color(hex: "C8A96E") : Theme.chipBG)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
         }
     }
@@ -157,10 +155,10 @@ struct WorkoutCalendarView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(Color(hex: "F4F1E8"))
+                    .foregroundColor(Theme.primaryText)
                 Text(subtitle)
                     .font(.system(size: 11))
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(Theme.secondaryText)
             }
             Spacer()
 

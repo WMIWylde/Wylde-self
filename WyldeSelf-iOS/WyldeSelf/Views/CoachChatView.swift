@@ -12,7 +12,7 @@ struct CoachChatView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            Theme.appBG.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header
@@ -77,9 +77,9 @@ struct CoachChatView: View {
                 } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                         .frame(width: 36, height: 36)
-                        .background(Color(hex: "111111"))
+                        .background(Theme.elevatedBG)
                         .clipShape(Circle())
                 }
             }
@@ -92,7 +92,7 @@ struct CoachChatView: View {
 
             Text("The version of you\nthat already did it.")
                 .font(.system(size: 20, weight: .bold, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(Theme.primaryText)
                 .multilineTextAlignment(.center)
                 .lineSpacing(2)
         }
@@ -119,11 +119,11 @@ struct CoachChatView: View {
                     .foregroundColor(Color(hex: "C8A96E"))
                 Text("I'm the version of you that's already walked this. What's actually going on?")
                     .font(.system(size: 15))
-                    .foregroundColor(Color(hex: "F4F1E8"))
+                    .foregroundColor(Theme.primaryText)
                     .lineSpacing(3)
             }
             .padding(14)
-            .background(Color(hex: "111111"))
+            .background(Theme.elevatedBG)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
             Spacer()
@@ -155,10 +155,10 @@ struct CoachChatView: View {
                 }
                 Text(msg.content)
                     .font(.system(size: 15))
-                    .foregroundColor(msg.role == .user ? Color(hex: "070707") : Color(hex: "F4F1E8"))
+                    .foregroundColor(msg.role == .user ? Theme.onAccent : Theme.primaryText)
                     .lineSpacing(3)
                     .padding(14)
-                    .background(msg.role == .user ? Color(hex: "C8A96E") : Color(hex: "111111"))
+                    .background(msg.role == .user ? Color(hex: "C8A96E") : Theme.elevatedBG)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
 
@@ -182,14 +182,14 @@ struct CoachChatView: View {
             HStack(spacing: 4) {
                 ForEach(0..<3, id: \.self) { i in
                     Circle()
-                        .fill(Color(hex: "A6A29A"))
+                        .fill(Theme.secondaryText)
                         .frame(width: 6, height: 6)
                         .opacity(0.6)
                 }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
-            .background(Color(hex: "111111"))
+            .background(Theme.elevatedBG)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
             Spacer()
@@ -235,14 +235,14 @@ struct CoachChatView: View {
             TextField("Speak plainly.", text: $inputText, axis: .vertical)
                 .lineLimit(1...4)
                 .font(.system(size: 15))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(Theme.primaryText)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(Color(hex: "111111"))
+                .background(Theme.elevatedBG)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
-                        .stroke(Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1)
+                        .stroke(Theme.primaryText.opacity(0.06), lineWidth: 1)
                 )
                 .focused($inputFocused)
                 .onSubmit { sendMessage() }
@@ -251,13 +251,13 @@ struct CoachChatView: View {
             Button(action: sendMessage) {
                 Image(systemName: "arrow.up.circle.fill")
                     .font(.system(size: 32))
-                    .foregroundColor(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Color(hex: "6E6B65") : Color(hex: "C8A96E"))
+                    .foregroundColor(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Theme.tertiaryText : Color(hex: "C8A96E"))
             }
             .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || service.isTyping)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Color(hex: "0B0B0B"))
+        .background(Theme.appBG)
     }
 
     private func sendMessage() {

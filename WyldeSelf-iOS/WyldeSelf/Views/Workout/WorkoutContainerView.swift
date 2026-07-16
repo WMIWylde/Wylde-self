@@ -16,7 +16,7 @@ struct WorkoutContainerView: View {
                             ToolbarItem(placement: .navigationBarLeading) {
                                 Button { dismiss() } label: {
                                     Image(systemName: "xmark")
-                                        .foregroundColor(Color(hex: "A6A29A"))
+                                        .foregroundColor(Theme.secondaryText)
                                 }
                             }
                         }
@@ -33,9 +33,9 @@ struct WorkoutContainerView: View {
                             Button { dismiss() } label: {
                                 Image(systemName: "xmark")
                                     .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(Color(hex: "A6A29A"))
+                                    .foregroundColor(Theme.secondaryText)
                                     .frame(width: 36, height: 36)
-                                    .background(Color(hex: "111111"))
+                                    .background(Theme.elevatedBG)
                                     .clipShape(Circle())
                             }
                             .padding(.trailing, 20)

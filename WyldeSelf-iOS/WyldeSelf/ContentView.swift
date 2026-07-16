@@ -12,7 +12,7 @@ struct ContentView: View {
                 if isRestoringSession {
                     // Loading state while Supabase checks session validity
                     ZStack {
-                        Color(hex: "070707").ignoresSafeArea()
+                        Theme.appBG.ignoresSafeArea()
                         ProgressView()
                             .tint(Color(hex: "C8A96E"))
                             .scaleEffect(1.2)

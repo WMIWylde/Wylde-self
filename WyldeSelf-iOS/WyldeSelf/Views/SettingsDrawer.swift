@@ -56,16 +56,16 @@ struct SettingsDrawer: View {
                         .foregroundColor(Color(hex: "C8A96E"))
                     Text(appState.userName.isEmpty ? "Your account" : appState.userName)
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                         .lineLimit(1)
                 }
                 Spacer(minLength: 0)
                 Button(action: dismiss) {
                     Image(systemName: "xmark")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                         .frame(width: 36, height: 36)
-                        .background(Color(hex: "161616"))
+                        .background(Theme.chipBG)
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
@@ -95,9 +95,12 @@ struct SettingsDrawer: View {
             // TODO: Wire up native Edit Profile and Rebuild My Program screens
             // (Previously routed through the WebView bridge which has been removed.)
 
+            // ── Appearance ─────────────────────────────────────
+            appearanceControl
+
             // ── Divider ────────────────────────────────────────
             Rectangle()
-                .fill(Color(hex: "F4F1E8").opacity(0.06))
+                .fill(Theme.hairline)
                 .frame(height: 1)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
@@ -110,7 +113,7 @@ struct SettingsDrawer: View {
             Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(Color(hex: "0B0B0B"))
+        .background(Theme.appBG)
         // Sheets bubble up over the entire app — not constrained inside
         // the drawer's narrow column.
         .sheet(isPresented: $showPaywall) {
@@ -133,6 +136,36 @@ struct SettingsDrawer: View {
         }
     }
 
+    // MARK: - Appearance
+
+    /// Light / dark / system toggle. Binds to `appState.appearanceMode`,
+    /// which persists to UserDefaults and drives `.preferredColorScheme`
+    /// on the root in WyldeSelfApp. Never tied to any other signal —
+    /// pure user preference.
+    private var appearanceControl: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("APPEARANCE")
+                .font(.system(size: 9, weight: .bold))
+                .tracking(2.2)
+                .foregroundColor(Theme.tertiaryText)
+            Picker("Appearance", selection: Binding(
+                get: { appState.appearanceMode },
+                set: { newValue in
+                    HapticManager.shared.impact(.light)
+                    appState.appearanceMode = newValue
+                }
+            )) {
+                Text("System").tag("system")
+                Text("Light").tag("light")
+                Text("Dark").tag("dark")
+            }
+            .pickerStyle(.segmented)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 6)
+        .padding(.bottom, 2)
+    }
+
     // MARK: - Founder CTA / badge
 
     private var founderCTA: some View {
@@ -150,11 +183,11 @@ struct SettingsDrawer: View {
                 }
                 Text("Sponsor the work. Lock in lifetime.")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(Color(hex: "F4F1E8"))
+                    .foregroundColor(Theme.primaryText)
                     .multilineTextAlignment(.leading)
                 Text("First 1,000 members. Founder pricing forever.")
                     .font(.system(size: 12))
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(Theme.secondaryText)
                 HStack(spacing: 4) {
                     Text("See the offer")
                         .font(.system(size: 12, weight: .semibold))
@@ -168,7 +201,7 @@ struct SettingsDrawer: View {
             .padding(18)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(hex: "111111"))
+                    .fill(Theme.elevatedBG)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(Color(hex: "C8A96E").opacity(0.30), lineWidth: 1)
@@ -192,14 +225,14 @@ struct SettingsDrawer: View {
                     .foregroundColor(Color(hex: "C8A96E"))
                 Text("Lifetime access locked.")
                     .font(.system(size: 13))
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(Theme.secondaryText)
             }
             Spacer()
         }
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 14)
-                .fill(Color(hex: "111111"))
+                .fill(Theme.elevatedBG)
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
                         .stroke(Color(hex: "C8A96E").opacity(0.25), lineWidth: 1)
@@ -242,15 +275,15 @@ private struct DrawerLink: View {
             HStack(spacing: 14) {
                 Image(systemName: icon)
                     .font(.system(size: 16))
-                    .foregroundColor(destructive ? Color(hex: "C26B5A") : Color(hex: "A6A29A"))
+                    .foregroundColor(destructive ? Color(hex: "C26B5A") : Theme.secondaryText)
                     .frame(width: 22)
                 Text(label)
                     .font(.system(size: 15, weight: .medium))
-                    .foregroundColor(destructive ? Color(hex: "C26B5A") : Color(hex: "F4F1E8"))
+                    .foregroundColor(destructive ? Color(hex: "C26B5A") : Theme.primaryText)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(Color(hex: "6E6B65"))
+                    .foregroundColor(Theme.tertiaryText)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 14)

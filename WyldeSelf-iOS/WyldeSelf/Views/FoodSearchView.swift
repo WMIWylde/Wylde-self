@@ -15,7 +15,7 @@ struct FoodSearchView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            Theme.appBG.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header
@@ -28,9 +28,9 @@ struct FoodSearchView: View {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
                             .frame(width: 36, height: 36)
-                            .background(Color(hex: "111111"))
+                            .background(Theme.elevatedBG)
                             .clipShape(Circle())
                     }
                 }
@@ -40,10 +40,10 @@ struct FoodSearchView: View {
                 // Search bar
                 HStack(spacing: 8) {
                     Image(systemName: "magnifyingglass")
-                        .foregroundColor(Color(hex: "6E6B65"))
+                        .foregroundColor(Theme.tertiaryText)
                     TextField("Search foods, brands, products...", text: $searchText)
                         .font(.system(size: 14))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                         .tint(Color(hex: "C8A96E"))
                         .autocorrectionDisabled()
                     if isSearching {
@@ -52,13 +52,13 @@ struct FoodSearchView: View {
                     if !searchText.isEmpty {
                         Button { searchText = ""; results = [] } label: {
                             Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(Color(hex: "6E6B65"))
+                                .foregroundColor(Theme.tertiaryText)
                         }
                     }
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
-                .background(Color(hex: "111111"))
+                .background(Theme.elevatedBG)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
@@ -77,10 +77,10 @@ struct FoodSearchView: View {
                             Button { selectedMealType = type } label: {
                                 Text(type.rawValue)
                                     .font(.system(size: 12, weight: .semibold))
-                                    .foregroundColor(selectedMealType == type ? Color(hex: "070707") : Color(hex: "A6A29A"))
+                                    .foregroundColor(selectedMealType == type ? Theme.onAccent : Theme.secondaryText)
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 7)
-                                    .background(selectedMealType == type ? Color(hex: "C8A96E") : Color(hex: "1A1A1A"))
+                                    .background(selectedMealType == type ? Color(hex: "C8A96E") : Theme.chipBG)
                                     .clipShape(Capsule())
                             }
                         }
@@ -109,10 +109,10 @@ struct FoodSearchView: View {
                         Spacer().frame(height: 40)
                         Image(systemName: "fork.knife")
                             .font(.system(size: 28))
-                            .foregroundColor(Color(hex: "6E6B65"))
+                            .foregroundColor(Theme.tertiaryText)
                         Text("No results for \"\(searchText)\"")
                             .font(.system(size: 14))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
                         Spacer()
                     }
                 } else {
@@ -129,7 +129,6 @@ struct FoodSearchView: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
         .sheet(isPresented: $showBarcode) {
             BarcodeScannerView { barcode in
                 showBarcode = false
@@ -147,18 +146,18 @@ struct FoodSearchView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(food.name)
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                         .lineLimit(1)
                     HStack(spacing: 8) {
                         if let brand = food.brand {
                             Text(brand)
                                 .font(.system(size: 11))
-                                .foregroundColor(Color(hex: "6E6B65"))
+                                .foregroundColor(Theme.tertiaryText)
                                 .lineLimit(1)
                         }
                         Text("\(food.servingSize ?? 100, specifier: "%.0f")\(food.servingUnit ?? "g")")
                             .font(.system(size: 11))
-                            .foregroundColor(Color(hex: "6E6B65"))
+                            .foregroundColor(Theme.tertiaryText)
                     }
                 }
                 Spacer()
@@ -168,7 +167,7 @@ struct FoodSearchView: View {
                         .foregroundColor(Color(hex: "C8A96E"))
                     Text("cal")
                         .font(.system(size: 9))
-                        .foregroundColor(Color(hex: "6E6B65"))
+                        .foregroundColor(Theme.tertiaryText)
                 }
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("\(food.protein ?? 0, specifier: "%.0f")g")
@@ -176,14 +175,14 @@ struct FoodSearchView: View {
                         .foregroundColor(Color(hex: "5EE6D6"))
                     Text("P")
                         .font(.system(size: 9))
-                        .foregroundColor(Color(hex: "6E6B65"))
+                        .foregroundColor(Theme.tertiaryText)
                 }
                 Image(systemName: "plus.circle.fill")
                     .foregroundColor(Color(hex: "C8A96E"))
                     .font(.system(size: 20))
             }
             .padding(14)
-            .background(Color(hex: "111111"))
+            .background(Theme.elevatedBG)
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(.plain)
