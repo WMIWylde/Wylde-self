@@ -17,6 +17,12 @@ enum SupabaseService {
         else {
             fatalError("Missing SUPABASE_URL or SUPABASE_ANON_KEY in Info.plist.")
         }
-        return SupabaseClient(supabaseURL: url, supabaseKey: anonKey)
+        return SupabaseClient(
+            supabaseURL: url,
+            supabaseKey: anonKey,
+            options: .init(
+                auth: .init(emitLocalSessionAsInitialSession: true)
+            )
+        )
     }()
 }
