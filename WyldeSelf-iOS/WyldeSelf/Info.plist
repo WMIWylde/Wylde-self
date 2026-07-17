@@ -30,7 +30,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>3</string>
 	<key>CLINICAL_API_BASE</key>
 	<string>https://clinical.wyldeself.com</string>
 	<key>ITSAppUsesNonExemptEncryption</key>

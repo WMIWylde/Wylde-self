@@ -842,6 +842,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = WyldeSelfWatch;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "WyldeSelf Watch reads your heart rate, steps, and workout data to display real-time health metrics on your wrist.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "WyldeSelf Watch saves workouts and activity data you log from your wrist to Apple Health.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.wyldeself.app;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -879,6 +881,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = WyldeSelfWatch;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "WyldeSelf Watch reads your heart rate, steps, and workout data to display real-time health metrics on your wrist.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "WyldeSelf Watch saves workouts and activity data you log from your wrist to Apple Health.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.wyldeself.app;
 				LD_RUNPATH_SEARCH_PATHS = (
