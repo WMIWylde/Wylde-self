@@ -14,7 +14,7 @@ struct ContentView: View {
                     ZStack {
                         Theme.appBG.ignoresSafeArea()
                         ProgressView()
-                            .tint(Color(hex: "C8A96E"))
+                            .tint(WyldeStyles.Colors.bronze)
                             .scaleEffect(1.2)
                     }
                 } else if !auth.isSignedIn {

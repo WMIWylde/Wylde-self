@@ -32,12 +32,12 @@ struct PaywallView: View {
     var body: some View {
         ZStack {
             // Strict dark — matches the rest of the brand
-            Color(hex: "070707").ignoresSafeArea()
+            WyldeStyles.Colors.paper.ignoresSafeArea()
 
             // Subtle gold radial glow at top — sets a "ritual" tone
             RadialGradient(
                 colors: [
-                    Color(hex: "C8A96E").opacity(0.08),
+                    WyldeStyles.Colors.bronze.opacity(0.08),
                     Color.clear
                 ],
                 center: .top,
@@ -97,21 +97,21 @@ struct PaywallView: View {
         VStack(spacing: 6) {
             HStack(spacing: 6) {
                 Circle()
-                    .fill(Color(hex: "C8A96E"))
+                    .fill(WyldeStyles.Colors.bronze)
                     .frame(width: 6, height: 6)
                 Text("FOUNDING MEMBER OFFER")
                     .font(.system(size: 10, weight: .semibold))
                     .tracking(2.5)
-                    .foregroundColor(Color(hex: "C8A96E"))
+                    .foregroundColor(WyldeStyles.Colors.bronze)
             }
             if isLoadingCount {
                 Text("Reserving your spot…")
                     .font(.system(size: 13))
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(WyldeStyles.Colors.stone)
             } else {
                 Text("Founding member \(founderCount + 1) of \(founderCap)")
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(Color(hex: "F4F1E8"))
+                    .foregroundColor(WyldeStyles.Colors.ink)
             }
         }
         .padding(.bottom, 28)
@@ -122,7 +122,7 @@ struct PaywallView: View {
     private var headline: some View {
         Text("Sponsor the work.\nLock in lifetime.")
             .font(.system(size: 34, weight: .bold))
-            .foregroundColor(Color(hex: "F4F1E8"))
+            .foregroundColor(WyldeStyles.Colors.ink)
             .multilineTextAlignment(.leading)
             .lineSpacing(2)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -133,11 +133,11 @@ struct PaywallView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Wylde Self is in active beta. We're building toward something that doesn't exist yet — a system that helps you become who you said you'd be.")
                 .font(.system(size: 15))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
                 .lineSpacing(4)
             Text("The first 1,000 people who fund this work get lifetime access, founder pricing forever, and a direct line to the build.")
                 .font(.system(size: 15))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
                 .lineSpacing(4)
         }
         .padding(.bottom, 28)
@@ -167,11 +167,11 @@ struct PaywallView: View {
                 // Selection indicator
                 ZStack {
                     Circle()
-                        .stroke(isSelected ? Color(hex: "C8A96E") : Theme.secondaryText.opacity(0.4), lineWidth: 1.5)
+                        .stroke(isSelected ? WyldeStyles.Colors.bronze : Theme.secondaryText.opacity(0.4), lineWidth: 1.5)
                         .frame(width: 22, height: 22)
                     if isSelected {
                         Circle()
-                            .fill(Color(hex: "C8A96E"))
+                            .fill(WyldeStyles.Colors.bronze)
                             .frame(width: 12, height: 12)
                     }
                 }
@@ -185,10 +185,10 @@ struct PaywallView: View {
                             Text("BEST VALUE")
                                 .font(.system(size: 9, weight: .bold))
                                 .tracking(1.2)
-                                .foregroundColor(Color(hex: "070707"))
+                                .foregroundColor(WyldeStyles.Colors.paper)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 3)
-                                .background(Color(hex: "C8A96E"))
+                                .background(WyldeStyles.Colors.bronze)
                                 .cornerRadius(4)
                         }
                     }
@@ -207,7 +207,7 @@ struct PaywallView: View {
             .background(isSelected ? Theme.chipBG : Theme.elevatedBG)
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
-                    .stroke(isSelected ? Color(hex: "C8A96E") : Theme.primaryText.opacity(0.06), lineWidth: 1)
+                    .stroke(isSelected ? WyldeStyles.Colors.bronze : Theme.primaryText.opacity(0.06), lineWidth: 1)
             )
             .cornerRadius(14)
         }
@@ -221,7 +221,7 @@ struct PaywallView: View {
             HStack(spacing: 8) {
                 if purchases.isPurchasing {
                     ProgressView()
-                        .tint(Color(hex: "070707"))
+                        .tint(WyldeStyles.Colors.paper)
                         .scaleEffect(0.85)
                 }
                 Text(purchases.isPurchasing ? "Processing…" : "Become a Founding Member")
@@ -229,12 +229,12 @@ struct PaywallView: View {
                     .tracking(1.5)
                     .textCase(.uppercase)
             }
-            .foregroundColor(Color(hex: "070707"))
+            .foregroundColor(WyldeStyles.Colors.paper)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 17)
-            .background(Color(hex: "C8A96E"))
+            .background(WyldeStyles.Colors.bronze)
             .cornerRadius(14)
-            .shadow(color: Color(hex: "C8A96E").opacity(0.18), radius: 24, x: 0, y: 8)
+            .shadow(color: WyldeStyles.Colors.bronze.opacity(0.18), radius: 24, x: 0, y: 8)
         }
         .buttonStyle(.plain)
         .disabled(purchases.isPurchasing)
@@ -247,7 +247,7 @@ struct PaywallView: View {
         } label: {
             Text("Restore purchases")
                 .font(.system(size: 13))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
         }
         .buttonStyle(.plain)
         .padding(.bottom, 24)
@@ -264,7 +264,7 @@ struct PaywallView: View {
             }
             Text("Annual & monthly auto-renew. Cancel anytime in Settings → Apple ID → Subscriptions. Lifetime is a one-time payment, yours forever.")
                 .font(.system(size: 11))
-                .foregroundColor(Color(hex: "6E6B65"))
+                .foregroundColor(WyldeStyles.Colors.stone)
                 .multilineTextAlignment(.center)
                 .lineSpacing(3)
         }
@@ -313,11 +313,11 @@ struct FounderThankYouView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            WyldeStyles.Colors.paper.ignoresSafeArea()
 
             // Soft gold halo behind the number
             RadialGradient(
-                colors: [Color(hex: "C8A96E").opacity(0.18), .clear],
+                colors: [WyldeStyles.Colors.bronze.opacity(0.18), .clear],
                 center: .center, startRadius: 0, endRadius: 280
             )
             .ignoresSafeArea()
@@ -328,20 +328,20 @@ struct FounderThankYouView: View {
                 Text("FOUNDING MEMBER")
                     .font(.system(size: 11, weight: .bold))
                     .tracking(3)
-                    .foregroundColor(Color(hex: "C8A96E"))
+                    .foregroundColor(WyldeStyles.Colors.bronze)
 
                 Text("#\(memberNumber)")
                     .font(.system(size: 84, weight: .bold))
-                    .foregroundColor(Color(hex: "F4F1E8"))
+                    .foregroundColor(WyldeStyles.Colors.ink)
                     .tracking(-2)
 
                 VStack(spacing: 10) {
                     Text("You're in.")
                         .font(.system(size: 22, weight: .semibold))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(WyldeStyles.Colors.ink)
                     Text("Founder pricing locked. Lifetime access. A direct line to the build.")
                         .font(.system(size: 14))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(WyldeStyles.Colors.stone)
                         .multilineTextAlignment(.center)
                         .lineSpacing(3)
                         .padding(.horizontal, 36)
@@ -356,10 +356,10 @@ struct FounderThankYouView: View {
                         .font(.system(size: 13, weight: .bold))
                         .tracking(1.5)
                         .textCase(.uppercase)
-                        .foregroundColor(Color(hex: "070707"))
+                        .foregroundColor(WyldeStyles.Colors.paper)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 17)
-                        .background(Color(hex: "C8A96E"))
+                        .background(WyldeStyles.Colors.bronze)
                         .cornerRadius(14)
                 }
                 .buttonStyle(.plain)

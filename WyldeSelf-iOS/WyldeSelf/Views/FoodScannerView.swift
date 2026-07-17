@@ -16,7 +16,7 @@ struct FoodScannerView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            WyldeStyles.Colors.paper.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Top bar
@@ -24,14 +24,14 @@ struct FoodScannerView: View {
                     Text("LOG FOOD")
                         .font(.system(size: 10, weight: .bold))
                         .tracking(2.5)
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
                     Spacer()
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(WyldeStyles.Colors.stone)
                             .frame(width: 36, height: 36)
-                            .background(Color(hex: "111111"))
+                            .background(WyldeStyles.Colors.bone)
                             .clipShape(Circle())
                     }
                 }
@@ -75,15 +75,15 @@ struct FoodScannerView: View {
 
             Image(systemName: "camera.viewfinder")
                 .font(.system(size: 56))
-                .foregroundColor(Color(hex: "C8A96E").opacity(0.5))
+                .foregroundColor(WyldeStyles.Colors.bronze.opacity(0.5))
 
             Text("Snap your meal")
                 .font(.system(size: 24, weight: .bold, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(WyldeStyles.Colors.ink)
 
             Text("Take a photo or choose from your library.\nAI will estimate the macros.")
                 .font(.system(size: 14))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
                 .multilineTextAlignment(.center)
                 .lineSpacing(3)
 
@@ -92,7 +92,7 @@ struct FoodScannerView: View {
                 Text("MEAL")
                     .font(.system(size: 10, weight: .bold))
                     .tracking(2)
-                    .foregroundColor(Color(hex: "6E6B65"))
+                    .foregroundColor(WyldeStyles.Colors.stone)
 
                 HStack(spacing: 8) {
                     ForEach(MealType.allCases, id: \.self) { type in
@@ -115,7 +115,7 @@ struct FoodScannerView: View {
                 } label: {
                     Text("Choose from library")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
                 }
             }
             .padding(.top, 8)
@@ -127,10 +127,10 @@ struct FoodScannerView: View {
         return Button { selectedMealType = type } label: {
             Text(type.rawValue)
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(isSelected ? Color(hex: "070707") : Color(hex: "A6A29A"))
+                .foregroundColor(isSelected ? WyldeStyles.Colors.paper : WyldeStyles.Colors.stone)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
-                .background(isSelected ? Color(hex: "C8A96E") : Color(hex: "1A1A1A"))
+                .background(isSelected ? WyldeStyles.Colors.bronze : WyldeStyles.Colors.sand)
                 .clipShape(Capsule())
         }
     }
@@ -154,16 +154,16 @@ struct FoodScannerView: View {
             }
 
             ProgressView()
-                .tint(Color(hex: "C8A96E"))
+                .tint(WyldeStyles.Colors.bronze)
                 .scaleEffect(1.2)
 
             Text("Analyzing your meal...")
                 .font(.system(size: 18, weight: .medium, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(WyldeStyles.Colors.ink)
 
             Text("Estimating calories, protein, carbs, and fat")
                 .font(.system(size: 13))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
         }
     }
 
@@ -184,16 +184,16 @@ struct FoodScannerView: View {
                 // Description
                 Text(analysis.description)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(Color(hex: "F4F1E8"))
+                    .foregroundColor(WyldeStyles.Colors.ink)
 
                 // Macro summary
                 HStack(spacing: 0) {
-                    macroBox(label: "Calories", value: "\(analysis.calories)", color: Color(hex: "C8A96E"))
-                    macroBox(label: "Protein", value: "\(analysis.protein)g", color: Color(hex: "5EE6D6"))
-                    macroBox(label: "Carbs", value: "\(analysis.carbs)g", color: Color(hex: "FF9A3C"))
-                    macroBox(label: "Fat", value: "\(analysis.fat)g", color: Color(hex: "B68BFF"))
+                    macroBox(label: "Calories", value: "\(analysis.calories)", color: WyldeStyles.Colors.bronze)
+                    macroBox(label: "Protein", value: "\(analysis.protein)g", color: WyldeStyles.Colors.vitalTeal)
+                    macroBox(label: "Carbs", value: "\(analysis.carbs)g", color: WyldeStyles.Colors.vitalOrange)
+                    macroBox(label: "Fat", value: "\(analysis.fat)g", color: WyldeStyles.Colors.vitalPurple)
                 }
-                .background(Color(hex: "111111"))
+                .background(WyldeStyles.Colors.bone)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
 
                 // Items breakdown
@@ -202,22 +202,22 @@ struct FoodScannerView: View {
                         Text("BREAKDOWN")
                             .font(.system(size: 10, weight: .bold))
                             .tracking(2)
-                            .foregroundColor(Color(hex: "6E6B65"))
+                            .foregroundColor(WyldeStyles.Colors.stone)
 
                         ForEach(Array(analysis.items.enumerated()), id: \.offset) { _, item in
                             HStack {
                                 Text(item.name)
                                     .font(.system(size: 13))
-                                    .foregroundColor(Color(hex: "F4F1E8"))
+                                    .foregroundColor(WyldeStyles.Colors.ink)
                                 Spacer()
                                 Text("\(item.calories) cal · \(item.protein)g P")
                                     .font(.system(size: 12, design: .monospaced))
-                                    .foregroundColor(Color(hex: "A6A29A"))
+                                    .foregroundColor(WyldeStyles.Colors.stone)
                             }
                         }
                     }
                     .padding(14)
-                    .background(Color(hex: "111111"))
+                    .background(WyldeStyles.Colors.bone)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
 
@@ -241,14 +241,14 @@ struct FoodScannerView: View {
                 } label: {
                     Text("Retake photo")
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(WyldeStyles.Colors.stone)
                 }
             }
 
             if let error = tracker.analysisError {
                 Text(error)
                     .font(.system(size: 13))
-                    .foregroundColor(Color(hex: "C26B5A"))
+                    .foregroundColor(WyldeStyles.Colors.clay)
 
                 GoldButton(label: "Try Again") {
                     if let img = capturedImage {
@@ -267,7 +267,7 @@ struct FoodScannerView: View {
                 .foregroundColor(color)
             Text(label)
                 .font(.system(size: 10, weight: .medium))
-                .foregroundColor(Color(hex: "6E6B65"))
+                .foregroundColor(WyldeStyles.Colors.stone)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)

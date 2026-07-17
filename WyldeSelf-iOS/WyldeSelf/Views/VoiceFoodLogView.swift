@@ -34,7 +34,7 @@ struct VoiceFoodLogView: View {
                     Text("VOICE LOG")
                         .font(.system(size: 10, weight: .bold))
                         .tracking(2.5)
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
                     Spacer()
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
@@ -58,7 +58,7 @@ struct VoiceFoodLogView: View {
                                     .foregroundColor(selectedMealType == type ? Theme.onAccent : Theme.secondaryText)
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 7)
-                                    .background(selectedMealType == type ? Color(hex: "C8A96E") : Theme.chipBG)
+                                    .background(selectedMealType == type ? WyldeStyles.Colors.bronze : Theme.chipBG)
                                     .clipShape(Capsule())
                             }
                         }
@@ -96,7 +96,7 @@ struct VoiceFoodLogView: View {
                 } label: {
                     ZStack {
                         Circle()
-                            .fill(isRecording ? Color.red.opacity(0.15) : Color(hex: "C8A96E").opacity(0.10))
+                            .fill(isRecording ? Color.red.opacity(0.15) : WyldeStyles.Colors.bronze.opacity(0.10))
                             .frame(width: 100, height: 100)
 
                         if isRecording {
@@ -110,7 +110,7 @@ struct VoiceFoodLogView: View {
 
                         Image(systemName: isRecording ? "stop.fill" : "mic.fill")
                             .font(.system(size: 32))
-                            .foregroundColor(isRecording ? .red : Color(hex: "C8A96E"))
+                            .foregroundColor(isRecording ? .red : WyldeStyles.Colors.bronze)
                     }
                 }
                 .buttonStyle(.plain)
@@ -164,7 +164,7 @@ struct VoiceFoodLogView: View {
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(Theme.primaryText.opacity(0.06), lineWidth: 1)
                         )
-                        .tint(Color(hex: "C8A96E"))
+                        .tint(WyldeStyles.Colors.bronze)
                 }
             }
 
@@ -176,17 +176,17 @@ struct VoiceFoodLogView: View {
                 } label: {
                     HStack(spacing: 8) {
                         if isParsing {
-                            ProgressView().tint(Color(hex: "1A1816")).scaleEffect(0.8)
+                            ProgressView().tint(WyldeStyles.Colors.ink).scaleEffect(0.8)
                         }
                         Text(isParsing ? "Calculating macros..." : "Calculate Macros")
                             .font(.system(size: 15, weight: .bold))
                     }
-                    .foregroundColor(Color(hex: "1A1816"))
+                    .foregroundColor(WyldeStyles.Colors.ink)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background(
                         LinearGradient(
-                            colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                            colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                             startPoint: .top, endPoint: .bottom
                         )
                     )
@@ -200,7 +200,7 @@ struct VoiceFoodLogView: View {
             if let error = errorText {
                 Text(error)
                     .font(.system(size: 13))
-                    .foregroundColor(Color(hex: "C26B5A"))
+                    .foregroundColor(WyldeStyles.Colors.clay)
             }
         }
     }
@@ -218,10 +218,10 @@ struct VoiceFoodLogView: View {
                         .foregroundColor(Theme.secondaryText)
 
                     HStack(spacing: 0) {
-                        macroStat("Calories", "\(total.calories)", Color(hex: "C8A96E"))
-                        macroStat("Protein", "\(total.protein)g", Color(hex: "5EE6D6"))
-                        macroStat("Carbs", "\(total.carbs)g", Color(hex: "FF9A3C"))
-                        macroStat("Fat", "\(total.fat)g", Color(hex: "B68BFF"))
+                        macroStat("Calories", "\(total.calories)", WyldeStyles.Colors.bronze)
+                        macroStat("Protein", "\(total.protein)g", WyldeStyles.Colors.vitalTeal)
+                        macroStat("Carbs", "\(total.carbs)g", WyldeStyles.Colors.vitalOrange)
+                        macroStat("Fat", "\(total.fat)g", WyldeStyles.Colors.vitalPurple)
                     }
                 }
                 .padding(16)
@@ -251,10 +251,10 @@ struct VoiceFoodLogView: View {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text("\(item.calories)")
                             .font(.system(size: 13, weight: .bold, design: .monospaced))
-                            .foregroundColor(Color(hex: "C8A96E"))
+                            .foregroundColor(WyldeStyles.Colors.bronze)
                         Text("\(item.protein)g P")
                             .font(.system(size: 10, design: .monospaced))
-                            .foregroundColor(Color(hex: "5EE6D6"))
+                            .foregroundColor(WyldeStyles.Colors.vitalTeal)
                     }
                 }
                 .padding(14)
@@ -284,12 +284,12 @@ struct VoiceFoodLogView: View {
                 Button { logAll() } label: {
                     Text("Log \(selectedMealType.rawValue)")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(Color(hex: "1A1816"))
+                        .foregroundColor(WyldeStyles.Colors.ink)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                         .background(
                             LinearGradient(
-                                colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                                colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                                 startPoint: .top, endPoint: .bottom
                             )
                         )

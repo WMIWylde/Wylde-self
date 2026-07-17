@@ -188,7 +188,7 @@ struct OnboardingView: View {
                     Text("WELCOME TO WYLDE SELF")
                         .font(.system(size: 10, weight: .bold))
                         .tracking(2.5)
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
                     Text("Become the version of\nyou already following through.")
                         .font(.system(size: 20, weight: .medium, design: .serif))
                         .foregroundColor(.white)
@@ -499,12 +499,12 @@ struct OnboardingView: View {
                 } label: {
                     Text("Let's Begin")
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(Color(hex: "1A1816"))
+                        .foregroundColor(WyldeStyles.Colors.ink)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(
                             LinearGradient(
-                                colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                                colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                                 startPoint: .top, endPoint: .bottom
                             )
                         )
@@ -558,12 +558,12 @@ struct OnboardingView: View {
                     } label: {
                         Text("Let's Begin")
                             .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(Color(hex: "1A1816"))
+                            .foregroundColor(WyldeStyles.Colors.ink)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(
                                 LinearGradient(
-                                    colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                                    colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                                     startPoint: .top, endPoint: .bottom
                                 )
                             )
@@ -675,7 +675,7 @@ struct OnboardingView: View {
                 if optional {
                     Text("(optional)")
                         .font(.system(size: 10))
-                        .foregroundColor(WyldeStyles.Colors.stone.opacity(0.6))
+                        .foregroundColor(WyldeStyles.Colors.stone.opacity(0.85))
                 }
             }
             content()

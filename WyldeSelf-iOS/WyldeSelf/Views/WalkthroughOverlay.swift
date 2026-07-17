@@ -16,49 +16,49 @@ struct WalkthroughOverlay: View {
             title: "Wylde Score",
             description: "Your daily alignment score. Complete actions throughout the day to build it toward 100.",
             icon: "chart.line.uptrend.xyaxis",
-            accent: Color(hex: "C8A96E")
+            accent: WyldeStyles.Colors.bronze
         ),
         WalkthroughStep(
             title: "Morning Ritual",
             description: "Energy movement, meditation, journaling, reading. Your non-negotiable morning practice.",
             icon: "sunrise.fill",
-            accent: Color(hex: "C8A96E")
+            accent: WyldeStyles.Colors.bronze
         ),
         WalkthroughStep(
             title: "Today's Workout",
             description: "AI-built training programs personalized to your goals. Tap to start today's session.",
             icon: "dumbbell.fill",
-            accent: Color(hex: "5EE6D6")
+            accent: WyldeStyles.Colors.vitalTeal
         ),
         WalkthroughStep(
             title: "Daily Walk",
             description: "30 minutes outside. Start the timer or log it done. Movement is medicine.",
             icon: "figure.walk",
-            accent: Color(hex: "7FD0FF")
+            accent: WyldeStyles.Colors.vitalBlue
         ),
         WalkthroughStep(
             title: "Nutrition",
             description: "Scan your meals with a photo. AI estimates your macros instantly. Track protein, carbs, fat, calories.",
             icon: "leaf.fill",
-            accent: Color(hex: "FF9A3C")
+            accent: WyldeStyles.Colors.vitalOrange
         ),
         WalkthroughStep(
             title: "AI Coach",
             description: "Talk to your future self. It knows your goals, your progress, and speaks with quiet certainty.",
             icon: "person.fill",
-            accent: Color(hex: "C8A96E")
+            accent: WyldeStyles.Colors.bronze
         ),
         WalkthroughStep(
             title: "Future Vision",
             description: "Create a visual representation of the life you're building. See your transformation evolve.",
             icon: "figure.walk.motion",
-            accent: Color(hex: "B68BFF")
+            accent: WyldeStyles.Colors.vitalPurple
         ),
         WalkthroughStep(
             title: "You",
             description: "Protocols, care team, therapy library, exercise library, and your profile all live here.",
             icon: "person.crop.circle.fill",
-            accent: Color(hex: "7A8771")
+            accent: WyldeStyles.Colors.sage
         ),
     ]
 
@@ -87,12 +87,12 @@ struct WalkthroughOverlay: View {
                     // Title
                     Text(steps[currentStep].title)
                         .font(.system(size: 22, weight: .bold, design: .serif))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(WyldeStyles.Colors.ink)
 
                     // Description
                     Text(steps[currentStep].description)
                         .font(.system(size: 14))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(WyldeStyles.Colors.stone)
                         .multilineTextAlignment(.center)
                         .lineSpacing(3)
                         .padding(.horizontal, 8)
@@ -114,7 +114,7 @@ struct WalkthroughOverlay: View {
                         } label: {
                             Text("Skip")
                                 .font(.system(size: 13, weight: .medium))
-                                .foregroundColor(Color(hex: "6E6B65"))
+                                .foregroundColor(WyldeStyles.Colors.stone)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
                         }
@@ -124,7 +124,7 @@ struct WalkthroughOverlay: View {
                         } label: {
                             Text(currentStep == steps.count - 1 ? "Get Started" : "Next")
                                 .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(Color(hex: "1A1816"))
+                                .foregroundColor(WyldeStyles.Colors.ink)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
                                 .background(steps[currentStep].accent)
@@ -133,7 +133,7 @@ struct WalkthroughOverlay: View {
                     }
                 }
                 .padding(28)
-                .background(Color(hex: "111111"))
+                .background(WyldeStyles.Colors.bone)
                 .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                 .shadow(color: .black.opacity(0.5), radius: 30, x: 0, y: 10)
                 .padding(.horizontal, 24)

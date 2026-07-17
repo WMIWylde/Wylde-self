@@ -23,7 +23,7 @@ struct FoodSearchView: View {
                     Text("LOG FOOD")
                         .font(.system(size: 10, weight: .bold))
                         .tracking(2.5)
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
                     Spacer()
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
@@ -44,10 +44,10 @@ struct FoodSearchView: View {
                     TextField("Search foods, brands, products...", text: $searchText)
                         .font(.system(size: 14))
                         .foregroundColor(Theme.primaryText)
-                        .tint(Color(hex: "C8A96E"))
+                        .tint(WyldeStyles.Colors.bronze)
                         .autocorrectionDisabled()
                     if isSearching {
-                        ProgressView().tint(Color(hex: "C8A96E")).scaleEffect(0.7)
+                        ProgressView().tint(WyldeStyles.Colors.bronze).scaleEffect(0.7)
                     }
                     if !searchText.isEmpty {
                         Button { searchText = ""; results = [] } label: {
@@ -80,7 +80,7 @@ struct FoodSearchView: View {
                                     .foregroundColor(selectedMealType == type ? Theme.onAccent : Theme.secondaryText)
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 7)
-                                    .background(selectedMealType == type ? Color(hex: "C8A96E") : Theme.chipBG)
+                                    .background(selectedMealType == type ? WyldeStyles.Colors.bronze : Theme.chipBG)
                                     .clipShape(Capsule())
                             }
                         }
@@ -92,10 +92,10 @@ struct FoodSearchView: View {
                                 Text("Scan")
                                     .font(.system(size: 12, weight: .medium))
                             }
-                            .foregroundColor(Color(hex: "5EE6D6"))
+                            .foregroundColor(WyldeStyles.Colors.vitalTeal)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 7)
-                            .background(Color(hex: "5EE6D6").opacity(0.10))
+                            .background(WyldeStyles.Colors.vitalTeal.opacity(0.10))
                             .clipShape(Capsule())
                         }
                     }
@@ -164,7 +164,7 @@ struct FoodSearchView: View {
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("\(food.calories ?? 0)")
                         .font(.system(size: 14, weight: .bold, design: .monospaced))
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
                     Text("cal")
                         .font(.system(size: 9))
                         .foregroundColor(Theme.tertiaryText)
@@ -172,13 +172,13 @@ struct FoodSearchView: View {
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("\(food.protein ?? 0, specifier: "%.0f")g")
                         .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                        .foregroundColor(Color(hex: "5EE6D6"))
+                        .foregroundColor(WyldeStyles.Colors.vitalTeal)
                     Text("P")
                         .font(.system(size: 9))
                         .foregroundColor(Theme.tertiaryText)
                 }
                 Image(systemName: "plus.circle.fill")
-                    .foregroundColor(Color(hex: "C8A96E"))
+                    .foregroundColor(WyldeStyles.Colors.bronze)
                     .font(.system(size: 20))
             }
             .padding(14)

@@ -57,7 +57,7 @@ struct ExerciseCard: View {
                 }
                 Text(exercise.setsReps)
                     .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                    .foregroundColor(Color(hex: "C8A96E"))
+                    .foregroundColor(WyldeStyles.Colors.bronze)
             }
             .padding(16)
 
@@ -89,12 +89,12 @@ struct ExerciseCard: View {
                         Text("Begin Warmup")
                             .font(.system(size: 14, weight: .semibold))
                     }
-                    .foregroundColor(Color(hex: "1A1816"))
+                    .foregroundColor(WyldeStyles.Colors.ink)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(
                         LinearGradient(
-                            colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                            colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                             startPoint: .top, endPoint: .bottom
                         )
                     )
@@ -108,17 +108,17 @@ struct ExerciseCard: View {
                     if cardioComplete {
                         HStack(spacing: 8) {
                             Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(Color(hex: "7A8771"))
+                                .foregroundColor(WyldeStyles.Colors.sage)
                             Text("Complete")
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(Color(hex: "7A8771"))
+                                .foregroundColor(WyldeStyles.Colors.sage)
                         }
                     } else if cardioRunning && isInterval {
                         // Interval mode — work/rest phases
                         Text(isWorkPhase ? "WORK" : "REST")
                             .font(.system(size: 11, weight: .bold))
                             .tracking(2)
-                            .foregroundColor(isWorkPhase ? Color(hex: "FF6B8B") : Color(hex: "5EE6D6"))
+                            .foregroundColor(isWorkPhase ? WyldeStyles.Colors.vitalPink : WyldeStyles.Colors.vitalTeal)
 
                         Text("\(intervalRemaining)")
                             .font(.system(size: 48, weight: .bold, design: .monospaced))
@@ -134,7 +134,7 @@ struct ExerciseCard: View {
                         HStack(spacing: 4) {
                             ForEach(1...intervalRounds, id: \.self) { r in
                                 Circle()
-                                    .fill(r < currentRound ? Color(hex: "7A8771") : (r == currentRound ? (isWorkPhase ? Color(hex: "FF6B8B") : Color(hex: "5EE6D6")) : Theme.chipBG))
+                                    .fill(r < currentRound ? WyldeStyles.Colors.sage : (r == currentRound ? (isWorkPhase ? WyldeStyles.Colors.vitalPink : WyldeStyles.Colors.vitalTeal) : Theme.chipBG))
                                     .frame(width: 8, height: 8)
                             }
                         }
@@ -149,7 +149,7 @@ struct ExerciseCard: View {
                                 .foregroundColor(Theme.onAccent)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 10)
-                                .background(Color(hex: "7A8771"))
+                                .background(WyldeStyles.Colors.sage)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
 
@@ -185,7 +185,7 @@ struct ExerciseCard: View {
                                     .foregroundColor(Theme.onAccent)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 10)
-                                    .background(Color(hex: "7A8771"))
+                                    .background(WyldeStyles.Colors.sage)
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
                             }
                         }
@@ -204,7 +204,7 @@ struct ExerciseCard: View {
                                 .foregroundColor(Theme.onAccent)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
-                                .background(Color(hex: "FF6B8B"))
+                                .background(WyldeStyles.Colors.vitalPink)
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
                         }
@@ -219,7 +219,7 @@ struct ExerciseCard: View {
                             .foregroundColor(hasInterval ? Theme.secondaryText : Theme.onAccent)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
-                            .background(hasInterval ? Theme.chipBG : Color(hex: "5EE6D6"))
+                            .background(hasInterval ? Theme.chipBG : WyldeStyles.Colors.vitalTeal)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                     }
@@ -232,11 +232,11 @@ struct ExerciseCard: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
                     if let pr = pr {
-                        statBadge(label: "PR", value: "\(Int(pr.bestWeight))lb × \(pr.bestReps)", color: Color(hex: "C8A96E"))
+                        statBadge(label: "PR", value: "\(Int(pr.bestWeight))lb × \(pr.bestReps)", color: WyldeStyles.Colors.bronze)
                     }
                     let suggestion = LiftingCoach.suggestedWeight(exercise: exercise.name, gender: gender, level: fitnessLevel)
                     if pr == nil {
-                        statBadge(label: "START", value: "\(Int(suggestion.weight))lb", color: Color(hex: "7FD0FF"))
+                        statBadge(label: "START", value: "\(Int(suggestion.weight))lb", color: WyldeStyles.Colors.vitalBlue)
                     }
                 }
 
@@ -254,10 +254,10 @@ struct ExerciseCard: View {
                     HStack(spacing: 6) {
                         Image(systemName: "arrow.up.circle.fill")
                             .font(.system(size: 12))
-                            .foregroundColor(Color(hex: "C8A96E"))
+                            .foregroundColor(WyldeStyles.Colors.bronze)
                         Text(tip)
                             .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(Color(hex: "C8A96E"))
+                            .foregroundColor(WyldeStyles.Colors.bronze)
                     }
                     .padding(.horizontal, 4)
                 }
@@ -275,7 +275,7 @@ struct ExerciseCard: View {
                             Image(systemName: showGuide ? "chevron.up" : "chevron.down")
                                 .font(.system(size: 9))
                         }
-                        .foregroundColor(Color(hex: "7FD0FF"))
+                        .foregroundColor(WyldeStyles.Colors.vitalBlue)
                     }
                     .padding(.horizontal, 4)
 
@@ -307,7 +307,7 @@ struct ExerciseCard: View {
             // Set number
             Text("\(setIndex + 1)")
                 .font(.system(size: 12, weight: .bold, design: .monospaced))
-                .foregroundColor(setLog.completed ? Color(hex: "C8A96E") : Theme.tertiaryText)
+                .foregroundColor(setLog.completed ? WyldeStyles.Colors.bronze : Theme.tertiaryText)
                 .frame(width: 18)
 
             // Reps stepper
@@ -319,7 +319,7 @@ struct ExerciseCard: View {
             } else {
                 Text("BW")
                     .font(.system(size: 11, weight: .bold, design: .monospaced))
-                    .foregroundColor(Color(hex: "7FD0FF"))
+                    .foregroundColor(WyldeStyles.Colors.vitalBlue)
                     .frame(minWidth: 30)
             }
 
@@ -343,13 +343,13 @@ struct ExerciseCard: View {
             } label: {
                 Image(systemName: setLog.completed ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 22))
-                    .foregroundColor(setLog.completed ? Color(hex: "C8A96E") : Theme.tertiaryText)
+                    .foregroundColor(setLog.completed ? WyldeStyles.Colors.bronze : Theme.tertiaryText)
             }
             .disabled(setLog.completed)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
-        .background(setLog.completed ? Color(hex: "C8A96E").opacity(0.04) : .clear)
+        .background(setLog.completed ? WyldeStyles.Colors.bronze.opacity(0.04) : .clear)
     }
 
     private func stepper(value: Binding<Double>, step: Double, label: String) -> some View {

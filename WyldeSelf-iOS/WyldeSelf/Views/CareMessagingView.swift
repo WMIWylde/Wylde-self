@@ -29,7 +29,7 @@ struct CareMessagingView: View {
                         Text("CARE TEAM")
                             .font(.system(size: 10, weight: .bold))
                             .tracking(2.5)
-                            .foregroundColor(Color(hex: "C8A96E"))
+                            .foregroundColor(WyldeStyles.Colors.bronze)
                         Text("Messages")
                             .font(.system(size: 20, weight: .bold, design: .serif))
                             .foregroundColor(Theme.primaryText)
@@ -50,7 +50,7 @@ struct CareMessagingView: View {
 
                 if isLoading {
                     Spacer()
-                    ProgressView().tint(Color(hex: "C8A96E"))
+                    ProgressView().tint(WyldeStyles.Colors.bronze)
                     Spacer()
                 } else if messages.isEmpty {
                     Spacer()
@@ -97,12 +97,12 @@ struct CareMessagingView: View {
                                 } label: {
                                     Text(t)
                                         .font(.system(size: 11, weight: .medium))
-                                        .foregroundColor(Color(hex: "C8A96E"))
+                                        .foregroundColor(WyldeStyles.Colors.bronze)
                                         .padding(.horizontal, 12)
                                         .padding(.vertical, 7)
-                                        .background(Color(hex: "C8A96E").opacity(0.08))
+                                        .background(WyldeStyles.Colors.bronze.opacity(0.08))
                                         .clipShape(Capsule())
-                                        .overlay(Capsule().stroke(Color(hex: "C8A96E").opacity(0.15), lineWidth: 1))
+                                        .overlay(Capsule().stroke(WyldeStyles.Colors.bronze.opacity(0.15), lineWidth: 1))
                                 }
                             }
                         }
@@ -123,12 +123,12 @@ struct CareMessagingView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 20))
                         .overlay(RoundedRectangle(cornerRadius: 20).stroke(Theme.primaryText.opacity(0.06), lineWidth: 1))
                         .focused($inputFocused)
-                        .tint(Color(hex: "C8A96E"))
+                        .tint(WyldeStyles.Colors.bronze)
 
                     Button(action: sendMessage) {
                         Image(systemName: "arrow.up.circle.fill")
                             .font(.system(size: 32))
-                            .foregroundColor(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Theme.tertiaryText : Color(hex: "C8A96E"))
+                            .foregroundColor(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Theme.tertiaryText : WyldeStyles.Colors.bronze)
                     }
                     .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
@@ -149,7 +149,7 @@ struct CareMessagingView: View {
                     .font(.system(size: 15))
                     .foregroundColor(isMe ? Theme.onAccent : Theme.primaryText)
                     .padding(14)
-                    .background(isMe ? Color(hex: "C8A96E") : Theme.elevatedBG)
+                    .background(isMe ? WyldeStyles.Colors.bronze : Theme.elevatedBG)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 Text(formatTime(msg.createdAt))
                     .font(.system(size: 10))

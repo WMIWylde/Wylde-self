@@ -71,7 +71,7 @@ struct WorkoutDayView: View {
                                         Spacer()
                                         Text(formatElapsed(workoutElapsed))
                                             .font(.system(size: 16, weight: .bold, design: .monospaced))
-                                            .foregroundColor(Color(hex: "C8A96E"))
+                                            .foregroundColor(WyldeStyles.Colors.bronze)
                                             .contentTransition(.numericText())
                                             .animation(.easeInOut(duration: 0.3), value: workoutElapsed)
                                     }
@@ -131,7 +131,7 @@ struct WorkoutDayView: View {
                         Circle().fill(Color.red).frame(width: 6, height: 6)
                         Text(formatElapsed(workoutElapsed))
                             .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                            .foregroundColor(Color(hex: "C8A96E"))
+                            .foregroundColor(WyldeStyles.Colors.bronze)
                     }
                 }
             }
@@ -176,7 +176,7 @@ struct WorkoutDayView: View {
             Text("DAY \(day.dayNumber)")
                 .font(.system(size: 10, weight: .bold))
                 .tracking(2)
-                .foregroundColor(Color(hex: "C8A96E"))
+                .foregroundColor(WyldeStyles.Colors.bronze)
 
             Text(day.focus)
                 .font(.system(size: 28, weight: .bold, design: .serif))

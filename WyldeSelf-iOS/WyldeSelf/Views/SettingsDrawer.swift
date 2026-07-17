@@ -53,7 +53,7 @@ struct SettingsDrawer: View {
                     Text("WYLDE SELF")
                         .font(.system(size: 10, weight: .bold))
                         .tracking(2.5)
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
                     Text(appState.userName.isEmpty ? "Your account" : appState.userName)
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(Theme.primaryText)
@@ -175,11 +175,11 @@ struct SettingsDrawer: View {
         } label: {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 6) {
-                    Circle().fill(Color(hex: "C8A96E")).frame(width: 5, height: 5)
+                    Circle().fill(WyldeStyles.Colors.bronze).frame(width: 5, height: 5)
                     Text("FOUNDING MEMBER")
                         .font(.system(size: 9, weight: .bold))
                         .tracking(2.2)
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
                 }
                 Text("Sponsor the work. Lock in lifetime.")
                     .font(.system(size: 16, weight: .semibold))
@@ -194,7 +194,7 @@ struct SettingsDrawer: View {
                     Image(systemName: "arrow.right")
                         .font(.system(size: 10, weight: .semibold))
                 }
-                .foregroundColor(Color(hex: "C8A96E"))
+                .foregroundColor(WyldeStyles.Colors.bronze)
                 .padding(.top, 4)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -204,7 +204,7 @@ struct SettingsDrawer: View {
                     .fill(Theme.elevatedBG)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color(hex: "C8A96E").opacity(0.30), lineWidth: 1)
+                            .stroke(WyldeStyles.Colors.bronze.opacity(0.30), lineWidth: 1)
                     )
             )
         }
@@ -217,12 +217,12 @@ struct SettingsDrawer: View {
         HStack(spacing: 12) {
             Image(systemName: "checkmark.seal.fill")
                 .font(.system(size: 22))
-                .foregroundColor(Color(hex: "C8A96E"))
+                .foregroundColor(WyldeStyles.Colors.bronze)
             VStack(alignment: .leading, spacing: 2) {
                 Text("FOUNDING MEMBER #\(appState.foundingMemberNumber)")
                     .font(.system(size: 10, weight: .bold))
                     .tracking(2)
-                    .foregroundColor(Color(hex: "C8A96E"))
+                    .foregroundColor(WyldeStyles.Colors.bronze)
                 Text("Lifetime access locked.")
                     .font(.system(size: 13))
                     .foregroundColor(Theme.secondaryText)
@@ -235,7 +235,7 @@ struct SettingsDrawer: View {
                 .fill(Theme.elevatedBG)
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
-                        .stroke(Color(hex: "C8A96E").opacity(0.25), lineWidth: 1)
+                        .stroke(WyldeStyles.Colors.bronze.opacity(0.25), lineWidth: 1)
                 )
         )
         .padding(.horizontal, 24)
@@ -275,11 +275,11 @@ private struct DrawerLink: View {
             HStack(spacing: 14) {
                 Image(systemName: icon)
                     .font(.system(size: 16))
-                    .foregroundColor(destructive ? Color(hex: "C26B5A") : Theme.secondaryText)
+                    .foregroundColor(destructive ? WyldeStyles.Colors.clay : Theme.secondaryText)
                     .frame(width: 22)
                 Text(label)
                     .font(.system(size: 15, weight: .medium))
-                    .foregroundColor(destructive ? Color(hex: "C26B5A") : Theme.primaryText)
+                    .foregroundColor(destructive ? WyldeStyles.Colors.clay : Theme.primaryText)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.system(size: 11, weight: .semibold))

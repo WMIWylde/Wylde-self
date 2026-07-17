@@ -22,7 +22,7 @@ struct TherapyLibraryView: View {
                         Text("WYLDE LIBRARY")
                             .font(.system(size: 10, weight: .bold))
                             .tracking(2.5)
-                            .foregroundColor(Color(hex: "C8A96E"))
+                            .foregroundColor(WyldeStyles.Colors.bronze)
                         Text("Research Library")
                             .font(.system(size: 22, weight: .bold, design: .serif))
                             .foregroundColor(Theme.primaryText)
@@ -47,7 +47,7 @@ struct TherapyLibraryView: View {
                     TextField("Search therapies...", text: $searchText)
                         .font(.system(size: 14))
                         .foregroundColor(Theme.primaryText)
-                        .tint(Color(hex: "C8A96E"))
+                        .tint(WyldeStyles.Colors.bronze)
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
@@ -72,7 +72,7 @@ struct TherapyLibraryView: View {
                 // Content
                 if isLoading {
                     Spacer()
-                    ProgressView().tint(Color(hex: "C8A96E"))
+                    ProgressView().tint(WyldeStyles.Colors.bronze)
                     Spacer()
                 } else {
                     ScrollView(showsIndicators: false) {
@@ -101,7 +101,7 @@ struct TherapyLibraryView: View {
                 .foregroundColor(isSelected ? Theme.onAccent : Theme.secondaryText)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 7)
-                .background(isSelected ? Color(hex: "C8A96E") : Theme.chipBG)
+                .background(isSelected ? WyldeStyles.Colors.bronze : Theme.chipBG)
                 .clipShape(Capsule())
         }
     }
@@ -125,10 +125,10 @@ struct TherapyLibraryView: View {
                         if t.requiresProviderReview == true {
                             Text("Provider review")
                                 .font(.system(size: 9, weight: .medium))
-                                .foregroundColor(Color(hex: "FF9A3C"))
+                                .foregroundColor(WyldeStyles.Colors.vitalOrange)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .background(Color(hex: "FF9A3C").opacity(0.10))
+                                .background(WyldeStyles.Colors.vitalOrange.opacity(0.10))
                                 .clipShape(Capsule())
                         }
                     }
@@ -147,7 +147,7 @@ struct TherapyLibraryView: View {
     }
 
     private func evidenceBadge(_ rating: String?) -> some View {
-        let colors: [String: Color] = ["A": Color(hex: "7A8771"), "B": Color(hex: "5EE6D6"), "C": Color(hex: "C8A96E"), "D": Color(hex: "FF9A3C"), "X": Color(hex: "C26B5A")]
+        let colors: [String: Color] = ["A": WyldeStyles.Colors.sage, "B": WyldeStyles.Colors.vitalTeal, "C": WyldeStyles.Colors.bronze, "D": WyldeStyles.Colors.vitalOrange, "X": WyldeStyles.Colors.clay]
         let color = colors[rating ?? "X"] ?? Theme.tertiaryText
         return Text(rating ?? "—")
             .font(.system(size: 9, weight: .bold))
@@ -308,8 +308,8 @@ struct TherapyDetailView: View {
 
                     // Badges
                     HStack(spacing: 8) {
-                        badge(therapy.therapyType.capitalized, color: Color(hex: "C8A96E"))
-                        if let cat = therapy.category { badge(cat.replacingOccurrences(of: "_", with: " ").capitalized, color: Color(hex: "7FD0FF")) }
+                        badge(therapy.therapyType.capitalized, color: WyldeStyles.Colors.bronze)
+                        if let cat = therapy.category { badge(cat.replacingOccurrences(of: "_", with: " ").capitalized, color: WyldeStyles.Colors.vitalBlue) }
                         if let fda = therapy.fdaStatus { badge(fda, color: Theme.secondaryText) }
                     }
 
@@ -327,11 +327,11 @@ struct TherapyDetailView: View {
                     }
 
                     if let risks = therapy.potentialRisks, !risks.isEmpty {
-                        listSection("Potential Risks", items: risks, color: Color(hex: "C26B5A"))
+                        listSection("Potential Risks", items: risks, color: WyldeStyles.Colors.clay)
                     }
 
                     if let contra = therapy.contraindications, !contra.isEmpty {
-                        listSection("Contraindications", items: contra, color: Color(hex: "C26B5A"))
+                        listSection("Contraindications", items: contra, color: WyldeStyles.Colors.clay)
                     }
 
                     if let routes = therapy.administrationRoutes, !routes.isEmpty {
@@ -359,12 +359,12 @@ struct TherapyDetailView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack(spacing: 6) {
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(Color(hex: "FF9A3C"))
+                                .foregroundColor(WyldeStyles.Colors.vitalOrange)
                                 .font(.system(size: 12))
                             Text("IMPORTANT")
                                 .font(.system(size: 10, weight: .bold))
                                 .tracking(2)
-                                .foregroundColor(Color(hex: "FF9A3C"))
+                                .foregroundColor(WyldeStyles.Colors.vitalOrange)
                         }
                         Text(therapy.safetyDisclaimer ?? "This information is for education only and is not medical advice.")
                             .font(.system(size: 12))
@@ -372,8 +372,8 @@ struct TherapyDetailView: View {
                             .lineSpacing(3)
                     }
                     .padding(16)
-                    .background(Color(hex: "FF9A3C").opacity(0.06))
-                    .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color(hex: "FF9A3C").opacity(0.15), lineWidth: 1))
+                    .background(WyldeStyles.Colors.vitalOrange.opacity(0.06))
+                    .overlay(RoundedRectangle(cornerRadius: 14).stroke(WyldeStyles.Colors.vitalOrange.opacity(0.15), lineWidth: 1))
                     .clipShape(RoundedRectangle(cornerRadius: 14))
 
                     // CTA
@@ -383,10 +383,10 @@ struct TherapyDetailView: View {
                         Text("Discuss with your provider")
                             .font(.system(size: 14, weight: .semibold))
                     }
-                    .foregroundColor(Color(hex: "1A1816"))
+                    .foregroundColor(WyldeStyles.Colors.ink)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Color(hex: "7A8771"))
+                    .background(WyldeStyles.Colors.sage)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
 
                     Spacer().frame(height: 40)
@@ -414,7 +414,7 @@ struct TherapyDetailView: View {
         .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 
-    private func listSection(_ title: String, items: [String], color: Color = Color(hex: "7A8771")) -> some View {
+    private func listSection(_ title: String, items: [String], color: Color = WyldeStyles.Colors.sage) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title.uppercased())
                 .font(.system(size: 10, weight: .bold))

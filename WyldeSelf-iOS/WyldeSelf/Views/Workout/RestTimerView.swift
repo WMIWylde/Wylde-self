@@ -23,9 +23,9 @@ struct RestTimerView: View {
     private var isDone: Bool { remaining <= 0 }
 
     private var ringColor: Color {
-        if isDone { return Color(hex: "7A8771") }
-        if isFinishing { return Color(hex: "FF9A3C") }
-        return Color(hex: "C8A96E")
+        if isDone { return WyldeStyles.Colors.sage }
+        if isFinishing { return WyldeStyles.Colors.vitalOrange }
+        return WyldeStyles.Colors.bronze
     }
 
     var body: some View {

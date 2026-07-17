@@ -37,7 +37,7 @@ struct WyldeWorkoutView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            WyldeStyles.Colors.paper.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header
@@ -45,7 +45,7 @@ struct WyldeWorkoutView: View {
                     Button { dismiss() } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(WyldeStyles.Colors.ink)
                     }
                     Spacer()
                     if isActive {
@@ -53,16 +53,16 @@ struct WyldeWorkoutView: View {
                             Circle().fill(Color.red).frame(width: 6, height: 6)
                             Text(formatTime(elapsed))
                                 .font(.system(size: 14, weight: .bold, design: .monospaced))
-                                .foregroundColor(Color(hex: "C8A96E"))
+                                .foregroundColor(WyldeStyles.Colors.bronze)
                         }
                     }
                     Spacer()
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(WyldeStyles.Colors.stone)
                             .frame(width: 36, height: 36)
-                            .background(Color(hex: "111111"))
+                            .background(WyldeStyles.Colors.bone)
                             .clipShape(Circle())
                     }
                 }
@@ -96,15 +96,15 @@ struct WyldeWorkoutView: View {
         VStack(spacing: 24) {
             Image(systemName: "bolt.heart.fill")
                 .font(.system(size: 44))
-                .foregroundColor(Color(hex: "C8A96E").opacity(0.6))
+                .foregroundColor(WyldeStyles.Colors.bronze.opacity(0.6))
 
             Text("Wylde Workout")
                 .font(.system(size: 26, weight: .bold, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(WyldeStyles.Colors.ink)
 
             Text("No plan. No rules. Just move.\nRecord what you did with voice notes.")
                 .font(.system(size: 14))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
                 .multilineTextAlignment(.center)
                 .lineSpacing(3)
 
@@ -117,12 +117,12 @@ struct WyldeWorkoutView: View {
                     Text("Start Wylde Workout")
                         .font(.system(size: 15, weight: .bold))
                 }
-                .foregroundColor(Color(hex: "1A1816"))
+                .foregroundColor(WyldeStyles.Colors.ink)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(
                     LinearGradient(
-                        colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                        colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                         startPoint: .top, endPoint: .bottom
                     )
                 )
@@ -141,14 +141,14 @@ struct WyldeWorkoutView: View {
             // Timer
             Text(formatTime(elapsed))
                 .font(.system(size: 48, weight: .bold, design: .monospaced))
-                .foregroundColor(Color(hex: "C8A96E"))
+                .foregroundColor(WyldeStyles.Colors.bronze)
                 .contentTransition(.numericText())
                 .animation(.easeInOut(duration: 0.3), value: elapsed)
 
             Text("WYLDE WORKOUT")
                 .font(.system(size: 10, weight: .bold))
                 .tracking(2.5)
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
 
             // Voice recording button
             VStack(spacing: 12) {
@@ -157,7 +157,7 @@ struct WyldeWorkoutView: View {
                 } label: {
                     ZStack {
                         Circle()
-                            .fill(isRecording ? Color.red.opacity(0.15) : Color(hex: "C8A96E").opacity(0.10))
+                            .fill(isRecording ? Color.red.opacity(0.15) : WyldeStyles.Colors.bronze.opacity(0.10))
                             .frame(width: 80, height: 80)
 
                         if isRecording {
@@ -171,24 +171,24 @@ struct WyldeWorkoutView: View {
 
                         Image(systemName: isRecording ? "stop.fill" : "mic.fill")
                             .font(.system(size: 28))
-                            .foregroundColor(isRecording ? .red : Color(hex: "C8A96E"))
+                            .foregroundColor(isRecording ? .red : WyldeStyles.Colors.bronze)
                     }
                 }
                 .buttonStyle(.plain)
 
                 Text(isRecording ? "Recording... tap to save" : (speechAuthorized ? "Tap to record what you did" : "Mic access needed"))
                     .font(.system(size: 13))
-                    .foregroundColor(isRecording ? .red : Color(hex: "A6A29A"))
+                    .foregroundColor(isRecording ? .red : WyldeStyles.Colors.stone)
             }
 
             // Live transcription
             if !transcribedText.isEmpty && isRecording {
                 Text(transcribedText)
                     .font(.system(size: 14))
-                    .foregroundColor(Color(hex: "F4F1E8"))
+                    .foregroundColor(WyldeStyles.Colors.ink)
                     .padding(14)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color(hex: "111111"))
+                    .background(WyldeStyles.Colors.bone)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
 
@@ -198,23 +198,23 @@ struct WyldeWorkoutView: View {
                     Text("LOGGED")
                         .font(.system(size: 10, weight: .bold))
                         .tracking(2)
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(WyldeStyles.Colors.stone)
 
                     ForEach(voiceNotes.indices, id: \.self) { i in
                         HStack(alignment: .top, spacing: 10) {
                             Text("\(i + 1)")
                                 .font(.system(size: 11, weight: .bold))
-                                .foregroundColor(Color(hex: "C8A96E"))
+                                .foregroundColor(WyldeStyles.Colors.bronze)
                                 .frame(width: 20, height: 20)
-                                .background(Color(hex: "C8A96E").opacity(0.12))
+                                .background(WyldeStyles.Colors.bronze.opacity(0.12))
                                 .clipShape(Circle())
                             Text(voiceNotes[i])
                                 .font(.system(size: 13))
-                                .foregroundColor(Color(hex: "F4F1E8"))
+                                .foregroundColor(WyldeStyles.Colors.ink)
                                 .lineLimit(3)
                         }
                         .padding(12)
-                        .background(Color(hex: "111111"))
+                        .background(WyldeStyles.Colors.bone)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
@@ -249,15 +249,15 @@ struct WyldeWorkoutView: View {
                 statPill("Exercises", "\(parsedExercises.count)")
             }
             .padding(14)
-            .background(Color(hex: "111111"))
+            .background(WyldeStyles.Colors.bone)
             .clipShape(RoundedRectangle(cornerRadius: 14))
 
             if isParsing {
                 VStack(spacing: 12) {
-                    ProgressView().tint(Color(hex: "C8A96E"))
+                    ProgressView().tint(WyldeStyles.Colors.bronze)
                     Text("Summarizing your workout...")
                         .font(.system(size: 14))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(WyldeStyles.Colors.stone)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 30)
@@ -267,23 +267,23 @@ struct WyldeWorkoutView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "sparkles")
                             .font(.system(size: 12))
-                            .foregroundColor(Color(hex: "C8A96E"))
+                            .foregroundColor(WyldeStyles.Colors.bronze)
                         Text("WORKOUT SUMMARY")
                             .font(.system(size: 10, weight: .bold))
                             .tracking(2)
-                            .foregroundColor(Color(hex: "C8A96E"))
+                            .foregroundColor(WyldeStyles.Colors.bronze)
                     }
 
                     Text(summary)
                         .font(.system(size: 14))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(WyldeStyles.Colors.ink)
                         .lineSpacing(3)
                 }
                 .padding(16)
-                .background(Color(hex: "111111"))
+                .background(WyldeStyles.Colors.bone)
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
-                        .stroke(Color(hex: "C8A96E").opacity(0.15), lineWidth: 1)
+                        .stroke(WyldeStyles.Colors.bronze.opacity(0.15), lineWidth: 1)
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 14))
 
@@ -293,21 +293,21 @@ struct WyldeWorkoutView: View {
                         Text("EXERCISES DETECTED")
                             .font(.system(size: 10, weight: .bold))
                             .tracking(2)
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(WyldeStyles.Colors.stone)
 
                         ForEach(parsedExercises) { ex in
                             HStack(spacing: 10) {
                                 Circle()
-                                    .fill(Color(hex: "C8A96E").opacity(0.15))
+                                    .fill(WyldeStyles.Colors.bronze.opacity(0.15))
                                     .frame(width: 8, height: 8)
                                 Text(ex.name)
                                     .font(.system(size: 13, weight: .medium))
-                                    .foregroundColor(Color(hex: "F4F1E8"))
+                                    .foregroundColor(WyldeStyles.Colors.ink)
                                 Spacer()
                                 if let sets = ex.sets {
                                     Text(sets)
                                         .font(.system(size: 11, design: .monospaced))
-                                        .foregroundColor(Color(hex: "A6A29A"))
+                                        .foregroundColor(WyldeStyles.Colors.stone)
                                 }
                             }
                         }
@@ -326,12 +326,12 @@ struct WyldeWorkoutView: View {
                     Text("Log Wylde Workout")
                         .font(.system(size: 15, weight: .bold))
                 }
-                .foregroundColor(Color(hex: "1A1816"))
+                .foregroundColor(WyldeStyles.Colors.ink)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
                 .background(
                     LinearGradient(
-                        colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                        colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                         startPoint: .top, endPoint: .bottom
                     )
                 )
@@ -346,10 +346,10 @@ struct WyldeWorkoutView: View {
         VStack(spacing: 4) {
             Text(value)
                 .font(.system(size: 18, weight: .bold, design: .monospaced))
-                .foregroundColor(Color(hex: "C8A96E"))
+                .foregroundColor(WyldeStyles.Colors.bronze)
             Text(label)
                 .font(.system(size: 10, weight: .medium))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
         }
         .frame(maxWidth: .infinity)
     }

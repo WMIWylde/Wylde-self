@@ -502,7 +502,7 @@ struct StartTodayFlow: View {
                     ForEach(day.exercises.prefix(8)) { ex in
                         HStack(spacing: 10) {
                             Circle()
-                                .fill(ex.isWarmup ? Theme.gold.opacity(0.15) : (ex.isCardio ? Color(hex: "7FD0FF").opacity(0.15) : Theme.sage.opacity(0.15)))
+                                .fill(ex.isWarmup ? Theme.gold.opacity(0.15) : (ex.isCardio ? WyldeStyles.Colors.vitalBlue.opacity(0.15) : Theme.sage.opacity(0.15)))
                                 .frame(width: 8, height: 8)
                             Text(ex.name)
                                 .font(.system(size: 13, weight: .medium))
@@ -530,12 +530,12 @@ struct StartTodayFlow: View {
                             Text("Start Workout")
                                 .font(.system(size: 14, weight: .bold))
                         }
-                        .foregroundColor(Color(hex: "1A1816"))
+                        .foregroundColor(WyldeStyles.Colors.ink)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                         .background(
                             LinearGradient(
-                                colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                                colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                                 startPoint: .top, endPoint: .bottom
                             )
                         )
@@ -746,7 +746,7 @@ struct StartTodayFlow: View {
                     HStack(spacing: 6) {
                         Image(systemName: "drop.fill")
                             .font(.system(size: 11))
-                            .foregroundColor(Color(hex: "7FD0FF"))
+                            .foregroundColor(WyldeStyles.Colors.vitalBlue)
                         Text("\(appState.waterLogged)/\(appState.waterGoal) glasses")
                             .font(.system(size: 12))
                             .foregroundColor(Theme.muted)
@@ -763,12 +763,12 @@ struct StartTodayFlow: View {
                         Text("Close the Day")
                             .font(.system(size: 15, weight: .bold))
                     }
-                    .foregroundColor(Color(hex: "1A1816"))
+                    .foregroundColor(WyldeStyles.Colors.ink)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(
                         LinearGradient(
-                            colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                            colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                             startPoint: .top, endPoint: .bottom
                         )
                     )

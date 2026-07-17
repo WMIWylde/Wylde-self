@@ -35,10 +35,10 @@ struct NutritionTabView: View {
                                 Text("Voice Log")
                                     .font(.system(size: 12, weight: .semibold))
                             }
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(WyldeStyles.Colors.ink)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 18)
-                            .background(Color(hex: "C8A96E"))
+                            .background(WyldeStyles.Colors.bronze)
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
 
@@ -49,10 +49,10 @@ struct NutritionTabView: View {
                                 Text("Search Food")
                                     .font(.system(size: 12, weight: .semibold))
                             }
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(WyldeStyles.Colors.ink)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 18)
-                            .background(Color(hex: "5EE6D6").opacity(0.85))
+                            .background(WyldeStyles.Colors.vitalTeal.opacity(0.85))
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
 
@@ -63,10 +63,10 @@ struct NutritionTabView: View {
                                 Text("Snap Meal")
                                     .font(.system(size: 12, weight: .semibold))
                             }
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(WyldeStyles.Colors.ink)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 18)
-                            .background(Color(hex: "FF9A3C"))
+                            .background(WyldeStyles.Colors.vitalOrange)
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
 
@@ -77,10 +77,10 @@ struct NutritionTabView: View {
                                 Text("Meal Plan")
                                     .font(.system(size: 12, weight: .semibold))
                             }
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(WyldeStyles.Colors.ink)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 18)
-                            .background(Color(hex: "B68BFF"))
+                            .background(WyldeStyles.Colors.vitalPurple)
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
                     }
@@ -93,10 +93,10 @@ struct NutritionTabView: View {
                             .foregroundColor(Theme.muted)
 
                         HStack(spacing: 0) {
-                            macroRing(label: "Calories", current: appState.caloriesLogged, goal: appState.caloriesGoal, unit: "", color: Color(hex: "C8A96E"))
-                            macroRing(label: "Protein", current: appState.proteinLogged, goal: appState.proteinGoal, unit: "g", color: Color(hex: "5EE6D6"))
-                            macroRing(label: "Carbs", current: appState.carbsLogged, goal: appState.carbsGoal, unit: "g", color: Color(hex: "FF9A3C"))
-                            macroRing(label: "Fat", current: appState.fatLogged, goal: appState.fatGoal, unit: "g", color: Color(hex: "B68BFF"))
+                            macroRing(label: "Calories", current: appState.caloriesLogged, goal: appState.caloriesGoal, unit: "", color: WyldeStyles.Colors.bronze)
+                            macroRing(label: "Protein", current: appState.proteinLogged, goal: appState.proteinGoal, unit: "g", color: WyldeStyles.Colors.vitalTeal)
+                            macroRing(label: "Carbs", current: appState.carbsLogged, goal: appState.carbsGoal, unit: "g", color: WyldeStyles.Colors.vitalOrange)
+                            macroRing(label: "Fat", current: appState.fatLogged, goal: appState.fatGoal, unit: "g", color: WyldeStyles.Colors.vitalPurple)
                         }
 
                         if appState.caloriesBurned > 0 {
@@ -172,11 +172,11 @@ struct NutritionTabView: View {
                                 HStack {
                                     Image(systemName: "calendar")
                                         .font(.system(size: 14))
-                                        .foregroundColor(Color(hex: "FF9A3C"))
+                                        .foregroundColor(WyldeStyles.Colors.vitalOrange)
                                     Text("TODAY'S MEAL PLAN")
                                         .font(.system(size: 10, weight: .bold))
                                         .tracking(2)
-                                        .foregroundColor(Color(hex: "FF9A3C"))
+                                        .foregroundColor(WyldeStyles.Colors.vitalOrange)
                                     Spacer()
                                     let done = today.meals.filter(\.completed).count
                                     Text("\(done)/\(today.meals.count)")
@@ -197,7 +197,7 @@ struct NutritionTabView: View {
                             }
                             .padding(16)
                             .background(Theme.surface)
-                            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color(hex: "FF9A3C").opacity(0.15), lineWidth: 1))
+                            .overlay(RoundedRectangle(cornerRadius: 14).stroke(WyldeStyles.Colors.vitalOrange.opacity(0.15), lineWidth: 1))
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
                         .buttonStyle(.plain)
@@ -235,7 +235,7 @@ struct NutritionTabView: View {
                                     VStack(alignment: .trailing, spacing: 2) {
                                         Text("\(summary.calories) cal")
                                             .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                                            .foregroundColor(Color(hex: "C8A96E"))
+                                            .foregroundColor(WyldeStyles.Colors.bronze)
                                         Text("\(summary.protein)g P · \(summary.carbs)g C · \(summary.fat)g F")
                                             .font(.system(size: 9, design: .monospaced))
                                             .foregroundColor(Theme.muted)

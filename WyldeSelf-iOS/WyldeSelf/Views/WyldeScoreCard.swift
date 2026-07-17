@@ -11,11 +11,11 @@ struct WyldeScoreCard: View {
             } label: {
             HStack {
                 Image(systemName: "chart.line.uptrend.xyaxis")
-                    .foregroundColor(Color(hex: "C8A96E"))
+                    .foregroundColor(WyldeStyles.Colors.bronze)
                 Text("WYLDE SCORE")
                     .font(.system(size: 10, weight: .bold))
                     .tracking(2)
-                    .foregroundColor(Color(hex: "C8A96E"))
+                    .foregroundColor(WyldeStyles.Colors.bronze)
                 Spacer()
                 if let s = score {
                     Text("\(s.totalScore)")
@@ -53,12 +53,12 @@ struct WyldeScoreCard: View {
 
                 // Component bars
                 VStack(spacing: 6) {
-                    scoreBar(label: "Ritual", score: s.ritualScore, max: 20, color: Color(hex: "C8A96E"))
-                    scoreBar(label: "Movement", score: s.movementScore, max: 20, color: Color(hex: "5EE6D6"))
-                    scoreBar(label: "Nutrition", score: s.nutritionScore, max: 20, color: Color(hex: "FF9A3C"))
-                    scoreBar(label: "Protocol", score: s.protocolScore, max: 25, color: Color(hex: "B68BFF"))
-                    scoreBar(label: "Recovery", score: s.recoveryScore, max: 10, color: Color(hex: "7FD0FF"))
-                    scoreBar(label: "Mindset", score: s.mindsetScore, max: 5, color: Color(hex: "7A8771"))
+                    scoreBar(label: "Ritual", score: s.ritualScore, max: 20, color: WyldeStyles.Colors.bronze)
+                    scoreBar(label: "Movement", score: s.movementScore, max: 20, color: WyldeStyles.Colors.vitalTeal)
+                    scoreBar(label: "Nutrition", score: s.nutritionScore, max: 20, color: WyldeStyles.Colors.vitalOrange)
+                    scoreBar(label: "Protocol", score: s.protocolScore, max: 25, color: WyldeStyles.Colors.vitalPurple)
+                    scoreBar(label: "Recovery", score: s.recoveryScore, max: 10, color: WyldeStyles.Colors.vitalBlue)
+                    scoreBar(label: "Mindset", score: s.mindsetScore, max: 5, color: WyldeStyles.Colors.sage)
                 }
             } else {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
@@ -79,7 +79,7 @@ struct WyldeScoreCard: View {
         .background(Theme.elevatedBG)
         .overlay(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(Color(hex: "C8A96E").opacity(0.15), lineWidth: 1)
+                .stroke(WyldeStyles.Colors.bronze.opacity(0.15), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .shadow(color: .black.opacity(0.3), radius: 12, x: 0, y: 6)
@@ -114,10 +114,10 @@ struct WyldeScoreCard: View {
 
     private func gradeColor(_ score: Int) -> Color {
         switch score {
-        case 90...100: return Color(hex: "C8A96E")
-        case 75..<90: return Color(hex: "5EE6D6")
-        case 55..<75: return Color(hex: "7A8771")
-        case 35..<55: return Color(hex: "FF9A3C")
+        case 90...100: return WyldeStyles.Colors.bronze
+        case 75..<90: return WyldeStyles.Colors.vitalTeal
+        case 55..<75: return WyldeStyles.Colors.sage
+        case 35..<55: return WyldeStyles.Colors.vitalOrange
         default: return Theme.secondaryText
         }
     }

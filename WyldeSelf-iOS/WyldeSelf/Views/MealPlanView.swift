@@ -24,7 +24,7 @@ struct MealPlanView: View {
                     Text("WEEKLY NUTRITION")
                         .font(.system(size: 10, weight: .bold))
                         .tracking(2.5)
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
                     Spacer()
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
@@ -89,7 +89,7 @@ struct MealPlanView: View {
             Spacer()
             Image(systemName: "fork.knife")
                 .font(.system(size: 44))
-                .foregroundColor(Color(hex: "C8A96E").opacity(0.5))
+                .foregroundColor(WyldeStyles.Colors.bronze.opacity(0.5))
 
             Text("Your Weekly Meal Plan")
                 .font(.system(size: 24, weight: .bold, design: .serif))
@@ -116,7 +116,7 @@ struct MealPlanView: View {
     private var generatingView: some View {
         VStack(spacing: 20) {
             Spacer()
-            ProgressView().tint(Color(hex: "C8A96E")).scaleEffect(1.2)
+            ProgressView().tint(WyldeStyles.Colors.bronze).scaleEffect(1.2)
             Text("Building your meal plan...")
                 .font(.system(size: 18, weight: .medium, design: .serif))
                 .foregroundColor(Theme.primaryText)
@@ -192,11 +192,11 @@ struct MealPlanView: View {
             VStack(spacing: 4) {
                 Text(String(day.dayName.prefix(3)))
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(isSelected ? Color(hex: "C8A96E") : Theme.secondaryText)
+                    .foregroundColor(isSelected ? WyldeStyles.Colors.bronze : Theme.secondaryText)
                 if completedCount == day.meals.count && !day.meals.isEmpty {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 10))
-                        .foregroundColor(Color(hex: "7A8771"))
+                        .foregroundColor(WyldeStyles.Colors.sage)
                 } else {
                     Text("\(completedCount)/\(day.meals.count)")
                         .font(.system(size: 9, design: .monospaced))
@@ -204,10 +204,10 @@ struct MealPlanView: View {
                 }
             }
             .frame(width: 48, height: 48)
-            .background(isSelected ? Color(hex: "C8A96E").opacity(0.10) : Theme.elevatedBG)
+            .background(isSelected ? WyldeStyles.Colors.bronze.opacity(0.10) : Theme.elevatedBG)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(isToday ? Color(hex: "C8A96E").opacity(0.3) : .clear, lineWidth: 1)
+                    .stroke(isToday ? WyldeStyles.Colors.bronze.opacity(0.3) : .clear, lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
@@ -222,14 +222,14 @@ struct MealPlanView: View {
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: meal.completed ? "checkmark.circle.fill" : "circle")
-                        .foregroundColor(meal.completed ? Color(hex: "7A8771") : Theme.tertiaryText)
+                        .foregroundColor(meal.completed ? WyldeStyles.Colors.sage : Theme.tertiaryText)
                         .font(.system(size: 20))
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(meal.mealType.rawValue)
                             .font(.system(size: 10, weight: .bold))
                             .tracking(1.5)
-                            .foregroundColor(Color(hex: "C8A96E"))
+                            .foregroundColor(WyldeStyles.Colors.bronze)
                         Text(meal.name)
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundColor(meal.completed ? Theme.tertiaryText : Theme.primaryText)
@@ -307,7 +307,7 @@ struct MealPlanView: View {
         VStack(spacing: 2) {
             Text(value)
                 .font(.system(size: 16, weight: .bold, design: .monospaced))
-                .foregroundColor(Color(hex: "C8A96E"))
+                .foregroundColor(WyldeStyles.Colors.bronze)
             Text(label)
                 .font(.system(size: 10))
                 .foregroundColor(Theme.tertiaryText)
@@ -326,7 +326,7 @@ struct MealPlanView: View {
                         Text(section.category.uppercased())
                             .font(.system(size: 10, weight: .bold))
                             .tracking(2)
-                            .foregroundColor(Color(hex: "C8A96E"))
+                            .foregroundColor(WyldeStyles.Colors.bronze)
 
                         ForEach(section.items) { item in
                             Button {
@@ -334,7 +334,7 @@ struct MealPlanView: View {
                             } label: {
                                 HStack(spacing: 10) {
                                     Image(systemName: item.checked ? "checkmark.square.fill" : "square")
-                                        .foregroundColor(item.checked ? Color(hex: "7A8771") : Theme.tertiaryText)
+                                        .foregroundColor(item.checked ? WyldeStyles.Colors.sage : Theme.tertiaryText)
                                         .font(.system(size: 16))
                                     Text(item.name)
                                         .font(.system(size: 14))

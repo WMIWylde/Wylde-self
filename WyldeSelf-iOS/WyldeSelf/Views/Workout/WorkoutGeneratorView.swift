@@ -10,8 +10,8 @@ struct WorkoutGeneratorView: View {
     var body: some View {
         ZStack {
             AmbientBackground(
-                glowColor: Color(hex: "C8A96E"),
-                secondaryGlow: Color(hex: "7A8771")
+                glowColor: WyldeStyles.Colors.bronze,
+                secondaryGlow: WyldeStyles.Colors.sage
             )
 
             ScrollView(showsIndicators: false) {
@@ -21,30 +21,30 @@ struct WorkoutGeneratorView: View {
                     if service.isGenerating {
                         Spacer().frame(height: 80)
                         ProgressView()
-                            .tint(Color(hex: "C8A96E"))
+                            .tint(WyldeStyles.Colors.bronze)
                             .scaleEffect(1.3)
 
                         Text("Building your program...")
                             .font(.system(size: 20, weight: .medium, design: .serif))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(WyldeStyles.Colors.ink)
 
                         Text("Analyzing your goals, equipment, and experience")
                             .font(.system(size: 13))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(WyldeStyles.Colors.stone)
                             .multilineTextAlignment(.center)
                     } else if service.program == nil {
                         // Header
                         Image(systemName: "figure.strengthtraining.traditional")
                             .font(.system(size: 44))
-                            .foregroundColor(Color(hex: "C8A96E").opacity(0.6))
+                            .foregroundColor(WyldeStyles.Colors.bronze.opacity(0.6))
 
                         Text("Choose Your Program")
                             .font(.system(size: 26, weight: .bold, design: .serif))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(WyldeStyles.Colors.ink)
 
                         Text("Select a training style, then pick your equipment.")
                             .font(.system(size: 14))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(WyldeStyles.Colors.stone)
                             .multilineTextAlignment(.center)
 
                         // Program options
@@ -74,7 +74,7 @@ struct WorkoutGeneratorView: View {
                                 icon: "figure.walk",
                                 title: "Bodyweight Only",
                                 subtitle: "No equipment needed. Push-ups, pull-ups, squats, HIIT. Train anywhere.",
-                                accent: Color(hex: "5EE6D6"),
+                                accent: WyldeStyles.Colors.vitalTeal,
                                 action: {
                                     service.sessionEquipment = ["bodyweight"]
                                     service.program = service.bodyweightProgram()
@@ -95,7 +95,7 @@ struct WorkoutGeneratorView: View {
                                 icon: "flame.fill",
                                 title: "Kettlebell HIIT",
                                 subtitle: "Full body. Core-focused. 4 days of kettlebell + high intensity intervals.",
-                                accent: Color(hex: "FF9A3C"),
+                                accent: WyldeStyles.Colors.vitalOrange,
                                 action: {
                                     service.sessionEquipment = ["bodyweight", "kettlebell"]
                                     service.program = service.kettlebellHIITProgram()
@@ -123,7 +123,7 @@ struct WorkoutGeneratorView: View {
         }
     }
 
-    private func programOption(icon: String, title: String, subtitle: String, accent: Color = Color(hex: "C8A96E"), action: @escaping () -> Void) -> some View {
+    private func programOption(icon: String, title: String, subtitle: String, accent: Color = WyldeStyles.Colors.bronze, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 14) {
                 Image(systemName: icon)
@@ -136,16 +136,16 @@ struct WorkoutGeneratorView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title)
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(WyldeStyles.Colors.ink)
                     Text(subtitle)
                         .font(.system(size: 12))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(WyldeStyles.Colors.stone)
                         .lineLimit(2)
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12))
-                    .foregroundColor(Color(hex: "6E6B65"))
+                    .foregroundColor(WyldeStyles.Colors.stone)
             }
             .padding(16)
             .background(Theme.elevatedBG)

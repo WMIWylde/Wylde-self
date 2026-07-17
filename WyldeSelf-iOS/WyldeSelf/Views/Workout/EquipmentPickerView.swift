@@ -52,7 +52,7 @@ struct EquipmentPickerView: View {
                     Text("WHAT ARE YOU WORKING WITH?")
                         .font(.system(size: 10, weight: .bold))
                         .tracking(2)
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
 
                     Text("Pick your setup for today")
                         .font(.system(size: 22, weight: .bold, design: .serif))
@@ -80,17 +80,17 @@ struct EquipmentPickerView: View {
                                     VStack(spacing: 8) {
                                         Image(systemName: preset.1)
                                             .font(.system(size: 20))
-                                            .foregroundColor(isActive ? Color(hex: "C8A96E") : Theme.secondaryText)
+                                            .foregroundColor(isActive ? WyldeStyles.Colors.bronze : Theme.secondaryText)
                                         Text(preset.0)
                                             .font(.system(size: 12, weight: .semibold))
                                             .foregroundColor(isActive ? Theme.primaryText : Theme.secondaryText)
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 16)
-                                    .background(isActive ? Color(hex: "C8A96E").opacity(0.10) : Theme.elevatedBG)
+                                    .background(isActive ? WyldeStyles.Colors.bronze.opacity(0.10) : Theme.elevatedBG)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 14)
-                                            .stroke(isActive ? Color(hex: "C8A96E").opacity(0.4) : Theme.primaryText.opacity(0.06), lineWidth: 1)
+                                            .stroke(isActive ? WyldeStyles.Colors.bronze.opacity(0.4) : Theme.primaryText.opacity(0.06), lineWidth: 1)
                                     )
                                     .clipShape(RoundedRectangle(cornerRadius: 14))
                                 }
@@ -118,9 +118,9 @@ struct EquipmentPickerView: View {
                                 HStack(spacing: 14) {
                                     Image(systemName: item.icon)
                                         .font(.system(size: 16))
-                                        .foregroundColor(isOn ? Color(hex: "C8A96E") : Theme.tertiaryText)
+                                        .foregroundColor(isOn ? WyldeStyles.Colors.bronze : Theme.tertiaryText)
                                         .frame(width: 36, height: 36)
-                                        .background(isOn ? Color(hex: "C8A96E").opacity(0.10) : Theme.elevatedBG)
+                                        .background(isOn ? WyldeStyles.Colors.bronze.opacity(0.10) : Theme.elevatedBG)
                                         .clipShape(RoundedRectangle(cornerRadius: 10))
 
                                     Text(item.name)
@@ -131,7 +131,7 @@ struct EquipmentPickerView: View {
 
                                     Image(systemName: isOn ? "checkmark.circle.fill" : "circle")
                                         .font(.system(size: 20))
-                                        .foregroundColor(isOn ? Color(hex: "C8A96E") : Theme.tertiaryText)
+                                        .foregroundColor(isOn ? WyldeStyles.Colors.bronze : Theme.tertiaryText)
                                 }
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, 12)
@@ -154,12 +154,12 @@ struct EquipmentPickerView: View {
                 } label: {
                     Text(selected.isEmpty ? "Bodyweight Workout" : "Generate Workout (\(selected.count))")
                         .font(.system(size: 15, weight: .bold))
-                        .foregroundColor(Color(hex: "1A1816"))
+                        .foregroundColor(WyldeStyles.Colors.ink)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(
                             LinearGradient(
-                                colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                                colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                                 startPoint: .top, endPoint: .bottom
                             )
                         )

@@ -12,7 +12,7 @@ struct SplashView: View {
         } else {
             ZStack {
                 // Cinematic dark background with subtle glow
-                Color(hex: "070707").ignoresSafeArea()
+                WyldeStyles.Colors.paper.ignoresSafeArea()
 
                 // Ambient gold glow — top right
                 RadialGradient(
@@ -29,13 +29,13 @@ struct SplashView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 64, height: 64)
                         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                        .shadow(color: Color(hex: "C8A96E").opacity(0.6), radius: glowRadius, x: 0, y: 0)
+                        .shadow(color: WyldeStyles.Colors.bronze.opacity(0.6), radius: glowRadius, x: 0, y: 0)
                         .opacity(logoOpacity)
 
                     Text("WYLDE SELF")
                         .font(.system(size: 12, weight: .semibold))
                         .tracking(3)
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(WyldeStyles.Colors.ink)
                         .opacity(textOpacity)
                 }
             }

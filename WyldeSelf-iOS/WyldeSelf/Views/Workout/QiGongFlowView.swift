@@ -35,11 +35,11 @@ struct QiGongFlowView: View {
         return 1.0 - CGFloat(remaining) / CGFloat(current.duration)
     }
 
-    private let accentColor = Color(hex: "B68BFF")
+    private let accentColor = WyldeStyles.Colors.vitalPurple
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            WyldeStyles.Colors.paper.ignoresSafeArea()
 
             // Soft ambient glow
             RadialGradient(
@@ -71,11 +71,11 @@ struct QiGongFlowView: View {
 
             Text("Energy Movement")
                 .font(.system(size: 28, weight: .bold, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(WyldeStyles.Colors.ink)
 
             Text("7 movements. Slow and intentional.\nWake up the body's energy.")
                 .font(.system(size: 15))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
                 .multilineTextAlignment(.center)
                 .lineSpacing(3)
 
@@ -89,7 +89,7 @@ struct QiGongFlowView: View {
 
             Button("Skip") { dismiss() }
                 .font(.system(size: 13, weight: .medium))
-                .foregroundColor(Color(hex: "6E6B65"))
+                .foregroundColor(WyldeStyles.Colors.stone)
 
             Spacer()
             Spacer()
@@ -105,9 +105,9 @@ struct QiGongFlowView: View {
                 Button { dismiss() } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(WyldeStyles.Colors.stone)
                         .frame(width: 36, height: 36)
-                        .background(Color(hex: "111111"))
+                        .background(WyldeStyles.Colors.bone)
                         .clipShape(Circle())
                 }
             }
@@ -136,7 +136,7 @@ struct QiGongFlowView: View {
 
                     Text("\(remaining)")
                         .font(.system(size: 40, weight: .light, design: .monospaced))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(WyldeStyles.Colors.ink)
                 }
             }
 
@@ -144,11 +144,11 @@ struct QiGongFlowView: View {
 
             Text(current.name)
                 .font(.system(size: 22, weight: .semibold, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(WyldeStyles.Colors.ink)
 
             Text(current.cue)
                 .font(.system(size: 14))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
                 .padding(.top, 6)
@@ -157,7 +157,7 @@ struct QiGongFlowView: View {
             if currentIndex < movements.count - 1 {
                 Text("Next: \(movements[currentIndex + 1].name)")
                     .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(Color(hex: "6E6B65"))
+                    .foregroundColor(WyldeStyles.Colors.stone)
                     .padding(.top, 16)
             }
 
@@ -172,7 +172,7 @@ struct QiGongFlowView: View {
                 } label: {
                     Image(systemName: isPaused ? "play.fill" : "pause.fill")
                         .font(.system(size: 18))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(WyldeStyles.Colors.ink)
                         .frame(width: 50, height: 50)
                         .background(accentColor.opacity(0.15))
                         .clipShape(Circle())
@@ -181,9 +181,9 @@ struct QiGongFlowView: View {
                 Button { advanceMovement() } label: {
                     Text("Skip")
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(WyldeStyles.Colors.stone)
                         .frame(width: 56, height: 40)
-                        .background(Color(hex: "1A1A1A"))
+                        .background(WyldeStyles.Colors.sand)
                         .clipShape(Capsule())
                 }
             }
@@ -214,11 +214,11 @@ struct QiGongFlowView: View {
 
             Text("Energy activated.")
                 .font(.system(size: 28, weight: .bold, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(WyldeStyles.Colors.ink)
 
             Text("Your body is awake. Your mind is clear.")
                 .font(.system(size: 15))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
 
             GoldButton(label: "Continue") {
                 dismiss()

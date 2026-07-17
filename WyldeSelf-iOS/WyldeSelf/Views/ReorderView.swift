@@ -26,7 +26,7 @@ struct ReorderView: View {
                             Text("REFILL & REORDER")
                                 .font(.system(size: 10, weight: .bold))
                                 .tracking(2.5)
-                                .foregroundColor(Color(hex: "C8A96E"))
+                                .foregroundColor(WyldeStyles.Colors.bronze)
                             Text("Your clinic's products")
                                 .font(.system(size: 22, weight: .bold, design: .serif))
                                 .foregroundColor(Theme.primaryText)
@@ -43,7 +43,7 @@ struct ReorderView: View {
                     }
 
                     if isLoading {
-                        HStack { Spacer(); ProgressView().tint(Color(hex: "C8A96E")); Spacer() }
+                        HStack { Spacer(); ProgressView().tint(WyldeStyles.Colors.bronze); Spacer() }
                             .padding(.top, 40)
                     } else {
                         // Available products
@@ -105,9 +105,9 @@ struct ReorderView: View {
             HStack(spacing: 14) {
                 Image(systemName: categoryIcon(product.category))
                     .font(.system(size: 20))
-                    .foregroundColor(Color(hex: "C8A96E"))
+                    .foregroundColor(WyldeStyles.Colors.bronze)
                     .frame(width: 44, height: 44)
-                    .background(Color(hex: "C8A96E").opacity(0.10))
+                    .background(WyldeStyles.Colors.bronze.opacity(0.10))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
 
                 VStack(alignment: .leading, spacing: 3) {
@@ -122,7 +122,7 @@ struct ReorderView: View {
                 if let price = product.price {
                     Text("$\(String(format: "%.2f", price))")
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
                 }
             }
             .padding(16)
@@ -173,7 +173,7 @@ struct ReorderView: View {
 
                         HStack(spacing: 16) {
                             VStack { Text("Dose").font(.system(size: 10)).foregroundColor(Theme.tertiaryText); Text(p.typicalDose ?? "—").font(.system(size: 14, weight: .medium)).foregroundColor(Theme.primaryText) }
-                            VStack { Text("Price").font(.system(size: 10)).foregroundColor(Theme.tertiaryText); Text(p.price != nil ? "$\(String(format: "%.2f", p.price!))" : "—").font(.system(size: 14, weight: .semibold)).foregroundColor(Color(hex: "C8A96E")) }
+                            VStack { Text("Price").font(.system(size: 10)).foregroundColor(Theme.tertiaryText); Text(p.price != nil ? "$\(String(format: "%.2f", p.price!))" : "—").font(.system(size: 14, weight: .semibold)).foregroundColor(WyldeStyles.Colors.bronze) }
                         }
 
                         TextField("Add a note for your clinician...", text: $orderNote, axis: .vertical)
@@ -183,7 +183,7 @@ struct ReorderView: View {
                             .padding(14)
                             .background(Theme.elevatedBG)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .tint(Color(hex: "C8A96E"))
+                            .tint(WyldeStyles.Colors.bronze)
 
                         GoldButton(label: "Request Refill") {
                             Task { await submitOrder(p) }
@@ -306,9 +306,9 @@ struct ReorderView: View {
 
     private func statusColor(_ s: String) -> Color {
         switch s {
-        case "fulfilled": return Color(hex: "7A8771")
-        case "approved": return Color(hex: "C8A96E")
-        case "rejected", "cancelled": return Color(hex: "C26B5A")
+        case "fulfilled": return WyldeStyles.Colors.sage
+        case "approved": return WyldeStyles.Colors.bronze
+        case "rejected", "cancelled": return WyldeStyles.Colors.clay
         default: return Theme.secondaryText
         }
     }

@@ -24,11 +24,11 @@ struct GuidedMeditationView: View {
         return 1.0 - CGFloat(remaining) / CGFloat(totalDuration)
     }
 
-    private let accentColor = Color(hex: "5EE6D6")
+    private let accentColor = WyldeStyles.Colors.vitalTeal
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            WyldeStyles.Colors.paper.ignoresSafeArea()
 
             switch phase {
             case .intro: introView
@@ -55,11 +55,11 @@ struct GuidedMeditationView: View {
 
             Text("Guided Meditation")
                 .font(.system(size: 28, weight: .bold, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(WyldeStyles.Colors.ink)
 
             Text("Close your eyes. Visualize the version\nof yourself you're becoming.")
                 .font(.system(size: 15))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
                 .multilineTextAlignment(.center)
                 .lineSpacing(3)
 
@@ -79,7 +79,7 @@ struct GuidedMeditationView: View {
 
             Button("Skip") { dismiss() }
                 .font(.system(size: 13, weight: .medium))
-                .foregroundColor(Color(hex: "6E6B65"))
+                .foregroundColor(WyldeStyles.Colors.stone)
 
             Spacer()
             Spacer()
@@ -94,9 +94,9 @@ struct GuidedMeditationView: View {
         } label: {
             Text("\(minutes)m")
                 .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(isSelected ? Color(hex: "070707") : accentColor)
+                .foregroundColor(isSelected ? WyldeStyles.Colors.paper : accentColor)
                 .frame(width: 48, height: 36)
-                .background(isSelected ? accentColor : Color(hex: "1A1A1A"))
+                .background(isSelected ? accentColor : WyldeStyles.Colors.sand)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
         }
     }
@@ -110,9 +110,9 @@ struct GuidedMeditationView: View {
                 Button { dismiss() } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(WyldeStyles.Colors.stone)
                         .frame(width: 36, height: 36)
-                        .background(Color(hex: "111111"))
+                        .background(WyldeStyles.Colors.bone)
                         .clipShape(Circle())
                 }
             }
@@ -160,7 +160,7 @@ struct GuidedMeditationView: View {
                     Spacer()
                     Text(timeString)
                         .font(.system(size: 28, weight: .ultraLight, design: .monospaced))
-                        .foregroundColor(Color(hex: "F4F1E8").opacity(0.6))
+                        .foregroundColor(WyldeStyles.Colors.ink.opacity(0.6))
 
                     // Progress arc — thin, subtle
                     Circle()
@@ -178,7 +178,7 @@ struct GuidedMeditationView: View {
             // Visualization prompts — rotate through
             Text(visualizationPrompt)
                 .font(.system(size: 15, weight: .regular, design: .serif))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
                 .lineSpacing(4)
@@ -200,7 +200,7 @@ struct GuidedMeditationView: View {
                 } label: {
                     Image(systemName: isPaused ? "play.fill" : "pause.fill")
                         .font(.system(size: 18))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(WyldeStyles.Colors.ink)
                         .frame(width: 50, height: 50)
                         .background(accentColor.opacity(0.15))
                         .clipShape(Circle())
@@ -213,9 +213,9 @@ struct GuidedMeditationView: View {
                 } label: {
                     Text("End")
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(WyldeStyles.Colors.stone)
                         .frame(width: 56, height: 40)
-                        .background(Color(hex: "1A1A1A"))
+                        .background(WyldeStyles.Colors.sand)
                         .clipShape(Capsule())
                 }
             }
@@ -235,11 +235,11 @@ struct GuidedMeditationView: View {
 
             Text("Mind clear.")
                 .font(.system(size: 28, weight: .bold, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(WyldeStyles.Colors.ink)
 
             Text("Carry this stillness into your day.")
                 .font(.system(size: 15))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
 
             GoldButton(label: "Continue") {
                 dismiss()

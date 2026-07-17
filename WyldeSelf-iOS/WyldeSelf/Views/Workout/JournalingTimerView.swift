@@ -17,11 +17,11 @@ struct JournalingTimerView: View {
         return 1.0 - CGFloat(remaining) / CGFloat(total)
     }
 
-    private let accentColor = Color(hex: "C8A96E")
+    private let accentColor = WyldeStyles.Colors.bronze
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            WyldeStyles.Colors.paper.ignoresSafeArea()
 
             // Subtle warm glow
             RadialGradient(
@@ -54,11 +54,11 @@ struct JournalingTimerView: View {
 
             Text("Journaling")
                 .font(.system(size: 28, weight: .bold, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(WyldeStyles.Colors.ink)
 
             Text("Write what's on your mind.\nWhat you're grateful for.\nWhat you're building.")
                 .font(.system(size: 15))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
 
@@ -67,7 +67,7 @@ struct JournalingTimerView: View {
                 Text("DURATION")
                     .font(.system(size: 10, weight: .bold))
                     .tracking(2)
-                    .foregroundColor(Color(hex: "6E6B65"))
+                    .foregroundColor(WyldeStyles.Colors.stone)
 
                 HStack(spacing: 10) {
                     ForEach([10, 15, 20], id: \.self) { mins in
@@ -77,9 +77,9 @@ struct JournalingTimerView: View {
                         } label: {
                             Text("\(mins)m")
                                 .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(selectedMinutes == mins ? Color(hex: "070707") : accentColor)
+                                .foregroundColor(selectedMinutes == mins ? WyldeStyles.Colors.paper : accentColor)
                                 .frame(width: 52, height: 40)
-                                .background(selectedMinutes == mins ? accentColor : Color(hex: "1A1A1A"))
+                                .background(selectedMinutes == mins ? accentColor : WyldeStyles.Colors.sand)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
                     }
@@ -97,7 +97,7 @@ struct JournalingTimerView: View {
 
             Button("Skip") { dismiss() }
                 .font(.system(size: 13, weight: .medium))
-                .foregroundColor(Color(hex: "6E6B65"))
+                .foregroundColor(WyldeStyles.Colors.stone)
 
             Spacer()
             Spacer()
@@ -113,9 +113,9 @@ struct JournalingTimerView: View {
                 Button { dismiss() } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(WyldeStyles.Colors.stone)
                         .frame(width: 36, height: 36)
-                        .background(Color(hex: "111111"))
+                        .background(WyldeStyles.Colors.bone)
                         .clipShape(Circle())
                 }
             }
@@ -140,7 +140,7 @@ struct JournalingTimerView: View {
                 VStack(spacing: 8) {
                     Text(timeString)
                         .font(.system(size: 44, weight: .ultraLight, design: .monospaced))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(WyldeStyles.Colors.ink)
                         .contentTransition(.numericText())
                         .animation(.easeInOut(duration: 0.3), value: remaining)
                     Text("write")
@@ -154,7 +154,7 @@ struct JournalingTimerView: View {
             // Prompt
             Text(journalPrompt)
                 .font(.system(size: 15, weight: .regular, design: .serif))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
                 .lineSpacing(4)
@@ -171,7 +171,7 @@ struct JournalingTimerView: View {
                 } label: {
                     Image(systemName: isPaused ? "play.fill" : "pause.fill")
                         .font(.system(size: 18))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(WyldeStyles.Colors.ink)
                         .frame(width: 50, height: 50)
                         .background(accentColor.opacity(0.15))
                         .clipShape(Circle())
@@ -183,9 +183,9 @@ struct JournalingTimerView: View {
                 } label: {
                     Text("Done")
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(WyldeStyles.Colors.stone)
                         .frame(width: 56, height: 40)
-                        .background(Color(hex: "1A1A1A"))
+                        .background(WyldeStyles.Colors.sand)
                         .clipShape(Capsule())
                 }
             }
@@ -201,15 +201,15 @@ struct JournalingTimerView: View {
 
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 56))
-                .foregroundColor(Color(hex: "7A8771"))
+                .foregroundColor(WyldeStyles.Colors.sage)
 
             Text("Thoughts captured.")
                 .font(.system(size: 28, weight: .bold, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(WyldeStyles.Colors.ink)
 
             Text("Clarity comes from the page, not the screen.")
                 .font(.system(size: 15))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
 
             GoldButton(label: "Continue") {
                 dismiss()

@@ -21,7 +21,7 @@ struct ProtocolTrackerView: View {
                             Text("PROTOCOL TRACKER")
                                 .font(.system(size: 10, weight: .bold))
                                 .tracking(2.5)
-                                .foregroundColor(Color(hex: "C8A96E"))
+                                .foregroundColor(WyldeStyles.Colors.bronze)
                             Text("Your active protocol")
                                 .font(.system(size: 22, weight: .bold, design: .serif))
                                 .foregroundColor(Theme.primaryText)
@@ -103,7 +103,7 @@ struct ProtocolTrackerView: View {
                         ForEach(service.adherenceLogs.prefix(10)) { log in
                             HStack(spacing: 10) {
                                 Image(systemName: log.status == "taken" ? "checkmark.circle.fill" : "xmark.circle")
-                                    .foregroundColor(log.status == "taken" ? Color(hex: "7A8771") : Color(hex: "C26B5A"))
+                                    .foregroundColor(log.status == "taken" ? WyldeStyles.Colors.sage : WyldeStyles.Colors.clay)
                                     .font(.system(size: 16))
                                 VStack(alignment: .leading, spacing: 1) {
                                     Text(log.dose ?? "Dose logged")
@@ -118,7 +118,7 @@ struct ProtocolTrackerView: View {
                                 Spacer()
                                 Text(log.status.capitalized)
                                     .font(.system(size: 10, weight: .semibold))
-                                    .foregroundColor(log.status == "taken" ? Color(hex: "7A8771") : Color(hex: "C26B5A"))
+                                    .foregroundColor(log.status == "taken" ? WyldeStyles.Colors.sage : WyldeStyles.Colors.clay)
                             }
                             .padding(12)
                             .background(Theme.elevatedBG)
@@ -162,7 +162,7 @@ struct ProtocolTrackerView: View {
                 Spacer()
                 if todayLogged {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(Color(hex: "7A8771"))
+                        .foregroundColor(WyldeStyles.Colors.sage)
                         .font(.system(size: 24))
                 }
             }
@@ -181,7 +181,7 @@ struct ProtocolTrackerView: View {
                         .foregroundColor(Theme.onAccent)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 11)
-                        .background(Color(hex: "7A8771"))
+                        .background(WyldeStyles.Colors.sage)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
 
@@ -203,9 +203,9 @@ struct ProtocolTrackerView: View {
                     } label: {
                         Image(systemName: "exclamationmark.triangle")
                             .font(.system(size: 13))
-                            .foregroundColor(Color(hex: "C26B5A"))
+                            .foregroundColor(WyldeStyles.Colors.clay)
                             .frame(width: 42, height: 38)
-                            .background(Color(hex: "C26B5A").opacity(0.10))
+                            .background(WyldeStyles.Colors.clay.opacity(0.10))
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
@@ -215,7 +215,7 @@ struct ProtocolTrackerView: View {
         .background(Theme.elevatedBG)
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(todayLogged ? Color(hex: "7A8771").opacity(0.2) : Theme.primaryText.opacity(0.06), lineWidth: 1)
+                .stroke(todayLogged ? WyldeStyles.Colors.sage.opacity(0.2) : Theme.primaryText.opacity(0.06), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
@@ -242,7 +242,7 @@ struct ProtocolTrackerView: View {
                         .padding(14)
                         .background(Theme.elevatedBG)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .tint(Color(hex: "C8A96E"))
+                        .tint(WyldeStyles.Colors.bronze)
 
                     GoldButton(label: "Submit Report") {
                         if let rxId = sideEffectPrescriptionId {
@@ -274,8 +274,8 @@ struct ProtocolTrackerView: View {
     }
 
     private func adherenceColor(_ rate: Int) -> Color {
-        if rate >= 80 { return Color(hex: "7A8771") }
-        if rate >= 50 { return Color(hex: "C8A96E") }
-        return Color(hex: "C26B5A")
+        if rate >= 80 { return WyldeStyles.Colors.sage }
+        if rate >= 50 { return WyldeStyles.Colors.bronze }
+        return WyldeStyles.Colors.clay
     }
 }

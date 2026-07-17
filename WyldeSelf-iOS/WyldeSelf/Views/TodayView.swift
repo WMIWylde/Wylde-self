@@ -86,15 +86,15 @@ struct TodayView: View {
                     HStack(spacing: 14) {
                         Image(systemName: "pills.fill")
                             .font(.system(size: 18))
-                            .foregroundColor(Color(hex: "B68BFF"))
+                            .foregroundColor(WyldeStyles.Colors.vitalPurple)
                             .frame(width: 44, height: 44)
-                            .background(Color(hex: "B68BFF").opacity(0.10))
+                            .background(WyldeStyles.Colors.vitalPurple.opacity(0.10))
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         VStack(alignment: .leading, spacing: 3) {
                             Text("PROTOCOL TRACKER")
                                 .font(.system(size: 10, weight: .bold))
                                 .tracking(1.6)
-                                .foregroundColor(Color(hex: "B68BFF"))
+                                .foregroundColor(WyldeStyles.Colors.vitalPurple)
                             Text("View prescriptions and log doses")
                                 .font(.system(size: 13))
                                 .foregroundColor(Theme.secondaryText)
@@ -106,7 +106,7 @@ struct TodayView: View {
                     }
                     .padding(16)
                     .background(Theme.elevatedBG)
-                    .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color(hex: "B68BFF").opacity(0.15), lineWidth: 1))
+                    .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(WyldeStyles.Colors.vitalPurple.opacity(0.15), lineWidth: 1))
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
                 .buttonStyle(.plain)
@@ -151,8 +151,8 @@ struct TodayView: View {
             ZStack {
                 Theme.background
                 AmbientBackground(
-                    glowColor: Color(hex: "C9A86A"),
-                    secondaryGlow: Color(hex: "7A8771")
+                    glowColor: WyldeStyles.Colors.bronze,
+                    secondaryGlow: WyldeStyles.Colors.sage
                 ).opacity(0.6)
             }
             .clipped()
@@ -282,7 +282,7 @@ struct TodayView: View {
                 Text(greeting.uppercased())
                     .font(.system(size: 10, weight: .bold))
                     .tracking(2.5)
-                    .foregroundColor(Color(hex: "C8A96E"))
+                    .foregroundColor(WyldeStyles.Colors.bronze)
                 Text(appState.userName.isEmpty ? "Today, presence." : "Today, \(appState.userName).")
                     .font(.system(size: 24, weight: .medium, design: .serif))
                     .foregroundColor(.white)
@@ -314,14 +314,14 @@ struct TodayView: View {
                 ZStack {
                     // Track
                     Circle()
-                        .stroke(Color(hex: "C8A96E").opacity(0.12), lineWidth: 3.5)
+                        .stroke(WyldeStyles.Colors.bronze.opacity(0.12), lineWidth: 3.5)
                         .frame(width: 90, height: 90)
                     // Fill — glows as actions complete
                     Circle()
                         .trim(from: 0, to: mirrorProgress)
                         .stroke(
                             LinearGradient(
-                                colors: [Color(hex: "C8A96E"), Color(hex: "E6C886")],
+                                colors: [WyldeStyles.Colors.bronze, WyldeStyles.Colors.gold],
                                 startPoint: .topLeading, endPoint: .bottomTrailing
                             ),
                             style: StrokeStyle(lineWidth: 3.5, lineCap: .round)
@@ -339,12 +339,12 @@ struct TodayView: View {
                             .clipShape(Circle())
                     } else {
                         Circle()
-                            .fill(Color(hex: "C8A96E").opacity(0.10))
+                            .fill(WyldeStyles.Colors.bronze.opacity(0.10))
                             .frame(width: 80, height: 80)
                             .overlay(
                                 Image(systemName: "person.fill")
                                     .font(.system(size: 28))
-                                    .foregroundColor(Color(hex: "C8A96E").opacity(0.4))
+                                    .foregroundColor(WyldeStyles.Colors.bronze.opacity(0.4))
                             )
                     }
                 }
@@ -354,7 +354,7 @@ struct TodayView: View {
                     Text("Day \(appState.currentDay)")
                         .font(.system(size: 11, weight: .bold))
                         .tracking(1.5)
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
 
                     let identity = appState.identityStatement.isEmpty ? derivedIdentity : appState.identityStatement
                     Text(identity)
@@ -382,7 +382,7 @@ struct TodayView: View {
                     .fill(Theme.surface)
                     .overlay(
                         RoundedRectangle(cornerRadius: 18)
-                            .stroke(Color(hex: "C8A96E").opacity(0.10), lineWidth: 1)
+                            .stroke(WyldeStyles.Colors.bronze.opacity(0.10), lineWidth: 1)
                     )
             )
 
@@ -405,12 +405,12 @@ struct TodayView: View {
                     Image(systemName: "arrow.right")
                         .font(.system(size: 12, weight: .bold))
                 }
-                .foregroundColor(Color(hex: "1A1816"))
+                .foregroundColor(WyldeStyles.Colors.ink)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
                 .background(
                     LinearGradient(
-                        colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                        colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                         startPoint: .top, endPoint: .bottom
                     )
                 )
@@ -479,16 +479,16 @@ struct TodayView: View {
                     .scaledToFill()
                     .frame(width: 44, height: 44)
                     .clipShape(Circle())
-                    .overlay(Circle().stroke(Color(hex: "C8A96E").opacity(0.4), lineWidth: 1.5))
+                    .overlay(Circle().stroke(WyldeStyles.Colors.bronze.opacity(0.4), lineWidth: 1.5))
                     .fixedSize()
             } else {
                 Circle()
-                    .fill(Color(hex: "C8A96E").opacity(0.15))
+                    .fill(WyldeStyles.Colors.bronze.opacity(0.15))
                     .frame(width: 44, height: 44)
                     .overlay(
                         Text(String((appState.userName.first ?? "W").uppercased()))
                             .font(.system(size: 18, weight: .bold, design: .serif))
-                            .foregroundColor(Color(hex: "C8A96E"))
+                            .foregroundColor(WyldeStyles.Colors.bronze)
                     )
                     .fixedSize()
             }
@@ -566,7 +566,7 @@ struct TodayView: View {
                 Text("\(appState.completedDays) of \(appState.currentDay) closed")
                     .font(.system(size: 13, weight: .semibold))
                     .tracking(1.2)
-                    .foregroundColor(Color(hex: "E6C886"))
+                    .foregroundColor(WyldeStyles.Colors.gold)
 
                 Text("of becoming who you said you'd be")
                     .font(.system(size: 13, weight: .medium))
@@ -584,12 +584,12 @@ struct TodayView: View {
                         Image(systemName: "arrow.right")
                             .font(.system(size: 12, weight: .bold))
                     }
-                    .foregroundColor(Color(hex: "1A1816"))
+                    .foregroundColor(WyldeStyles.Colors.ink)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(
                         LinearGradient(
-                            colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                            colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -801,12 +801,12 @@ struct TodayView: View {
                         Image(systemName: "arrow.right")
                             .font(.system(size: 12, weight: .bold))
                     }
-                    .foregroundColor(Color(hex: "1A1816"))
+                    .foregroundColor(WyldeStyles.Colors.ink)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(
                         LinearGradient(
-                            colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                            colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                             startPoint: .top, endPoint: .bottom
                         )
                     )
@@ -823,12 +823,12 @@ struct TodayView: View {
                         Image(systemName: "sparkles")
                             .font(.system(size: 12, weight: .bold))
                     }
-                    .foregroundColor(Color(hex: "1A1816"))
+                    .foregroundColor(WyldeStyles.Colors.ink)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(
                         LinearGradient(
-                            colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                            colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                             startPoint: .top, endPoint: .bottom
                         )
                     )
@@ -850,11 +850,11 @@ struct TodayView: View {
             HStack(spacing: 14) {
                 Image(systemName: "figure.walk")
                     .font(.system(size: 22))
-                    .foregroundColor(appState.dailyWalkCompleted ? Theme.sage : Color(hex: "7FD0FF"))
+                    .foregroundColor(appState.dailyWalkCompleted ? Theme.sage : WyldeStyles.Colors.vitalBlue)
                     .frame(width: 36, height: 36)
                     .background(
                         Circle()
-                            .fill((appState.dailyWalkCompleted ? Theme.sage : Color(hex: "7FD0FF")).opacity(0.12))
+                            .fill((appState.dailyWalkCompleted ? Theme.sage : WyldeStyles.Colors.vitalBlue).opacity(0.12))
                     )
 
                 VStack(alignment: .leading, spacing: 3) {
@@ -865,7 +865,7 @@ struct TodayView: View {
                     if walkTimerActive {
                         Text(walkTimeString)
                             .font(.system(size: 20, weight: .bold, design: .monospaced))
-                            .foregroundColor(Color(hex: "7FD0FF"))
+                            .foregroundColor(WyldeStyles.Colors.vitalBlue)
                             .contentTransition(.numericText())
                             .animation(.easeInOut(duration: 0.3), value: walkSecondsElapsed)
                     } else {
@@ -895,10 +895,10 @@ struct TodayView: View {
                         } label: {
                             Text(walkSecondsElapsed >= 1800 ? "Complete Walk" : "End (\(walkSecondsElapsed / 60)m)")
                                 .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(walkSecondsElapsed >= 1800 ? Color(hex: "1A1816") : Color(hex: "7FD0FF"))
+                                .foregroundColor(walkSecondsElapsed >= 1800 ? WyldeStyles.Colors.ink : WyldeStyles.Colors.vitalBlue)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
-                                .background(walkSecondsElapsed >= 1800 ? Color(hex: "7FD0FF") : Color(hex: "7FD0FF").opacity(0.12))
+                                .background(walkSecondsElapsed >= 1800 ? WyldeStyles.Colors.vitalBlue : WyldeStyles.Colors.vitalBlue.opacity(0.12))
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
                     } else {
@@ -910,10 +910,10 @@ struct TodayView: View {
                                 Text("Start Walk")
                                     .font(.system(size: 13, weight: .semibold))
                             }
-                            .foregroundColor(Color(hex: "1A1816"))
+                            .foregroundColor(WyldeStyles.Colors.ink)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
-                            .background(Color(hex: "7FD0FF"))
+                            .background(WyldeStyles.Colors.vitalBlue)
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
 
@@ -1060,7 +1060,7 @@ struct TodayView: View {
                 }
 
                 // Radial glow
-                RadialGlowOverlay(color: Color(hex: "C9A86A"), opacity: 0.12, position: .init(x: 0.85, y: 0.2), radius: 120)
+                RadialGlowOverlay(color: Color(hex: "C8A96E"), opacity: 0.12, position: .init(x: 0.85, y: 0.2), radius: 120)
 
                 // Content
                 VStack(alignment: .leading, spacing: 6) {
@@ -1093,7 +1093,7 @@ struct TodayView: View {
             .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .stroke(Color(hex: "C9A86A").opacity(0.15), lineWidth: 1)
+                    .stroke(Color(hex: "C8A96E").opacity(0.15), lineWidth: 1)
             )
             .shadow(color: .black.opacity(0.3), radius: 12, x: 0, y: 6)
         }
@@ -1133,7 +1133,7 @@ struct TodayView: View {
                     label: "Exercise",
                     current: appState.workoutCompleted ? 30 : (walkTimerActive ? walkSecondsElapsed / 60 : 0),
                     goal: 30,
-                    color: Color(hex: "5EE6D6"),
+                    color: WyldeStyles.Colors.vitalTeal,
                     icon: "figure.run"
                 )
                 // Stand/Steps ring
@@ -1141,7 +1141,7 @@ struct TodayView: View {
                     label: "Steps",
                     current: healthSteps,
                     goal: 10000,
-                    color: Color(hex: "7FD0FF"),
+                    color: WyldeStyles.Colors.vitalBlue,
                     icon: "figure.walk"
                 )
             }
@@ -1243,19 +1243,19 @@ struct TodayView: View {
         } label: {
             HStack(spacing: 14) {
                 Circle()
-                    .fill(Color(hex: "C8A96E").opacity(0.12))
+                    .fill(WyldeStyles.Colors.bronze.opacity(0.12))
                     .frame(width: 44, height: 44)
                     .overlay(
                         Image(systemName: "person.fill")
                             .font(.system(size: 18))
-                            .foregroundColor(Color(hex: "C8A96E"))
+                            .foregroundColor(WyldeStyles.Colors.bronze)
                     )
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text("TALK TO \(name.uppercased())")
                         .font(.system(size: 10, weight: .bold))
                         .tracking(1.6)
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
                     Text("The version of you that already did it.")
                         .font(.system(size: 13))
                         .foregroundColor(Theme.secondaryText)
@@ -1269,7 +1269,7 @@ struct TodayView: View {
             .background(Theme.elevatedBG)
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(Color(hex: "C8A96E").opacity(0.15), lineWidth: 1)
+                    .stroke(WyldeStyles.Colors.bronze.opacity(0.15), lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
@@ -1307,7 +1307,7 @@ struct TodayView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "drop.fill")
-                    .foregroundColor(Color(hex: "7FD0FF"))
+                    .foregroundColor(WyldeStyles.Colors.vitalBlue)
                 Text("Water")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(Theme.text)
@@ -1321,12 +1321,12 @@ struct TodayView: View {
             HStack(spacing: 6) {
                 ForEach(0..<appState.waterGoal, id: \.self) { i in
                     Circle()
-                        .fill(i < appState.waterLogged ? Color(hex: "7FD0FF") : Color(hex: "7FD0FF").opacity(0.15))
+                        .fill(i < appState.waterLogged ? WyldeStyles.Colors.vitalBlue : WyldeStyles.Colors.vitalBlue.opacity(0.15))
                         .frame(width: 28, height: 28)
                         .overlay(
                             Image(systemName: "drop.fill")
                                 .font(.system(size: 11))
-                                .foregroundColor(i < appState.waterLogged ? .white : Color(hex: "7FD0FF").opacity(0.3))
+                                .foregroundColor(i < appState.waterLogged ? .white : WyldeStyles.Colors.vitalBlue.opacity(0.3))
                         )
                         .onTapGesture {
                             HapticManager.shared.impact(.light)
@@ -1354,10 +1354,10 @@ struct TodayView: View {
                         Text("Add glass")
                             .font(.system(size: 12, weight: .medium))
                     }
-                    .foregroundColor(Color(hex: "7FD0FF"))
+                    .foregroundColor(WyldeStyles.Colors.vitalBlue)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 8)
-                    .background(Color(hex: "7FD0FF").opacity(0.10))
+                    .background(WyldeStyles.Colors.vitalBlue.opacity(0.10))
                     .clipShape(Capsule())
                 }
 
@@ -1389,15 +1389,15 @@ struct TodayView: View {
             HStack(spacing: 14) {
                 Image(systemName: isEveningTime ? "moon.stars.fill" : "checkmark.circle")
                     .font(.system(size: 18))
-                    .foregroundColor(Color(hex: "B68BFF"))
+                    .foregroundColor(WyldeStyles.Colors.vitalPurple)
                     .frame(width: 44, height: 44)
-                    .background(Color(hex: "B68BFF").opacity(0.10))
+                    .background(WyldeStyles.Colors.vitalPurple.opacity(0.10))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 VStack(alignment: .leading, spacing: 3) {
                     Text("CLOSE THE DAY")
                         .font(.system(size: 10, weight: .bold))
                         .tracking(1.6)
-                        .foregroundColor(Color(hex: "B68BFF"))
+                        .foregroundColor(WyldeStyles.Colors.vitalPurple)
                     Text("Reflect, reset, and close the loop")
                         .font(.system(size: 13))
                         .foregroundColor(Theme.secondaryText)
@@ -1409,7 +1409,7 @@ struct TodayView: View {
             }
             .padding(16)
             .background(Theme.elevatedBG)
-            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color(hex: "B68BFF").opacity(0.15), lineWidth: 1))
+            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(WyldeStyles.Colors.vitalPurple.opacity(0.15), lineWidth: 1))
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
         .buttonStyle(.plain)

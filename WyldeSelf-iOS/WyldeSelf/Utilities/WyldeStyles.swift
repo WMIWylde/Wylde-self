@@ -33,6 +33,13 @@ enum WyldeStyles {
         static let success = sage
         static let warning = clay
         static let error = adaptive(light: "8B3A2F", dark: "C26B5A")
+
+        // Vitals / stat accents — dark-mode brights with AA-contrast light variants
+        static let vitalBlue   = adaptive(light: "2F6E8F", dark: "7FD0FF")
+        static let vitalOrange = adaptive(light: "A0561B", dark: "FF9A3C")
+        static let vitalTeal   = adaptive(light: "1D7A6E", dark: "5EE6D6")
+        static let vitalPurple = adaptive(light: "6E4DB8", dark: "B68BFF")
+        static let vitalPink   = adaptive(light: "B03A55", dark: "FF6B8B")
     }
 
     /// Layout primitives from DESIGN.md (sizes not on the spacing scale).

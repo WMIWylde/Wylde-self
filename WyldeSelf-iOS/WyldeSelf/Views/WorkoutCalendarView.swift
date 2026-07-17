@@ -25,7 +25,7 @@ struct WorkoutCalendarView: View {
                             Text("SCHEDULE")
                                 .font(.system(size: 10, weight: .bold))
                                 .tracking(2.5)
-                                .foregroundColor(Color(hex: "C8A96E"))
+                                .foregroundColor(WyldeStyles.Colors.bronze)
                             Text("Plan Your Week")
                                 .font(.system(size: 22, weight: .bold, design: .serif))
                                 .foregroundColor(Theme.primaryText)
@@ -91,7 +91,7 @@ struct WorkoutCalendarView: View {
                             icon: "drop.fill",
                             title: "Water Reminders",
                             subtitle: "Every 2 hours from 8am to 8pm",
-                            color: Color(hex: "7FD0FF"),
+                            color: WyldeStyles.Colors.vitalBlue,
                             isOn: $waterReminders
                         )
 
@@ -99,7 +99,7 @@ struct WorkoutCalendarView: View {
                             icon: "fork.knife",
                             title: "Protein Check-In",
                             subtitle: "Midday + evening — are you on track?",
-                            color: Color(hex: "5EE6D6"),
+                            color: WyldeStyles.Colors.vitalTeal,
                             isOn: $proteinReminders
                         )
                     }
@@ -136,7 +136,7 @@ struct WorkoutCalendarView: View {
                 .foregroundColor(isSelected ? Theme.onAccent : Theme.secondaryText)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-                .background(isSelected ? Color(hex: "C8A96E") : Theme.chipBG)
+                .background(isSelected ? WyldeStyles.Colors.bronze : Theme.chipBG)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
         }
     }

@@ -27,7 +27,7 @@ struct IdentityImportView: View {
             // Cinematic identity-anchor photo as a subtle textural backdrop.
             // Heavy scrim so the dark UI stays legible; the photo just adds
             // depth so the screen doesn't read as a solid black wall.
-            Color(hex: "070707").ignoresSafeArea()
+            WyldeStyles.Colors.paper.ignoresSafeArea()
             Image.wylde(.identityAnchor)
                 .aspectRatio(contentMode: .fill)
                 .ignoresSafeArea()
@@ -87,14 +87,14 @@ struct IdentityImportView: View {
             Text("IDENTITY INTELLIGENCE")
                 .font(.system(size: 10, weight: .semibold))
                 .tracking(2.5)
-                .foregroundColor(Color(hex: "C8A96E"))
+                .foregroundColor(WyldeStyles.Colors.bronze)
             Text("Import Your Identity")
                 .font(.system(size: 30, weight: .bold))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(WyldeStyles.Colors.ink)
                 .lineSpacing(1)
             Text("Connect the platforms where your current identity already lives. Wylde will analyze how you think, communicate, and show up — and adapt your coaching accordingly.")
                 .font(.system(size: 14))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
                 .lineSpacing(3)
         }
         .padding(.bottom, 28)
@@ -123,11 +123,11 @@ struct IdentityImportView: View {
             // Overlay CTA
             VStack(spacing: 16) {
                 HStack(spacing: 6) {
-                    Circle().fill(Color(hex: "C8A96E")).frame(width: 5, height: 5)
+                    Circle().fill(WyldeStyles.Colors.bronze).frame(width: 5, height: 5)
                     Text("FOUNDING MEMBERS")
                         .font(.system(size: 9, weight: .bold))
                         .tracking(2.2)
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
                 }
                 Text("Unlock how Wylde sees you — and become who you're meant to be.")
                     .font(.system(size: 17, weight: .semibold))
@@ -147,10 +147,10 @@ struct IdentityImportView: View {
                         .font(.system(size: 12, weight: .bold))
                         .tracking(1.3)
                         .textCase(.uppercase)
-                        .foregroundColor(Color(hex: "070707"))
+                        .foregroundColor(WyldeStyles.Colors.paper)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(Color(hex: "C8A96E"))
+                        .background(WyldeStyles.Colors.bronze)
                         .cornerRadius(12)
                 }
                 .buttonStyle(.plain)
@@ -162,7 +162,7 @@ struct IdentityImportView: View {
                     .fill(Color(hex: "0F0F0F"))
                     .overlay(
                         RoundedRectangle(cornerRadius: 18)
-                            .stroke(Color(hex: "C8A96E").opacity(0.40), lineWidth: 1)
+                            .stroke(WyldeStyles.Colors.bronze.opacity(0.40), lineWidth: 1)
                     )
             )
             .shadow(color: Color.black.opacity(0.5), radius: 24, y: 12)
@@ -174,7 +174,7 @@ struct IdentityImportView: View {
             Text(label.uppercased())
                 .font(.system(size: 10, weight: .semibold))
                 .tracking(2.0)
-                .foregroundColor(accent ? Color(hex: "C8A96E") : Theme.secondaryText)
+                .foregroundColor(accent ? WyldeStyles.Colors.bronze : Theme.secondaryText)
             Text(title)
                 .font(.system(size: accent ? 22 : 14, weight: accent ? .bold : .regular))
                 .foregroundColor(Theme.primaryText)
@@ -190,11 +190,11 @@ struct IdentityImportView: View {
         .background(
             RoundedRectangle(cornerRadius: 14)
                 .fill(accent
-                      ? AnyShapeStyle(LinearGradient(colors: [Color(hex: "C8A96E").opacity(0.10), Color(hex: "7D9275").opacity(0.06)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                      ? AnyShapeStyle(LinearGradient(colors: [WyldeStyles.Colors.bronze.opacity(0.10), Color(hex: "7D9275").opacity(0.06)], startPoint: .topLeading, endPoint: .bottomTrailing))
                       : AnyShapeStyle(Theme.elevatedBG))
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
-                        .stroke(accent ? Color(hex: "C8A96E").opacity(0.35) : Theme.primaryText.opacity(0.06), lineWidth: 1)
+                        .stroke(accent ? WyldeStyles.Colors.bronze.opacity(0.35) : Theme.primaryText.opacity(0.06), lineWidth: 1)
                 )
         )
     }
@@ -230,7 +230,7 @@ struct IdentityImportView: View {
                 sectionLabel("ADD PUBLIC PROFILE LINKS", accent: true)
                 Text("Up to 5. Personal site, X/Twitter, public Substack — anywhere your voice lives.")
                     .font(.system(size: 12))
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(WyldeStyles.Colors.stone)
                 ForEach(urls.indices, id: \.self) { idx in
                     HStack(spacing: 8) {
                         TextField("https://...", text: $urls[idx])
@@ -252,7 +252,7 @@ struct IdentityImportView: View {
                             Button { urls.remove(at: idx) } label: {
                                 Image(systemName: "xmark")
                                     .font(.system(size: 14))
-                                    .foregroundColor(Color(hex: "A6A29A"))
+                                    .foregroundColor(WyldeStyles.Colors.stone)
                                     .padding(8)
                             }
                             .buttonStyle(.plain)
@@ -265,11 +265,11 @@ struct IdentityImportView: View {
                     } label: {
                         Text("+ Add another link")
                             .font(.system(size: 12))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(WyldeStyles.Colors.stone)
                             .padding(.horizontal, 14).padding(.vertical, 8)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color(hex: "F4F1E8").opacity(0.10), style: StrokeStyle(lineWidth: 1, dash: [3]))
+                                    .stroke(WyldeStyles.Colors.ink.opacity(0.10), style: StrokeStyle(lineWidth: 1, dash: [3]))
                             )
                     }
                     .buttonStyle(.plain)
@@ -281,7 +281,7 @@ struct IdentityImportView: View {
                 sectionLabel("OR PASTE CONTENT DIRECTLY", accent: true)
                 Text("Bio, recent posts, captions, an \"About\" section. Anything in your real voice.")
                     .font(.system(size: 12))
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(WyldeStyles.Colors.stone)
                 TextEditor(text: $rawText)
                     .font(.system(size: 14))
                     .foregroundColor(Theme.primaryText)
@@ -305,10 +305,10 @@ struct IdentityImportView: View {
                         .font(.system(size: 13, weight: .bold))
                         .tracking(1.3)
                         .textCase(.uppercase)
-                        .foregroundColor(Color(hex: "070707"))
+                        .foregroundColor(WyldeStyles.Colors.paper)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(Color(hex: "C8A96E"))
+                        .background(WyldeStyles.Colors.bronze)
                         .cornerRadius(12)
                 }
                 .buttonStyle(.plain)
@@ -318,7 +318,7 @@ struct IdentityImportView: View {
                 Button { dismiss() } label: {
                     Text("Skip for now")
                         .font(.system(size: 13))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(WyldeStyles.Colors.stone)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                 }
@@ -340,7 +340,7 @@ struct IdentityImportView: View {
             // Subtle gold ring spinner
             Circle()
                 .trim(from: 0, to: 0.75)
-                .stroke(Color(hex: "C8A96E"), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                .stroke(WyldeStyles.Colors.bronze, style: StrokeStyle(lineWidth: 2, lineCap: .round))
                 .frame(width: 48, height: 48)
                 .rotationEffect(.degrees(loadingAngle))
                 .onAppear { withAnimation(.linear(duration: 1.4).repeatForever(autoreverses: false)) { loadingAngle = 360 } }
@@ -348,10 +348,10 @@ struct IdentityImportView: View {
             VStack(spacing: 6) {
                 Text("Reading you...")
                     .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(Color(hex: "F4F1E8"))
+                    .foregroundColor(WyldeStyles.Colors.ink)
                 Text("Wylde is studying how you communicate, what drives you, and what gets in your way.")
                     .font(.system(size: 13))
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(WyldeStyles.Colors.stone)
                     .multilineTextAlignment(.center)
                     .lineSpacing(3)
                     .frame(maxWidth: 300)
@@ -387,12 +387,12 @@ struct IdentityImportView: View {
                     Button { phase = .input } label: {
                         Text("Edit responses")
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(WyldeStyles.Colors.stone)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color(hex: "F4F1E8").opacity(0.10), lineWidth: 1)
+                                    .stroke(WyldeStyles.Colors.ink.opacity(0.10), lineWidth: 1)
                             )
                     }
                     .buttonStyle(.plain)
@@ -404,10 +404,10 @@ struct IdentityImportView: View {
                             .font(.system(size: 12, weight: .bold))
                             .tracking(1.2)
                             .textCase(.uppercase)
-                            .foregroundColor(Color(hex: "070707"))
+                            .foregroundColor(WyldeStyles.Colors.paper)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
-                            .background(Color(hex: "C8A96E"))
+                            .background(WyldeStyles.Colors.bronze)
                             .cornerRadius(12)
                     }
                     .buttonStyle(.plain)
@@ -422,7 +422,7 @@ struct IdentityImportView: View {
             Text("IDENTITY ARCHETYPE")
                 .font(.system(size: 10, weight: .semibold))
                 .tracking(2.0)
-                .foregroundColor(Color(hex: "C8A96E"))
+                .foregroundColor(WyldeStyles.Colors.bronze)
             Text(p.identityArchetype)
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(Theme.primaryText)
@@ -437,12 +437,12 @@ struct IdentityImportView: View {
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(LinearGradient(
-                    colors: [Color(hex: "C8A96E").opacity(0.10), Color(hex: "7D9275").opacity(0.06)],
+                    colors: [WyldeStyles.Colors.bronze.opacity(0.10), Color(hex: "7D9275").opacity(0.06)],
                     startPoint: .topLeading, endPoint: .bottomTrailing
                 ))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color(hex: "C8A96E").opacity(0.40), lineWidth: 1)
+                        .stroke(WyldeStyles.Colors.bronze.opacity(0.40), lineWidth: 1)
                 )
         )
     }
@@ -480,7 +480,7 @@ struct IdentityImportView: View {
                 ForEach(items, id: \.self) { item in
                     HStack(alignment: .top, spacing: 8) {
                         Text("·")
-                            .foregroundColor(Color(hex: "C8A96E"))
+                            .foregroundColor(WyldeStyles.Colors.bronze)
                         Text(item)
                             .font(.system(size: 14))
                             .foregroundColor(Theme.primaryText)
@@ -518,7 +518,7 @@ struct IdentityImportView: View {
         Text(text)
             .font(.system(size: 10, weight: .semibold))
             .tracking(2.0)
-            .foregroundColor(accent ? Color(hex: "C8A96E") : Color(hex: "A6A29A"))
+            .foregroundColor(accent ? WyldeStyles.Colors.bronze : WyldeStyles.Colors.stone)
     }
 
     private func comingSoonCard(name: String, icon: String) -> some View {

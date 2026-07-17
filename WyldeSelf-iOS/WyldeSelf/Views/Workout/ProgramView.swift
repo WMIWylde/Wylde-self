@@ -18,7 +18,7 @@ struct ProgramView: View {
                                 Text("YOUR PROGRAM")
                                     .font(.system(size: 10, weight: .bold))
                                     .tracking(2.5)
-                                    .foregroundColor(Color(hex: "C8A96E"))
+                                    .foregroundColor(WyldeStyles.Colors.bronze)
 
                                 Text(program.goal)
                                     .font(.system(size: 24, weight: .bold, design: .serif))
@@ -75,10 +75,10 @@ struct ProgramView: View {
                 // Day badge
                 ZStack {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(isToday ? Color(hex: "C8A96E").opacity(0.12) : Theme.chipBG)
+                        .fill(isToday ? WyldeStyles.Colors.bronze.opacity(0.12) : Theme.chipBG)
                     Text("D\(day.dayNumber)")
                         .font(.system(size: 16, weight: .bold, design: .monospaced))
-                        .foregroundColor(isToday ? Color(hex: "C8A96E") : Theme.tertiaryText)
+                        .foregroundColor(isToday ? WyldeStyles.Colors.bronze : Theme.tertiaryText)
                 }
                 .frame(width: 48, height: 48)
 
@@ -91,10 +91,10 @@ struct ProgramView: View {
                             Text("TODAY")
                                 .font(.system(size: 8, weight: .bold))
                                 .tracking(1.5)
-                                .foregroundColor(Color(hex: "C8A96E"))
+                                .foregroundColor(WyldeStyles.Colors.bronze)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .background(Color(hex: "C8A96E").opacity(0.12))
+                                .background(WyldeStyles.Colors.bronze.opacity(0.12))
                                 .clipShape(Capsule())
                         }
                     }
@@ -107,7 +107,7 @@ struct ProgramView: View {
 
                 if day.isComplete {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(Color(hex: "7A8771"))
+                        .foregroundColor(WyldeStyles.Colors.sage)
                 } else {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 12))
@@ -118,7 +118,7 @@ struct ProgramView: View {
             .background(Theme.elevatedBG)
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(isToday ? Color(hex: "C8A96E").opacity(0.2) : Theme.primaryText.opacity(0.06), lineWidth: 1)
+                    .stroke(isToday ? WyldeStyles.Colors.bronze.opacity(0.2) : Theme.primaryText.opacity(0.06), lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }

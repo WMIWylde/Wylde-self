@@ -41,7 +41,7 @@ struct DynamicWarmupView: View {
     var body: some View {
         ZStack {
             // Background with movement accent color
-            Color(hex: "070707").ignoresSafeArea()
+            WyldeStyles.Colors.paper.ignoresSafeArea()
 
             if phase != .intro {
                 RadialGradient(
@@ -74,15 +74,15 @@ struct DynamicWarmupView: View {
 
             Image(systemName: "flame.fill")
                 .font(.system(size: 48))
-                .foregroundColor(Color(hex: "C8A96E"))
+                .foregroundColor(WyldeStyles.Colors.bronze)
 
             Text("Prepare the body")
                 .font(.system(size: 28, weight: .bold, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(WyldeStyles.Colors.ink)
 
             Text("5 movements. 3 minutes.\nActivate everything.")
                 .font(.system(size: 15))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
                 .multilineTextAlignment(.center)
                 .lineSpacing(3)
 
@@ -96,7 +96,7 @@ struct DynamicWarmupView: View {
 
             Button("Skip") { dismiss() }
                 .font(.system(size: 13, weight: .medium))
-                .foregroundColor(Color(hex: "6E6B65"))
+                .foregroundColor(WyldeStyles.Colors.stone)
 
             Spacer()
             Spacer()
@@ -124,7 +124,7 @@ struct DynamicWarmupView: View {
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(Color(hex: "A6A29A"))
                         .frame(width: 36, height: 36)
-                        .background(Color(hex: "111111"))
+                        .background(Color.white.opacity(0.12))
                         .clipShape(Circle())
                 }
             }
@@ -175,7 +175,7 @@ struct DynamicWarmupView: View {
             if currentIndex < movements.count - 1 {
                 Text("Next: \(movements[currentIndex + 1].name)")
                     .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(Color(hex: "6E6B65"))
+                    .foregroundColor(Color(hex: "A6A29A"))
                     .padding(.top, 16)
             }
 
@@ -190,7 +190,7 @@ struct DynamicWarmupView: View {
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(Color(hex: "A6A29A"))
                         .frame(width: 56, height: 40)
-                        .background(Color(hex: "1A1A1A"))
+                        .background(Color.white.opacity(0.10))
                         .clipShape(Capsule())
                 }
 
@@ -214,7 +214,7 @@ struct DynamicWarmupView: View {
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(Color(hex: "A6A29A"))
                         .frame(width: 56, height: 40)
-                        .background(Color(hex: "1A1A1A"))
+                        .background(Color.white.opacity(0.10))
                         .clipShape(Capsule())
                 }
             }
@@ -257,15 +257,15 @@ struct DynamicWarmupView: View {
 
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 56))
-                .foregroundColor(Color(hex: "7A8771"))
+                .foregroundColor(WyldeStyles.Colors.sage)
 
             Text("Body activated.")
                 .font(.system(size: 28, weight: .bold, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(WyldeStyles.Colors.ink)
 
             Text("Let's train.")
                 .font(.system(size: 15))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(WyldeStyles.Colors.stone)
 
             GoldButton(label: "Start Workout") {
                 dismiss()

@@ -8,7 +8,7 @@ enum Theme {
     static var surface: Color { WyldeStyles.Colors.paper }
     static var text: Color { WyldeStyles.Colors.ink }
     static var muted: Color { WyldeStyles.Colors.stone }
-    static var text3: Color { WyldeStyles.Colors.charcoal.opacity(0.55) }
+    static var text3: Color { WyldeStyles.Colors.charcoal.opacity(0.72) }
     static var sage: Color { WyldeStyles.Colors.sage }
     /// Celebration / founder moments — use bronze for everyday primary accents in new UI.
     static var gold: Color { WyldeStyles.Colors.gold }

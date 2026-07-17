@@ -88,7 +88,7 @@ struct CoachChatView: View {
             Text(coachName)
                 .font(.system(size: 11, weight: .semibold))
                 .tracking(2)
-                .foregroundColor(Color(hex: "C8A96E"))
+                .foregroundColor(WyldeStyles.Colors.bronze)
 
             Text("The version of you\nthat already did it.")
                 .font(.system(size: 20, weight: .bold, design: .serif))
@@ -105,18 +105,18 @@ struct CoachChatView: View {
         HStack(alignment: .top, spacing: 10) {
             // Avatar
             Circle()
-                .fill(Color(hex: "C8A96E").opacity(0.15))
+                .fill(WyldeStyles.Colors.bronze.opacity(0.15))
                 .frame(width: 32, height: 32)
                 .overlay(
                     Image(systemName: "person.fill")
                         .font(.system(size: 14))
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
                 )
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(coachName)
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(Color(hex: "C8A96E"))
+                    .foregroundColor(WyldeStyles.Colors.bronze)
                 Text("I'm the version of you that's already walked this. What's actually going on?")
                     .font(.system(size: 15))
                     .foregroundColor(Theme.primaryText)
@@ -138,12 +138,12 @@ struct CoachChatView: View {
 
             if msg.role == .assistant {
                 Circle()
-                    .fill(Color(hex: "C8A96E").opacity(0.15))
+                    .fill(WyldeStyles.Colors.bronze.opacity(0.15))
                     .frame(width: 28, height: 28)
                     .overlay(
                         Image(systemName: "person.fill")
                             .font(.system(size: 12))
-                            .foregroundColor(Color(hex: "C8A96E"))
+                            .foregroundColor(WyldeStyles.Colors.bronze)
                     )
             }
 
@@ -151,14 +151,14 @@ struct CoachChatView: View {
                 if msg.role == .assistant {
                     Text(coachName)
                         .font(.system(size: 10, weight: .semibold))
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
                 }
                 Text(msg.content)
                     .font(.system(size: 15))
                     .foregroundColor(msg.role == .user ? Theme.onAccent : Theme.primaryText)
                     .lineSpacing(3)
                     .padding(14)
-                    .background(msg.role == .user ? Color(hex: "C8A96E") : Theme.elevatedBG)
+                    .background(msg.role == .user ? WyldeStyles.Colors.bronze : Theme.elevatedBG)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
 
@@ -171,12 +171,12 @@ struct CoachChatView: View {
     private var typingIndicator: some View {
         HStack(spacing: 10) {
             Circle()
-                .fill(Color(hex: "C8A96E").opacity(0.15))
+                .fill(WyldeStyles.Colors.bronze.opacity(0.15))
                 .frame(width: 28, height: 28)
                 .overlay(
                     Image(systemName: "person.fill")
                         .font(.system(size: 12))
-                        .foregroundColor(Color(hex: "C8A96E"))
+                        .foregroundColor(WyldeStyles.Colors.bronze)
                 )
 
             HStack(spacing: 4) {
@@ -217,12 +217,12 @@ struct CoachChatView: View {
         } label: {
             Text(label)
                 .font(.system(size: 12, weight: .medium))
-                .foregroundColor(Color(hex: "C8A96E"))
+                .foregroundColor(WyldeStyles.Colors.bronze)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
-                .background(Color(hex: "C8A96E").opacity(0.08))
+                .background(WyldeStyles.Colors.bronze.opacity(0.08))
                 .overlay(
-                    Capsule().stroke(Color(hex: "C8A96E").opacity(0.2), lineWidth: 1)
+                    Capsule().stroke(WyldeStyles.Colors.bronze.opacity(0.2), lineWidth: 1)
                 )
                 .clipShape(Capsule())
         }
@@ -246,12 +246,12 @@ struct CoachChatView: View {
                 )
                 .focused($inputFocused)
                 .onSubmit { sendMessage() }
-                .tint(Color(hex: "C8A96E"))
+                .tint(WyldeStyles.Colors.bronze)
 
             Button(action: sendMessage) {
                 Image(systemName: "arrow.up.circle.fill")
                     .font(.system(size: 32))
-                    .foregroundColor(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Theme.tertiaryText : Color(hex: "C8A96E"))
+                    .foregroundColor(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Theme.tertiaryText : WyldeStyles.Colors.bronze)
             }
             .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || service.isTyping)
         }

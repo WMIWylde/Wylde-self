@@ -133,11 +133,11 @@ struct TabButton: View {
 
                 Image(systemName: tab.icon)
                     .font(.system(size: 20, weight: isActive ? .semibold : .regular))
-                    .foregroundColor(isActive ? Theme.sage : Color(hex: "999999"))
+                    .foregroundColor(isActive ? Theme.sage : WyldeStyles.Colors.stone)
 
                 Text(tab.rawValue)
                     .font(.system(size: 10, weight: isActive ? .semibold : .medium))
-                    .foregroundColor(isActive ? Theme.sage : Color(hex: "999999"))
+                    .foregroundColor(isActive ? Theme.sage : WyldeStyles.Colors.stone)
             }
             .frame(maxWidth: .infinity)
         }

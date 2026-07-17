@@ -37,7 +37,7 @@ struct EveningReflectionView: View {
                             Text("EVENING REFLECTION")
                                 .font(.system(size: 10, weight: .bold))
                                 .tracking(2.5)
-                                .foregroundColor(Color(hex: "C8A96E"))
+                                .foregroundColor(WyldeStyles.Colors.bronze)
 
                             Text("Close the day with clarity.")
                                 .font(.system(size: 24, weight: .bold, design: .serif))
@@ -72,7 +72,7 @@ struct EveningReflectionView: View {
                             // AI reflection
                             if isReflecting {
                                 VStack(spacing: 16) {
-                                    ProgressView().tint(Color(hex: "C8A96E"))
+                                    ProgressView().tint(WyldeStyles.Colors.bronze)
                                     Text("Reflecting...")
                                         .font(.system(size: 14))
                                         .foregroundColor(Theme.secondaryText)
@@ -100,10 +100,10 @@ struct EveningReflectionView: View {
         let ritualTotal = appState.morningProtocolActions.count
 
         return HStack(spacing: 16) {
-            summaryPill(icon: "sunrise.fill", label: "Ritual", value: "\(ritualDone)/\(ritualTotal)", color: Color(hex: "C8A96E"))
-            summaryPill(icon: "dumbbell.fill", label: "Workout", value: appState.workoutCompleted ? "Done" : "Skipped", color: appState.workoutCompleted ? Color(hex: "5EE6D6") : Theme.tertiaryText)
-            summaryPill(icon: "figure.walk", label: "Walk", value: appState.dailyWalkCompleted ? "Done" : "Skipped", color: appState.dailyWalkCompleted ? Color(hex: "7FD0FF") : Theme.tertiaryText)
-            summaryPill(icon: "fork.knife", label: "Nutrition", value: "\(appState.caloriesLogged) cal", color: Color(hex: "FF9A3C"))
+            summaryPill(icon: "sunrise.fill", label: "Ritual", value: "\(ritualDone)/\(ritualTotal)", color: WyldeStyles.Colors.bronze)
+            summaryPill(icon: "dumbbell.fill", label: "Workout", value: appState.workoutCompleted ? "Done" : "Skipped", color: appState.workoutCompleted ? WyldeStyles.Colors.vitalTeal : Theme.tertiaryText)
+            summaryPill(icon: "figure.walk", label: "Walk", value: appState.dailyWalkCompleted ? "Done" : "Skipped", color: appState.dailyWalkCompleted ? WyldeStyles.Colors.vitalBlue : Theme.tertiaryText)
+            summaryPill(icon: "fork.knife", label: "Nutrition", value: "\(appState.caloriesLogged) cal", color: WyldeStyles.Colors.vitalOrange)
         }
         .padding(14)
         .background(Theme.elevatedBG)
@@ -148,17 +148,17 @@ struct EveningReflectionView: View {
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(Theme.primaryText.opacity(0.06), lineWidth: 1)
                 )
-                .tint(Color(hex: "C8A96E"))
+                .tint(WyldeStyles.Colors.bronze)
 
             Button(action: onNext) {
                 Text("Continue")
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(Color(hex: "1A1816"))
+                    .foregroundColor(WyldeStyles.Colors.ink)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(
                         LinearGradient(
-                            colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                            colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                             startPoint: .top, endPoint: .bottom
                         )
                     )
@@ -175,11 +175,11 @@ struct EveningReflectionView: View {
             HStack(spacing: 8) {
                 Image(systemName: "sparkles")
                     .font(.system(size: 14))
-                    .foregroundColor(Color(hex: "C8A96E"))
+                    .foregroundColor(WyldeStyles.Colors.bronze)
                 Text("YOUR REFLECTION")
                     .font(.system(size: 10, weight: .bold))
                     .tracking(2)
-                    .foregroundColor(Color(hex: "C8A96E"))
+                    .foregroundColor(WyldeStyles.Colors.bronze)
             }
 
             Text(text)
@@ -193,12 +193,12 @@ struct EveningReflectionView: View {
             } label: {
                 Text("Close the day")
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(Color(hex: "1A1816"))
+                    .foregroundColor(WyldeStyles.Colors.ink)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(
                         LinearGradient(
-                            colors: [Color(hex: "E6C886"), Color(hex: "A6834A")],
+                            colors: [WyldeStyles.Colors.gold, Color(hex: "A6834A")],
                             startPoint: .top, endPoint: .bottom
                         )
                     )
@@ -209,7 +209,7 @@ struct EveningReflectionView: View {
         .background(Theme.elevatedBG)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color(hex: "C8A96E").opacity(0.15), lineWidth: 1)
+                .stroke(WyldeStyles.Colors.bronze.opacity(0.15), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
