@@ -19,7 +19,7 @@ enum WyldeStyles {
         static let paper    = adaptive(light: "F4F1EC", dark: "070707")
         static let bone     = adaptive(light: "E8E2D6", dark: "111111")
         static let sand     = adaptive(light: "D4C9B5", dark: "1A1A1A")
-        static let stone    = adaptive(light: "9A9286", dark: "A6A29A")
+        static let stone    = adaptive(light: "665F53", dark: "A6A29A")
         static let charcoal = adaptive(light: "2C2A26", dark: "F4F1E8")
         static let ink      = adaptive(light: "1A1816", dark: "F4F1E8")
 
