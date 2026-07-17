@@ -45,7 +45,8 @@ class WatchSync: NSObject, ObservableObject {
     func syncToWatch() {
         guard let state = appState,
               let session = session,
-              session.activationState == .activated else { return }
+              session.activationState == .activated,
+              session.isPaired else { return }
 
         let ritualDone = state.morningProtocolActions.filter(\.completed).count
         let todayWorkout = WorkoutService.shared.todaysWorkout(day: state.currentDay)
