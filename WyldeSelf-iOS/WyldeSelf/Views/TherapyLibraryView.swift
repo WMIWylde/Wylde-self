@@ -13,7 +13,7 @@ struct TherapyLibraryView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            Theme.appBG.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header
@@ -25,15 +25,15 @@ struct TherapyLibraryView: View {
                             .foregroundColor(Color(hex: "C8A96E"))
                         Text("Research Library")
                             .font(.system(size: 22, weight: .bold, design: .serif))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(Theme.primaryText)
                     }
                     Spacer()
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
                             .frame(width: 36, height: 36)
-                            .background(Color(hex: "111111"))
+                            .background(Theme.elevatedBG)
                             .clipShape(Circle())
                     }
                 }
@@ -43,15 +43,15 @@ struct TherapyLibraryView: View {
                 // Search
                 HStack(spacing: 8) {
                     Image(systemName: "magnifyingglass")
-                        .foregroundColor(Color(hex: "6E6B65"))
+                        .foregroundColor(Theme.tertiaryText)
                     TextField("Search therapies...", text: $searchText)
                         .font(.system(size: 14))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                         .tint(Color(hex: "C8A96E"))
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
-                .background(Color(hex: "111111"))
+                .background(Theme.elevatedBG)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
@@ -88,7 +88,6 @@ struct TherapyLibraryView: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
         .task { await loadTherapies() }
         .sheet(item: $selectedTherapy) { detail in
             TherapyDetailView(therapy: detail)
@@ -99,10 +98,10 @@ struct TherapyLibraryView: View {
         Button(action: action) {
             Text(label)
                 .font(.system(size: 12, weight: .medium))
-                .foregroundColor(isSelected ? Color(hex: "070707") : Color(hex: "A6A29A"))
+                .foregroundColor(isSelected ? Theme.onAccent : Theme.secondaryText)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 7)
-                .background(isSelected ? Color(hex: "C8A96E") : Color(hex: "1A1A1A"))
+                .background(isSelected ? Color(hex: "C8A96E") : Theme.chipBG)
                 .clipShape(Capsule())
         }
     }
@@ -114,12 +113,12 @@ struct TherapyLibraryView: View {
                     HStack(spacing: 6) {
                         Text(t.name)
                             .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(Theme.primaryText)
                         evidenceBadge(t.evidenceRating)
                     }
                     Text(t.shortDescription ?? "")
                         .font(.system(size: 12))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                         .lineLimit(2)
                     HStack(spacing: 6) {
                         typeBadge(t.therapyType)
@@ -137,11 +136,11 @@ struct TherapyLibraryView: View {
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12))
-                    .foregroundColor(Color(hex: "6E6B65"))
+                    .foregroundColor(Theme.tertiaryText)
             }
             .padding(16)
-            .background(Color(hex: "111111"))
-            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1))
+            .background(Theme.elevatedBG)
+            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Theme.primaryText.opacity(0.06), lineWidth: 1))
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         }
         .buttonStyle(.plain)
@@ -149,7 +148,7 @@ struct TherapyLibraryView: View {
 
     private func evidenceBadge(_ rating: String?) -> some View {
         let colors: [String: Color] = ["A": Color(hex: "7A8771"), "B": Color(hex: "5EE6D6"), "C": Color(hex: "C8A96E"), "D": Color(hex: "FF9A3C"), "X": Color(hex: "C26B5A")]
-        let color = colors[rating ?? "X"] ?? Color(hex: "6E6B65")
+        let color = colors[rating ?? "X"] ?? Theme.tertiaryText
         return Text(rating ?? "—")
             .font(.system(size: 9, weight: .bold))
             .foregroundColor(color)
@@ -161,10 +160,10 @@ struct TherapyLibraryView: View {
     private func typeBadge(_ type: String) -> some View {
         Text(type.capitalized)
             .font(.system(size: 9, weight: .medium))
-            .foregroundColor(Color(hex: "A6A29A"))
+            .foregroundColor(Theme.secondaryText)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
-            .background(Color(hex: "1A1A1A"))
+            .background(Theme.chipBG)
             .clipShape(Capsule())
     }
 
@@ -279,7 +278,7 @@ struct TherapyDetailView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            Theme.appBG.ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 20) {
@@ -289,21 +288,21 @@ struct TherapyDetailView: View {
                         Button { dismiss() } label: {
                             Image(systemName: "xmark")
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(Color(hex: "A6A29A"))
+                                .foregroundColor(Theme.secondaryText)
                                 .frame(width: 36, height: 36)
-                                .background(Color(hex: "111111"))
+                                .background(Theme.elevatedBG)
                                 .clipShape(Circle())
                         }
                     }
 
                     Text(therapy.name)
                         .font(.system(size: 28, weight: .bold, design: .serif))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
 
                     if let desc = therapy.shortDescription {
                         Text(desc)
                             .font(.system(size: 15))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
                             .lineSpacing(3)
                     }
 
@@ -311,7 +310,7 @@ struct TherapyDetailView: View {
                     HStack(spacing: 8) {
                         badge(therapy.therapyType.capitalized, color: Color(hex: "C8A96E"))
                         if let cat = therapy.category { badge(cat.replacingOccurrences(of: "_", with: " ").capitalized, color: Color(hex: "7FD0FF")) }
-                        if let fda = therapy.fdaStatus { badge(fda, color: Color(hex: "A6A29A")) }
+                        if let fda = therapy.fdaStatus { badge(fda, color: Theme.secondaryText) }
                     }
 
                     // Sections
@@ -345,14 +344,14 @@ struct TherapyDetailView: View {
                             Text("EVIDENCE LEVEL")
                                 .font(.system(size: 10, weight: .bold))
                                 .tracking(2)
-                                .foregroundColor(Color(hex: "6E6B65"))
+                                .foregroundColor(Theme.tertiaryText)
                             Text(evidenceLabel(rating))
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(Color(hex: "F4F1E8"))
+                                .foregroundColor(Theme.primaryText)
                         }
                         .padding(16)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color(hex: "111111"))
+                        .background(Theme.elevatedBG)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
 
@@ -369,7 +368,7 @@ struct TherapyDetailView: View {
                         }
                         Text(therapy.safetyDisclaimer ?? "This information is for education only and is not medical advice.")
                             .font(.system(size: 12))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
                             .lineSpacing(3)
                     }
                     .padding(16)
@@ -396,7 +395,6 @@ struct TherapyDetailView: View {
                 .padding(.top, 16)
             }
         }
-        .preferredColorScheme(.dark)
     }
 
     private func section(_ title: String, content: String) -> some View {
@@ -404,15 +402,15 @@ struct TherapyDetailView: View {
             Text(title.uppercased())
                 .font(.system(size: 10, weight: .bold))
                 .tracking(2)
-                .foregroundColor(Color(hex: "6E6B65"))
+                .foregroundColor(Theme.tertiaryText)
             Text(content)
                 .font(.system(size: 14))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(Theme.primaryText)
                 .lineSpacing(3)
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(hex: "111111"))
+        .background(Theme.elevatedBG)
         .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 
@@ -421,20 +419,20 @@ struct TherapyDetailView: View {
             Text(title.uppercased())
                 .font(.system(size: 10, weight: .bold))
                 .tracking(2)
-                .foregroundColor(Color(hex: "6E6B65"))
+                .foregroundColor(Theme.tertiaryText)
             ForEach(items, id: \.self) { item in
                 HStack(alignment: .top, spacing: 8) {
                     Circle().fill(color).frame(width: 5, height: 5).padding(.top, 6)
                     Text(item)
                         .font(.system(size: 13))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                         .lineSpacing(2)
                 }
             }
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(hex: "111111"))
+        .background(Theme.elevatedBG)
         .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 

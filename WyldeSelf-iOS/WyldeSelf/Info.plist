@@ -32,9 +32,11 @@
 	<key>CFBundleVersion</key>
 	<string>3</string>
 	<key>CLINICAL_API_BASE</key>
-	<string>https://clinical.wyldeself.com</string>
+	<string>https://www.wyldeself.com</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>REVENUECAT_API_KEY</key>
+	<string>appl_iJyjqPDCjsBsSmavnKgOxtkaWni</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>

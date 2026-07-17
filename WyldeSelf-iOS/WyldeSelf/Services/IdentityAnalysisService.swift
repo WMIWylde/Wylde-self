@@ -25,6 +25,11 @@ final class IdentityAnalysisService: ObservableObject {
         var req = URLRequest(url: endpoint)
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        // Authenticate the request. The server now derives the user_id from
+        // this token (the client-supplied user_id below is ignored server-side).
+        if let token = await AuthService.shared.accessToken {
+            req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
 
         let payload: [String: Any] = [
             "user_id": userId,

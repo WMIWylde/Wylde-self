@@ -28,6 +28,14 @@ struct TodayView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
+                // ─── Today Hero (cinematic, rotates by time of day) ────
+                // Photographic banner that shifts morning → midday →
+                // evening → night so the surface breathes with the day.
+                todayHero
+                    .opacity(didAppear ? 1 : 0)
+                    .offset(y: didAppear ? 0 : 10)
+                    .animation(.easeOut(duration: 0.5), value: didAppear)
+
                 // ─── Future Self Identity Hero ─────────────────────────
                 // The emotional center of the app. Shows who you're
                 // becoming, today's day count, and the Start Today CTA.
@@ -89,15 +97,15 @@ struct TodayView: View {
                                 .foregroundColor(Color(hex: "B68BFF"))
                             Text("View prescriptions and log doses")
                                 .font(.system(size: 13))
-                                .foregroundColor(Color(hex: "A6A29A"))
+                                .foregroundColor(Theme.secondaryText)
                         }
                         Spacer()
                         Image(systemName: "chevron.right")
                             .font(.system(size: 12))
-                            .foregroundColor(Color(hex: "6E6B65"))
+                            .foregroundColor(Theme.tertiaryText)
                     }
                     .padding(16)
-                    .background(Color(hex: "111111"))
+                    .background(Theme.elevatedBG)
                     .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color(hex: "B68BFF").opacity(0.15), lineWidth: 1))
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
@@ -1250,15 +1258,15 @@ struct TodayView: View {
                         .foregroundColor(Color(hex: "C8A96E"))
                     Text("The version of you that already did it.")
                         .font(.system(size: 13))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12))
-                    .foregroundColor(Color(hex: "6E6B65"))
+                    .foregroundColor(Theme.tertiaryText)
             }
             .padding(16)
-            .background(Color(hex: "111111"))
+            .background(Theme.elevatedBG)
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .stroke(Color(hex: "C8A96E").opacity(0.15), lineWidth: 1)
@@ -1392,15 +1400,15 @@ struct TodayView: View {
                         .foregroundColor(Color(hex: "B68BFF"))
                     Text("Reflect, reset, and close the loop")
                         .font(.system(size: 13))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12))
-                    .foregroundColor(Color(hex: "6E6B65"))
+                    .foregroundColor(Theme.tertiaryText)
             }
             .padding(16)
-            .background(Color(hex: "111111"))
+            .background(Theme.elevatedBG)
             .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color(hex: "B68BFF").opacity(0.15), lineWidth: 1))
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }

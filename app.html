@@ -3828,7 +3828,7 @@
       <h2 class="auth-headline">See your future.</h2>
       <p class="auth-sub">Follow the plan. Train alongside the person you're becoming.</p>
 
-      <button class="btn ob-next auth-cta" onclick="continueAsGuest()">Get Started</button>
+      <button class="btn ob-next auth-cta" onclick="showAuthForm()">Get Started</button>
 
       <p class="auth-switch">
         <button class="auth-switch-btn" onclick="showAuthForm()">Sign in with email <span>→</span></button>
@@ -6356,6 +6356,20 @@
     return _supabase;
   }
 
+  // Authenticated fetch for JWT-protected /api/* endpoints. Attaches the
+  // current Supabase session access token as a Bearer header. Harmless on
+  // public endpoints. Falls back to a plain request if no session exists.
+  async function apiFetch(url, opts) {
+    opts = opts || {};
+    opts.headers = Object.assign({ 'Content-Type': 'application/json' }, opts.headers || {});
+    try {
+      var sb = _getSupabase();
+      var s = (sb && sb.auth) ? (await sb.auth.getSession()).data.session : null;
+      if (s && s.access_token) opts.headers['Authorization'] = 'Bearer ' + s.access_token;
+    } catch (e) {}
+    return fetch(url, opts);
+  }
+
   function _showAuthScreen() {
     var el = document.getElementById('screen-auth');
     if (el) el.style.display = 'flex';
@@ -6375,8 +6389,11 @@
 
     var sb = _getSupabase();
     if (!sb) {
-      // No Supabase available — let them in as guest
-      _hideAuthScreen();
+      // No Supabase available — the app is gated (beta code + NDA). Do NOT
+      // admit the user. Keep the auth screen up and surface an error.
+      _showAuthScreen();
+      var err = document.getElementById('authError');
+      if (err) { err.textContent = 'Sign-in is temporarily unavailable. Please try again shortly.'; err.style.display = 'block'; }
       return;
     }
     sb.auth.getSession().then(function(res) {
@@ -6426,9 +6443,13 @@
 
   function submitAuth() {
     var sb = _getSupabase();
-    if (!sb) { continueAsGuest(); return; }
-    var email = (document.getElementById('authEmail').value || '').trim();
     var err = document.getElementById('authError');
+    if (!sb) {
+      // Gated app — never admit as guest. Surface an error and stop.
+      if (err) { err.textContent = 'Sign-in is temporarily unavailable. Please try again shortly.'; err.style.display = 'block'; }
+      return;
+    }
+    var email = (document.getElementById('authEmail').value || '').trim();
     var btn = document.getElementById('authSubmitBtn');
     if (!email) {
       if (err) { err.textContent = 'Please enter your email address.'; err.style.display = 'block'; }
@@ -7481,7 +7502,7 @@
     showIdentityState('Loading');
 
     try {
-      var r = await fetch('/api/identity-analyze', {
+      var r = await apiFetch('/api/identity-analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -7856,15 +7877,27 @@
       else console.log('[logSet] Saved:', exerciseName, weight, reps);
     });
     var volume = (weight || 0) * (reps || 0);
-    sb.from('personal_bests').upsert({
-      user_id: currentUser.id,
-      exercise: exerciseName,
-      best_weight: weight || 0,
-      best_reps: reps || 0,
-      best_volume: volume,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id,exercise' }).then(function(res) {
-      if (res.error) console.warn('[logSet] personal_bests error:', res.error.message);
+    // Only upsert a new personal best when this set actually beats the stored
+    // best — a light back-off set must NOT lower the recorded "best". Read the
+    // current row first, then conditionally upsert. Async, non-blocking, guarded.
+    sb.from('personal_bests').select('best_weight,best_volume').eq('user_id', currentUser.id).eq('exercise', exerciseName).maybeSingle().then(function(cur) {
+      var existing = (cur && cur.data) || null;
+      var beatsBest = !existing ||
+        volume > (existing.best_volume || 0) ||
+        (weight || 0) > (existing.best_weight || 0);
+      if (!beatsBest) return;
+      sb.from('personal_bests').upsert({
+        user_id: currentUser.id,
+        exercise: exerciseName,
+        best_weight: weight || 0,
+        best_reps: reps || 0,
+        best_volume: volume,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id,exercise' }).then(function(res) {
+        if (res.error) console.warn('[logSet] personal_bests error:', res.error.message);
+      });
+    }, function(err) {
+      if (err) console.warn('[logSet] personal_bests read error:', err && err.message);
     });
   }
 
@@ -8270,10 +8303,10 @@
         var fireCount = (post.reactions && post.reactions['🔥']) || 0;
         return '<div class="feed-post">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
-            '<span style="font-size:11px;font-weight:500;color:var(--gold);letter-spacing:0.08em;">' + authorName.toUpperCase() + '</span>' +
+            '<span style="font-size:11px;font-weight:500;color:var(--gold);letter-spacing:0.08em;">' + esc(authorName.toUpperCase()) + '</span>' +
             '<span style="font-size:11px;color:var(--muted);">' + date + '</span>' +
           '</div>' +
-          '<p style="font-size:14px;color:var(--white);line-height:1.6;margin-bottom:12px;">' + (post.body || '') + '</p>' +
+          '<p style="font-size:14px;color:var(--white);line-height:1.6;margin-bottom:12px;">' + esc(post.body || '') + '</p>' +
           '<div style="display:flex;gap:10px;">' +
             '<button onclick="addReaction(\'' + post.id + '\',\'🔥\')" style="background:none;border:1px solid var(--border);color:var(--muted);padding:4px 12px;font-size:12px;cursor:pointer;border-radius:20px;font-family:var(--font-ui);">🔥 ' + fireCount + '</button>' +
           '</div>' +
@@ -8322,7 +8355,7 @@
         var isYou = currentUser && row.id === currentUser.id;
         return '<div class="lb-row" style="border-color:' + (isYou ? 'rgba(201,173,110,0.35)' : 'var(--border)') + ';background:' + (isYou ? 'rgba(201,173,110,0.07)' : 'var(--surface)') + ';">' +
           '<span style="font-size:18px;width:28px;">' + medal + '</span>' +
-          '<span style="flex:1;font-size:13px;color:var(--white);">' + name + (isYou ? ' <span style="font-size:10px;color:var(--gold)">(you)</span>' : '') + '</span>' +
+          '<span style="flex:1;font-size:13px;color:var(--white);">' + esc(name) + (isYou ? ' <span style="font-size:10px;color:var(--gold)">(you)</span>' : '') + '</span>' +
           '<span style="font-size:13px;font-weight:500;color:var(--gold);font-family:var(--font-mono);">' + value + '</span>' +
         '</div>';
       }).join('');
@@ -8420,7 +8453,7 @@
         var valMap = { xp: (row.xp_rank || 0) + ' XP', streak: (row.streak_rank || 0) + ' days', weekly: (row.weekly_rank || 0) + ' sessions' };
         return '<div class="lb-item' + (isYou ? ' is-you' : '') + '">' +
           '<span class="lb-rank">' + (medals[i] || (i+1) + '.') + '</span>' +
-          '<span class="lb-name">' + (row.name || 'Member') + (isYou ? ' <span class="wtag wtag-gold" style="font-size:9px;padding:2px 7px;">you</span>' : '') + '</span>' +
+          '<span class="lb-name">' + esc(row.name || 'Member') + (isYou ? ' <span class="wtag wtag-gold" style="font-size:9px;padding:2px 7px;">you</span>' : '') + '</span>' +
           '<span class="lb-score">' + (valMap[type] || '') + '</span>' +
         '</div>';
       }).join('');
@@ -8453,10 +8486,10 @@
         var name  = (item.users && item.users.name)  || 'Member';
         return '<div class="feed-item">' +
           '<div class="feed-item-header">' +
-            '<span class="feed-item-author">' + name + '</span>' +
+            '<span class="feed-item-author">' + esc(name) + '</span>' +
             '<span class="feed-item-time">' + timeAgo(item.created_at) + '</span>' +
           '</div>' +
-          '<div class="feed-item-body">' + (item.body || '') + '</div>' +
+          '<div class="feed-item-body">' + esc(item.body || '') + '</div>' +
         '</div>';
       }).join('');
     } catch(e) {
@@ -8483,6 +8516,27 @@
   // alias for new functions
   userProfile = state;
   var futurePhotoBase64 = null;
+
+  // ── One-time boot sweep: prune stale dated localStorage keys ──
+  // Removes any `wylde_*` key that carries a YYYY-MM-DD date segment older
+  // than 90 days (e.g. daily food logs, and the dated workout-log keys).
+  // The date may appear anywhere in the key, so this also catches keys like
+  // `wylde_workout_log_YYYY-MM-DD_N`. Wrapped in try/catch — best effort.
+  (function sweepStaleStorage() {
+    try {
+      var keys = Object.keys(localStorage);
+      var cutoff = Date.now() - 90 * 86400000;
+      var dateRe = /^wylde_.*(\d{4}-\d{2}-\d{2})/;
+      keys.forEach(function(k) {
+        var m = dateRe.exec(k);
+        if (!m) return;
+        var t = new Date(m[1] + 'T00:00:00').getTime();
+        if (!isNaN(t) && t < cutoff) {
+          try { localStorage.removeItem(k); } catch (_) {}
+        }
+      });
+    } catch (e) {}
+  })();
 
   // Load saved profile from localStorage (immediate, offline-first)
   (function loadProfile() {
@@ -10076,7 +10130,7 @@
           + '.'
       : 'Client has not set up profile yet.';
 
-    fetch('/api/anthropic', {
+    apiFetch('/api/anthropic', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -10117,7 +10171,7 @@
       '. Dietary restrictions: ' + (state.diet && state.diet.length ? state.diet.join(', ') : 'none') +
       '. Health notes: ' + (state.healthNotes || 'none') + '.';
 
-    fetch('/api/anthropic', {
+    apiFetch('/api/anthropic', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -10517,7 +10571,7 @@
   }
 
   function _fetchFutureBoardOnce(payload) {
-    return fetch('/api/generate-image', {
+    return apiFetch('/api/generate-image', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -11660,7 +11714,7 @@
       'Return ONLY a JSON array with no markdown, no backticks, no extra text. Each element: {"day":"Day 01","focus":"Focus Label","exercises":[["Full Exercise Name","sets x reps","one-line movement cue describing form and motion"],...]}\n' +
       'Return only the JSON array.';
 
-    fetch('/api/openai', {
+    apiFetch('/api/openai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] })
@@ -11706,7 +11760,7 @@
       constraintNote + '\nClient profile: ' + state.name + ', ' + (state.gender || '') + ', ' + (state.age || '') + ', ' + (state.weight ? state.weight + ' ' + (state.weightUnit || 'lbs') : '') + ', ' + (state.height || '') + '. Goals: ' + goalsStr + ', Level: ' + state.level + ', Equipment: ' + (state.equipment || 'not specified') + ', Gym: ' + (state.gymAccess || 'not specified') + ', Health: ' + (state.health.join(', ') || 'none') + ', Diet: ' + ((state.diet && state.diet.length > 0) ? state.diet.join(', ') : 'none') + '\n' +
       'Return ONLY a JSON object: {"focus":"Label","exercises":[["Full Exercise Name","sets x reps","brief movement cue describing form"],...]}\nRULES: Start with a 10-min Dynamic Warmup. End with 15-20 min cardio (specific type, not just "Cardio"). Include 5 strength exercises between warmup and cardio. Use precise full exercise names. Tailor to this specific person. Return only the JSON.';
 
-    fetch('/api/openai', {
+    apiFetch('/api/openai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] })
@@ -11814,7 +11868,7 @@
       'Return ONLY a JSON object: {"name":"Full Exercise Name","sets":"sets x reps","cue":"brief form cue 10-15 words"}\n' +
       'No markdown, no backticks, just the JSON.';
 
-    fetch('/api/openai', {
+    apiFetch('/api/openai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] })
@@ -11965,7 +12019,7 @@
       '{"setup":"how to set up and position your body","execution":"step-by-step movement cues","breathing":"breathing pattern","common_mistakes":["mistake 1","mistake 2","mistake 3"],"pro_tip":"one expert cue that makes the biggest difference"}\n' +
       'Be specific and actionable. No markdown, no backticks. Return only the JSON.';
 
-    var guidePromise = fetch('/api/anthropic', {
+    var guidePromise = apiFetch('/api/anthropic', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
@@ -12191,7 +12245,7 @@
         '\u2022 "I\u2019m off track" \u2192 No shame. Acknowledge the slip in one line. Then give them the smallest possible next action to re-enter the current day. They don\u2019t need a new plan, they need to take one step.\n' +
         '\u2022 "Optimize everything" \u2192 Identify their biggest leak from the context (worst sleep, lowest feel, missed walks, sedentary days). Name it. Give one lever to pull this week.';
 
-      return fetch('/api/anthropic', {
+      return apiFetch('/api/anthropic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -12237,49 +12291,8 @@
   initLevelColors();
 
   // ═══ DASHBOARD CARDS ═══
-  // PROGRESS
-  function completeSession() {
-    state.sessions++;
-    state.streak++;
-    var weeks = Math.floor(state.sessions / (parseInt(state.days) || 4));
-    document.getElementById('sessionCount').textContent = state.sessions;
-    document.getElementById('streakCount').textContent = state.streak;
-    document.getElementById('weekCount').textContent = weeks;
-
-    var log = document.getElementById('sessionLog');
-    var now = new Date();
-    var dateStr = now.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
-    var names = ['Full Body Burn','Chest & Triceps','Athletic Conditioning','Legs & Core','Power Session','Hypertrophy','Back & Biceps'];
-    var sessionName = names[state.sessions % names.length];
-
-    if (state.sessions === 1) { log.innerHTML = ''; }
-    var item = document.createElement('div');
-    item.className = 'log-item';
-    item.innerHTML = '<span class="log-name">Session ' + state.sessions + ' — ' + sessionName + '</span><span class="log-date">' + dateStr + '</span><div class="log-check">✓</div>';
-    log.insertBefore(item, log.firstChild);
-
-    var msgs = ['Keep going.','The gap is closing.','You\'re building evidence.','Identity is shifting.','This is the work.'];
-    document.getElementById('streakMsg').textContent = msgs[state.streak % msgs.length];
-
-    var btn = document.querySelector('.complete-btn');
-    btn.textContent = '✓ Session Complete';
-    btn.style.background = 'transparent';
-    btn.style.color = 'var(--gold)';
-    btn.style.border = '1px solid var(--gold)';
-    setTimeout(function() {
-      btn.textContent = '✓ Complete Today\'s Session';
-      btn.style.background = 'var(--gold)';
-      btn.style.color = '#080808';
-      btn.style.border = 'none';
-    }, 2000);
-
-    // XP + logging
-    awardXP(100, 'Workout complete');
-    if (state.streak > 0 && state.streak % 7 === 0) awardXP(200, '7-day streak bonus!');
-    var sessionNames = ['Full Body Burn','Chest & Triceps','Athletic Conditioning','Legs & Core','Power Session','Hypertrophy','Back & Biceps'];
-    logWorkoutSession(sessionNames[state.sessions % sessionNames.length], 45);
-    saveProfile();
-  }
+  // (Dead completeSession() removed — it had no callers. Session completion
+  //  is handled elsewhere via the workout overlay flow.)
 
   // ═══ NUTRITION ═══
 
@@ -12605,7 +12618,7 @@
         '{"day":"Monday","meals":[{"name":"Breakfast","title":"Meal Title","foods":"1-line description","calories":number,"protein":number,"carbs":number,"fat":number,"prep":"15 min","ingredients":["6oz chicken breast","1 cup brown rice","1 tbsp olive oil"],"steps":["Step 1","Step 2"]},...]}\n' +
         'Include breakfast, lunch, dinner, snack. Keep steps concise (3-6). No markdown, no backticks, just the JSON array.';
 
-      return fetch('/api/anthropic', {
+      return apiFetch('/api/anthropic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -12785,7 +12798,7 @@
     input.disabled = true;
     input.placeholder = 'Analyzing macros...';
 
-    fetch('/api/anthropic', {
+    apiFetch('/api/anthropic', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -12827,10 +12840,13 @@
 
     var reader = new FileReader();
     reader.onload = function(e) {
-      var base64 = e.target.result.split(',')[1];
-      var mediaType = file.type || 'image/jpeg';
+      // Downscale before encoding — full-res base64 is huge and slow to upload.
+      // Scale the longest side to <=1024px and re-encode as JPEG @0.8.
+      _obDataUrlToCompressedJpeg(e.target.result, 1024, 0.8, function(compressedDataUrl) {
+        var base64 = String(compressedDataUrl).split(',')[1];
+        var mediaType = 'image/jpeg';
 
-      fetch('/api/anthropic', {
+      apiFetch('/api/anthropic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -12855,6 +12871,16 @@
           var clean = text.replace(/```json|```/g, '').trim();
           var macros = JSON.parse(clean);
           var foodName = macros.name || 'Scanned meal';
+
+          // Guard: if the model returned no usable macros, surface an error
+          // instead of logging a zero-macro meal.
+          var _cal = macros.cal || 0, _p = macros.protein || 0, _c = macros.carbs || 0, _f = macros.fat || 0;
+          if (!_cal && !_p && !_c && !_f) {
+            if (scanLabel) scanLabel.style.opacity = '1';
+            statusText.textContent = 'Could not read this meal — try a clearer photo';
+            setTimeout(function() { status.style.display = 'none'; }, 3000);
+            return;
+          }
 
           // Show breakdown before logging
           var itemsHTML = '';
@@ -12881,6 +12907,7 @@
         statusText.textContent = 'Could not analyze — try again';
         setTimeout(function() { status.style.display = 'none'; }, 3000);
       });
+      }); // end _obDataUrlToCompressedJpeg callback
     };
     reader.readAsDataURL(file);
   }
@@ -13655,7 +13682,7 @@
     document.getElementById('protocolBody').innerHTML = '<div style="display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px"><span>Building your protocol...</span></div>';
     document.getElementById('protocolModal').style.display = 'flex';
 
-    fetch('/api/anthropic', {
+    apiFetch('/api/anthropic', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -13701,7 +13728,7 @@
   async function loadTodayChecklist() {
     if (!currentUser) { showGuestProtocolState(); return; }
     try {
-      var res = await fetch('/api/protocol-checklist?userId=' + currentUser.id);
+      var res = await apiFetch('/api/protocol-checklist?userId=' + currentUser.id);
       var data = await res.json();
       window._activeProtocols = data.protocols;
       window._todayDoses = data.todayDoses;
@@ -13737,7 +13764,7 @@
   async function logDose(protocolId, skipped) {
     if (!currentUser) return;
     try {
-      var res = await fetch('/api/protocol-checklist', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ action:'log_dose', userId:currentUser.id, protocolId:protocolId, skipped:skipped }) });
+      var res = await apiFetch('/api/protocol-checklist', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ action:'log_dose', userId:currentUser.id, protocolId:protocolId, skipped:skipped }) });
       if (res.ok) {
         var actions = document.getElementById('pca-' + protocolId);
         if (actions) actions.outerHTML = '<div class="pc-status" style="display:block;margin-top:12px;"><div class="pc-status-text">' + (skipped ? 'Skipped today.' : 'Taken today. Keep going.') + '</div></div>';
@@ -13766,7 +13793,7 @@
     var btn = document.getElementById('spSubmitBtn');
     btn.textContent = 'STARTING...'; btn.disabled = true;
     try {
-      var res = await fetch('/api/protocol-checklist', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ action:'start_protocol', userId:currentUser.id, peptideName:_spPeptideName, dose:document.getElementById('sp-dose').value, frequency:document.getElementById('sp-frequency').value, timing:timing, method:document.getElementById('sp-method').value, cycleWeeks:parseInt(document.getElementById('sp-cycle').value) }) });
+      var res = await apiFetch('/api/protocol-checklist', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ action:'start_protocol', userId:currentUser.id, peptideName:_spPeptideName, dose:document.getElementById('sp-dose').value, frequency:document.getElementById('sp-frequency').value, timing:timing, method:document.getElementById('sp-method').value, cycleWeeks:parseInt(document.getElementById('sp-cycle').value) }) });
       if (res.ok) {
         closeModal('startProtocolModal');
         showHealthTab('today');
@@ -13803,7 +13830,7 @@
     var userProfile = {};
     try { userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}'); } catch(e) {}
     try {
-      var res = await fetch('/api/predict-protocol', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ protocol:protocol, userProfile:userProfile, userId:currentUser ? currentUser.id : null }) });
+      var res = await apiFetch('/api/predict-protocol', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ protocol:protocol, userProfile:userProfile, userId:currentUser ? currentUser.id : null }) });
       var data = await res.json();
       window._lastPrediction = data.prediction;
       window._lastPredictionProtocol = protocol;
@@ -13896,7 +13923,7 @@
         currentWeek = Math.max(1, Math.floor((new Date() - new Date(protocol.start_date)) / (7*24*60*60*1000)) + 1);
       }
       try {
-        await fetch('/api/protocol-checklist', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({
+        await apiFetch('/api/protocol-checklist', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({
           action:'log_weekly', userId:currentUser.id, protocolId:protocolEl.value, weekNumber:currentWeek,
           energyLevel: payload.energy_level, sleepQuality: payload.sleep_quality, recoveryScore: payload.recovery_score,
           moodScore: payload.mood_score, painLevel: payload.pain_level, bodyWeight: payload.body_weight, notes: payload.notes
@@ -14256,7 +14283,8 @@
     if (prefs.streak_protection.enabled && time === prefs.streak_protection.time && !sent.streak) {
       var lastCompleted = localStorage.getItem('wylde_last_completed_day');
       if (lastCompleted !== todayKey) {
-        var streak = parseInt(localStorage.getItem('wylde_streak') || '0');
+        var _stStreak = (typeof state !== 'undefined') ? state : {};
+        var streak = parseInt(_stStreak.streak || 0, 10) || 0;
         var msg = streak > 0
           ? "You're on a " + streak + "-day streak. Don't let it slip."
           : "You haven't completed today yet. Show up.";
@@ -14291,9 +14319,10 @@
 
     // 6. Weekly recap (Sunday 10:00 AM)
     if (prefs.weekly_recap.enabled && dayName === 'sunday' && time === prefs.weekly_recap.time && !sent.recap) {
-      var totalSessions = parseInt(localStorage.getItem('wylde_sessions') || '0');
-      var streak2 = parseInt(localStorage.getItem('wylde_streak') || '0');
-      var xp = parseInt(localStorage.getItem('wylde_xp') || '0');
+      var _stRecap = (typeof state !== 'undefined') ? state : {};
+      var totalSessions = parseInt(_stRecap.sessions || 0, 10) || 0;
+      var streak2 = parseInt(_stRecap.streak || 0, 10) || 0;
+      var xp = parseInt(_stRecap.xp || 0, 10) || 0;
       fireLocalNotif('Your Week in Review', 'Sessions: ' + totalSessions + ' | Streak: ' + streak2 + ' days | ' + xp + ' XP earned. Keep building.', 'recap');
       sent.recap = true;
     }
@@ -16075,7 +16104,12 @@
     return y + '-' + m + '-' + day;
   }
   function sessionCreditKey() { return 'wylde_session_credited_' + todayKey(); }
-  function workoutLogKey()    { return 'wylde_workout_log'; }
+  // Per-day key so multiple workouts on the same calendar day don't collide.
+  // dayIndex identifies which program day this session is.
+  function workoutLogKey(dayIndex) {
+    var idx = (typeof dayIndex === 'number' && dayIndex >= 0) ? dayIndex : 0;
+    return 'wylde_workout_log_' + todayKey() + '_' + idx;
+  }
 
   // ── Read program from localStorage ──
   function loadProgram() {
@@ -16118,7 +16152,7 @@
   function buildSession(day) {
     var existing = null;
     try {
-      var raw = localStorage.getItem(workoutLogKey());
+      var raw = localStorage.getItem(workoutLogKey(day.dayIndex));
       if (raw) {
         var parsed = JSON.parse(raw);
         if (parsed && parsed.date === todayKey() && parsed.dayName === day.name) {
@@ -16171,7 +16205,7 @@
       session.exercises.forEach(function(ex){
         payload.logged[ex.name] = { sets: ex.logged };
       });
-      localStorage.setItem(workoutLogKey(), JSON.stringify(payload));
+      localStorage.setItem(workoutLogKey(session.dayIndex), JSON.stringify(payload));
     } catch(_){}
   }
 

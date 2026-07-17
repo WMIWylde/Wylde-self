@@ -56,10 +56,10 @@ struct RestTimerView: View {
                     VStack(spacing: 4) {
                         Text(timeString)
                             .font(.system(size: 48, weight: .bold, design: .monospaced))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(Theme.primaryText)
                         Text("seconds")
                             .font(.system(size: 12))
-                            .foregroundColor(Color(hex: "6E6B65"))
+                            .foregroundColor(Theme.tertiaryText)
                     }
                 }
 
@@ -69,7 +69,7 @@ struct RestTimerView: View {
                         remaining = 0
                     }
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(Theme.secondaryText)
                 }
             }
         }

@@ -10,7 +10,7 @@ struct CareMessagingView: View {
     @State private var relationshipId: String?
     @FocusState private var inputFocused: Bool
 
-    private let baseURL = "https://www.wyldeself.com"
+    private let baseURL = ClinicalAPI.host
     private let templates = [
         "I missed a dose",
         "I'm having a side effect",
@@ -20,7 +20,7 @@ struct CareMessagingView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            Theme.appBG.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header
@@ -32,15 +32,15 @@ struct CareMessagingView: View {
                             .foregroundColor(Color(hex: "C8A96E"))
                         Text("Messages")
                             .font(.system(size: 20, weight: .bold, design: .serif))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(Theme.primaryText)
                     }
                     Spacer()
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
                             .frame(width: 36, height: 36)
-                            .background(Color(hex: "111111"))
+                            .background(Theme.elevatedBG)
                             .clipShape(Circle())
                     }
                 }
@@ -57,13 +57,13 @@ struct CareMessagingView: View {
                     VStack(spacing: 12) {
                         Image(systemName: "bubble.left.and.bubble.right")
                             .font(.system(size: 36))
-                            .foregroundColor(Color(hex: "6E6B65"))
+                            .foregroundColor(Theme.tertiaryText)
                         Text("No messages yet")
                             .font(.system(size: 15))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
                         Text("Send your clinician a message below.")
                             .font(.system(size: 12))
-                            .foregroundColor(Color(hex: "6E6B65"))
+                            .foregroundColor(Theme.tertiaryText)
                     }
                     Spacer()
                 } else {
@@ -116,28 +116,27 @@ struct CareMessagingView: View {
                     TextField("Message your clinician...", text: $inputText, axis: .vertical)
                         .lineLimit(1...4)
                         .font(.system(size: 15))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
-                        .background(Color(hex: "111111"))
+                        .background(Theme.elevatedBG)
                         .clipShape(RoundedRectangle(cornerRadius: 20))
-                        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1))
+                        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Theme.primaryText.opacity(0.06), lineWidth: 1))
                         .focused($inputFocused)
                         .tint(Color(hex: "C8A96E"))
 
                     Button(action: sendMessage) {
                         Image(systemName: "arrow.up.circle.fill")
                             .font(.system(size: 32))
-                            .foregroundColor(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Color(hex: "6E6B65") : Color(hex: "C8A96E"))
+                            .foregroundColor(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Theme.tertiaryText : Color(hex: "C8A96E"))
                     }
                     .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(Color(hex: "0B0B0B"))
+                .background(Theme.appBG)
             }
         }
-        .preferredColorScheme(.dark)
         .task { await loadMessages() }
     }
 
@@ -148,13 +147,13 @@ struct CareMessagingView: View {
             VStack(alignment: isMe ? .trailing : .leading, spacing: 4) {
                 Text(msg.body)
                     .font(.system(size: 15))
-                    .foregroundColor(isMe ? Color(hex: "070707") : Color(hex: "F4F1E8"))
+                    .foregroundColor(isMe ? Theme.onAccent : Theme.primaryText)
                     .padding(14)
-                    .background(isMe ? Color(hex: "C8A96E") : Color(hex: "111111"))
+                    .background(isMe ? Color(hex: "C8A96E") : Theme.elevatedBG)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 Text(formatTime(msg.createdAt))
                     .font(.system(size: 10))
-                    .foregroundColor(Color(hex: "6E6B65"))
+                    .foregroundColor(Theme.tertiaryText)
             }
             if !isMe { Spacer() }
         }

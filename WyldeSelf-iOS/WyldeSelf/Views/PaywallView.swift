@@ -82,9 +82,9 @@ struct PaywallView: View {
             } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(Theme.secondaryText)
                     .frame(width: 36, height: 36)
-                    .background(Color(hex: "111111"))
+                    .background(Theme.elevatedBG)
                     .clipShape(Circle())
             }
             .padding(.bottom, 24)
@@ -147,7 +147,7 @@ struct PaywallView: View {
 
     private var priceTiles: some View {
         VStack(spacing: 10) {
-            ForEach([WyldeProduct.lifetimeFounder, .annualFounder, .monthlyFounder], id: \.rawValue) { product in
+            ForEach([WyldeProduct.lifetimeFounder, .annual, .monthly], id: \.rawValue) { product in
                 priceTile(for: product)
             }
         }
@@ -167,7 +167,7 @@ struct PaywallView: View {
                 // Selection indicator
                 ZStack {
                     Circle()
-                        .stroke(isSelected ? Color(hex: "C8A96E") : Color(hex: "A6A29A").opacity(0.4), lineWidth: 1.5)
+                        .stroke(isSelected ? Color(hex: "C8A96E") : Theme.secondaryText.opacity(0.4), lineWidth: 1.5)
                         .frame(width: 22, height: 22)
                     if isSelected {
                         Circle()
@@ -180,7 +180,7 @@ struct PaywallView: View {
                     HStack(spacing: 8) {
                         Text(product.displayName)
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(Color(hex: "F4F1E8"))
+                            .foregroundColor(Theme.primaryText)
                         if isLifetime {
                             Text("BEST VALUE")
                                 .font(.system(size: 9, weight: .bold))
@@ -194,20 +194,20 @@ struct PaywallView: View {
                     }
                     Text(product.billingNote)
                         .font(.system(size: 12))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                 }
 
                 Spacer()
 
                 Text(priceText)
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(Color(hex: "F4F1E8"))
+                    .foregroundColor(Theme.primaryText)
             }
             .padding(16)
-            .background(isSelected ? Color(hex: "1A1A1A") : Color(hex: "111111"))
+            .background(isSelected ? Theme.chipBG : Theme.elevatedBG)
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
-                    .stroke(isSelected ? Color(hex: "C8A96E") : Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1)
+                    .stroke(isSelected ? Color(hex: "C8A96E") : Theme.primaryText.opacity(0.06), lineWidth: 1)
             )
             .cornerRadius(14)
         }
@@ -289,7 +289,7 @@ struct PaywallView: View {
 
     private func loadFounderCount() async {
         defer { isLoadingCount = false }
-        guard let url = URL(string: "https://wyldeself.com/api/founder-count") else { return }
+        guard let url = URL(string: "\(ClinicalAPI.host)/api/founder-count") else { return }
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {

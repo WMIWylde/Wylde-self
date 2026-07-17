@@ -11,7 +11,7 @@ final class ProtocolTrackerService: ObservableObject {
     @Published var adherenceRate: Int?
     @Published var isLoading = false
 
-    private let baseURL = "https://www.wyldeself.com"
+    private let baseURL = ClinicalAPI.host
 
     // MARK: - Fetch protocols + prescriptions + adherence
 

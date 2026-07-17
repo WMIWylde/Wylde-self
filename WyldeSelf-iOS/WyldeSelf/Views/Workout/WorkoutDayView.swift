@@ -19,7 +19,7 @@ struct WorkoutDayView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            Theme.appBG.ignoresSafeArea()
 
             if let day = day {
                 ScrollView(showsIndicators: false) {
@@ -67,7 +67,7 @@ struct WorkoutDayView: View {
                                         Text("WORKOUT ACTIVE")
                                             .font(.system(size: 10, weight: .bold))
                                             .tracking(2)
-                                            .foregroundColor(Color(hex: "F4F1E8"))
+                                            .foregroundColor(Theme.primaryText)
                                         Spacer()
                                         Text(formatElapsed(workoutElapsed))
                                             .font(.system(size: 16, weight: .bold, design: .monospaced))
@@ -77,7 +77,7 @@ struct WorkoutDayView: View {
                                     }
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 12)
-                                    .background(Color(hex: "111111"))
+                                    .background(Theme.elevatedBG)
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                                 }
 
@@ -122,7 +122,7 @@ struct WorkoutDayView: View {
                     dismiss()
                 } label: {
                     Image(systemName: "chevron.left")
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -180,11 +180,11 @@ struct WorkoutDayView: View {
 
             Text(day.focus)
                 .font(.system(size: 28, weight: .bold, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(Theme.primaryText)
 
             Text("\(day.exercises.count) exercises")
                 .font(.system(size: 13))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(Theme.secondaryText)
         }
         .padding(.bottom, 8)
     }

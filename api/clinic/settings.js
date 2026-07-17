@@ -21,11 +21,12 @@ module.exports = async function handler(req, res) {
       .eq('clinician_id', user.id)
       .single();
 
-    // Auto-create if doesn't exist (new clinician onboarding)
+    // Auto-create if doesn't exist (new clinician onboarding).
+    // New clinics start 'pending' and must be approved before gaining access.
     if (!data) {
       const { data: newSettings } = await supabase
         .from('clinic_settings')
-        .insert({ clinician_id: user.id, status: 'approved' })
+        .insert({ clinician_id: user.id, status: 'pending' })
         .select()
         .single();
       data = newSettings;

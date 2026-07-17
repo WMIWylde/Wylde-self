@@ -29,6 +29,7 @@ final class CoachService: ObservableObject {
         } catch {
             let errMsg = CoachMessage(role: .assistant, content: "Connection lost. I'm still here — try again.")
             messages.append(errMsg)
+            saveHistory()
         }
 
         isTyping = false

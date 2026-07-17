@@ -1,19 +1,24 @@
 import Foundation
 
 // ════════════════════════════════════════════════════════════════════
-//  ClinicalAPI — wrapper for the clinical Next.js app's consumer
-//  endpoints. Attaches the Supabase access token to every request.
+//  ClinicalAPI — wrapper for the consumer API's endpoints. Attaches the
+//  Supabase access token to every request.
 //
-//  Configure CLINICAL_API_BASE in Info.plist (defaults to
-//  https://clinical.wyldeself.com).
+//  `host` is the SINGLE source of truth for the consumer API base URL.
+//  Every consumer service (WyldeScore, protocol tracker, care messaging,
+//  reorder, and the /api/consumer/* endpoints below) routes through it.
+//  Override via the Info.plist key CLINICAL_API_BASE (defaults to
+//  https://www.wyldeself.com).
 // ════════════════════════════════════════════════════════════════════
 
 enum ClinicalAPI {
 
+    /// Single source of truth for the consumer API host string.
+    static let host: String = (Bundle.main.object(forInfoDictionaryKey: "CLINICAL_API_BASE") as? String)
+        ?? "https://www.wyldeself.com"
+
     static var baseURL: URL {
-        let s = (Bundle.main.object(forInfoDictionaryKey: "CLINICAL_API_BASE") as? String)
-              ?? "https://clinical.wyldeself.com"
-        return URL(string: s)!
+        return URL(string: host)!
     }
 
     // MARK: ─── Patient profile + today's plan ───

@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import WatchConnectivity
 
 /// Bridges watch ↔ phone via WatchConnectivity.

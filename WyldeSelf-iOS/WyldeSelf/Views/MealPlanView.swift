@@ -16,7 +16,7 @@ struct MealPlanView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            Theme.appBG.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Top bar
@@ -29,9 +29,9 @@ struct MealPlanView: View {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
                             .frame(width: 36, height: 36)
-                            .background(Color(hex: "111111"))
+                            .background(Theme.elevatedBG)
                             .clipShape(Circle())
                     }
                 }
@@ -55,7 +55,6 @@ struct MealPlanView: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
     }
 
     // MARK: - Tab Picker
@@ -69,17 +68,17 @@ struct MealPlanView: View {
                     Text(tab.rawValue)
                         .font(.system(size: 12, weight: .semibold))
                         .tracking(0.5)
-                        .foregroundColor(selectedTab == tab ? Color(hex: "F4F1E8") : Color(hex: "6E6B65"))
+                        .foregroundColor(selectedTab == tab ? Theme.primaryText : Theme.tertiaryText)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
-                        .background(selectedTab == tab ? Color(hex: "1A1A1A") : .clear)
+                        .background(selectedTab == tab ? Theme.chipBG : .clear)
                         .clipShape(Capsule())
                 }
                 .buttonStyle(.plain)
             }
         }
         .padding(3)
-        .background(Color(hex: "111111"))
+        .background(Theme.elevatedBG)
         .clipShape(Capsule())
     }
 
@@ -94,11 +93,11 @@ struct MealPlanView: View {
 
             Text("Your Weekly Meal Plan")
                 .font(.system(size: 24, weight: .bold, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(Theme.primaryText)
 
             Text("AI-built around your goals, dietary preferences, and macros.")
                 .font(.system(size: 14))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(Theme.secondaryText)
                 .multilineTextAlignment(.center)
 
             GoldButton(label: "Generate Meal Plan") {
@@ -120,10 +119,10 @@ struct MealPlanView: View {
             ProgressView().tint(Color(hex: "C8A96E")).scaleEffect(1.2)
             Text("Building your meal plan...")
                 .font(.system(size: 18, weight: .medium, design: .serif))
-                .foregroundColor(Color(hex: "F4F1E8"))
+                .foregroundColor(Theme.primaryText)
             Text("Recipes, macros, and grocery list")
                 .font(.system(size: 13))
-                .foregroundColor(Color(hex: "A6A29A"))
+                .foregroundColor(Theme.secondaryText)
             Spacer()
         }
     }
@@ -153,7 +152,7 @@ struct MealPlanView: View {
                         miniMacro(label: "Cal", value: "\(day.totalCalories)")
                         miniMacro(label: "Protein", value: "\(day.totalProtein)g")
                     }
-                    .background(Color(hex: "111111"))
+                    .background(Theme.elevatedBG)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .padding(.horizontal, 20)
 
@@ -175,7 +174,7 @@ struct MealPlanView: View {
                         Text("Generate new plan")
                             .font(.system(size: 12, weight: .medium))
                     }
-                    .foregroundColor(Color(hex: "A6A29A"))
+                    .foregroundColor(Theme.secondaryText)
                 }
                 .padding(.top, 12)
 
@@ -193,7 +192,7 @@ struct MealPlanView: View {
             VStack(spacing: 4) {
                 Text(String(day.dayName.prefix(3)))
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(isSelected ? Color(hex: "C8A96E") : Color(hex: "A6A29A"))
+                    .foregroundColor(isSelected ? Color(hex: "C8A96E") : Theme.secondaryText)
                 if completedCount == day.meals.count && !day.meals.isEmpty {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 10))
@@ -201,11 +200,11 @@ struct MealPlanView: View {
                 } else {
                     Text("\(completedCount)/\(day.meals.count)")
                         .font(.system(size: 9, design: .monospaced))
-                        .foregroundColor(Color(hex: "6E6B65"))
+                        .foregroundColor(Theme.tertiaryText)
                 }
             }
             .frame(width: 48, height: 48)
-            .background(isSelected ? Color(hex: "C8A96E").opacity(0.10) : Color(hex: "111111"))
+            .background(isSelected ? Color(hex: "C8A96E").opacity(0.10) : Theme.elevatedBG)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(isToday ? Color(hex: "C8A96E").opacity(0.3) : .clear, lineWidth: 1)
@@ -223,7 +222,7 @@ struct MealPlanView: View {
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: meal.completed ? "checkmark.circle.fill" : "circle")
-                        .foregroundColor(meal.completed ? Color(hex: "7A8771") : Color(hex: "6E6B65"))
+                        .foregroundColor(meal.completed ? Color(hex: "7A8771") : Theme.tertiaryText)
                         .font(.system(size: 20))
 
                     VStack(alignment: .leading, spacing: 2) {
@@ -233,13 +232,13 @@ struct MealPlanView: View {
                             .foregroundColor(Color(hex: "C8A96E"))
                         Text(meal.name)
                             .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(meal.completed ? Color(hex: "6E6B65") : Color(hex: "F4F1E8"))
-                            .strikethrough(meal.completed, color: Color(hex: "6E6B65"))
+                            .foregroundColor(meal.completed ? Theme.tertiaryText : Theme.primaryText)
+                            .strikethrough(meal.completed, color: Theme.tertiaryText)
                     }
                     Spacer()
                     Text("\(meal.calories) cal")
                         .font(.system(size: 12, design: .monospaced))
-                        .foregroundColor(Color(hex: "A6A29A"))
+                        .foregroundColor(Theme.secondaryText)
                 }
             }
             .buttonStyle(.plain)
@@ -254,11 +253,11 @@ struct MealPlanView: View {
                 HStack {
                     Text("\(meal.protein)g P · \(meal.carbs)g C · \(meal.fat)g F · \(meal.prepTime) min")
                         .font(.system(size: 10, design: .monospaced))
-                        .foregroundColor(Color(hex: "6E6B65"))
+                        .foregroundColor(Theme.tertiaryText)
                     Spacer()
                     Image(systemName: expandedMeal == meal.id ? "chevron.up" : "chevron.down")
                         .font(.system(size: 10))
-                        .foregroundColor(Color(hex: "6E6B65"))
+                        .foregroundColor(Theme.tertiaryText)
                 }
                 .padding(.horizontal, 14)
                 .padding(.bottom, 10)
@@ -271,23 +270,23 @@ struct MealPlanView: View {
                         Text("INGREDIENTS")
                             .font(.system(size: 9, weight: .bold))
                             .tracking(1.5)
-                            .foregroundColor(Color(hex: "6E6B65"))
+                            .foregroundColor(Theme.tertiaryText)
                         ForEach(meal.ingredients, id: \.self) { item in
                             Text("· \(item)")
                                 .font(.system(size: 13))
-                                .foregroundColor(Color(hex: "A6A29A"))
+                                .foregroundColor(Theme.secondaryText)
                         }
                     }
                     if !meal.instructions.isEmpty {
                         Text("HOW TO MAKE")
                             .font(.system(size: 9, weight: .bold))
                             .tracking(1.5)
-                            .foregroundColor(Color(hex: "6E6B65"))
+                            .foregroundColor(Theme.tertiaryText)
                             .padding(.top, 4)
                         ForEach(Array(meal.instructions.enumerated()), id: \.offset) { i, step in
                             Text("\(i + 1). \(step)")
                                 .font(.system(size: 13))
-                                .foregroundColor(Color(hex: "A6A29A"))
+                                .foregroundColor(Theme.secondaryText)
                                 .lineSpacing(2)
                         }
                     }
@@ -296,10 +295,10 @@ struct MealPlanView: View {
                 .padding(.bottom, 14)
             }
         }
-        .background(Color(hex: "111111"))
+        .background(Theme.elevatedBG)
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1)
+                .stroke(Theme.primaryText.opacity(0.06), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
@@ -311,7 +310,7 @@ struct MealPlanView: View {
                 .foregroundColor(Color(hex: "C8A96E"))
             Text(label)
                 .font(.system(size: 10))
-                .foregroundColor(Color(hex: "6E6B65"))
+                .foregroundColor(Theme.tertiaryText)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 10)
@@ -335,23 +334,23 @@ struct MealPlanView: View {
                             } label: {
                                 HStack(spacing: 10) {
                                     Image(systemName: item.checked ? "checkmark.square.fill" : "square")
-                                        .foregroundColor(item.checked ? Color(hex: "7A8771") : Color(hex: "6E6B65"))
+                                        .foregroundColor(item.checked ? Color(hex: "7A8771") : Theme.tertiaryText)
                                         .font(.system(size: 16))
                                     Text(item.name)
                                         .font(.system(size: 14))
-                                        .foregroundColor(item.checked ? Color(hex: "6E6B65") : Color(hex: "F4F1E8"))
-                                        .strikethrough(item.checked, color: Color(hex: "6E6B65"))
+                                        .foregroundColor(item.checked ? Theme.tertiaryText : Theme.primaryText)
+                                        .strikethrough(item.checked, color: Theme.tertiaryText)
                                     Spacer()
                                     Text(item.quantity)
                                         .font(.system(size: 12, design: .monospaced))
-                                        .foregroundColor(Color(hex: "A6A29A"))
+                                        .foregroundColor(Theme.secondaryText)
                                 }
                             }
                             .buttonStyle(.plain)
                         }
                     }
                     .padding(14)
-                    .background(Color(hex: "111111"))
+                    .background(Theme.elevatedBG)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
 

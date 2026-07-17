@@ -31,7 +31,7 @@ struct EquipmentPickerView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "070707").ignoresSafeArea()
+            Theme.appBG.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header
@@ -41,9 +41,9 @@ struct EquipmentPickerView: View {
                         Button { dismiss() } label: {
                             Image(systemName: "xmark")
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(Color(hex: "A6A29A"))
+                                .foregroundColor(Theme.secondaryText)
                                 .frame(width: 36, height: 36)
-                                .background(Color(hex: "111111"))
+                                .background(Theme.elevatedBG)
                                 .clipShape(Circle())
                         }
                     }
@@ -56,7 +56,7 @@ struct EquipmentPickerView: View {
 
                     Text("Pick your setup for today")
                         .font(.system(size: 22, weight: .bold, design: .serif))
-                        .foregroundColor(Color(hex: "F4F1E8"))
+                        .foregroundColor(Theme.primaryText)
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
@@ -68,7 +68,7 @@ struct EquipmentPickerView: View {
                         Text("QUICK SELECT")
                             .font(.system(size: 10, weight: .bold))
                             .tracking(2)
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
 
                         LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
                             ForEach(presets, id: \.0) { preset in
@@ -80,17 +80,17 @@ struct EquipmentPickerView: View {
                                     VStack(spacing: 8) {
                                         Image(systemName: preset.1)
                                             .font(.system(size: 20))
-                                            .foregroundColor(isActive ? Color(hex: "C8A96E") : Color(hex: "A6A29A"))
+                                            .foregroundColor(isActive ? Color(hex: "C8A96E") : Theme.secondaryText)
                                         Text(preset.0)
                                             .font(.system(size: 12, weight: .semibold))
-                                            .foregroundColor(isActive ? Color(hex: "F4F1E8") : Color(hex: "A6A29A"))
+                                            .foregroundColor(isActive ? Theme.primaryText : Theme.secondaryText)
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 16)
-                                    .background(isActive ? Color(hex: "C8A96E").opacity(0.10) : Color(hex: "111111"))
+                                    .background(isActive ? Color(hex: "C8A96E").opacity(0.10) : Theme.elevatedBG)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 14)
-                                            .stroke(isActive ? Color(hex: "C8A96E").opacity(0.4) : Color(hex: "F4F1E8").opacity(0.06), lineWidth: 1)
+                                            .stroke(isActive ? Color(hex: "C8A96E").opacity(0.4) : Theme.primaryText.opacity(0.06), lineWidth: 1)
                                     )
                                     .clipShape(RoundedRectangle(cornerRadius: 14))
                                 }
@@ -102,7 +102,7 @@ struct EquipmentPickerView: View {
                         Text("OR PICK INDIVIDUALLY")
                             .font(.system(size: 10, weight: .bold))
                             .tracking(2)
-                            .foregroundColor(Color(hex: "A6A29A"))
+                            .foregroundColor(Theme.secondaryText)
                             .padding(.top, 8)
 
                         ForEach(equipment, id: \.id) { item in
@@ -118,24 +118,24 @@ struct EquipmentPickerView: View {
                                 HStack(spacing: 14) {
                                     Image(systemName: item.icon)
                                         .font(.system(size: 16))
-                                        .foregroundColor(isOn ? Color(hex: "C8A96E") : Color(hex: "6E6B65"))
+                                        .foregroundColor(isOn ? Color(hex: "C8A96E") : Theme.tertiaryText)
                                         .frame(width: 36, height: 36)
-                                        .background(isOn ? Color(hex: "C8A96E").opacity(0.10) : Color(hex: "111111"))
+                                        .background(isOn ? Color(hex: "C8A96E").opacity(0.10) : Theme.elevatedBG)
                                         .clipShape(RoundedRectangle(cornerRadius: 10))
 
                                     Text(item.name)
                                         .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(isOn ? Color(hex: "F4F1E8") : Color(hex: "A6A29A"))
+                                        .foregroundColor(isOn ? Theme.primaryText : Theme.secondaryText)
 
                                     Spacer()
 
                                     Image(systemName: isOn ? "checkmark.circle.fill" : "circle")
                                         .font(.system(size: 20))
-                                        .foregroundColor(isOn ? Color(hex: "C8A96E") : Color(hex: "6E6B65"))
+                                        .foregroundColor(isOn ? Color(hex: "C8A96E") : Theme.tertiaryText)
                                 }
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, 12)
-                                .background(Color(hex: "111111"))
+                                .background(Theme.elevatedBG)
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
                             .buttonStyle(.plain)

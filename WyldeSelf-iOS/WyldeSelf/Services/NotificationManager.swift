@@ -8,7 +8,7 @@ class NotificationManager: NSObject {
         super.init()
     }
 
-    func requestPermission() {
+    func requestPermission(completion: ((Bool) -> Void)? = nil) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             #if DEBUG
             if let error = error {
@@ -16,6 +16,7 @@ class NotificationManager: NSObject {
             }
             print("[Notifications] Permission granted: \(granted)")
             #endif
+            DispatchQueue.main.async { completion?(granted) }
         }
     }
 

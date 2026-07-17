@@ -23,7 +23,7 @@ End-to-end checklist to get the app into TestFlight beta. Assumes you're already
    - **Platform:** iOS
    - **Name:** Wylde Self
    - **Primary language:** English (U.S.)
-   - **Bundle ID:** `com.wylde.self` (or your chosen ID — must match Xcode → Target → General → Bundle Identifier)
+   - **Bundle ID:** `com.wyldeself.app` (must match Xcode → Target → General → Bundle Identifier)
    - **SKU:** `wylde-self-001` (any unique string)
    - **User access:** Full Access
 3. Click Create
@@ -37,7 +37,7 @@ Open `WyldeSelf.xcodeproj` in Xcode.
 1. Click the project in the navigator → **WyldeSelf target** → Signing & Capabilities
 2. Set:
    - **Team:** your developer team
-   - **Bundle Identifier:** `com.wylde.self` (must match App Store Connect)
+   - **Bundle Identifier:** `com.wyldeself.app` (must match App Store Connect)
    - **Automatically manage signing:** ✓ checked
 3. Xcode will fetch a provisioning profile automatically. Wait for the green checkmark.
 
@@ -50,8 +50,8 @@ If you see "No signing certificate":
 ## Step 3 — Increment version (2 min)
 
 Open `WyldeSelf/Info.plist` (or General tab in Xcode):
-- **Version (CFBundleShortVersionString):** `1.0.0`
-- **Build (CFBundleVersion):** increment by 1 each time you upload (start at `1`)
+- **Version (CFBundleShortVersionString):** `1.0` (current value in Info.plist)
+- **Build (CFBundleVersion):** increment by 1 each time you upload (currently `2`). The watch target's `CURRENT_PROJECT_VERSION` is kept in sync at `2`.
 
 For TestFlight, build number must be unique per upload. Apple won't let you overwrite.
 
@@ -65,8 +65,8 @@ For TestFlight, build number must be unique per upload. Apple won't let you over
    - [ ] Launch screen shows the Wylde logo
    - [ ] Today screen renders
    - [ ] Hamburger drawer opens from left, lists vertically
-   - [ ] All 4 bottom tabs work (Today / Future / Coach / Progress)
-   - [ ] WebView tabs load wyldeself.com content
+   - [ ] All 4 bottom tabs work (Today / Nutrition / Future / You)
+   - [ ] Screens are fully native SwiftUI (no WebView tabs)
    - [ ] No crashes
 
 If anything's broken — fix before archiving.
@@ -100,7 +100,7 @@ Once Apple finishes processing:
 1. App Store Connect → your app → **TestFlight** tab
 2. Wait for the build to appear (left sidebar shows it under your iOS version number)
 3. Click the build → **Test Information**:
-   - **What to test:** *"Beta — main flows: onboarding, today screen, coach, library, paywall."*
+   - **What to test:** *"Beta — main flows: onboarding, Today screen, Nutrition tracking, Future Self, paywall."*
    - **Beta App Description:** *"Wylde Self — your future self, daily."*
    - **Email:** your support email
    - **Marketing URL:** `https://wyldeself.com`
@@ -177,11 +177,11 @@ Don't worry about App Store today — TestFlight is the goal. App Store is the n
 
 ## RevenueCat — for in-app purchases later
 
-The native iOS PaywallView is currently in stub mode (simulated purchases). To make it actually charge real money via Apple IAP:
+The native iOS PurchaseManager is now wired for REAL RevenueCat (`useRealRevenueCat = true`, `import RevenueCat` active). Before the project will build + charge real money via Apple IAP you must:
 
-1. Follow the steps in `PAYWALL_SETUP.md`
-2. Your TestFlight beta works WITHOUT this — you can test the app flow without real purchases
-3. Add RevenueCat once you're ready to flip on iOS-side payments
+1. Add the RevenueCat Swift Package in Xcode (File → Add Package Dependencies → `https://github.com/RevenueCat/purchases-ios`). **The project will not compile until this package is added.**
+2. Put your RevenueCat public SDK key in `WyldeSelf/Info.plist` under `REVENUECAT_API_KEY` (currently a placeholder).
+3. Follow the remaining steps in `PAYWALL_SETUP.md` (entitlement identifier `wylde_pro`, product IDs, matching App Store Connect products).
 
 **For your initial founders push**, web Stripe is the primary path (see `STRIPE_SETUP.md`). iOS IAP can come post-launch.
 

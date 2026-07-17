@@ -323,12 +323,13 @@ module.exports = async function handler(req, res) {
       obstacle,
       category,
       reflectionText,
+      protocolAddition,
     } = body;
 
     const effectiveGoals = normalizeGoals(goals, userGoal, goal);
     const effectiveTimeline = timeline || '12weeks';
 
-    const prompt = buildPrompt(effectiveTimeline, effectiveGoals, gender, !!image_base64, {
+    let prompt = buildPrompt(effectiveTimeline, effectiveGoals, gender, !!image_base64, {
       mode: mode || 'physique',
       userGoal,
       goal,
@@ -338,6 +339,12 @@ module.exports = async function handler(req, res) {
       category,
       reflectionText,
     });
+
+    // Health+ prediction tie-in: append the protocol-driven body change
+    // description so the generated image reflects the predicted outcome.
+    if (protocolAddition && String(protocolAddition).trim()) {
+      prompt += ' ' + String(protocolAddition).trim();
+    }
     console.log(`[generate-image] mode=${mode || 'physique'} timeline=${effectiveTimeline} goals=${JSON.stringify(effectiveGoals)} promptLen=${prompt.length}`);
 
     let contents;

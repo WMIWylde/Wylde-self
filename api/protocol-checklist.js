@@ -1,19 +1,17 @@
-import { createClient } from '@supabase/supabase-js';
+// Authentication: requires a valid Supabase JWT in the Authorization header.
+// user_id is always derived from the verified token — never from client input.
+const { applyCors } = require('../lib/security');
+const { getSupabaseAdmin, getUserFromRequest } = require('../lib/supabase-admin');
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
+module.exports = async function handler(req, res) {
+  if (applyCors(req, res, { methods: 'GET, POST, OPTIONS' })) return;
 
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  const user = await getUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
-
+  const supabase = getSupabaseAdmin();
   const { method } = req;
-  const { userId } = req.body || req.query;
+  const userId = user.id;
 
   try {
     if (method === 'GET') {
@@ -126,6 +124,6 @@ export default async function handler(req, res) {
     console.error('Checklist error:', error);
     return res.status(500).json({ error: error.message });
   }
-}
+};
 
-export const config = { maxDuration: 15 };
+module.exports.config = { maxDuration: 15 };
