@@ -3766,6 +3766,32 @@
   }
 
   /* StartTodayFlow styles live in /css/start-today-flow.css (linked above). */
+
+    /* ═══ DESKTOP = CENTERED PHONE COLUMN (2026-07-18) ═══
+       The 200px desktop rail predates the mobile-first screens, which
+       center themselves with !important and slide under it. The product
+       is a phone experience — desktop now renders the same bottom-tab
+       column, centered. */
+    @media (min-width: 701px) {
+      nav {
+        top: auto; bottom: 0; left: 50%; right: auto;
+        transform: translateX(-50%);
+        width: 100%; max-width: 500px; height: auto;
+        border-right: none; border-top: 1px solid var(--border);
+        border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+        flex-direction: column; padding: 0;
+        background: var(--nav-bg-mobile, rgba(11,11,11,0.94));
+        backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      }
+      .nav-logo { display: none; }
+      .nav-tabs { flex-direction: row; padding: 0; justify-content: space-around; }
+      .nav-tab { padding: 12px 0; height: auto; font-size: 10px; border-left: none; border-bottom: none; white-space: nowrap; flex: 1; text-align: center; justify-content: center; }
+      .nav-tab.active { border-left-color: transparent; background: none; color: var(--text); }
+      .nav-footer { display: none; }
+      .screen { padding: 16px 16px 96px 16px; max-width: 500px; margin: 0 auto; }
+      .container { padding: 0; }
+      body { background: #050505; }
+    }
   </style>
 </head>
 <body style="background:#F7F6F3;">
