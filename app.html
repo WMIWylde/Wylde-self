@@ -77,7 +77,7 @@
       --surface:    #111111;
       --surface2:   #161616;
       --card-light: #161616;
-      --sand:       #1F1E1B;
+      --sand:       #1A1A1A;
       --cream:      #161616;            /* repurposed for dark modal surfaces */
       --border:     rgba(244,241,232,0.06);
       --border2:    rgba(244,241,232,0.10);
@@ -125,7 +125,8 @@
       --font-ui:        'Inter', system-ui, -apple-system, sans-serif;
       --font-mono:      'Inter', system-ui, sans-serif;
       --font-milestone: 'Inter', system-ui, sans-serif;
-      --font-serif:     'Inter', system-ui, sans-serif;
+      --font-serif:     'New York', ui-serif, Georgia, 'Times New Roman', serif;
+      --font-display:   'New York', ui-serif, Georgia, 'Times New Roman', serif;
       /* ── Spacing ── */
       --space-1: 8px;
       --space-2: 12px;
@@ -197,67 +198,67 @@
        Apply via <html data-theme="light"> (set by pre-paint script).
        ═══════════════════════════════════════════════════════════════ */
     html[data-theme="light"] {
-      --bg:         #F4EFE6;     /* warm cream, not pure white */
-      --bg-main:    #F4EFE6;
-      --bg-surface: #FAF6EE;
-      --bg-soft:    #EDE5D6;     /* subtle taupe wash for input backgrounds */
+      --bg:         #F4F1EC;     /* warm cream, not pure white */
+      --bg-main:    #F4F1EC;
+      --bg-surface: #FFFFFF;
+      --bg-soft:    #E8E2D6;     /* subtle taupe wash for input backgrounds */
       --bg-elevated:#FFFFFF;
-      --surface:    #FAF6EE;
-      --surface2:   #EDE5D6;
+      --surface:    #FFFFFF;
+      --surface2:   #E8E2D6;
       --card-light: #FFFFFF;
-      --sand:       #E2D9C4;
-      --cream:      #FAF6EE;
+      --sand:       #D4C9B5;
+      --cream:      #F4F1EC;
       --border:     rgba(60,50,30,0.10);
       --border2:    rgba(60,50,30,0.14);
       --border-soft: rgba(60,50,30,0.08);
-      --border-warm: rgba(184,154,90,0.25);
+      --border-warm: rgba(156,122,74,0.25);
 
       /* Warm dark text — never pure black, more like espresso */
-      --text:       #2A2724;
-      --text2:      #6B6258;
-      --text3:      #9B9489;
-      --text-dark:  #2A2724;
-      --text-primary:   #2A2724;
-      --text-secondary: #6B6258;
-      --text-muted:     #9B9489;
+      --text:       #1A1816;
+      --text2:      #665F53;
+      --text3:      #6E675C;
+      --text-dark:  #1A1816;
+      --text-primary:   #1A1816;
+      --text-secondary: #665F53;
+      --text-muted:     #6E675C;
 
       /* Soft taupe-gold — slightly darker than dark theme gold to keep
          contrast on cream. Sage darkened a touch for the same reason. */
-      --gold:       #B89A5A;
-      --gold-hi:    rgba(184,154,90,0.95);
-      --gold-mid:   rgba(184,154,90,0.55);
-      --gold-lo:    rgba(184,154,90,0.30);
-      --gold-dim:   rgba(184,154,90,0.10);
-      --gold-glow:  rgba(184,154,90,0.18);
-      --ember:      #B89A5A;
+      --gold:       #9C7A4A;
+      --gold-hi:    rgba(156,122,74,0.95);
+      --gold-mid:   rgba(156,122,74,0.55);
+      --gold-lo:    rgba(156,122,74,0.30);
+      --gold-dim:   rgba(156,122,74,0.10);
+      --gold-glow:  rgba(156,122,74,0.18);
+      --ember:      #9C7A4A;
       /* --sage now aliases champagne (light-mode bronze). */
-      --sage:       #9F8855;
-      --sage-soft:  #B5A075;
-      --sage-dim:   rgba(159,136,85,0.10);
-      --sage-glow:  rgba(159,136,85,0.16);
+      --sage:       #7A8771;
+      --sage-soft:  #8F9C86;
+      --sage-dim:   rgba(156,122,74,0.10);
+      --sage-glow:  rgba(156,122,74,0.16);
       /* Champagne — primary universal accent (light-mode bronze) */
-      --champagne:      #9F8855;
-      --champagne-mid:  rgba(159,136,85,0.55);
-      --champagne-dim:  rgba(159,136,85,0.10);
-      --champagne-glow: rgba(159,136,85,0.22);
-      --green:      #9F8855;
+      --champagne:      #9C7A4A;
+      --champagne-mid:  rgba(156,122,74,0.55);
+      --champagne-dim:  rgba(156,122,74,0.10);
+      --champagne-glow: rgba(156,122,74,0.22);
+      --green:      #7A8771;
 
-      --accent:        #9F8855;
-      --accent-bg:     rgba(159,136,85,0.10);
-      --accent-border: rgba(159,136,85,0.22);
+      --accent:        #9C7A4A;
+      --accent-bg:     rgba(156,122,74,0.10);
+      --accent-border: rgba(156,122,74,0.22);
 
       /* Lighter, warmer shadows for the light theme */
       --shadow-soft: 0 2px 12px rgba(60,50,30,0.06);
       --shadow-card: 0 6px 24px rgba(60,50,30,0.08);
       --shadow-hover: 0 12px 36px rgba(60,50,30,0.12);
-      --shadow-glow: 0 0 60px rgba(184,154,90,0.10);
+      --shadow-glow: 0 0 60px rgba(156,122,74,0.10);
 
-      --black:       #2A2724;
-      --charcoal:    #4A433B;
-      --white:       #2A2724;
-      --muted:       #6B6258;
+      --black:       #1A1816;
+      --charcoal:    #2C2A26;
+      --white:       #1A1816;
+      --muted:       #665F53;
       /* Cream-tinted translucent bottom nav for light theme */
-      --nav-bg-mobile: rgba(244,239,230,0.94);
+      --nav-bg-mobile: rgba(244,241,236,0.94);
       /* Floating menu button — warm cream tile that reads in light mode */
       --menu-btn-bg: rgba(250,246,238,0.92);
       --menu-btn-border: rgba(60,50,30,0.14);
@@ -2211,7 +2212,7 @@
     /* Default-today behavior: only today's day card is visible; the rest of
        the week sits behind the "View full program" toggle below. */
     .day-card.is-hidden { display: none; }
-    .day-card.is-today .day-header { background: rgba(184,154,90,0.06); }
+    .day-card.is-today .day-header { background: rgba(156,122,74,0.06); }
     .show-full-week-btn {
       display: block; width: 100%;
       margin: 12px 0 4px;
@@ -2570,7 +2571,7 @@
   .ov-future-img-placeholder { width: 72px; height: 72px; border-radius: 16px; background: rgba(212,190,146,0.10); flex-shrink: 0; overflow: hidden; position: relative; }
   .ov-future-img-placeholder.has-photo { background: #0E120E; }
   .ov-future-img-placeholder img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .ov-future-badge { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); background: rgba(159,136,85,0.92); color: #fff; font-size: 8px; font-weight: 700; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 6px; white-space: nowrap; text-transform: uppercase; }
+  .ov-future-badge { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); background: rgba(156,122,74,0.92); color: #fff; font-size: 8px; font-weight: 700; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 6px; white-space: nowrap; text-transform: uppercase; }
   .ov-future-text { flex: 1; min-width: 0; }
   .ov-future-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--champagne); margin-bottom: 3px; }
   .ov-future-headline { font-size: 16px; font-weight: 600; color: var(--text); line-height: 1.3; }
@@ -3766,6 +3767,15 @@
   }
 
   /* StartTodayFlow styles live in /css/start-today-flow.css (linked above). */
+
+
+    /* ═══ iOS PARITY: serif display type (2026-07-18) ═══ */
+    .ov-hero-title, .future-title, .ov-hero-identity,
+    .screen h1, .modal-title, .fs-result-title {
+      font-family: var(--font-display) !important;
+      font-weight: 500 !important;
+      letter-spacing: -0.01em !important;
+    }
 
     /* ═══ DESKTOP = CENTERED PHONE COLUMN (2026-07-18) ═══
        The 200px desktop rail predates the mobile-first screens, which
@@ -7888,7 +7898,7 @@
     }).catch(function(){});
   }
 
-  function logSet(exerciseName, weight, reps, sessionId) {
+  function logSet(exerciseName, weight, reps, sessionId, targetReps) {
     var sb = _getSupabase();
     if (!sb || !currentUser) { console.warn('[logSet] No supabase or user'); return; }
     sb.from('workout_sets').insert({
@@ -7902,6 +7912,23 @@
       if (res.error) console.error('[logSet] workout_sets error:', res.error.message);
       else console.log('[logSet] Saved:', exerciseName, weight, reps);
     });
+    // Shared cross-platform history (same table the iOS app writes) —
+    // powers ProgressionEngine on both platforms.
+    sb.from('workout_set_logs').insert({
+      exercise_name: exerciseName,
+      weight: weight || 0,
+      reps: reps || 0,
+      target_reps: (typeof targetReps === 'number' && targetReps > 0) ? targetReps : null,
+      day_focus: 'web'
+    }).then(function(res) {
+      if (res.error) console.warn('[logSet] workout_set_logs error:', res.error.message);
+    });
+    // Update in-memory session so progression reflects today immediately
+    var _k = _normExName(exerciseName);
+    if (!window._wsLastSessions) window._wsLastSessions = {};
+    if (!window._wsLastSessionsToday) window._wsLastSessionsToday = {};
+    if (!window._wsLastSessionsToday[_k]) { window._wsLastSessionsToday[_k] = []; window._wsLastSessions[_k] = window._wsLastSessionsToday[_k]; }
+    window._wsLastSessionsToday[_k].push({ weight: weight || 0, reps: reps || 0 });
     var volume = (weight || 0) * (reps || 0);
     // Only upsert a new personal best when this set actually beats the stored
     // best — a light back-off set must NOT lower the recorded "best". Read the
@@ -11097,11 +11124,18 @@
       var lastValHTML = lastInfo
         ? '<div class="ex-stat-value">' + lastInfo.weight + 'lb × ' + lastInfo.reps + '</div>'
         : '<div class="ex-stat-value empty">First time</div>';
+      _wsSyncHistory();
+      var progTarget = _wsProgressionTarget(name, recReps);
+      var targetHTML = progTarget
+        ? '<div class="ex-stat-card target"><div class="ex-stat-label" style="color:var(--sage);">Target</div><div class="ex-stat-value" style="color:var(--sage);">' + progTarget.weight + 'lb</div></div>'
+        : '';
       var statCards =
         '<div class="ex-stat-cards">' +
           '<div class="ex-stat-card pr"><div class="ex-stat-label">Personal Record</div>' + prValHTML + '</div>' +
           '<div class="ex-stat-card"><div class="ex-stat-label">Last Weight</div>' + lastValHTML + '</div>' +
-        '</div>';
+          targetHTML +
+        '</div>' +
+        (progTarget ? '<div style="font-size:11px;color:var(--text2);margin:6px 2px 0;">' + progTarget.note + '</div>' : '');
 
       // Build set rows with steppers
       var setRows = '';
@@ -11112,6 +11146,8 @@
         // Carry weight from previous set, or use last session's weight as a starting point for set 1
         if (!sd.weight && s > 0 && savedSets[s-1] && savedSets[s-1].weight) {
           prevWeight = savedSets[s-1].weight;
+        } else if (!sd.weight && s === 0 && progTarget && progTarget.weight) {
+          prevWeight = progTarget.weight;
         } else if (!sd.weight && s === 0 && lastInfo && lastInfo.weight) {
           prevWeight = lastInfo.weight;
         }
@@ -11174,6 +11210,64 @@
   function _normExName(name) {
     return String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
   }
+  // ═══ ProgressionEngine — same rules as iOS (double progression) ═══
+  window._wsLastSessions = window._wsLastSessions || null;
+  var _wsHistoryFetched = 0;
+  function _wsSyncHistory() {
+    var sb = _getSupabase();
+    if (!sb || !currentUser) return;
+    if (Date.now() - _wsHistoryFetched < 300000) return; // 5-min throttle
+    _wsHistoryFetched = Date.now();
+    var cutoff = new Date(Date.now() - 90 * 86400000).toISOString();
+    sb.from('workout_set_logs')
+      .select('exercise_name, weight, reps, logged_at')
+      .gte('logged_at', cutoff)
+      .order('logged_at', { ascending: false })
+      .limit(1000)
+      .then(function(res) {
+        if (res.error || !res.data) return;
+        var sessions = {}, sessionDay = {};
+        res.data.forEach(function(r) {
+          var k = _normExName(r.exercise_name);
+          var day = String(r.logged_at).slice(0, 10);
+          if (sessionDay[k] && sessionDay[k] !== day) return; // older session
+          sessionDay[k] = day;
+          (sessions[k] = sessions[k] || []).push({ weight: r.weight, reps: r.reps });
+        });
+        window._wsLastSessions = sessions;
+        // Hydrate the Last Weight cache from cross-device history
+        Object.keys(sessions).forEach(function(k) {
+          var best = sessions[k].reduce(function(a, b) { return b.weight > a.weight ? b : a; });
+          if (best.weight > 0 && !_lastWeightCache[k]) {
+            _lastWeightCache[k] = { weight: best.weight, reps: best.reps, ts: Date.now() };
+          }
+        });
+        console.log('[Progression] history loaded:', Object.keys(sessions).length, 'exercises');
+      });
+  }
+  function _wsBigLift(name) {
+    var l = (name || '').toLowerCase();
+    return ['squat','deadlift','leg press','hip thrust','romanian','rdl','lunge','trap bar'].some(function(w) { return l.indexOf(w) !== -1; });
+  }
+  function _wsProgressionTarget(name, targetReps) {
+    targetReps = parseInt(targetReps) || 0;
+    var sess = window._wsLastSessions && window._wsLastSessions[_normExName(name)];
+    var sets = (sess || []).filter(function(x) { return x.weight > 0; });
+    if (!sets.length || !targetReps) return null;
+    var w = Math.max.apply(null, sets.map(function(x) { return x.weight; }));
+    var allHit = sets.every(function(x) { return x.reps >= targetReps; });
+    var avg = sets.reduce(function(a, x) { return a + x.reps; }, 0) / sets.length;
+    if (allHit) {
+      var inc = _wsBigLift(name) ? 10 : 5;
+      return { weight: w + inc, note: 'Every set hit ' + targetReps + ' reps at ' + w + 'lb last session. Move to ' + (w + inc) + 'lb.' };
+    }
+    if (avg <= targetReps - 3) {
+      var d = Math.max(Math.round(w * 0.9 / 5) * 5, 0);
+      return { weight: d, note: 'Last session was a grind. Deload to ' + d + 'lb and build back.' };
+    }
+    return { weight: w, note: 'Stay at ' + w + 'lb until every set hits ' + targetReps + ' reps.' };
+  }
+
   function _getPRInfo(name) {
     var k = _normExName(name);
     return _prCache[k] || null;
@@ -11330,7 +11424,8 @@
     if (typeof _setLastWeight === 'function') _setLastWeight(exName, weight, reps);
 
     // Save to Supabase
-    logSet(exName, parseFloat(weight) || 0, parseInt(reps) || 0);
+    var _recReps = exercise ? parseInt(exercise.dataset.recreps) : 0;
+    logSet(exName, parseFloat(weight) || 0, parseInt(reps) || 0, null, _recReps || 0);
 
     // Bust the userContext cache so next AI call sees this set
     if (typeof _userContextCache !== 'undefined') _userContextCache = null;
