@@ -91,8 +91,8 @@ struct OnboardingView: View {
                 Button("Back") {
                     step -= 1
                 }
-                .font(.system(size: 13, weight: .medium))
-                .foregroundColor(WyldeStyles.Colors.stone)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(WyldeStyles.Colors.charcoal)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
                 .overlay(
@@ -233,8 +233,8 @@ struct OnboardingView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .foregroundColor(WyldeStyles.Colors.ink)
                 Text("This anchors your daily experience. You can change it anytime.")
-                    .font(.system(size: 11))
-                    .foregroundColor(WyldeStyles.Colors.stone)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(WyldeStyles.Colors.charcoal.opacity(0.7))
             }
         }
     }
@@ -658,8 +658,8 @@ struct OnboardingView: View {
                 .foregroundColor(WyldeStyles.Colors.ink)
                 .lineSpacing(1)
             Text(sub)
-                .font(.system(size: 15))
-                .foregroundColor(WyldeStyles.Colors.stone)
+                .font(.system(size: 15, weight: .medium))
+                .foregroundColor(WyldeStyles.Colors.charcoal)
                 .lineSpacing(3)
         }
         .padding(.bottom, 8)
@@ -669,13 +669,13 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 6) {
                 Text(label.uppercased())
-                    .font(.system(size: 11, weight: .regular))
+                    .font(.system(size: 11, weight: .bold))
                     .tracking(1.1)
-                    .foregroundColor(WyldeStyles.Colors.stone)
+                    .foregroundColor(WyldeStyles.Colors.ink)
                 if optional {
                     Text("(optional)")
-                        .font(.system(size: 10))
-                        .foregroundColor(WyldeStyles.Colors.stone.opacity(0.85))
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundColor(WyldeStyles.Colors.stone)
                 }
             }
             content()
@@ -721,11 +721,11 @@ struct PillButton: View {
                 .tracking(0.2)
                 .padding(.horizontal, 18)
                 .padding(.vertical, 9)
-                .foregroundColor(isSelected ? WyldeStyles.Colors.sage : WyldeStyles.Colors.stone)
-                .background(isSelected ? WyldeStyles.Colors.sage.opacity(0.12) : Color.clear)
+                .foregroundColor(isSelected ? WyldeStyles.Colors.gold : WyldeStyles.Colors.ink)
+                .background(isSelected ? WyldeStyles.Colors.gold.opacity(0.12) : Color.clear)
                 .overlay(
                     Capsule()
-                        .stroke(isSelected ? WyldeStyles.Colors.sage.opacity(0.3) : WyldeStyles.Colors.charcoal.opacity(0.10), lineWidth: 1)
+                        .stroke(isSelected ? WyldeStyles.Colors.gold.opacity(0.5) : WyldeStyles.Colors.charcoal.opacity(0.25), lineWidth: 1.5)
                 )
                 .clipShape(Capsule())
         }
