@@ -46,6 +46,7 @@ module.exports = async function handler(req, res) {
       `Check-ins: ${days}/7 days`,
       pct !== null ? `Protocol adherence: ${pct}% (${dosesTaken}/${doses} doses)` : 'Protocol adherence: no doses scheduled',
       score ? `Wylde Score: ${score.score ?? score.value ?? 'n/a'}` : null,
+      `Full adherence view: https://wyldeself.com/clinical-dashboard?patient=${user.id}`,
       `Generated ${new Date().toISOString().split('T')[0]} · wyldeself.com`,
     ].filter(Boolean);
 

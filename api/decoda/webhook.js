@@ -70,6 +70,27 @@ module.exports = async function handler(req, res) {
             },
             { onConflict: 'user_id' }
           );
+
+          // Auto-onboard: creating the patient in Decoda IS the clinic
+          // connection — no invite code needed for Decoda clinics.
+          const clinicianId = process.env.DECODA_CLINICIAN_ID;
+          if (clinicianId) {
+            const { data: existingRel } = await supabase
+              .from('care_relationships')
+              .select('id')
+              .eq('patient_id', profile.id)
+              .eq('clinician_id', clinicianId)
+              .maybeSingle();
+            if (!existingRel) {
+              await supabase.from('care_relationships').insert({
+                patient_id: profile.id,
+                clinician_id: clinicianId,
+                clinic_name: process.env.DECODA_CLINIC_NAME || 'Decoda Clinic',
+                status: 'active',
+                linked_at: new Date().toISOString(),
+              });
+            }
+          }
         }
       }
     }

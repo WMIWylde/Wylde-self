@@ -414,6 +414,13 @@ async function loadPatients() {
   }
 
   render();
+
+  // Deep link from Decoda chart notes: /clinical-dashboard?patient=<id>
+  const deepLinkId = new URLSearchParams(location.search).get('patient');
+  if (deepLinkId && patients.some(p => p.id === deepLinkId)) {
+    showPatient(deepLinkId);
+    history.replaceState(null, '', location.pathname);
+  }
 }
 
 async function loadPatientsFallback() {
