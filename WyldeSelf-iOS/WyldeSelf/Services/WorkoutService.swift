@@ -446,8 +446,20 @@ final class WorkoutService: ObservableObject {
         saveProgram()
 
         // Check for PR
-        let exName = program.days[dayIndex].exercises[exerciseIndex].name
-        updatePR(exerciseName: exName, weight: weight, reps: reps)
+        let exercise = program.days[dayIndex].exercises[exerciseIndex]
+        updatePR(exerciseName: exercise.name, weight: weight, reps: reps)
+
+        // Persist to Supabase for progression history (fire-and-forget)
+        let focus = program.days[dayIndex].focus
+        Task { @MainActor in
+            WorkoutLogSync.shared.upload(
+                exerciseName: exercise.name,
+                weight: weight,
+                reps: reps,
+                targetReps: exercise.parsedReps,
+                dayFocus: focus
+            )
+        }
     }
 
     private func updatePR(exerciseName: String, weight: Double, reps: Int) {

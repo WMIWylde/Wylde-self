@@ -141,6 +141,9 @@ struct WorkoutDayView: View {
                 startWorkoutSession()
             }
         }
+        .task {
+            await WorkoutLogSync.shared.refreshHistory()
+        }
         .onDisappear {
             // Don't stop the HealthKit session on disappear — only on Complete
             stopWorkoutTimer()

@@ -234,15 +234,17 @@ struct ExerciseCard: View {
                     if let pr = pr {
                         statBadge(label: "PR", value: "\(Int(pr.bestWeight))lb × \(pr.bestReps)", color: WyldeStyles.Colors.bronze)
                     }
-                    let suggestion = LiftingCoach.suggestedWeight(exercise: exercise.name, gender: gender, level: fitnessLevel)
-                    if pr == nil {
-                        statBadge(label: "START", value: "\(Int(suggestion.weight))lb", color: WyldeStyles.Colors.vitalBlue)
+                    let target = progressionTarget
+                    if target.source == .history {
+                        statBadge(label: "TARGET", value: "\(Int(target.weight))lb", color: WyldeStyles.Colors.sage)
+                    } else if pr == nil {
+                        statBadge(label: "START", value: "\(Int(target.weight))lb", color: WyldeStyles.Colors.vitalBlue)
                     }
                 }
 
                 // Coaching note
-                let suggestion = LiftingCoach.suggestedWeight(exercise: exercise.name, gender: gender, level: fitnessLevel)
-                if pr == nil {
+                let suggestion = progressionTarget
+                if suggestion.source == .history || pr == nil {
                     Text(suggestion.note)
                         .font(.system(size: 11))
                         .foregroundColor(Theme.secondaryText)
@@ -512,9 +514,18 @@ struct ExerciseCard: View {
         }
     }
 
+    private var progressionTarget: ProgressionTarget {
+        ProgressionEngine.target(
+            exercise: exercise,
+            lastSession: WorkoutLogSync.shared.lastSession(for: exercise.name),
+            gender: gender,
+            level: fitnessLevel
+        )
+    }
+
     private func initState() {
-        let suggestion = LiftingCoach.suggestedWeight(exercise: exercise.name, gender: gender, level: fitnessLevel)
-        weights = exercise.sets.map { $0.weight > 0 ? $0.weight : suggestion.weight }
+        let target = progressionTarget
+        weights = exercise.sets.map { $0.weight > 0 ? $0.weight : target.weight }
         reps = exercise.sets.map(\.reps).map(Double.init)
     }
 
