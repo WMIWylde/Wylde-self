@@ -1,10 +1,12 @@
 import SwiftUI
+import Speech
 
 struct WorkoutGeneratorView: View {
     @EnvironmentObject var appState: AppState
     @StateObject private var service = WorkoutService.shared
     @State private var showEquipmentPicker = false
     @State private var showWyldeWorkout = false
+    @State private var showDescribeWorkout = false
     @State private var pendingAction: ((Set<String>) -> Void)?
 
     var body: some View {
@@ -56,6 +58,15 @@ struct WorkoutGeneratorView: View {
                                 subtitle: "No plan. Just move. Record what you did with voice notes.",
                                 accent: Color(hex: "FF6B6B"),
                                 action: { showWyldeWorkout = true }
+                            )
+
+                            // Describe Your Workout — voice/text → AI generates it
+                            programOption(
+                                icon: "mic.badge.plus",
+                                title: "Describe Your Workout",
+                                subtitle: "Tell us what you want to do. We'll build it for you.",
+                                accent: WyldeStyles.Colors.gold,
+                                action: { showDescribeWorkout = true }
                             )
 
                             programOption(
@@ -112,6 +123,10 @@ struct WorkoutGeneratorView: View {
         }
         .fullScreenCover(isPresented: $showWyldeWorkout) {
             WyldeWorkoutView()
+                .environmentObject(appState)
+        }
+        .sheet(isPresented: $showDescribeWorkout) {
+            DescribeWorkoutView()
                 .environmentObject(appState)
         }
         .sheet(isPresented: $showEquipmentPicker) {

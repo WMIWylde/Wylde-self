@@ -505,6 +505,116 @@ final class WorkoutService: ObservableObject {
         personalRecords = saved
     }
 
+    // MARK: - Custom Workout from Description
+
+    func generateFromDescription(_ description: String, appState: AppState) async {
+        isGenerating = true
+        generationError = nil
+
+        do {
+            let program = try await withThrowingTaskGroup(of: WorkoutProgram.self) { group in
+                group.addTask {
+                    try await self.callAIForCustomWorkout(description: description, appState: appState)
+                }
+                group.addTask {
+                    try await Task.sleep(nanoseconds: 60_000_000_000)
+                    throw WorkoutError.generationFailed
+                }
+                let result = try await group.next()!
+                group.cancelAll()
+                return result
+            }
+            self.program = program
+            saveProgram()
+            #if DEBUG
+            print("[WorkoutService] ✅ Custom workout generated from description")
+            #endif
+        } catch {
+            #if DEBUG
+            print("[WorkoutService] ❌ Custom workout failed: \(error.localizedDescription)")
+            #endif
+            generationError = "Couldn't generate your workout. Try again or pick a preset."
+        }
+
+        isGenerating = false
+    }
+
+    private func callAIForCustomWorkout(description: String, appState: AppState) async throws -> WorkoutProgram {
+        guard let url = URL(string: "https://www.wyldeself.com/api/openai") else {
+            throw WorkoutError.invalidURL
+        }
+
+        let level = appState.fitnessLevel.isEmpty ? "intermediate" : appState.fitnessLevel
+        let gender = appState.gender.isEmpty ? "unspecified" : appState.gender
+        let healthConcerns = appState.healthConcerns.isEmpty ? "None" : appState.healthConcerns.joined(separator: ", ")
+
+        let prompt = """
+        The user described the workout they want to do today:
+
+        "\(description)"
+
+        Build a single-session workout based on what they described.
+
+        CLIENT CONTEXT:
+        - Gender: \(gender)
+        - Fitness level: \(level)
+        - Health concerns: \(healthConcerns)
+
+        RULES:
+        - Honor what the user asked for — muscle groups, duration, style, equipment, intensity
+        - First exercise: "Dynamic Warmup", "10 min", "Prepare the body for training"
+        - Last exercise: a conditioning finisher, "10-15 min"
+        - Between warmup and finisher: 5-7 exercises with specific set × rep schemes
+        - Use precise exercise names with form cues (10-20 words each)
+        - If health concerns conflict with the request, substitute safer alternatives
+        - If the user is vague, fill in smart defaults for their fitness level
+
+        Return ONLY a valid JSON array with exactly ONE day:
+        [
+          {
+            "day": "Day 01",
+            "focus": "Short focus title based on what they asked",
+            "exercises": [
+              ["Dynamic Warmup", "10 min", "Prepare the body for training"],
+              ["Exercise Name", "4 × 8", "Coaching cue"],
+              ["Finisher Name", "10-15 min", "Intensity cue"]
+            ]
+          }
+        ]
+        """
+
+        let payload: [String: Any] = [
+            "model": "gpt-4o",
+            "max_tokens": 2048,
+            "messages": [
+                ["role": "system", "content": "You are a world-class strength and conditioning coach. The user is describing what they want to train today. Build them a precise, executable workout. Return ONLY valid JSON."],
+                ["role": "user", "content": prompt]
+            ],
+            "temperature": 0.7
+        ]
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let token = await AuthService.shared.accessToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        request.timeoutInterval = 60
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw WorkoutError.generationFailed
+        }
+
+        let aiResponse = try JSONDecoder().decode(AIResponse.self, from: data)
+        guard let content = aiResponse.choices?.first?.message?.content else {
+            throw WorkoutError.generationFailed
+        }
+
+        return try parseAIProgram(content, goal: description)
+    }
+
     func resetProgram() {
         program = nil
         UserDefaults.standard.removeObject(forKey: programKey)
