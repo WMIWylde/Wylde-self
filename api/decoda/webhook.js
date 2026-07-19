@@ -18,10 +18,18 @@ function readRawBody(req) {
 
 function verifySignature(rawBody, signature) {
   if (!signature) return false;
+  // Tolerate "sha256=<hex>" scheme prefixes
+  const sig = String(signature).replace(/^sha256=/i, '').trim();
   const expected = crypto.createHmac('sha256', WEBHOOK_SECRET).update(rawBody).digest('hex');
-  const a = Buffer.from(signature);
+  const a = Buffer.from(sig);
   const b = Buffer.from(expected);
   return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
+function findSignatureHeader(headers) {
+  const candidates = ['decoda-signature', 'x-decoda-signature', 'x-signature', 'x-webhook-signature', 'signature'];
+  for (const c of candidates) if (headers[c]) return headers[c];
+  return null;
 }
 
 module.exports = async function handler(req, res) {
@@ -32,8 +40,10 @@ module.exports = async function handler(req, res) {
   }
 
   const rawBody = await readRawBody(req);
-  const signature = req.headers['decoda-signature'];
+  const signature = findSignatureHeader(req.headers);
   if (!verifySignature(rawBody, signature)) {
+    console.error('[decoda/webhook] signature failed. sig header present:', Boolean(signature),
+      'headers:', Object.keys(req.headers).join(','));
     return res.status(401).json({ error: 'Invalid signature' });
   }
 
