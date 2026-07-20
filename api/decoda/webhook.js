@@ -65,11 +65,21 @@ module.exports = async function handler(req, res) {
     if (event.type === 'PATIENT_CREATED' || event.type === 'PATIENT_UPDATED') {
       const p = event.data || {};
       if (p.email) {
-        const { data: profile } = await supabase
+        // profiles.email first; fall back to the auth admin API since many
+        // signup flows never copy email into profiles.
+        let profile = (await supabase
           .from('profiles')
           .select('id')
           .ilike('email', p.email)
-          .maybeSingle();
+          .maybeSingle()).data;
+        if (!profile) {
+          const { data: list } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
+          const match = list && list.users && list.users.find(
+            (u) => (u.email || '').toLowerCase() === p.email.toLowerCase()
+          );
+          if (match) profile = { id: match.id };
+          console.log('[decoda/webhook] auth-fallback lookup for', p.email, '→', match ? 'found' : 'NOT FOUND');
+        }
         if (profile) {
           await supabase.from('decoda_links').upsert(
             {
