@@ -129,7 +129,7 @@
       "maxDuration": 30
     },
     "api/openai.js": {
-      "maxDuration": 30
+      "maxDuration": 90
     },
     "api/identity-analyze.js": {
       "maxDuration": 30

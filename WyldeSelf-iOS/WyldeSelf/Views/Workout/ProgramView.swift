@@ -13,6 +13,32 @@ struct ProgramView: View {
                 if let program = service.program {
                     ScrollView(showsIndicators: false) {
                         VStack(alignment: .leading, spacing: 16) {
+                            // Fallback notice — never silently pass off a template as AI
+                            if service.usedFallback {
+                                HStack(spacing: 10) {
+                                    Image(systemName: "exclamationmark.triangle.fill")
+                                        .font(.system(size: 13))
+                                        .foregroundColor(WyldeStyles.Colors.clay)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("This is a starter template")
+                                            .font(.system(size: 13, weight: .semibold))
+                                            .foregroundColor(WyldeStyles.Colors.ink)
+                                        Text("Custom generation didn't finish. Regenerate for a program built around your goals.")
+                                            .font(.system(size: 12))
+                                            .foregroundColor(WyldeStyles.Colors.stone)
+                                    }
+                                    Spacer()
+                                    Button("Retry") {
+                                        Task { await service.generateProgram(appState: appState) }
+                                    }
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(WyldeStyles.Colors.bronze)
+                                }
+                                .padding(14)
+                                .background(WyldeStyles.Colors.clay.opacity(0.08))
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                            }
+
                             // Header
                             VStack(alignment: .leading, spacing: 6) {
                                 Text("YOUR PROGRAM")

@@ -5934,6 +5934,10 @@
             <p class="fs-compare-subtext" id="fsCompareSubtext">This is the version of you that kept every promise.</p>
           </div>
         </div>
+        <button type="button" class="fs-download-btn" id="fsDownloadBtn" onclick="downloadFutureSelf()" style="display:none;position:absolute;top:12px;right:12px;z-index:5;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.18);color:#fff;font-size:11px;font-weight:600;letter-spacing:0.06em;padding:8px 14px;border-radius:20px;cursor:pointer;display:none;align-items:center;gap:6px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Download
+        </button>
         <div class="fs-loading-status" id="fsLoading" aria-live="polite">
           <div class="loading-ring" aria-hidden="true"></div>
           <p class="fs-loading-text" id="loadingText">Generating your 12-week self&hellip;</p>
@@ -8568,6 +8572,33 @@
   };
   // alias for new functions
   userProfile = state;
+  // ═══ Future Self download (2026-07-19) ═══
+  function downloadFutureSelf() {
+    var img = document.getElementById('fsDisplayImg');
+    if (!img || !img.src || img.src.indexOf('data:') !== 0 && img.src.indexOf('http') !== 0) return;
+    var a = document.createElement('a');
+    a.href = img.src;
+    a.download = 'wylde-future-self.jpg';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+  // Show the download button whenever a real rendering is displayed
+  (function() {
+    function toggle() {
+      var img = document.getElementById('fsDisplayImg');
+      var btn = document.getElementById('fsDownloadBtn');
+      if (!img || !btn) return;
+      var has = img.src && (img.src.indexOf('data:') === 0 || /\.(jpg|jpeg|png|webp)/i.test(img.src));
+      btn.style.display = has ? 'inline-flex' : 'none';
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      var img = document.getElementById('fsDisplayImg');
+      if (img) new MutationObserver(toggle).observe(img, { attributes: true, attributeFilter: ['src'] });
+      toggle();
+    });
+  })();
+
   var futurePhotoBase64 = null;
 
   // ── One-time boot sweep: prune stale dated localStorage keys ──

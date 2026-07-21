@@ -9,6 +9,8 @@ final class WorkoutService: ObservableObject {
     @Published var program: WorkoutProgram?
     @Published var isGenerating = false
     @Published var generationError: String?
+    /// True when the current program is a canned template because AI generation failed.
+    @Published var usedFallback = false
     @Published var personalRecords: [String: PersonalRecord] = [:]
 
     private let programKey = "wylde_workout_program"
@@ -40,7 +42,7 @@ final class WorkoutService: ObservableObject {
                     try await self.callAIForProgram(appState: appState)
                 }
                 group.addTask {
-                    try await Task.sleep(nanoseconds: 60_000_000_000) // 60s timeout
+                    try await Task.sleep(nanoseconds: 95_000_000_000) // 95s timeout
                     throw WorkoutError.generationFailed
                 }
                 let result = try await group.next()!
@@ -48,6 +50,7 @@ final class WorkoutService: ObservableObject {
                 return result
             }
             self.program = program
+            usedFallback = false
             saveProgram()
             #if DEBUG
             print("[WorkoutService] ✅ AI program generated: \(program.days.count) days")
@@ -57,6 +60,7 @@ final class WorkoutService: ObservableObject {
             print("[WorkoutService] ❌ AI failed: \(error.localizedDescription) — using fallback template")
             #endif
             self.program = fallbackForEquipment(appState: appState)
+            usedFallback = true
             saveProgram()
         }
 
@@ -82,7 +86,7 @@ final class WorkoutService: ObservableObject {
         let prompt = buildProgramPrompt(appState: appState)
         let payload: [String: Any] = [
             "model": "gpt-4o",
-            "max_tokens": 4096,
+            "max_tokens": 8192,
             "messages": [
                 ["role": "system", "content": "You are a world-class NSCA-certified strength and conditioning coach with 20+ years of experience training athletes, executives, and transformation clients. You design periodized programs with precise exercise selection, set/rep schemes, tempo prescriptions, and coaching cues. You are NOT a medical professional — if the client reports injuries, pregnancy, or medical conditions, recommend they consult a doctor before starting. Avoid exercises that could aggravate reported health concerns; for bad knees suggest leg press over deep squats, for bad backs avoid heavy spinal loading, for shoulder issues avoid behind-the-neck presses. Return ONLY valid JSON."],
                 ["role": "user", "content": prompt]
@@ -96,7 +100,7 @@ final class WorkoutService: ObservableObject {
         if let token = await AuthService.shared.accessToken {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
-        request.timeoutInterval = 60
+        request.timeoutInterval = 90
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
 
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -165,6 +169,12 @@ final class WorkoutService: ObservableObject {
         - If "Bodyweight only": use push-ups, pull-ups, squats, lunges, planks, burpees, mountain climbers, dips, etc. NO barbells, dumbbells, cables, or machines
         - If no cardio machines listed: use running, jump rope, high knees, jumping jacks, bear crawls for conditioning
         - Do NOT suggest exercises that require equipment the client does not have
+
+        SESSION REQUIREMENTS (non-negotiable):
+        - Every training day: 5-7 working exercises PLUS a warmup entry and a conditioning finisher
+        - Sessions must fill 50-65 minutes of training time
+        - Working sets: 3-4 per exercise (list as "4 × 8" etc.)
+        - Programs must differ RADICALLY by goal: a fat-loss program and a strength program must not share more than 2 exercises per day
 
         PROGRAMMING PRINCIPLES:
         - Design this as a periodized program, not a random list of exercises
@@ -599,7 +609,7 @@ final class WorkoutService: ObservableObject {
         if let token = await AuthService.shared.accessToken {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
-        request.timeoutInterval = 60
+        request.timeoutInterval = 90
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
 
         let (data, response) = try await URLSession.shared.data(for: request)

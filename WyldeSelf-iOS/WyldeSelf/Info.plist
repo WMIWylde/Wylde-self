@@ -49,6 +49,8 @@
 	<string>Wylde Self reads step count, active calories, heart rate, exercise minutes, and sleep data to personalize your daily training and recovery recommendations.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Wylde Self writes active energy burned from logged workouts to keep your Apple Health records accurate.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Wylde Self saves your Future Self image to your photo library when you tap Save Image.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Wylde Self accesses your photo library to upload progress photos and meal images.</string>
 	<key>SUPABASE_ANON_KEY</key>
