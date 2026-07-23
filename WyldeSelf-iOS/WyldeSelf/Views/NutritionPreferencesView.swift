@@ -36,13 +36,13 @@ struct NutritionPreferencesView: View {
 
                         // Save / Cancel
                         VStack(spacing: 12) {
-                            GoldButton(label: "Save Preferences", isDisabled: !service.hasUnsavedChanges, action:  {
+                            GoldButton(label: "Save Preferences", action: {
                                 Task {
                                     await service.commitEditing()
                                     service.syncMacroGoalsToAppState(appState)
                                     dismiss()
                                 }
-                            })
+                            }, isDisabled: !service.hasUnsavedChanges)
 
                             Button {
                                 service.cancelEditing()

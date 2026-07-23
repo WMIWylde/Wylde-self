@@ -110,4 +110,11 @@ class PhoneConnector: NSObject, ObservableObject, WCSessionDelegate {
         print("[Watch] Activation: \(activationState.rawValue)")
         #endif
     }
+
+    #if os(iOS)
+    nonisolated func sessionDidBecomeInactive(_ session: WCSession) {}
+    nonisolated func sessionDidDeactivate(_ session: WCSession) {
+        session.activate()
+    }
+    #endif
 }
