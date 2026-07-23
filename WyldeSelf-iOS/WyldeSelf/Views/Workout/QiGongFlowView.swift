@@ -1,10 +1,12 @@
 import SwiftUI
+import AVKit
 
 struct QiGongMovement {
     let name: String
     let cue: String
     let duration: Int
     let icon: String
+    var videoURL: URL? = nil
 }
 
 /// Guided morning Qi Gong flow — 5-7 minutes of slow, intentional movement.
@@ -12,12 +14,12 @@ struct QiGongFlowView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let movements: [QiGongMovement] = [
-        QiGongMovement(name: "Lymphatic Bounce", cue: "Jump lightly up and down. Loose ankles, soft knees. Wake the lymphatic system.", duration: 45, icon: "figure.jumprope"),
-        QiGongMovement(name: "Sweep to the Sky", cue: "Hinge over, let the arms hang. Inhale, sweep them wide and up to the sky. Exhale, fold back down.", duration: 50, icon: "figure.arms.open"),
-        QiGongMovement(name: "Trunk Twists", cue: "Feet planted, twist the trunk side to side. Let the arms follow loosely.", duration: 45, icon: "figure.flexibility"),
-        QiGongMovement(name: "Golf Swings", cue: "Sweep both arms across the body like a slow golf swing. Rotate through the hips. Both directions.", duration: 45, icon: "figure.golf"),
-        QiGongMovement(name: "Shoulder Openers", cue: "Right arm rises as the left falls. Alternate in rhythm. Open through the shoulders.", duration: 45, icon: "figure.mixed.cardio"),
-        QiGongMovement(name: "Dead Arm Swings", cue: "Arms fully relaxed. Turn the body left and right, letting the arms whip and tap the shoulders.", duration: 45, icon: "figure.walk.motion"),
+        QiGongMovement(name: "Lymphatic Bounce", cue: "Jump lightly up and down. Loose ankles, soft knees. Wake the lymphatic system.", duration: 45, icon: "figure.jumprope", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-lymphatic-bounce.mp4")),
+        QiGongMovement(name: "Sweep to the Sky", cue: "Hinge over, let the arms hang. Inhale, sweep them wide and up to the sky. Exhale, fold back down.", duration: 50, icon: "figure.arms.open", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-sky-sweep.mp4")),
+        QiGongMovement(name: "Trunk Twists", cue: "Feet planted, twist the trunk side to side. Let the arms follow loosely.", duration: 45, icon: "figure.flexibility", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-trunk-twists.mp4")),
+        QiGongMovement(name: "Golf Swings", cue: "Sweep both arms across the body like a slow golf swing. Rotate through the hips. Both directions.", duration: 45, icon: "figure.golf", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-golf-swings.mp4")),
+        QiGongMovement(name: "Shoulder Openers", cue: "Right arm rises as the left falls. Alternate in rhythm. Open through the shoulders.", duration: 45, icon: "figure.mixed.cardio", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-shoulder-openers.mp4")),
+        QiGongMovement(name: "Dead Arm Swings", cue: "Arms fully relaxed. Turn the body left and right, letting the arms whip and tap the shoulders.", duration: 45, icon: "figure.walk.motion", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-dead-arm-swings.mp4")),
     ]
 
     enum Phase { case intro, active, complete }
@@ -27,6 +29,7 @@ struct QiGongFlowView: View {
     @State private var remaining = 0
     @State private var timer: Timer?
     @State private var isPaused = false
+    @State private var player: AVPlayer?
 
     private var current: QiGongMovement { movements[currentIndex] }
     private var progress: CGFloat {
@@ -98,6 +101,14 @@ struct QiGongFlowView: View {
     // MARK: - Active
 
     private var activeView: some View {
+        ZStack {
+            if let player = player {
+                VideoPlayer(player: player)
+                    .disabled(true)
+                    .ignoresSafeArea()
+                    .overlay(Color.black.opacity(0.55))
+            }
+
         VStack(spacing: 0) {
             HStack {
                 Spacer()
@@ -199,6 +210,23 @@ struct QiGongFlowView: View {
             .padding(.horizontal, 40)
             .padding(.bottom, 40)
         }
+        }
+        .onAppear { loadVideo() }
+        .onChange(of: currentIndex) { _, _ in loadVideo() }
+    }
+
+    private func loadVideo() {
+        player?.pause()
+        guard let url = current.videoURL else { player = nil; return }
+        try? AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
+        let p = AVPlayer(url: url)
+        p.isMuted = true
+        p.play()
+        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: p.currentItem, queue: .main) { _ in
+            p.seek(to: .zero)
+            p.play()
+        }
+        player = p
     }
 
     // MARK: - Complete
