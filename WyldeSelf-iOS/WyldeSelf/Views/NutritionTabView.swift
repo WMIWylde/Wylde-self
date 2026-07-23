@@ -4,10 +4,12 @@ struct NutritionTabView: View {
     @EnvironmentObject var appState: AppState
     @StateObject private var tracker = MacroTrackerService.shared
     @StateObject private var mealService = MealPlanService.shared
+    @StateObject private var prefsService = NutritionPreferencesService.shared
     @State private var showFoodScanner = false
     @State private var showFoodSearch = false
     @State private var showMealPlan = false
     @State private var showVoiceLog = false
+    @State private var showPreferences = false
 
     var body: some View {
         ZStack {
@@ -16,15 +18,40 @@ struct NutritionTabView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
                     // Header
-                    Text("Nutrition")
-                        .font(.system(size: 26, weight: .bold))
-                        .foregroundColor(Theme.text)
-                        .padding(.top, 60)
-                        .onAppear {
-                            #if DEBUG
-                            print("[NutritionTab] View appeared")
-                            #endif
+                    HStack {
+                        Text("Nutrition")
+                            .font(.system(size: 26, weight: .bold))
+                            .foregroundColor(Theme.text)
+                        Spacer()
+                        Button { showPreferences = true } label: {
+                            Image(systemName: "gearshape")
+                                .font(.system(size: 16))
+                                .foregroundColor(Theme.muted)
                         }
+                    }
+                    .padding(.top, 60)
+                    .onAppear {
+                        #if DEBUG
+                        print("[NutritionTab] View appeared")
+                        #endif
+                    }
+
+                    // Current dietary direction
+                    if let framework = prefsService.preferences.dietaryFramework {
+                        HStack(spacing: 6) {
+                            Image(systemName: "leaf.fill")
+                                .font(.system(size: 10))
+                                .foregroundColor(WyldeStyles.Colors.sage)
+                            Text(framework.displayName)
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(Theme.text)
+                            if let cal = prefsService.preferences.calorieTarget {
+                                Text("· \(cal) cal target")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(Theme.muted)
+                            }
+                        }
+                    }
 
                     // Log food actions — prominent
                     LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
@@ -264,6 +291,9 @@ struct NutritionTabView: View {
         }
         .fullScreenCover(isPresented: $showMealPlan) {
             MealPlanView().environmentObject(appState)
+        }
+        .fullScreenCover(isPresented: $showPreferences) {
+            NutritionPreferencesView().environmentObject(appState)
         }
     }
 

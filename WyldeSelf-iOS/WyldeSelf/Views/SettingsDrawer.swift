@@ -28,6 +28,7 @@ struct SettingsDrawer: View {
     @State private var showIdentityImport = false
     @State private var showExercises = false
     @State private var showFeedback = false
+    @State private var showNutritionPrefs = false
 
     /// Centralized dismiss — calls custom onClose if provided, otherwise
     /// falls back to SwiftUI sheet dismiss.
@@ -88,7 +89,10 @@ struct SettingsDrawer: View {
                 HapticManager.shared.impact(.light)
                 showExercises = true
             })
-            DrawerLink(icon: "fork.knife",              label: "Nutrition",          action: openNutritionTab)
+            DrawerLink(icon: "fork.knife",              label: "Nutrition Preferences", action: {
+                HapticManager.shared.impact(.light)
+                showNutritionPrefs = true
+            })
             DrawerLink(icon: "brain.head.profile",      label: "Identity Import",    action: {
                 HapticManager.shared.impact(.light)
                 showIdentityImport = true
@@ -130,6 +134,9 @@ struct SettingsDrawer: View {
         }
         .sheet(isPresented: $showFeedback) {
             FeedbackSheet()
+        }
+        .fullScreenCover(isPresented: $showNutritionPrefs) {
+            NutritionPreferencesView().environmentObject(appState)
         }
         .alert("Reset profile?", isPresented: $showResetConfirm) {
             Button("Cancel", role: .cancel) { }

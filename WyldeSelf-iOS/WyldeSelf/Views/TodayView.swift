@@ -18,10 +18,9 @@ struct TodayView: View {
     @State private var ritualExpanded = true
     @State private var showJournaling = false
     @State private var showSchedule = false
-    @State private var walkTimerActive = false
-    @State private var walkSecondsElapsed = 0
-    @State private var walkTimer: Timer?
+    @StateObject private var walkTimer = BackgroundTimer(persistKey: "wylde_walk_start")
 
+    @State private var expandedActionID: String?
     @State private var didAppear = false
     @State private var showReflection = false
 
@@ -389,8 +388,8 @@ struct TodayView: View {
             // ── Today's proof ──
             let todayActions = todayProofText
             Text(todayActions)
-                .font(.system(size: 13))
-                .foregroundColor(Theme.muted)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(WyldeStyles.Colors.charcoal)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             // Start Today CTA
@@ -633,6 +632,9 @@ struct TodayView: View {
 
             if ritualExpanded {
             ForEach(Array(appState.morningProtocolActions.enumerated()), id: \.element.id) { index, action in
+                let isExpanded = expandedActionID == action.id
+                let hasActivity = ["qigong", "meditation", "journaling"].contains(action.id)
+
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 14) {
                         Image(systemName: action.completed ? "checkmark.circle.fill" : "circle")
@@ -651,27 +653,54 @@ struct TodayView: View {
                             Text(action.desc)
                                 .font(.system(size: 12))
                                 .foregroundColor(Theme.muted)
-                                .lineLimit(3)
+                                .lineLimit(isExpanded ? nil : 1)
+                                .animation(.easeInOut(duration: 0.2), value: isExpanded)
                         }
                         Spacer()
-                        Text("\(action.dur)m")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(Theme.muted)
+
+                        HStack(spacing: 8) {
+                            Text("\(action.dur)m")
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundColor(Theme.muted)
+                            Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                                .font(.system(size: 10, weight: .medium))
+                                .foregroundColor(Theme.muted)
+                        }
                     }
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        if action.id == "qigong" && !action.completed {
-                            showQiGong = true
-                            toggleMorningAction(index)
-                        } else if action.id == "meditation" && !action.completed {
-                            showMeditation = true
-                            toggleMorningAction(index)
-                        } else if action.id == "journaling" && !action.completed {
-                            showJournaling = true
-                            toggleMorningAction(index)
-                        } else {
-                            toggleMorningAction(index)
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            expandedActionID = isExpanded ? nil : action.id
                         }
+                    }
+
+                    // Expanded: show Start button for actions with a dedicated view
+                    if isExpanded && hasActivity && !action.completed {
+                        Button {
+                            if action.id == "qigong" {
+                                showQiGong = true
+                            } else if action.id == "meditation" {
+                                showMeditation = true
+                            } else if action.id == "journaling" {
+                                showJournaling = true
+                            }
+                            toggleMorningAction(index)
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "play.fill")
+                                    .font(.system(size: 10))
+                                Text("Start \(action.name)")
+                                    .font(.system(size: 13, weight: .semibold))
+                            }
+                            .foregroundColor(Theme.gold)
+                            .padding(.vertical, 10)
+                            .frame(maxWidth: .infinity)
+                            .background(Theme.gold.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+                        .padding(.leading, 36)
+                        .padding(.top, 8)
+                        .transition(.opacity.combined(with: .move(edge: .top)))
                     }
 
                     // Reading tracker — shows under the reading action
@@ -862,12 +891,12 @@ struct TodayView: View {
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(appState.dailyWalkCompleted ? Theme.muted : Theme.text)
                         .strikethrough(appState.dailyWalkCompleted, color: Theme.muted)
-                    if walkTimerActive {
+                    if walkTimer.isRunning {
                         Text(walkTimeString)
                             .font(.system(size: 20, weight: .bold, design: .monospaced))
                             .foregroundColor(WyldeStyles.Colors.vitalBlue)
                             .contentTransition(.numericText())
-                            .animation(.easeInOut(duration: 0.3), value: walkSecondsElapsed)
+                            .animation(.easeInOut(duration: 0.3), value: walkTimer.elapsed)
                     } else {
                         Text(appState.dailyWalkCompleted ? "Done — that counts." : "30+ minutes outside")
                             .font(.system(size: 12))
@@ -885,25 +914,34 @@ struct TodayView: View {
 
             if !appState.dailyWalkCompleted {
                 HStack(spacing: 8) {
-                    if walkTimerActive {
+                    if walkTimer.isRunning {
                         // Stop + Complete
                         Button {
-                            stopWalkTimer()
-                            if walkSecondsElapsed >= 1800 { // 30 min
+                            let seconds = walkTimer.elapsed
+                            let startDate = walkTimer.startDate
+                            let _ = walkTimer.stop()
+                            if seconds >= 1800 { // 30 min
                                 toggleWalk()
                             }
+                            // Save walk to HealthKit
+                            if let start = startDate {
+                                Task { await HealthKitManager.shared.saveWalkWorkout(start: start, end: Date()) }
+                            }
                         } label: {
-                            Text(walkSecondsElapsed >= 1800 ? "Complete Walk" : "End (\(walkSecondsElapsed / 60)m)")
+                            Text(walkTimer.elapsed >= 1800 ? "Complete Walk" : "End (\(walkTimer.elapsed / 60)m)")
                                 .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(walkSecondsElapsed >= 1800 ? WyldeStyles.Colors.ink : WyldeStyles.Colors.vitalBlue)
+                                .foregroundColor(walkTimer.elapsed >= 1800 ? WyldeStyles.Colors.ink : WyldeStyles.Colors.vitalBlue)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
-                                .background(walkSecondsElapsed >= 1800 ? WyldeStyles.Colors.vitalBlue : WyldeStyles.Colors.vitalBlue.opacity(0.12))
+                                .background(walkTimer.elapsed >= 1800 ? WyldeStyles.Colors.vitalBlue : WyldeStyles.Colors.vitalBlue.opacity(0.12))
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
                     } else {
                         // Start timer
-                        Button { startWalkTimer() } label: {
+                        Button {
+                            walkTimer.start()
+                            HealthKitManager.shared.startWorkoutSession(activityType: .walking)
+                        } label: {
                             HStack(spacing: 6) {
                                 Image(systemName: "play.fill")
                                     .font(.system(size: 11))
@@ -939,25 +977,9 @@ struct TodayView: View {
     }
 
     private var walkTimeString: String {
-        let m = walkSecondsElapsed / 60
-        let s = walkSecondsElapsed % 60
+        let m = walkTimer.elapsed / 60
+        let s = walkTimer.elapsed % 60
         return String(format: "%d:%02d", m, s)
-    }
-
-    private func startWalkTimer() {
-        walkSecondsElapsed = 0
-        walkTimerActive = true
-        walkTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            DispatchQueue.main.async {
-                walkSecondsElapsed += 1
-            }
-        }
-    }
-
-    private func stopWalkTimer() {
-        walkTimer?.invalidate()
-        walkTimer = nil
-        walkTimerActive = false
     }
 
     // MARK: - Nutrition
@@ -1131,7 +1153,7 @@ struct TodayView: View {
                 // Exercise ring
                 activityRing(
                     label: "Exercise",
-                    current: appState.workoutCompleted ? 30 : (walkTimerActive ? walkSecondsElapsed / 60 : 0),
+                    current: appState.workoutCompleted ? 30 : (walkTimer.isRunning ? walkTimer.elapsed / 60 : 0),
                     goal: 30,
                     color: WyldeStyles.Colors.vitalTeal,
                     icon: "figure.run"

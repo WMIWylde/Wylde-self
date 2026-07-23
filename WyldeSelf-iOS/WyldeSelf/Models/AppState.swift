@@ -304,6 +304,16 @@ class AppState: ObservableObject {
         healthNotes = secure.get(forKey: "wylde_health_notes") ?? defaults.string(forKey: "wylde_health_notes") ?? ""
         dietaryPrefs = secure.getCodable([String].self, forKey: "wylde_diet") ?? defaults.stringArray(forKey: "wylde_diet") ?? []
         dietNotes = secure.get(forKey: "wylde_diet_notes") ?? defaults.string(forKey: "wylde_diet_notes") ?? ""
+
+        // One-time migration to structured nutrition preferences
+        if !defaults.bool(forKey: "wylde_nutrition_prefs_migrated") && !dietaryPrefs.isEmpty {
+            let migrated = NutritionPreferences.migrateFromLegacy(dietaryPrefs: dietaryPrefs, dietNotes: dietNotes)
+            secure.setCodable(migrated, forKey: "wylde_nutrition_prefs")
+            defaults.set(true, forKey: "wylde_nutrition_prefs_migrated")
+            Task { @MainActor in
+                NutritionPreferencesService.shared.preferences = migrated
+            }
+        }
         classPreferences = defaults.stringArray(forKey: "wylde_classes") ?? []
         currentBook = defaults.string(forKey: "wylde_book") ?? ""
         pagesReadToday = defaults.integer(forKey: dayKey("wylde_pages"))
@@ -410,6 +420,12 @@ class AppState: ObservableObject {
                 defaults.removeObject(forKey: key)
             }
         }
+        // Clear nutrition preferences migration flag
+        defaults.removeObject(forKey: "wylde_nutrition_prefs_migrated")
+        Task { @MainActor in
+            NutritionPreferencesService.shared.reset()
+        }
+
         // Wipe Keychain + file storage (sensitive data + vision images)
         SecureStorage.shared.deleteAllUserData()
         loadFromDefaults()

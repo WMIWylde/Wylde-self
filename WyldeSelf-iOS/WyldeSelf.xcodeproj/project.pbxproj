@@ -11,6 +11,8 @@
 		1618CBE42196225475D0C3C2 /* FoodScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69E107E33E7FC797119B57B0 /* FoodScannerView.swift */; };
 		18A966E3AE3C65C025FD7A33 /* ConsumerModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C62374029D5DB6ADFC8027 /* ConsumerModels.swift */; };
 		1E676D246DFD4BF057B505E7 /* LiftingCoach.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEE5CC471CD6CDF6FC9422 /* LiftingCoach.swift */; };
+		BT10001 /* BackgroundTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT10002 /* BackgroundTimer.swift */; };
+		MC10001 /* MacroCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = MC10002 /* MacroCalculator.swift */; };
 		226DB19A0A68CF671A037743 /* CoachService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843B810CFE4E4C6C4991366 /* CoachService.swift */; };
 		362218F195F2E3CB7D31A5D9 /* guided-meditation.m4a in Resources */ = {isa = PBXBuildFile; fileRef = FA5FDC2D6C2789D0FC463D9D /* guided-meditation.m4a */; };
 		3CEB2998F10B188B9BB71D31 /* FutureVisionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2B347630952E8C8CA2062F /* FutureVisionView.swift */; };
@@ -28,10 +30,13 @@
 		54ACB79B98CF6A41D49A035F /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF420548325F72C353160DF2 /* AuthService.swift */; };
 		5A4AB3FE4181FCD75D3C619B /* CoachChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF4835D17241407BFFB21D4 /* CoachChatView.swift */; };
 		5A67B7DA36AD63031104A78B /* MealPlanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18F936666895C871BB1E34F /* MealPlanService.swift */; };
+		E237ECE16CE3C4978ACC66D7 /* NutritionPreferencesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFEEBCDCD70D00BD1C02905 /* NutritionPreferencesService.swift */; };
+		B70630E6D92C64BFAD6745ED /* RecipeBookService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D27E85A246F35FA083B065 /* RecipeBookService.swift */; };
 		5BC247E261A81C158532BC3D /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352956980DD2811651EE9D0A /* SignInView.swift */; };
 		5FCFEFDF3D6CC8A88FE046F0 /* ExerciseCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A054D6EC4B792386BE934C /* ExerciseCard.swift */; };
 		6059D435113646AA939D0277 /* ProtocolTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1AA03C12AC3C85B020A3B1 /* ProtocolTrackerService.swift */; };
 		65FBC8E7CEC068561E2C87FD /* MealPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AFFF42775D4153D41F2066 /* MealPlan.swift */; };
+		9F5B7B82D98FB4ADE9512585 /* NutritionPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5AC371656915BE3ACA369C /* NutritionPreferences.swift */; };
 		6A37D341076537A6868C7660 /* WyldeScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FAC72A0042A0FCA4C090D4 /* WyldeScore.swift */; };
 		737EF09808A24CE680E5C184 /* WorkoutProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE58C92F2054D9E998BA6D6C /* WorkoutProgram.swift */; };
 		7523CD98CF0AAF21E9CAD442 /* NutritionTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD1F3F8F5C76E6EA177FB4 /* NutritionTabView.swift */; };
@@ -76,6 +81,9 @@
 		A3D81F9B947EE5D76747F083 /* VisionTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD6EAA094DE1A417B99DD349 /* VisionTheme.swift */; };
 		A3F396A2D7CCA845AB1A80FE /* WyldeScoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3245AF428E0732CDC8B62655 /* WyldeScoreService.swift */; };
 		A6BBE708419A60DBE90DF00E /* MealPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83B41DA2B4C49B1FE789CCD /* MealPlanView.swift */; };
+		6CF007D1FA78952DD0C8EB3C /* CreateRecipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA99A87EB34F5B3FF1F8F463 /* CreateRecipeView.swift */; };
+		55FE0DD464E6D63C92DB3A4D /* MealDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07233285A002323B6F127C2B /* MealDetailView.swift */; };
+		E4854A35E498864689FB7FEB /* NutritionPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7932D9C9B06F559821F5B481 /* NutritionPreferencesView.swift */; };
 		A8CB2D23D6EB86B182C431ED /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91180521F9514686E9160EBF /* OnboardingView.swift */; };
 		ACA54FDA9CB2728ADED95C59 /* YouView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36DC41DE8014E1FAD7AF5F91 /* YouView.swift */; };
 		B47E22954C3FC0CEAA0E33E4 /* RestTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 572F46AD3D93FB29BD076690 /* RestTimerView.swift */; };
@@ -184,13 +192,19 @@
 		7843B810CFE4E4C6C4991366 /* CoachService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoachService.swift; sourceTree = "<group>"; };
 		7A1AA03C12AC3C85B020A3B1 /* ProtocolTrackerService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProtocolTrackerService.swift; sourceTree = "<group>"; };
 		88CEE5CC471CD6CDF6FC9422 /* LiftingCoach.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LiftingCoach.swift; sourceTree = "<group>"; };
+		BT10002 /* BackgroundTimer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BackgroundTimer.swift; sourceTree = "<group>"; };
+		MC10002 /* MacroCalculator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MacroCalculator.swift; sourceTree = "<group>"; };
 		8DDF27D0AD3DFF23AE7F9504 /* wyldeself-intro.mp4 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file; path = "wyldeself-intro.mp4"; sourceTree = "<group>"; };
 		91180521F9514686E9160EBF /* OnboardingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		96AFFF42775D4153D41F2066 /* MealPlan.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MealPlan.swift; sourceTree = "<group>"; };
+		2D5AC371656915BE3ACA369C /* NutritionPreferences.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NutritionPreferences.swift; sourceTree = "<group>"; };
 		9AAD1F3F8F5C76E6EA177FB4 /* NutritionTabView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NutritionTabView.swift; sourceTree = "<group>"; };
 		A07DC257E3ECC043B6773A58 /* WorkoutDayView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutDayView.swift; sourceTree = "<group>"; };
 		A3623AA1C98F5FD93FB6739C /* WorkoutService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutService.swift; sourceTree = "<group>"; };
 		A83B41DA2B4C49B1FE789CCD /* MealPlanView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MealPlanView.swift; sourceTree = "<group>"; };
+		BA99A87EB34F5B3FF1F8F463 /* CreateRecipeView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CreateRecipeView.swift; sourceTree = "<group>"; };
+		07233285A002323B6F127C2B /* MealDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MealDetailView.swift; sourceTree = "<group>"; };
+		7932D9C9B06F559821F5B481 /* NutritionPreferencesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NutritionPreferencesView.swift; sourceTree = "<group>"; };
 		A8D83A4483E5DB70EE0AE39B /* WyldeScoreCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WyldeScoreCard.swift; sourceTree = "<group>"; };
 		ADAB00E2228BCBC88233AD1C /* ProtocolTrackerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProtocolTrackerView.swift; sourceTree = "<group>"; };
 		B10001 /* WyldeSelfApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WyldeSelfApp.swift; sourceTree = "<group>"; };
@@ -232,6 +246,8 @@
 		E07F46ED130E8FA952F7BE9A /* FutureVision.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FutureVision.swift; sourceTree = "<group>"; };
 		E0F126C93E921C9F6B9698D5 /* SplashView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		E18F936666895C871BB1E34F /* MealPlanService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MealPlanService.swift; sourceTree = "<group>"; };
+		8EFEEBCDCD70D00BD1C02905 /* NutritionPreferencesService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NutritionPreferencesService.swift; sourceTree = "<group>"; };
+		F4D27E85A246F35FA083B065 /* RecipeBookService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecipeBookService.swift; sourceTree = "<group>"; };
 		ED05833A5593DE8DE9080106 /* CheckinSync.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CheckinSync.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F6071800000003 /* WorkoutLogSync.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutLogSync.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F6071800000001 /* ProgressionEngine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProgressionEngine.swift; sourceTree = "<group>"; };
@@ -359,6 +375,7 @@
 				E07F46ED130E8FA952F7BE9A /* FutureVision.swift */,
 				BE58C92F2054D9E998BA6D6C /* WorkoutProgram.swift */,
 				96AFFF42775D4153D41F2066 /* MealPlan.swift */,
+				2D5AC371656915BE3ACA369C /* NutritionPreferences.swift */,
 				16FAC72A0042A0FCA4C090D4 /* WyldeScore.swift */,
 			);
 			path = Models;
@@ -384,6 +401,9 @@
 				0AF4835D17241407BFFB21D4 /* CoachChatView.swift */,
 				69E107E33E7FC797119B57B0 /* FoodScannerView.swift */,
 				A83B41DA2B4C49B1FE789CCD /* MealPlanView.swift */,
+				BA99A87EB34F5B3FF1F8F463 /* CreateRecipeView.swift */,
+				07233285A002323B6F127C2B /* MealDetailView.swift */,
+				7932D9C9B06F559821F5B481 /* NutritionPreferencesView.swift */,
 				A8D83A4483E5DB70EE0AE39B /* WyldeScoreCard.swift */,
 				ADAB00E2228BCBC88233AD1C /* ProtocolTrackerView.swift */,
 				DFF7FBABC90464C1050C45FA /* CareMessagingView.swift */,
@@ -420,6 +440,8 @@
 				7843B810CFE4E4C6C4991366 /* CoachService.swift */,
 				450A3040BEA993FD183CB41B /* MacroTrackerService.swift */,
 				E18F936666895C871BB1E34F /* MealPlanService.swift */,
+				8EFEEBCDCD70D00BD1C02905 /* NutritionPreferencesService.swift */,
+				F4D27E85A246F35FA083B065 /* RecipeBookService.swift */,
 				3245AF428E0732CDC8B62655 /* WyldeScoreService.swift */,
 				7A1AA03C12AC3C85B020A3B1 /* ProtocolTrackerService.swift */,
 				N20001 /* SecureStorage.swift */,
@@ -440,6 +462,8 @@
 				FD6EAA094DE1A417B99DD349 /* VisionTheme.swift */,
 				CF64D03B1398C1C46DFCCB8C /* CinematicEffects.swift */,
 				88CEE5CC471CD6CDF6FC9422 /* LiftingCoach.swift */,
+				BT10002 /* BackgroundTimer.swift */,
+				MC10002 /* MacroCalculator.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -774,6 +798,8 @@
 				4DB67C730EDC228B7B9498A7 /* DynamicWarmupView.swift in Sources */,
 				C1F3B0C06D74EC542FDC4DD2 /* WorkoutContainerView.swift in Sources */,
 				1E676D246DFD4BF057B505E7 /* LiftingCoach.swift in Sources */,
+				BT10001 /* BackgroundTimer.swift in Sources */,
+				MC10001 /* MacroCalculator.swift in Sources */,
 				895AE0504FC089DC025DFF9C /* QiGongFlowView.swift in Sources */,
 				C60C7CC6C017D714F0C8F352 /* GuidedMeditationView.swift in Sources */,
 				226DB19A0A68CF671A037743 /* CoachService.swift in Sources */,
@@ -781,8 +807,14 @@
 				8E8881408C7AD92A30FBD15D /* MacroTrackerService.swift in Sources */,
 				1618CBE42196225475D0C3C2 /* FoodScannerView.swift in Sources */,
 				65FBC8E7CEC068561E2C87FD /* MealPlan.swift in Sources */,
+				9F5B7B82D98FB4ADE9512585 /* NutritionPreferences.swift in Sources */,
 				5A67B7DA36AD63031104A78B /* MealPlanService.swift in Sources */,
+				E237ECE16CE3C4978ACC66D7 /* NutritionPreferencesService.swift in Sources */,
+				B70630E6D92C64BFAD6745ED /* RecipeBookService.swift in Sources */,
 				A6BBE708419A60DBE90DF00E /* MealPlanView.swift in Sources */,
+				6CF007D1FA78952DD0C8EB3C /* CreateRecipeView.swift in Sources */,
+				55FE0DD464E6D63C92DB3A4D /* MealDetailView.swift in Sources */,
+				E4854A35E498864689FB7FEB /* NutritionPreferencesView.swift in Sources */,
 				6A37D341076537A6868C7660 /* WyldeScore.swift in Sources */,
 				A3F396A2D7CCA845AB1A80FE /* WyldeScoreService.swift in Sources */,
 				6059D435113646AA939D0277 /* ProtocolTrackerService.swift in Sources */,
@@ -853,7 +885,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = WyldeSelfWatch;
@@ -892,7 +924,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = WyldeSelfWatch;
@@ -929,7 +961,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
@@ -957,7 +989,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
@@ -983,7 +1015,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
@@ -1010,7 +1042,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
@@ -1151,7 +1183,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = WyldeSelf/WyldeSelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WyldeSelf/Info.plist;
@@ -1182,7 +1214,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = WyldeSelf/WyldeSelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WyldeSelf/Info.plist;
@@ -1211,7 +1243,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
@@ -1230,7 +1262,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = L5869XDHF7;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;

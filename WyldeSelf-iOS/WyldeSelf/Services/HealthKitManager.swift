@@ -19,6 +19,7 @@ class HealthKitManager {
             HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
             HKObjectType.quantityType(forIdentifier: .heartRate)!,
             HKObjectType.quantityType(forIdentifier: .appleExerciseTime)!,
+            HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!,
             HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
         ]
 
@@ -93,34 +94,48 @@ class HealthKitManager {
     // MARK: - Workout Session (activates Apple Watch + Activity rings)
 
     private var workoutStartDate: Date?
+    private var workoutActivityType: HKWorkoutActivityType = .traditionalStrengthTraining
     private(set) var isWorkoutActive = false
 
     /// Start an HKWorkout session — this activates the Apple Watch sensors
     /// and begins tracking active energy, heart rate, and exercise minutes.
-    func startWorkoutSession() {
+    func startWorkoutSession(activityType: HKWorkoutActivityType = .traditionalStrengthTraining) {
         guard isAvailable else { return }
         workoutStartDate = Date()
+        workoutActivityType = activityType
         isWorkoutActive = true
         #if DEBUG
-        print("[HealthKit] Workout session started")
+        print("[HealthKit] Workout session started (\(activityType.rawValue))")
         #endif
     }
 
-    /// End the workout session and save it to HealthKit as a strength training workout.
+    /// End the workout session and save it to HealthKit.
     /// This shows up in the Activity app, Health app, and on the Apple Watch rings.
     func endWorkoutSession() async {
         guard isAvailable, let start = workoutStartDate else { return }
         let end = Date()
+        let activityType = workoutActivityType
         isWorkoutActive = false
         workoutStartDate = nil
 
+        await saveWorkout(activityType: activityType, start: start, end: end)
+    }
+
+    /// Save a completed walk to HealthKit as an outdoor walking workout.
+    /// Called when the walk timer completes — uses the actual start/end dates
+    /// so it's accurate even if the app was backgrounded.
+    func saveWalkWorkout(start: Date, end: Date) async {
+        guard isAvailable else { return }
+        await saveWorkout(activityType: .walking, start: start, end: end, location: .outdoor)
+    }
+
+    private func saveWorkout(activityType: HKWorkoutActivityType, start: Date, end: Date, location: HKWorkoutSessionLocationType? = nil) async {
         // Calculate active calories during the workout window
         let calories = await fetchSum(.activeEnergyBurned, from: start, to: end)
 
-        // Build and save the workout using HKWorkoutBuilder
         let config = HKWorkoutConfiguration()
-        config.activityType = .traditionalStrengthTraining
-        config.locationType = .indoor
+        config.activityType = activityType
+        config.locationType = location ?? (activityType == .walking ? .outdoor : .indoor)
 
         let builder = HKWorkoutBuilder(healthStore: store, configuration: config, device: .local())
 
@@ -138,11 +153,26 @@ class HealthKitManager {
                 try await builder.addSamples([energySample])
             }
 
+            // Add distance for walking workouts
+            if activityType == .walking {
+                let distance = await fetchSum(.distanceWalkingRunning, from: start, to: end)
+                if distance > 0, let distType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning) {
+                    let distSample = HKQuantitySample(
+                        type: distType,
+                        quantity: HKQuantity(unit: .meter(), doubleValue: distance),
+                        start: start,
+                        end: end
+                    )
+                    try await builder.addSamples([distSample])
+                }
+            }
+
             try await builder.endCollection(at: end)
             try await builder.finishWorkout()
 
             #if DEBUG
-            print("[HealthKit] Workout saved: \(Int(end.timeIntervalSince(start) / 60))min, \(Int(calories)) cal")
+            let mins = Int(end.timeIntervalSince(start) / 60)
+            print("[HealthKit] Workout saved: \(activityType.rawValue), \(mins)min, \(Int(calories)) cal")
             #endif
         } catch {
             #if DEBUG

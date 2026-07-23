@@ -10,8 +10,7 @@ struct WorkoutDayView: View {
     @State private var restDuration = 90
     @State private var showWarmup = false
     @State private var workoutSessionActive = false
-    @State private var workoutElapsed = 0
-    @State private var workoutTimer: Timer?
+    @StateObject private var workoutClock = BackgroundTimer(persistKey: "wylde_workout_start")
 
     private var day: WorkoutDay? {
         service.program?.days.indices.contains(dayIndex) == true ? service.program?.days[dayIndex] : nil
@@ -69,11 +68,11 @@ struct WorkoutDayView: View {
                                             .tracking(2)
                                             .foregroundColor(Theme.primaryText)
                                         Spacer()
-                                        Text(formatElapsed(workoutElapsed))
+                                        Text(formatElapsed(workoutClock.elapsed))
                                             .font(.system(size: 16, weight: .bold, design: .monospaced))
                                             .foregroundColor(WyldeStyles.Colors.bronze)
                                             .contentTransition(.numericText())
-                                            .animation(.easeInOut(duration: 0.3), value: workoutElapsed)
+                                            .animation(.easeInOut(duration: 0.3), value: workoutClock.elapsed)
                                     }
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 12)
@@ -83,7 +82,8 @@ struct WorkoutDayView: View {
 
                                 GoldButton(label: "Complete Workout") {
                                     HapticManager.shared.notification(.success)
-                                    stopWorkoutTimer()
+                                    let _ = workoutClock.stop()
+                                    workoutSessionActive = false
                                     Task { await HealthKitManager.shared.endWorkoutSession() }
                                     withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
                                         appState.workoutCompleted = true
@@ -129,7 +129,7 @@ struct WorkoutDayView: View {
                 if workoutSessionActive {
                     HStack(spacing: 4) {
                         Circle().fill(Color.red).frame(width: 6, height: 6)
-                        Text(formatElapsed(workoutElapsed))
+                        Text(formatElapsed(workoutClock.elapsed))
                             .font(.system(size: 12, weight: .semibold, design: .monospaced))
                             .foregroundColor(WyldeStyles.Colors.bronze)
                     }
@@ -138,34 +138,14 @@ struct WorkoutDayView: View {
         }
         .onAppear {
             if !appState.workoutCompleted && !workoutSessionActive {
-                startWorkoutSession()
+                HealthKitManager.shared.startWorkoutSession()
+                workoutSessionActive = true
+                workoutClock.start()
             }
         }
         .task {
             await WorkoutLogSync.shared.refreshHistory()
         }
-        .onDisappear {
-            // Don't stop the HealthKit session on disappear — only on Complete
-            stopWorkoutTimer()
-        }
-    }
-
-    // MARK: - Workout Session
-
-    private func startWorkoutSession() {
-        HealthKitManager.shared.startWorkoutSession()
-        workoutSessionActive = true
-        workoutElapsed = 0
-        workoutTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            DispatchQueue.main.async {
-                workoutElapsed += 1
-            }
-        }
-    }
-
-    private func stopWorkoutTimer() {
-        workoutTimer?.invalidate()
-        workoutTimer = nil
     }
 
     private func formatElapsed(_ seconds: Int) -> String {

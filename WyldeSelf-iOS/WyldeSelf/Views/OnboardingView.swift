@@ -21,6 +21,8 @@ struct OnboardingView: View {
     @State private var healthNotes = ""
     @State private var dietaryPrefs: Set<String> = []
     @State private var dietNotes = ""
+    @State private var selectedFramework: DietaryFramework? = nil
+    @State private var selectedRestrictions: Set<Restriction> = []
     @State private var nameError = false
     @State private var futurePhoto: UIImage? = nil
     @State private var showPhotoPicker = false
@@ -153,13 +155,27 @@ struct OnboardingView: View {
         appState.weightUnit = weightUnit
         appState.healthConcerns = Array(healthConcerns)
         appState.healthNotes = healthNotes
+        // Legacy fields — backward compat
         appState.dietaryPrefs = Array(dietaryPrefs)
         appState.dietNotes = dietNotes
+
+        // Structured nutrition preferences
+        var prefs = NutritionPreferences.default
+        prefs.dietaryFramework = selectedFramework
+        prefs.restrictions = Array(selectedRestrictions)
+        if !dietNotes.isEmpty { prefs.clinicalNotes = dietNotes }
+        NutritionPreferencesService.shared.preferences = prefs
+        Task { await NutritionPreferencesService.shared.save() }
+        UserDefaults.standard.set(true, forKey: "wylde_nutrition_prefs_migrated")
+
         // Save rendered future self if generated
         if let rendering = futureRendering, let jpegData = rendering.jpegData(compressionQuality: 0.9) {
             let base64 = jpegData.base64EncodedString()
             UserDefaults.standard.set(base64, forKey: "wylde_future_rendering")
         }
+        // Calculate personalized macro targets from body data + goals
+        NutritionPreferencesService.shared.syncMacroGoalsToAppState(appState)
+
         appState.onboardingComplete = true
         appState.awardXP(100, reason: "Profile created")
         // Sync profile to Supabase so clinician dashboard shows real data
@@ -345,11 +361,35 @@ struct OnboardingView: View {
 
     private var step4: some View {
         VStack(alignment: .leading, spacing: 28) {
-            stepHeader("Almost there", sub: "Any dietary preferences? Then we'll build your future self.")
+            stepHeader("Almost there", sub: "Choose your dietary direction. You can always change this later.")
 
-            fieldGroup("Dietary preferences", optional: true) {
-                multiSelect(options: ["No restrictions", "Vegetarian", "Vegan", "Gluten-free", "Dairy-free", "Keto", "Paleo", "Halal", "Kosher", "Nut allergy", "Shellfish allergy"], selection: $dietaryPrefs)
+            fieldGroup("Dietary direction", optional: true) {
+                let frameworks: [DietaryFramework] = [.balancedWholeFood, .highProtein, .mediterranean, .vegetarian, .vegan, .keto, .paleo, .pescatarian]
+                FlowLayout(spacing: 8) {
+                    ForEach(frameworks) { fw in
+                        PillButton(label: fw.displayName, isSelected: selectedFramework == fw) {
+                            selectedFramework = selectedFramework == fw ? nil : fw
+                        }
+                    }
+                }
+            }
 
+            fieldGroup("Allergies & restrictions", optional: true) {
+                let topRestrictions: [Restriction] = [.glutenFree, .dairyFree, .nutFree, .shellfishFree, .eggFree, .soyFree, .halal, .kosher]
+                FlowLayout(spacing: 8) {
+                    ForEach(topRestrictions) { r in
+                        PillButton(label: r.displayName, isSelected: selectedRestrictions.contains(r)) {
+                            if selectedRestrictions.contains(r) {
+                                selectedRestrictions.remove(r)
+                            } else {
+                                selectedRestrictions.insert(r)
+                            }
+                        }
+                    }
+                }
+            }
+
+            fieldGroup("Additional notes", optional: true) {
                 TextField("Any other dietary needs or allergies...", text: $dietNotes)
                     .font(.system(size: 14))
                     .padding(.horizontal, 16)
@@ -361,7 +401,6 @@ struct OnboardingView: View {
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .foregroundColor(WyldeStyles.Colors.ink)
-                    .padding(.top, 8)
             }
         }
     }

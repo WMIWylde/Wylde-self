@@ -46,6 +46,14 @@ struct ContentView: View {
             // Sync local auth flag with Supabase truth
             appState.isAuthenticated = auth.isSignedIn
             isRestoringSession = false
+
+            // Sync Supabase data after auth
+            if auth.isSignedIn {
+                await RecipeBookService.shared.loadFromSupabase()
+            }
+
+            // Calculate personalized macros from body data on launch
+            NutritionPreferencesService.shared.syncMacroGoalsToAppState(appState)
         }
         .onReceive(NotificationCenter.default.publisher(for: .wyldeAuthChanged)) { note in
             let signedIn = (note.userInfo?["isSignedIn"] as? Bool) ?? false

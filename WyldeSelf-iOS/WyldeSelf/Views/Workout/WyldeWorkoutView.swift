@@ -9,8 +9,7 @@ struct WyldeWorkoutView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var isActive = false
-    @State private var elapsed = 0
-    @State private var timer: Timer?
+    @StateObject private var workoutClock = BackgroundTimer(persistKey: "wylde_freeform_workout_start")
 
     // Voice recording
     @State private var isRecording = false
@@ -51,7 +50,7 @@ struct WyldeWorkoutView: View {
                     if isActive {
                         HStack(spacing: 4) {
                             Circle().fill(Color.red).frame(width: 6, height: 6)
-                            Text(formatTime(elapsed))
+                            Text(formatTime(workoutClock.elapsed))
                                 .font(.system(size: 14, weight: .bold, design: .monospaced))
                                 .foregroundColor(WyldeStyles.Colors.bronze)
                         }
@@ -87,7 +86,7 @@ struct WyldeWorkoutView: View {
         }
         .preferredColorScheme(.dark)
         .onAppear { requestSpeechAuth() }
-        .onDisappear { stopRecording(); timer?.invalidate() }
+        .onDisappear { stopRecording() }
     }
 
     // MARK: - Pre-Workout
@@ -139,11 +138,11 @@ struct WyldeWorkoutView: View {
     private var activeWorkout: some View {
         VStack(spacing: 20) {
             // Timer
-            Text(formatTime(elapsed))
+            Text(formatTime(workoutClock.elapsed))
                 .font(.system(size: 48, weight: .bold, design: .monospaced))
                 .foregroundColor(WyldeStyles.Colors.bronze)
                 .contentTransition(.numericText())
-                .animation(.easeInOut(duration: 0.3), value: elapsed)
+                .animation(.easeInOut(duration: 0.3), value: workoutClock.elapsed)
 
             Text("WYLDE WORKOUT")
                 .font(.system(size: 10, weight: .bold))
@@ -244,7 +243,7 @@ struct WyldeWorkoutView: View {
         VStack(alignment: .leading, spacing: 20) {
             // Stats
             HStack(spacing: 0) {
-                statPill("Duration", formatTime(elapsed))
+                statPill("Duration", formatTime(workoutClock.elapsed))
                 statPill("Notes", "\(voiceNotes.count)")
                 statPill("Exercises", "\(parsedExercises.count)")
             }
@@ -358,17 +357,13 @@ struct WyldeWorkoutView: View {
 
     private func startWorkout() {
         isActive = true
-        elapsed = 0
+        workoutClock.start()
         HealthKitManager.shared.startWorkoutSession()
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            DispatchQueue.main.async { elapsed += 1 }
-        }
         HapticManager.shared.impact(.medium)
     }
 
     private func endWorkout() {
-        timer?.invalidate()
-        timer = nil
+        let _ = workoutClock.stop()
         isActive = false
         stopRecording()
         Task { await HealthKitManager.shared.endWorkoutSession() }
@@ -387,7 +382,7 @@ struct WyldeWorkoutView: View {
         let entry: [String: Any] = [
             "type": "wylde",
             "date": ISO8601DateFormatter().string(from: Date()),
-            "duration": elapsed,
+            "duration": workoutClock.elapsed,
             "notes": voiceNotes,
             "summary": aiSummary ?? "",
             "exercises": parsedExercises.map { $0.name }
@@ -481,7 +476,7 @@ struct WyldeWorkoutView: View {
         let combined = voiceNotes.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: "\n")
 
         let prompt = """
-        The user just finished a freeform workout (\(elapsed / 60) minutes). They recorded these voice notes during the session:
+        The user just finished a freeform workout (\(workoutClock.elapsed / 60) minutes). They recorded these voice notes during the session:
 
         \(combined)
 
