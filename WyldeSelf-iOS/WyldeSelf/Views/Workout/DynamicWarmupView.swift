@@ -9,17 +9,18 @@ struct WarmupMovement {
     let color: Color
     let icon: String
     let videoURL: URL?
+    var benefit: String = ""
 }
 
 struct DynamicWarmupView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let movements: [WarmupMovement] = [
-        WarmupMovement(name: "Arm Circles", cue: "Loosen the shoulders and open the chest.", duration: 30, color: Color(hex: "FF9A3C"), icon: "figure.arms.open", videoURL: URL(string: "https://www.wyldeself.com/warmup-videos/arm-circles.mp4")),
-        WarmupMovement(name: "Leg Swings", cue: "Hips first. Let the leg fall and rise like a pendulum.", duration: 30, color: Color(hex: "5EE6D6"), icon: "figure.walk", videoURL: URL(string: "https://www.wyldeself.com/warmup-videos/leg-swings.mp4")),
-        WarmupMovement(name: "Hip Openers", cue: "Slow rotations. Breathe into the joint.", duration: 35, color: Color(hex: "B68BFF"), icon: "figure.cooldown", videoURL: URL(string: "https://www.wyldeself.com/warmup-videos/hip-openers.mp4")),
-        WarmupMovement(name: "Bodyweight Squats", cue: "Chest tall. Drive the knees out. Light, easy reps.", duration: 40, color: Color(hex: "FF6B8B"), icon: "figure.strengthtraining.functional", videoURL: URL(string: "https://www.wyldeself.com/warmup-videos/bodyweight-squats.mp4")),
-        WarmupMovement(name: "Light Jog", cue: "In place. Find your rhythm. Get the blood moving.", duration: 45, color: Color(hex: "7FD0FF"), icon: "figure.run", videoURL: URL(string: "https://www.wyldeself.com/warmup-videos/light-jog.mp4")),
+        WarmupMovement(name: "Arm Circles", cue: "Loosen the shoulders and open the chest.", duration: 30, color: Color(hex: "FF9A3C"), icon: "figure.arms.open", videoURL: URL(string: "https://www.wyldeself.com/warmup-videos/arm-circles.mp4"), benefit: "Warms the rotator cuff and wakes the upper back — the small muscles that protect your shoulders under load."),
+        WarmupMovement(name: "Leg Swings", cue: "Hips first. Let the leg fall and rise like a pendulum.", duration: 30, color: Color(hex: "5EE6D6"), icon: "figure.walk", videoURL: URL(string: "https://www.wyldeself.com/warmup-videos/leg-swings.mp4"), benefit: "Dynamic hip mobility without forcing it. Primes the hamstrings and hip flexors for everything that follows."),
+        WarmupMovement(name: "Hip Openers", cue: "Slow rotations. Breathe into the joint.", duration: 35, color: Color(hex: "B68BFF"), icon: "figure.cooldown", videoURL: URL(string: "https://www.wyldeself.com/warmup-videos/hip-openers.mp4"), benefit: "Your hips stiffen from sitting more than anything else. Slow circles restore the range squats and lunges need."),
+        WarmupMovement(name: "Bodyweight Squats", cue: "Chest tall. Drive the knees out. Light, easy reps.", duration: 40, color: Color(hex: "FF6B8B"), icon: "figure.strengthtraining.functional", videoURL: URL(string: "https://www.wyldeself.com/warmup-videos/bodyweight-squats.mp4"), benefit: "Grooves the exact movement pattern before you load it, and raises core temperature the honest way."),
+        WarmupMovement(name: "Light Jog", cue: "In place. Find your rhythm. Get the blood moving.", duration: 45, color: Color(hex: "7FD0FF"), icon: "figure.run", videoURL: URL(string: "https://www.wyldeself.com/warmup-videos/light-jog.mp4"), benefit: "Elevates heart rate and blood flow so working sets start strong instead of serving as your warmup."),
     ]
 
     enum Phase { case intro, active, complete }
@@ -169,6 +170,16 @@ struct DynamicWarmupView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
                 .padding(.top, 6)
+
+            if !current.benefit.isEmpty {
+                Text(current.benefit)
+                    .font(.system(size: 12))
+                    .foregroundColor(Color(hex: "D4BE92"))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 36)
+                    .padding(.top, 8)
+                    .lineSpacing(3)
+            }
 
             // Next up
             if currentIndex < movements.count - 1 {
