@@ -12,13 +12,12 @@ struct QiGongFlowView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let movements: [QiGongMovement] = [
-        QiGongMovement(name: "Standing Meditation", cue: "Feet shoulder-width. Soften the knees. Hands at your sides. Three deep breaths.", duration: 30, icon: "figure.stand"),
-        QiGongMovement(name: "Raising the Sky", cue: "Inhale, raise arms overhead. Exhale, float them down. Slow, continuous circles.", duration: 50, icon: "figure.arms.open"),
-        QiGongMovement(name: "Pushing Mountains", cue: "Palms forward, push out on exhale. Draw back on inhale. Feel the resistance of air.", duration: 50, icon: "figure.martial.arts"),
-        QiGongMovement(name: "Turning the Waist", cue: "Arms relaxed, swing side to side. Let the arms wrap around the body. Loose and fluid.", duration: 50, icon: "figure.flexibility"),
-        QiGongMovement(name: "Gathering Energy", cue: "Hands in front of the belly. Slow circles. Feel the warmth between your palms.", duration: 40, icon: "sparkles"),
-        QiGongMovement(name: "Shaking the Tree", cue: "Bounce gently on your heels. Shake out the arms. Release tension from the whole body.", duration: 40, icon: "figure.walk"),
-        QiGongMovement(name: "Standing Stillness", cue: "Return to standing. Hands on lower belly. Three final breaths. Feel the energy settle.", duration: 30, icon: "figure.mind.and.body"),
+        QiGongMovement(name: "Lymphatic Bounce", cue: "Jump lightly up and down. Loose ankles, soft knees. Wake the lymphatic system.", duration: 45, icon: "figure.jumprope"),
+        QiGongMovement(name: "Sweep to the Sky", cue: "Hinge over, let the arms hang. Inhale, sweep them wide and up to the sky. Exhale, fold back down.", duration: 50, icon: "figure.arms.open"),
+        QiGongMovement(name: "Trunk Twists", cue: "Feet planted, twist the trunk side to side. Let the arms follow loosely.", duration: 45, icon: "figure.flexibility"),
+        QiGongMovement(name: "Golf Swings", cue: "Sweep both arms across the body like a slow golf swing. Rotate through the hips. Both directions.", duration: 45, icon: "figure.golf"),
+        QiGongMovement(name: "Shoulder Openers", cue: "Right arm rises as the left falls. Alternate in rhythm. Open through the shoulders.", duration: 45, icon: "figure.mixed.cardio"),
+        QiGongMovement(name: "Dead Arm Swings", cue: "Arms fully relaxed. Turn the body left and right, letting the arms whip and tap the shoulders.", duration: 45, icon: "figure.walk.motion"),
     ]
 
     enum Phase { case intro, active, complete }
