@@ -282,6 +282,12 @@ struct GuidedMeditationView: View {
     }
 
     private func tryPlayAudio() {
+        // .playback: audio plays even with the ringer/silent switch on —
+        // the default (.soloAmbient) mutes with the switch, which testers
+        // reported as "no sound during meditation".
+        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+        try? AVAudioSession.sharedInstance().setActive(true)
+
         // Try bundled audio first
         if let url = Bundle.main.url(forResource: "guided-meditation", withExtension: "m4a") {
             audioPlayer = try? AVAudioPlayer(contentsOf: url)
