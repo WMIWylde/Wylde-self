@@ -27,6 +27,7 @@ struct SettingsDrawer: View {
     @State private var showResetConfirm = false
     @State private var showIdentityImport = false
     @State private var showExercises = false
+    @State private var showFeedback = false
 
     /// Centralized dismiss — calls custom onClose if provided, otherwise
     /// falls back to SwiftUI sheet dismiss.
@@ -98,6 +99,8 @@ struct SettingsDrawer: View {
             // ── Appearance ─────────────────────────────────────
             appearanceControl
 
+            DrawerLink(icon: "bubble.left.and.text.bubble.right", label: "Send Feedback", action: { showFeedback = true })
+
             // ── Divider ────────────────────────────────────────
             Rectangle()
                 .fill(Theme.hairline)
@@ -124,6 +127,9 @@ struct SettingsDrawer: View {
         }
         .fullScreenCover(isPresented: $showExercises) {
             NavigationStack { ExercisesView() }
+        }
+        .sheet(isPresented: $showFeedback) {
+            FeedbackSheet()
         }
         .alert("Reset profile?", isPresented: $showResetConfirm) {
             Button("Cancel", role: .cancel) { }
@@ -293,3 +299,100 @@ private struct DrawerLink: View {
     }
 }
 
+
+
+// ════════════════════════════════════════════════════════════════════
+//  FeedbackSheet — beta feedback tied to the signed-in account.
+//  Writes to the Supabase `feedback` table (user_id via auth.uid()).
+// ════════════════════════════════════════════════════════════════════
+
+struct FeedbackSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var message = ""
+    @State private var isSending = false
+    @State private var sent = false
+    @State private var errorText: String?
+
+    private struct FeedbackRow: Encodable {
+        let message: String
+        let platform: String
+        let build: String
+        let screen: String
+    }
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("What's working? What's broken? What's missing?")
+                    .font(.system(size: 14))
+                    .foregroundColor(WyldeStyles.Colors.stone)
+
+                TextEditor(text: $message)
+                    .frame(minHeight: 160)
+                    .padding(10)
+                    .scrollContentBackground(.hidden)
+                    .background(Theme.cardSurface)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(WyldeStyles.Colors.charcoal.opacity(0.10), lineWidth: 1)
+                    )
+
+                if let err = errorText {
+                    Text(err)
+                        .font(.system(size: 12))
+                        .foregroundColor(WyldeStyles.Colors.error)
+                }
+
+                Button {
+                    Task { await send() }
+                } label: {
+                    if sent {
+                        Label("Sent — thank you", systemImage: "checkmark")
+                            .frame(maxWidth: .infinity)
+                    } else if isSending {
+                        ProgressView().frame(maxWidth: .infinity)
+                    } else {
+                        Text("Send Feedback").frame(maxWidth: .infinity)
+                    }
+                }
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(WyldeStyles.Colors.paper)
+                .padding(.vertical, 14)
+                .background(WyldeStyles.Colors.ink)
+                .clipShape(Capsule())
+                .disabled(message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSending || sent)
+
+                Spacer()
+            }
+            .padding(20)
+            .background(Theme.appBG)
+            .navigationTitle("Beta Feedback")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+    }
+
+    private func send() async {
+        let text = message.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return }
+        isSending = true
+        errorText = nil
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "?"
+        do {
+            try await SupabaseService.shared
+                .from("feedback")
+                .insert(FeedbackRow(message: text, platform: "ios", build: build, screen: "settings"))
+                .execute()
+            sent = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { dismiss() }
+        } catch {
+            errorText = "Couldn't send. Check your connection and try again."
+        }
+        isSending = false
+    }
+}
