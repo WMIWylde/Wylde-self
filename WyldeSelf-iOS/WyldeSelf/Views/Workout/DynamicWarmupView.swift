@@ -109,10 +109,9 @@ struct DynamicWarmupView: View {
         ZStack {
             // Video background
             if let player = player {
-                VideoPlayer(player: player)
-                    .disabled(true)
+                FullBleedVideoPlayer(player: player)
                     .ignoresSafeArea()
-                    .overlay(Color.black.opacity(0.55))
+                    .overlay(Color.black.opacity(0.5))
             }
 
         VStack(spacing: 0) {

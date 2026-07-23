@@ -7,6 +7,7 @@ struct QiGongMovement {
     let duration: Int
     let icon: String
     var videoURL: URL? = nil
+    var benefit: String = ""
 }
 
 /// Guided morning Qi Gong flow — 5-7 minutes of slow, intentional movement.
@@ -14,12 +15,12 @@ struct QiGongFlowView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let movements: [QiGongMovement] = [
-        QiGongMovement(name: "Lymphatic Bounce", cue: "Jump lightly up and down. Loose ankles, soft knees. Wake the lymphatic system.", duration: 45, icon: "figure.jumprope", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-lymphatic-bounce.mp4")),
-        QiGongMovement(name: "Sweep to the Sky", cue: "Hinge over, let the arms hang. Inhale, sweep them wide and up to the sky. Exhale, fold back down.", duration: 50, icon: "figure.arms.open", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-sky-sweep.mp4")),
-        QiGongMovement(name: "Trunk Twists", cue: "Feet planted, twist the trunk side to side. Let the arms follow loosely.", duration: 45, icon: "figure.flexibility", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-trunk-twists.mp4")),
-        QiGongMovement(name: "Golf Swings", cue: "Sweep both arms across the body like a slow golf swing. Rotate through the hips. Both directions.", duration: 45, icon: "figure.golf", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-golf-swings.mp4")),
-        QiGongMovement(name: "Shoulder Openers", cue: "Right arm rises as the left falls. Alternate in rhythm. Open through the shoulders.", duration: 45, icon: "figure.mixed.cardio", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-shoulder-openers.mp4")),
-        QiGongMovement(name: "Dead Arm Swings", cue: "Arms fully relaxed. Turn the body left and right, letting the arms whip and tap the shoulders.", duration: 45, icon: "figure.walk.motion", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-dead-arm-swings.mp4")),
+        QiGongMovement(name: "Lymphatic Bounce", cue: "Jump lightly up and down. Loose ankles, soft knees. Wake the lymphatic system.", duration: 45, icon: "figure.jumprope", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-lymphatic-bounce.mp4"), benefit: "Your lymphatic system has no pump — movement is the pump. Light bouncing drives lymph flow, flushes overnight stagnation, and switches the whole body on."),
+        QiGongMovement(name: "Sweep to the Sky", cue: "Hinge over, let the arms hang. Inhale, sweep them wide and up to the sky. Exhale, fold back down.", duration: 50, icon: "figure.arms.open", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-sky-sweep.mp4"), benefit: "Decompresses the spine after sleep and opens the breath. The full sweep wakes the posterior chain and floods the lungs with morning air."),
+        QiGongMovement(name: "Trunk Twists", cue: "Feet planted, twist the trunk side to side. Let the arms follow loosely.", duration: 45, icon: "figure.flexibility", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-trunk-twists.mp4"), benefit: "Restores rotation to the spine, wakes the obliques, and gently massages the digestive organs — mobility where modern life makes you rigid."),
+        QiGongMovement(name: "Golf Swings", cue: "Sweep both arms across the body like a slow golf swing. Rotate through the hips. Both directions.", duration: 45, icon: "figure.golf", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-golf-swings.mp4"), benefit: "Trains rotation through the hips instead of the lower back. Cross-body movement fires both brain hemispheres and builds usable, athletic mobility."),
+        QiGongMovement(name: "Shoulder Openers", cue: "Right arm rises as the left falls. Alternate in rhythm. Open through the shoulders.", duration: 45, icon: "figure.mixed.cardio", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-shoulder-openers.mp4"), benefit: "Undoes the forward slump of sleep and screens. Alternating reaches restore shoulder range and lift posture for the rest of the day."),
+        QiGongMovement(name: "Dead Arm Swings", cue: "Arms fully relaxed. Turn the body left and right, letting the arms whip and tap the shoulders.", duration: 45, icon: "figure.walk.motion", videoURL: URL(string: "https://www.wyldeself.com/morning-videos/qigong-dead-arm-swings.mp4"), benefit: "Fully relaxed arms teach the nervous system to release. Shakes out neck and shoulder tension and downshifts you into calm, ready energy."),
     ]
 
     enum Phase { case intro, active, complete }
@@ -103,10 +104,9 @@ struct QiGongFlowView: View {
     private var activeView: some View {
         ZStack {
             if let player = player {
-                VideoPlayer(player: player)
-                    .disabled(true)
+                FullBleedVideoPlayer(player: player)
                     .ignoresSafeArea()
-                    .overlay(Color.black.opacity(0.55))
+                    .overlay(Color.black.opacity(0.45))
             }
 
         VStack(spacing: 0) {
@@ -163,6 +163,16 @@ struct QiGongFlowView: View {
                 .padding(.horizontal, 32)
                 .padding(.top, 6)
                 .lineSpacing(3)
+
+            if !current.benefit.isEmpty {
+                Text(current.benefit)
+                    .font(.system(size: 12))
+                    .foregroundColor(WyldeStyles.Colors.sage)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 36)
+                    .padding(.top, 10)
+                    .lineSpacing(3)
+            }
 
             if currentIndex < movements.count - 1 {
                 Text("Next: \(movements[currentIndex + 1].name)")
@@ -277,5 +287,32 @@ struct QiGongFlowView: View {
         } else {
             phase = .complete
         }
+    }
+}
+
+
+// ════════════════════════════════════════════════════════════════════
+//  FullBleedVideoPlayer — AVPlayerLayer with resizeAspectFill so
+//  portrait clips fill the screen edge to edge (no letterboxing,
+//  no poster frame showing behind). Shared by movement screens.
+// ════════════════════════════════════════════════════════════════════
+
+struct FullBleedVideoPlayer: UIViewRepresentable {
+    let player: AVPlayer
+
+    final class PlayerView: UIView {
+        override static var layerClass: AnyClass { AVPlayerLayer.self }
+        var playerLayer: AVPlayerLayer { layer as! AVPlayerLayer }
+    }
+
+    func makeUIView(context: Context) -> PlayerView {
+        let view = PlayerView()
+        view.playerLayer.videoGravity = .resizeAspectFill
+        view.playerLayer.player = player
+        return view
+    }
+
+    func updateUIView(_ view: PlayerView, context: Context) {
+        view.playerLayer.player = player
     }
 }
