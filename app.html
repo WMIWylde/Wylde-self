@@ -5765,6 +5765,18 @@
     if (typeof maybePromptPush === 'function') setTimeout(maybePromptPush, 1500);
   };
 
+  // Badge ceremony — the cinematic overlay (levelup1.mp4) earns its keep.
+  // Gold is reserved for rewards; this is THE reward moment.
+  function showBadgeCeremony(badge) {
+    var t = document.getElementById('lu-title');
+    var st = document.getElementById('lu-subtitle');
+    var bd = document.getElementById('lu-body');
+    if (t) t.textContent = badge.name;
+    if (st) st.textContent = badge.desc || 'Earned.';
+    if (bd) bd.textContent = '+100 points';
+    showLevelUpVideo();
+  }
+
   function showLevelUpVideo() {
     var overlay = document.getElementById('level-up-overlay');
     var video = document.getElementById('lu-video');
@@ -7270,6 +7282,12 @@
         newlyEarned.push(b);
         if (sb && currentUser) {
           sb.from('badges').insert({ user_id: currentUser.id, badge_id: b.id, earned_at: new Date().toISOString() }).catch(function(){});
+          if (!silent) {
+            // Badge bonus: +100 points, written directly (awardXP would recurse)
+            state.xp = (state.xp || 0) + 100;
+            sb.from('points_ledger').insert({ delta: 100, reason: 'Badge: ' + b.name, source: 'web' }).then(function(){}, function(){});
+            sb.from('profiles').upsert({ id: currentUser.id, xp: state.xp, updated_at: new Date().toISOString() }, { onConflict: 'id' }).catch(function(){});
+          }
         }
       }
     });
@@ -7284,10 +7302,13 @@
     // Skipped during silent retro-credit so the user isn't celebrated for
     // achievements they already earned in past sessions.
     if (!silent) {
-      newlyEarned.slice(0, 3).forEach(function(b, i) {
+      if (newlyEarned.length > 0) {
+        showBadgeCeremony(newlyEarned[0]);
+      }
+      newlyEarned.slice(1, 3).forEach(function(b, i) {
         setTimeout(function() {
           showBadgeToast(b);
-        }, i * 700);
+        }, 5000 + i * 700);
       });
     }
     // Refresh the badge UI if it's currently visible

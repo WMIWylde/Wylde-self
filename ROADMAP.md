@@ -12,6 +12,11 @@ authoring, day-state machine, program picker, completion ceremony.
 - Levels as identity ranks (Wylde voice, not gamer levels) driven by lifetime points
 - Redemption codes wired to partner checkout / Decoda billing
 
+## iOS badge system parity
+Port WYLDE_BADGES definitions + stat gathering to iOS, with the same +100
+bonus and a native ceremony moment (video overlay or particle animation).
+Web badge system is the reference implementation.
+
 ## Automatic weekly re-periodization
 The "Adapt to my progress" flow, on a schedule (cron) with a "your program
 evolved" notification instead of a button.
