@@ -5,8 +5,53 @@ struct MainTabView: View {
     @State private var showSettingsDrawer = false
     @State private var showWalkthrough = !UserDefaults.standard.bool(forKey: "wylde_walkthrough_seen")
 
+    @State private var xpToast: (amount: Int, reason: String)? = nil
+    @State private var xpToastID = 0
+
     var body: some View {
         ZStack(alignment: .bottom) {
+            // XP earn toast — rises above everything, auto-dismisses
+            if let toast = xpToast {
+                VStack {
+                    Spacer()
+                    HStack(spacing: 8) {
+                        Text("+\(toast.amount)")
+                            .font(.system(size: 15, weight: .bold, design: .monospaced))
+                            .foregroundColor(WyldeStyles.Colors.bronze)
+                        Text(toast.reason)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(WyldeStyles.Colors.ink)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(Theme.cardSurface)
+                    .overlay(Capsule().stroke(WyldeStyles.Colors.bronze.opacity(0.35), lineWidth: 1))
+                    .clipShape(Capsule())
+                    .shadow(color: .black.opacity(0.18), radius: 12, y: 4)
+                    .padding(.bottom, 96)
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity).combined(with: .scale(scale: 0.9)))
+                .zIndex(50)
+                .allowsHitTesting(false)
+            }
+
+            Color.clear
+                .frame(width: 0, height: 0)
+                .onReceive(NotificationCenter.default.publisher(for: .wyldeXPAwarded)) { note in
+                    guard let amount = note.userInfo?["amount"] as? Int,
+                          let reason = note.userInfo?["reason"] as? String else { return }
+                    xpToastID += 1
+                    let myID = xpToastID
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                        xpToast = (amount, reason)
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.4) {
+                        if xpToastID == myID {
+                            withAnimation(.easeOut(duration: 0.3)) { xpToast = nil }
+                        }
+                    }
+                }
+
             // All 4 tab views stay mounted simultaneously. We toggle which
             // one is visible/interactive so WKWebViews don't reload, local
             // @State doesn't reset, and scroll positions are preserved when
