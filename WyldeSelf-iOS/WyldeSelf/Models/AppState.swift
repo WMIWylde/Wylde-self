@@ -54,6 +54,7 @@ class AppState: ObservableObject {
     @Published var onboardingComplete: Bool = false                  { didSet { defaults.set(onboardingComplete, forKey: "wylde_onboarded") } }
     @Published var ageRange: String = ""                             { didSet { guard !isLoading else { return }; secure.set(ageRange, forKey: "wylde_age") } }
     @Published var fitnessLevel: String = ""                         { didSet { defaults.set(fitnessLevel, forKey: "wylde_level") } }
+    @Published var trainingStyle: String = ""                        { didSet { defaults.set(trainingStyle, forKey: "wylde_training_style") } }
     @Published var trainingDays: String = ""                         { didSet { defaults.set(trainingDays, forKey: "wylde_days") } }
     @Published var equipment: String = ""                            { didSet { defaults.set(equipment, forKey: "wylde_equipment") } }
     @Published var gymAccess: String = ""                            { didSet { defaults.set(gymAccess, forKey: "wylde_gym_access") } }
@@ -294,6 +295,7 @@ class AppState: ObservableObject {
         onboardingComplete = defaults.bool(forKey: "wylde_onboarded")
         ageRange = secure.get(forKey: "wylde_age") ?? defaults.string(forKey: "wylde_age") ?? ""
         fitnessLevel = defaults.string(forKey: "wylde_level") ?? ""
+        trainingStyle = defaults.string(forKey: "wylde_training_style") ?? ""
         trainingDays = defaults.string(forKey: "wylde_days") ?? ""
         equipment = defaults.string(forKey: "wylde_equipment") ?? ""
         gymAccess = defaults.string(forKey: "wylde_gym_access") ?? ""

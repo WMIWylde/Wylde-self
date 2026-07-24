@@ -53,6 +53,30 @@ struct ProgramView: View {
                                 Text("\(program.days.count)-day split")
                                     .font(.system(size: 13))
                                     .foregroundColor(Theme.secondaryText)
+
+                                // Evolve the program from actual logged training
+                                Button {
+                                    Task { await service.adaptProgram(appState: appState) }
+                                } label: {
+                                    HStack(spacing: 6) {
+                                        if service.isGenerating {
+                                            ProgressView().scaleEffect(0.7)
+                                            Text("Adapting to your training…")
+                                        } else {
+                                            Image(systemName: "arrow.triangle.2.circlepath")
+                                                .font(.system(size: 11, weight: .semibold))
+                                            Text("Adapt to my progress")
+                                        }
+                                    }
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundColor(WyldeStyles.Colors.sage)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(WyldeStyles.Colors.sage.opacity(0.10))
+                                    .clipShape(Capsule())
+                                }
+                                .disabled(service.isGenerating)
+                                .padding(.top, 6)
                             }
                             .padding(.top, 20)
 

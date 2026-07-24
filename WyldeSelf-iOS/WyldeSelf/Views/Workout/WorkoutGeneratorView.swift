@@ -69,6 +69,32 @@ struct WorkoutGeneratorView: View {
                                 action: { showDescribeWorkout = true }
                             )
 
+                            // Training style — shapes the AI program's entire structure
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("TRAINING STYLE")
+                                    .font(.system(size: 10, weight: .semibold))
+                                    .tracking(2)
+                                    .foregroundColor(WyldeStyles.Colors.stone)
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 8) {
+                                        ForEach(["Strength", "Hypertrophy", "Kettlebell & Dynamic", "HIIT", "Longevity"], id: \.self) { style in
+                                            Button {
+                                                appState.trainingStyle = (appState.trainingStyle == style) ? "" : style
+                                            } label: {
+                                                Text(style)
+                                                    .font(.system(size: 12, weight: .medium))
+                                                    .foregroundColor(appState.trainingStyle == style ? WyldeStyles.Colors.paper : WyldeStyles.Colors.ink)
+                                                    .padding(.horizontal, 14)
+                                                    .padding(.vertical, 8)
+                                                    .background(appState.trainingStyle == style ? WyldeStyles.Colors.ink : WyldeStyles.Colors.bone)
+                                                    .clipShape(Capsule())
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            .padding(.vertical, 4)
+
                             programOption(
                                 icon: "sparkles",
                                 title: "AI-Built Program",

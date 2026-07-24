@@ -5365,6 +5365,12 @@
 
   // Calculate protocol day number
   function mpDayNumber(data) {
+    // Unified day counter (2026-07-23): the ONE number a user lives by is the
+    // program day (hero's "Day X of 84"). The old per-card days-since-start
+    // counter drifted from it and read like a bug.
+    if (typeof ovPhase !== 'undefined' && ovPhase && ovPhase.currentDay > 0) {
+      return ovPhase.currentDay;
+    }
     if (!data || !data.startDate) return 1;
     var start = new Date(data.startDate);
     var now = new Date(mpGetToday());

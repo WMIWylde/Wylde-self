@@ -170,6 +170,8 @@ final class WorkoutService: ObservableObject {
         - If no cardio machines listed: use running, jump rope, high knees, jumping jacks, bear crawls for conditioning
         - Do NOT suggest exercises that require equipment the client does not have
 
+        \(styleBlock(appState.trainingStyle))
+
         SESSION REQUIREMENTS (non-negotiable):
         - Every training day: 5-7 working exercises PLUS a warmup entry and a conditioning finisher
         - Sessions must fill 50-65 minutes of training time
@@ -185,6 +187,8 @@ final class WorkoutService: ObservableObject {
         - Include a posterior chain focus day or emphasis
         - Vary cardio: don't use treadmill every day — rotate rowing, cycling, stairmaster, jump rope, sled push, farmer's walks, battle ropes
         - For \(level) level: \(level == "beginner" ? "focus on movement patterns and form, use machines where helpful" : level == "advanced" ? "include supersets, drop sets, tempo work, and advanced variations" : "balance compound strength with targeted hypertrophy work")
+
+        \(adaptationContext ?? "")
 
         GOAL-SPECIFIC ADJUSTMENTS:
         \(goals.contains("Burn fat") ? "- Higher volume, shorter rest (45-60s), include HIIT finishers" : "")
@@ -440,6 +444,62 @@ final class WorkoutService: ObservableObject {
 
         return WorkoutProgram(days: buildDaysFromTemplates(templates), generatedAt: Date(), goal: goal)
     }
+
+    // MARK: - Training style
+
+    private func styleBlock(_ style: String) -> String {
+        switch style {
+        case "Strength":
+            return """
+            TRAINING STYLE: STRENGTH. Structure the entire program around the big lifts (squat, deadlift, press, row variations) in the 3-6 rep range with long rests (2-3 min). Accessories support the main lifts. Minimal cardio — short sled/carry finishers only.
+            """
+        case "Hypertrophy":
+            return """
+            TRAINING STYLE: HYPERTROPHY. 8-15 rep range, 3-4 sets, moderate rests (60-90s), high weekly volume per muscle group, intensity techniques (supersets, drop sets) for intermediate+. Split by muscle groups.
+            """
+        case "Kettlebell & Dynamic":
+            return """
+            TRAINING STYLE: KETTLEBELL & DYNAMIC. Build around kettlebell swings, cleans, presses, snatches, Turkish get-ups, carries, and flowing complexes. Full-body sessions, athletic movement patterns, minimal machines even if available.
+            """
+        case "HIIT":
+            return """
+            TRAINING STYLE: HIIT. Interval-based sessions: work/rest circuits (30-45s on, 15-30s off), EMOMs, AMRAPs. Compound movements at high heart rate, 20-35 min of intense work per session. Strength work is secondary and explosive.
+            """
+        case "Longevity":
+            return """
+            TRAINING STYLE: LONGEVITY / HEALTHY AGING. Prioritize: zone 2 cardio, loaded carries, grip work, single-leg stability, hinge patterns, mobility blocks, and moderate full-body strength (8-12 reps, no grinding maximal sets). Joint-friendly variations. Balance and power preservation (light explosive work) matter more than PRs.
+            """
+        default:
+            return ""
+        }
+    }
+
+    // MARK: - Adapt from history
+
+    /// Regenerate the program using the user's ACTUAL logged training from
+    /// Supabase — deload what's stalled, progress what's easy, keep what works.
+    @MainActor
+    func adaptProgram(appState: AppState) async {
+        await WorkoutLogSync.shared.refreshHistory(force: true)
+        let history = WorkoutLogSync.shared.lastSessions
+        var lines: [String] = []
+        for (exercise, sets) in history.prefix(20) {
+            let done = sets.filter { $0.completed && $0.weight > 0 }
+            guard !done.isEmpty else { continue }
+            let w = done.map(\.weight).max() ?? 0
+            let reps = done.map(\.reps)
+            lines.append("- \(exercise): last session \(done.count) sets at \(Int(w))lb, reps \(reps.map(String.init).joined(separator: "/"))")
+        }
+        adaptationContext = lines.isEmpty ? nil : """
+
+        RECENT TRAINING HISTORY (adapt around this — progress lifts where all target reps were hit, hold or deload lifts with missed reps, swap exercises that appear stalled across sessions, and keep exercises the client is clearly progressing on):
+        \(lines.joined(separator: "\n"))
+        """
+        await generateProgram(appState: appState)
+        adaptationContext = nil
+    }
+
+    private var adaptationContext: String?
 
     // MARK: - Set Logging
 
