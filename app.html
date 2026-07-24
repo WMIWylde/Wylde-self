@@ -3988,6 +3988,10 @@
         <span class="drawer-link-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
         <span>Rebuild My Program</span>
       </button>
+      <button class="drawer-link" onclick="closeSettingsDrawer();openRewardsModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="6"/><path d="M15.5 13l2 8-5.5-3-5.5 3 2-8"/></svg>
+        <span>Rewards</span>
+      </button>
       <button class="drawer-link" onclick="closeSettingsDrawer();openFeedbackModal()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
         <span>Send Feedback</span>
@@ -7232,6 +7236,8 @@
     var sb = _getSupabase();
     if (sb && currentUser) {
       sb.from('profiles').upsert({ id: currentUser.id, xp: state.xp, updated_at: new Date().toISOString() }, { onConflict: 'id' }).catch(function(){});
+      // Points ledger — the redeemable economy (same value as XP)
+      sb.from('points_ledger').insert({ delta: amount, reason: reason || 'Logged', source: 'web' }).then(function(){}, function(){});
     }
   }
 
@@ -8608,6 +8614,75 @@
       toggle();
     });
   })();
+
+  // ═══ Rewards modal (2026-07-23) ═══
+  function openRewardsModal() {
+    var el = document.getElementById('rewardsModal');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'rewardsModal';
+      el.style.cssText = 'position:fixed;inset:0;z-index:600;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);padding:20px;';
+      el.innerHTML =
+        '<div style="background:var(--bg-surface);border-radius:20px;max-width:460px;width:100%;max-height:82vh;overflow-y:auto;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.5);">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+            '<div style="font-size:16px;font-weight:600;color:var(--text);">Rewards</div>' +
+            '<button onclick="document.getElementById(\'rewardsModal\').style.display=\'none\'" style="background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;">&times;</button>' +
+          '</div>' +
+          '<div id="rewardsBalance" style="font-size:13px;color:var(--text2);margin-bottom:16px;">Loading&hellip;</div>' +
+          '<div id="rewardsList"></div>' +
+        '</div>';
+      document.body.appendChild(el);
+    }
+    el.style.display = 'flex';
+    loadRewards();
+  }
+  function loadRewards() {
+    var listEl = document.getElementById('rewardsList');
+    var balEl = document.getElementById('rewardsBalance');
+    _authedFetch('/api/consumer/rewards').then(function(r) { return r.json(); }).then(function(data) {
+      if (balEl) balEl.innerHTML = '<span style="font-size:22px;font-weight:700;color:var(--gold);">' + (data.balance || 0) + '</span> points available &middot; ' + (data.lifetime || 0) + ' earned all-time';
+      if (!listEl) return;
+      var html = (data.rewards || []).map(function(rw) {
+        var afford = (data.balance || 0) >= rw.cost;
+        return '<div style="border:1px solid var(--border2);border-radius:14px;padding:14px;margin-bottom:10px;">' +
+          '<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;">' +
+            '<div><div style="font-size:14px;font-weight:600;color:var(--text);">' + rw.title + '</div>' +
+            '<div style="font-size:12px;color:var(--text2);margin-top:2px;">' + (rw.description || '') + '</div></div>' +
+            '<button onclick="redeemReward(\'' + rw.id + '\')" ' + (afford ? '' : 'disabled') + ' style="flex-shrink:0;padding:8px 14px;border-radius:18px;border:none;background:' + (afford ? 'var(--text)' : 'var(--bg-soft)') + ';color:' + (afford ? 'var(--bg)' : 'var(--text3)') + ';font-size:12px;font-weight:600;cursor:' + (afford ? 'pointer' : 'default') + ';">' + rw.cost + ' pts</button>' +
+          '</div></div>';
+      }).join('');
+      var codes = (data.redemptions || []).filter(function(x) { return x.status === 'issued'; });
+      if (codes.length) {
+        html += '<div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin:14px 0 8px;">Your codes</div>' +
+          codes.map(function(c) {
+            return '<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text);padding:8px 2px;border-bottom:1px solid var(--border);"><span style="font-family:monospace;">' + c.code + '</span><span style="color:var(--text2);">' + new Date(c.created_at).toLocaleDateString() + '</span></div>';
+          }).join('');
+      }
+      listEl.innerHTML = html || '<div style="font-size:13px;color:var(--text2);">No rewards available yet.</div>';
+    }).catch(function() {
+      if (balEl) balEl.textContent = 'Could not load rewards.';
+    });
+  }
+  function redeemReward(id) {
+    _authedFetch('/api/consumer/redeem', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reward_id: id }) })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.redeemed) {
+          alert('Redeemed! Your code: ' + data.code);
+          loadRewards();
+        } else {
+          alert(data.error || 'Redemption failed');
+        }
+      });
+  }
+  function _authedFetch(url, opts) {
+    opts = opts || {};
+    var key = Object.keys(localStorage).find(function(k) { return k.indexOf('auth-token') !== -1; });
+    var tok = null;
+    try { tok = JSON.parse(localStorage.getItem(key)).access_token; } catch(e) {}
+    opts.headers = Object.assign({}, opts.headers, tok ? { Authorization: 'Bearer ' + tok } : {});
+    return fetch(url, opts);
+  }
 
   // ═══ Beta feedback modal (2026-07-21) ═══
   function openFeedbackModal() {

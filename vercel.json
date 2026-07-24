@@ -148,6 +148,12 @@
     },
     "api/decoda/webhook.js": {
       "maxDuration": 10
+    },
+    "api/consumer/rewards.js": {
+      "maxDuration": 10
+    },
+    "api/consumer/redeem.js": {
+      "maxDuration": 10
     }
   },
   "crons": [

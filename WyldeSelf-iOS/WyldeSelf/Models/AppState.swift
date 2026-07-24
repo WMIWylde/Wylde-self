@@ -441,6 +441,14 @@ class AppState: ObservableObject {
     func awardXP(_ amount: Int, reason: String) {
         xp += amount  // didSet writes to defaults automatically
         HapticManager.shared.impact(.light)
+        // Points ledger — redeemable economy, synced cross-platform
+        struct LedgerRow: Encodable { let delta: Int; let reason: String; let source: String }
+        Task {
+            try? await SupabaseService.shared
+                .from("points_ledger")
+                .insert(LedgerRow(delta: amount, reason: reason, source: "ios"))
+                .execute()
+        }
     }
 }
 
