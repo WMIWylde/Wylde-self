@@ -62,6 +62,12 @@ final class MacroTrackerService: ObservableObject {
     // MARK: - Add Meal
 
     func addMeal(name: String, analysis: FoodAnalysis, mealType: MealType) {
+        // Reward the log itself — adherence economy parity with web
+        struct LedgerRow: Encodable { let delta: Int; let reason: String; let source: String }
+        Task {
+            try? await SupabaseService.shared.from("points_ledger")
+                .insert(LedgerRow(delta: 10, reason: "Food logged", source: "ios")).execute()
+        }
         let entry = MealEntry(
             name: name.isEmpty ? analysis.description : name,
             mealType: mealType,

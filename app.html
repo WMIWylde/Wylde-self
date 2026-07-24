@@ -7908,6 +7908,12 @@
 
   // ═══ WORKOUT LOGGING ═══
   function logWorkoutSession(sessionName, durationMin) {
+    // Core action of the product — reward it (once per day)
+    var todayKey = 'wylde_workout_xp_' + new Date().toISOString().slice(0, 10);
+    if (!localStorage.getItem(todayKey)) {
+      localStorage.setItem(todayKey, '1');
+      if (typeof awardXP === 'function') awardXP(40, 'Workout completed');
+    }
     var sb = _getSupabase();
     if (!sb || !currentUser) return;
     sb.from('workout_sessions').insert({

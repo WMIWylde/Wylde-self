@@ -102,7 +102,10 @@ class AppState: ObservableObject {
     @Published var dailyWalkCompleted: Bool = false                 { didSet { defaults.set(dailyWalkCompleted, forKey: dayKey("wylde_walk_done")) } }
 
     // Today — daily state, scoped by day-of-year so it auto-resets at midnight
-    @Published var workoutCompleted: Bool = false                   { didSet { defaults.set(workoutCompleted, forKey: dayKey("wylde_workout_done")) } }
+    @Published var workoutCompleted: Bool = false                   { didSet {
+        defaults.set(workoutCompleted, forKey: dayKey("wylde_workout_done"))
+        if workoutCompleted && !oldValue && !isLoading { awardXP(40, reason: "Workout completed") }
+    } }
     @Published var proteinLogged: Int = 0                           { didSet { defaults.set(proteinLogged, forKey: dayKey("wylde_protein_logged")) } }
     @Published var proteinGoal: Int = 180                           { didSet { defaults.set(proteinGoal, forKey: "wylde_protein_goal") } }
     @Published var caloriesLogged: Int = 0                          { didSet { defaults.set(caloriesLogged, forKey: dayKey("wylde_calories_logged")) } }
@@ -112,7 +115,10 @@ class AppState: ObservableObject {
     @Published var fatLogged: Int = 0                                { didSet { defaults.set(fatLogged, forKey: dayKey("wylde_fat_logged")) } }
     @Published var fatGoal: Int = 80                                 { didSet { defaults.set(fatGoal, forKey: "wylde_fat_goal") } }
     @Published var caloriesBurned: Int = 0                           { didSet { defaults.set(caloriesBurned, forKey: dayKey("wylde_calories_burned")) } }
-    @Published var waterLogged: Int = 0                              { didSet { defaults.set(waterLogged, forKey: dayKey("wylde_water_logged")) } }
+    @Published var waterLogged: Int = 0                              { didSet {
+        defaults.set(waterLogged, forKey: dayKey("wylde_water_logged"))
+        if !isLoading && oldValue < waterGoal && waterLogged >= waterGoal { awardXP(25, reason: "Hydration goal hit") }
+    } }
     @Published var waterGoal: Int = 8                                { didSet { defaults.set(waterGoal, forKey: "wylde_water_goal") } }
     @Published var eveningReflectionDone: Bool = false               { didSet { defaults.set(eveningReflectionDone, forKey: dayKey("wylde_reflection_done")) } }
 
