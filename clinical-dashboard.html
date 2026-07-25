@@ -315,6 +315,11 @@ async function confirmSignUp() {
   const { data, error } = await sb.auth.signUp({ email, password: pw });
   btn.disabled = false; btn.textContent = 'Confirm & Create Account';
   if (error) { errEl.textContent = escapeHTML(error.message); errEl.classList.remove('hidden'); return; }
+  if (data.user && !data.session) {
+    errEl.textContent = 'Check your email to confirm your account, then sign in.';
+    errEl.classList.remove('hidden');
+    return;
+  }
   if (data.user) { currentUser = data.user; initDashboard(); }
 }
 async function signOut() { await sb.auth.signOut(); location.reload(); }
@@ -342,6 +347,18 @@ async function initDashboard() {
   }
 
   el('dashboardScreen').classList.remove('hidden');
+  // Pending clinics see the dashboard but writes are gated server-side —
+  // say so instead of letting every action fail mysteriously.
+  if (clinicSettings && clinicSettings.status && clinicSettings.status !== 'approved') {
+    var banner = document.createElement('div');
+    banner.id = 'pendingBanner';
+    banner.style.cssText = 'background:#FBF3E4;border:1px solid #E3CFA4;color:#8a6d3b;padding:12px 18px;border-radius:12px;margin:12px 16px;font-size:13px;';
+    banner.textContent = clinicSettings.status === 'pending'
+      ? 'Your clinic is pending approval. You can explore the dashboard, but saving products, notes, and protocols unlocks once Wylde approves your account (usually same-day).'
+      : 'Your clinic account is ' + clinicSettings.status + '. Contact Wylde support.';
+    var dash = el('dashboardScreen');
+    if (dash && !document.getElementById('pendingBanner')) dash.prepend(banner);
+  }
   el('sidebarName').textContent = escapeHTML(clinicSettings.clinic_name || name);
   el('sidebarAvatar').textContent = escapeHTML((clinicSettings.clinic_name || name).substring(0,2).toUpperCase());
   loadPatients();
@@ -691,6 +708,10 @@ async function loadPatientNotes(patientId) {
   if (resp.ok) {
     const { notes } = await resp.json();
     notesEl.innerHTML = notes.length ? notes.map(n => '<div class="py-2 border-b border-line last:border-0"><div class="text-sm text-ink">' + escapeHTML(n.content) + '</div><div class="text-[10px] text-ink3 mt-1">' + fmtDate(n.created_at) + ' &middot; ' + escapeHTML(n.note_type) + '</div></div>').join('') : '<div class="text-xs text-ink3">No notes yet. Use "Add Note" to record observations.</div>';
+  } else {
+    let msg = 'Could not load notes';
+    try { msg = (await resp.json()).error || msg; } catch(_) {}
+    notesEl.innerHTML = '<div class="text-xs text-crit">' + escapeHTML(msg) + '</div>';
   }
 }
 
@@ -707,7 +728,7 @@ function renderLibrary(c) {
         '<div class="bg-white rounded-xl border border-line shadow-soft p-5 hover:shadow-card transition cursor-pointer" onclick="showEditProduct(\'' + escapeHTML(p.id) + '\')">' +
           '<div class="flex justify-between items-start mb-3">' +
             '<span class="text-lg">' + (cats[p.category] || '&#x1F4E6;') + '</span>' +
-            '<span class="text-[10px] px-2 py-0.5 rounded-full ' + (p.in_stock ? 'bg-successbg text-success' : 'bg-critbg text-crit') + '">' + (p.in_stock ? 'In Stock' : 'Out') + '</span>' +
+            '<span class="text-[10px] px-2 py-0.5 rounded-full ' + (p.is_in_stock !== false ? 'bg-successbg text-success' : 'bg-critbg text-crit') + '">' + (p.is_in_stock !== false ? 'In Stock' : 'Out') + '</span>' +
           '</div>' +
           '<h3 class="text-sm font-semibold mb-1">' + escapeHTML(p.name) + '</h3>' +
           '<p class="text-xs text-ink3 mb-2">' + escapeHTML(p.category) + ' &middot; ' + escapeHTML(p.method || '&mdash;') + '</p>' +
@@ -820,12 +841,32 @@ function showEditProduct(id) {
     </div>`);
 }
 
-async function deleteProduct(id) {
+
+// Checked mutation helper — every write surfaces success/failure honestly.
+async function apiWrite(path, method, bodyObj) {
   const token = (await sb.auth.getSession()).data?.session?.access_token;
-  await fetch(API + '/api/clinic/products', {
-    method: 'DELETE', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ id }),
-  });
+  try {
+    const resp = await fetch(API + path, {
+      method,
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify(bodyObj),
+    });
+    if (!resp.ok) {
+      let msg = 'Request failed';
+      try { msg = (await resp.json()).error || msg; } catch(_) {}
+      showToast(msg, 'error');
+      return null;
+    }
+    return await resp.json().catch(() => ({}));
+  } catch (e) {
+    showToast('Network error — check your connection', 'error');
+    return null;
+  }
+}
+
+async function deleteProduct(id) {
+  const ok = await apiWrite('/api/clinic/products', 'DELETE', { id });
+  if (!ok) return;
   closeModal(); await loadProducts(); render();
   showToast('Product removed', 'info');
 }
@@ -930,6 +971,12 @@ async function loadPatientMessages(patientId, relationshipId) {
     headers: { 'Authorization': 'Bearer ' + token }
   });
   const msgEl = el('patientMessages');
+  if (!resp.ok) {
+    let msg = 'Could not load messages';
+    try { msg = (await resp.json()).error || msg; } catch(_) {}
+    if (msgEl) msgEl.innerHTML = '<div class="text-xs text-crit">' + escapeHTML(msg) + '</div>';
+    return;
+  }
   if (resp.ok) {
     const { messages } = await resp.json();
     msgEl.innerHTML = messages.length ? messages.map(m => {
@@ -1037,12 +1084,8 @@ function renderReorders(c) {
 }
 
 async function updateReorder(id, status) {
-  const token = (await sb.auth.getSession()).data?.session?.access_token;
-  await fetch(API + '/api/clinic/reorders', {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ id, status }),
-  });
+  const ok = await apiWrite('/api/clinic/reorders', 'PUT', { id, status });
+  if (!ok) return;
   showToast('Reorder ' + status, 'success');
   renderReorders(el('content'));
 }
@@ -1293,16 +1336,21 @@ async function saveClinicTherapyProduct(therapyId) {
     clinic_notes: el('ctpNotes').value,
   };
 
-  const { error } = await sb.from('clinic_therapy_products').insert({
-    clinic_id: currentUser.id,
-    ...body,
-    active: true,
-    requires_consult: true,
+  // Route through the products API so it lands in the SAME library the
+  // dashboard displays (clinic_products), with the approval gate applied.
+  const ok = await apiWrite('/api/clinic/products', 'POST', {
+    name: body.product_name,
+    category: 'therapy',
+    description: (body.formulation ? body.formulation + ' ' : '') + (body.concentration || ''),
+    price: body.price,
+    price_unit: body.price_unit || 'per unit',
+    notes: body.clinic_notes,
   });
-
-  if (error) { btn.disabled = false; btn.textContent = 'Save'; showToast(escapeHTML(error.message), 'error'); return; }
+  btn.disabled = false; btn.textContent = 'Save';
+  if (!ok) return;
   closeModal();
-  showToast('Product added to your clinic!', 'success');
+  await loadProducts();
+  showToast('Product added to your library!', 'success');
 }
 
 // ─── AI Onboard ───
@@ -1626,28 +1674,20 @@ async function inviteTeamMember() {
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify({ email: el('tm_email').value, name: el('tm_name').value, role: el('tm_role').value }),
   });
-  if (resp.ok) { closeModal(); renderSettingsContent(); showToast('Invite sent!', 'success'); }
+  if (resp.ok) { closeModal(); renderSettingsContent(); showToast('Team member recorded. (Email invites are coming — share dashboard access manually for now.)', 'info'); }
   else { btn.disabled = false; btn.textContent = 'Send Invite'; showToast('Failed to invite member', 'error'); }
 }
 
 async function updateTeamRole(id, role) {
-  const token = (await sb.auth.getSession()).data?.session?.access_token;
-  await fetch(API + '/api/clinic/team', {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ id, role }),
-  });
+  const ok = await apiWrite('/api/clinic/team', 'PUT', { id, role });
+  if (!ok) { renderSettingsContent(); return; }
   showToast('Role updated', 'info');
 }
 
 async function removeTeamMember(id) {
   if (!confirm('Remove this team member?')) return;
-  const token = (await sb.auth.getSession()).data?.session?.access_token;
-  await fetch(API + '/api/clinic/team', {
-    method: 'DELETE',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ id }),
-  });
+  const ok = await apiWrite('/api/clinic/team', 'DELETE', { id });
+  if (!ok) return;
   renderSettingsContent();
   showToast('Team member removed', 'info');
 }
@@ -1695,13 +1735,10 @@ async function renderFeatureSettings(c) {
 }
 
 async function toggleFeature(key, enabled) {
-  const token = (await sb.auth.getSession()).data?.session?.access_token;
   const body = {}; body[key] = enabled;
-  await fetch(API + '/api/clinic/features', {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify(body),
-  });
+  const ok = await apiWrite('/api/clinic/features', 'PUT', body);
+  if (!ok) { renderSettingsContent(); return; }
+  showToast('Setting saved', 'info');
 }
 
 // ─── Communications ───
@@ -1779,24 +1816,36 @@ async function saveTemplate() {
 }
 
 async function quickCreateTemplate(name, category, body) {
-  const token = (await sb.auth.getSession()).data?.session?.access_token;
-  await fetch(API + '/api/clinic/templates', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ name, category, body }),
-  });
+  const ok = await apiWrite('/api/clinic/templates', 'POST', { name, category, body });
+  if (!ok) return;
   renderSettingsContent();
   showToast('Template created!', 'success');
 }
 
+function editTemplate(id) {
+  // Minimal inline edit: prompt-based (template modal is create-only)
+  (async () => {
+    const token = (await sb.auth.getSession()).data?.session?.access_token;
+    const resp = await fetch(API + '/api/clinic/templates', { headers: { 'Authorization': 'Bearer ' + token } });
+    if (!resp.ok) { showToast('Could not load template', 'error'); return; }
+    const { templates } = await resp.json();
+    const t = (templates || []).find(x => x.id === id);
+    if (!t) { showToast('Template not found', 'error'); return; }
+    const name = prompt('Template name:', t.name);
+    if (name === null) return;
+    const body = prompt('Template text:', t.body);
+    if (body === null) return;
+    const ok = await apiWrite('/api/clinic/templates', 'PUT', { id, name, body });
+    if (!ok) return;
+    renderSettingsContent();
+    showToast('Template updated', 'success');
+  })();
+}
+
 async function deleteTemplate(id) {
   if (!confirm('Delete this template?')) return;
-  const token = (await sb.auth.getSession()).data?.session?.access_token;
-  await fetch(API + '/api/clinic/templates', {
-    method: 'DELETE',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ id }),
-  });
+  const ok = await apiWrite('/api/clinic/templates', 'DELETE', { id });
+  if (!ok) return;
   renderSettingsContent();
   showToast('Template deleted', 'info');
 }

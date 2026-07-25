@@ -46,7 +46,7 @@ module.exports = async function handler(req, res) {
         method: body.method,
         price: body.price,
         price_unit: body.price_unit || 'per unit',
-        in_stock: body.in_stock !== false,
+        is_in_stock: body.in_stock !== false && body.is_in_stock !== false,
         notes: body.notes,
       })
       .select()

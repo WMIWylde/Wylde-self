@@ -1,13 +1,14 @@
 const { applyCors, rateLimit, clientIp } = require('../../lib/security');
-const { getSupabaseAdmin, requireClinicAccess } = require('../../lib/supabase-admin');
+const { getSupabaseAdmin, getUserFromRequest } = require('../../lib/supabase-admin');
 
 module.exports = async function handler(req, res) {
   if (applyCors(req, res, { methods: 'POST, OPTIONS' })) return;
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const auth = await requireClinicAccess(req, res);
-  if (!auth) return;
-  const { user } = auth;
+  // Onboarding must work for PENDING clinics (it's part of signup) —
+  // writes are scoped to the caller's own clinic row, so this is safe.
+  const user = await getUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
   const rl = rateLimit({ key: 'clinic-onboard', ip: clientIp(req), limit: 3, windowMs: 60000 });
   if (!rl.ok) return res.status(429).json({ error: 'Rate limit exceeded' });
@@ -56,7 +57,6 @@ module.exports = async function handler(req, res) {
       await supabase.from('clinic_settings').upsert({
         clinician_id: user.id,
         clinic_name: parsed.clinic_name,
-        branding: parsed.branding || {},
       }, { onConflict: 'clinician_id' });
     }
 
@@ -74,7 +74,7 @@ module.exports = async function handler(req, res) {
           method: p.method || p.administration || null,
           price: p.price ? parseFloat(p.price) : null,
           price_unit: p.price_unit || 'per unit',
-          in_stock: true,
+          is_in_stock: true,
           is_active: true,
         });
         if (!error) productsAdded++;

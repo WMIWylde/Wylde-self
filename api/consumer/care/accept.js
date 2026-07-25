@@ -43,12 +43,20 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Cannot accept your own invite code' });
   }
 
-  // Create the care relationship
+  // Create the care relationship (with clinic name so the patient
+  // sees who they're linked to)
+  const { data: clinicRow } = await supabase
+    .from('clinic_settings')
+    .select('clinic_name')
+    .eq('clinician_id', user.id)
+    .maybeSingle();
+
   const { error: relErr } = await supabase
     .from('care_relationships')
     .upsert({
       patient_id: invite.user_id,
       clinician_id: user.id,
+      clinic_name: (clinicRow && clinicRow.clinic_name) || null,
       status: 'active',
       linked_at: new Date().toISOString(),
     }, { onConflict: 'patient_id,clinician_id' });

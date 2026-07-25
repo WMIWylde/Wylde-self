@@ -138,7 +138,7 @@ CREATE TABLE IF NOT EXISTS clinic_products (
   method TEXT,
   price DECIMAL(10,2),
   price_unit TEXT DEFAULT 'per unit',
-  available BOOLEAN DEFAULT true,
+  is_in_stock BOOLEAN DEFAULT true,
   image_url TEXT,
   notes TEXT,
   sort_order INT DEFAULT 0,
@@ -333,7 +333,7 @@ CREATE TABLE IF NOT EXISTS clinic_settings (
   approved_at TIMESTAMPTZ,
   approved_by UUID,
   notification_prefs JSONB DEFAULT '{"email_new_patient": true, "email_checkin": false, "email_reorder": true}'::jsonb,
-  status TEXT NOT NULL DEFAULT 'approved',
+  status TEXT NOT NULL DEFAULT 'pending',
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
