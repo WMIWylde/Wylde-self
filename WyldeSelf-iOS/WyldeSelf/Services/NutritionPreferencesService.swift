@@ -32,7 +32,7 @@ final class NutritionPreferencesService: ObservableObject {
     // MARK: - Supabase Persistence
 
     func loadFromSupabase() async {
-        guard let uid = await AuthService.shared.userID else { return }
+        guard let uid = AuthService.shared.userID else { return }
 
         do {
             let row: SupabaseRow = try await SupabaseService.shared
@@ -62,7 +62,7 @@ final class NutritionPreferencesService: ObservableObject {
         preferences.updatedAt = Date()
         saveLocal()
 
-        guard let uid = await AuthService.shared.userID else { return }
+        guard let uid = AuthService.shared.userID else { return }
 
         do {
             let prefsData: Data = try JSONEncoder().encode(preferences)

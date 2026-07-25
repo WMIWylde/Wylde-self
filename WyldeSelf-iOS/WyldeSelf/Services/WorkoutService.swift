@@ -686,6 +686,130 @@ final class WorkoutService: ObservableObject {
         return try parseAIProgram(content, goal: description)
     }
 
+    // MARK: - Generate from Space Photo
+
+    func generateFromSpacePhoto(_ image: UIImage, appState: AppState) async {
+        isGenerating = true
+        generationError = nil
+
+        do {
+            let program = try await withThrowingTaskGroup(of: WorkoutProgram.self) { group in
+                group.addTask {
+                    try await self.callAIForSpaceWorkout(image: image, appState: appState)
+                }
+                group.addTask {
+                    try await Task.sleep(nanoseconds: 90_000_000_000)
+                    throw WorkoutError.generationFailed
+                }
+                let result = try await group.next()!
+                group.cancelAll()
+                return result
+            }
+            self.program = program
+            saveProgram()
+        } catch {
+            #if DEBUG
+            print("[WorkoutService] Space scan failed: \(error.localizedDescription)")
+            #endif
+            generationError = "Couldn't generate your workout. Try again or take a clearer photo."
+        }
+
+        isGenerating = false
+    }
+
+    private func callAIForSpaceWorkout(image: UIImage, appState: AppState) async throws -> WorkoutProgram {
+        guard let url = URL(string: "https://www.wyldeself.com/api/openai") else {
+            throw WorkoutError.invalidURL
+        }
+
+        // Compress and encode image
+        guard let imageData = image.jpegData(compressionQuality: 0.5) else {
+            throw WorkoutError.generationFailed
+        }
+        let base64Image = imageData.base64EncodedString()
+
+        let level = appState.fitnessLevel.isEmpty ? "intermediate" : appState.fitnessLevel
+        let gender = appState.gender.isEmpty ? "unspecified" : appState.gender
+        let healthConcerns = appState.healthConcerns.isEmpty ? "None" : appState.healthConcerns.joined(separator: ", ")
+
+        let textPrompt = """
+        The user took a photo of the space and equipment they have available for today's workout.
+
+        Look at the image carefully. Identify:
+        1. The type of space (home, garage, park, hotel room, gym, outdoor, etc.)
+        2. Any visible equipment (dumbbells, bands, pull-up bar, bench, kettlebell, mat, etc.)
+        3. Approximate space constraints (small room, open area, etc.)
+
+        Build a single-session workout that:
+        - PRIORITIZES BODYWEIGHT EXERCISES (at least 60% of exercises should be bodyweight)
+        - Incorporates any visible equipment as supplementary
+        - Is realistic for the space shown
+        - Adapts to space constraints (e.g. no jumping in a small apartment)
+
+        CLIENT CONTEXT:
+        - Gender: \(gender)
+        - Fitness level: \(level)
+        - Health concerns: \(healthConcerns)
+
+        RULES:
+        - First exercise: "Dynamic Warmup", "8 min", warmup cue relevant to the space
+        - Last exercise: a bodyweight conditioning finisher, "8-12 min"
+        - Between warmup and finisher: 6-8 exercises with specific set × rep schemes
+        - At least 60% bodyweight movements (push-ups, squats, lunges, planks, burpees, mountain climbers, etc.)
+        - Use any visible equipment for 2-3 exercises max
+        - Use precise exercise names with form cues (10-20 words each)
+        - If health concerns conflict, substitute safer alternatives
+        - Name the focus based on what you see (e.g. "Hotel Room Full Body", "Garage Strength", "Park Bodyweight Circuit")
+
+        Return ONLY a valid JSON array with exactly ONE day:
+        [
+          {
+            "day": "Day 01",
+            "focus": "Descriptive focus based on the space",
+            "exercises": [
+              ["Dynamic Warmup", "8 min", "Warmup cue"],
+              ["Exercise Name", "4 × 10", "Coaching cue"],
+              ["Finisher Name", "8-12 min", "Intensity cue"]
+            ]
+          }
+        ]
+        """
+
+        let payload: [String: Any] = [
+            "model": "gpt-4o",
+            "max_tokens": 2048,
+            "messages": [
+                ["role": "system", "content": "You are a world-class strength and conditioning coach specializing in bodyweight training and adaptive workouts. The user is showing you their training space. Analyze the image and build a workout that works for that exact environment. Return ONLY valid JSON."],
+                ["role": "user", "content": [
+                    ["type": "text", "text": textPrompt],
+                    ["type": "image_url", "image_url": ["url": "data:image/jpeg;base64,\(base64Image)"]]
+                ]]
+            ],
+            "temperature": 0.7
+        ]
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let token = await AuthService.shared.accessToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        request.timeoutInterval = 90
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw WorkoutError.generationFailed
+        }
+
+        let aiResponse = try JSONDecoder().decode(AIResponse.self, from: data)
+        guard let content = aiResponse.choices?.first?.message?.content else {
+            throw WorkoutError.generationFailed
+        }
+
+        return try parseAIProgram(content, goal: "Space Scan Workout")
+    }
+
     func resetProgram() {
         program = nil
         UserDefaults.standard.removeObject(forKey: programKey)

@@ -15,6 +15,10 @@ struct ExerciseCard: View {
     @State private var weights: [Double] = []
     @State private var reps: [Double] = []
     @State private var showGuide = false
+    @State private var showExerciseInfo = false
+    @State private var matchedExercise: Exercise?
+    @State private var demoFrameIndex = 0
+    @State private var demoTimer: Timer?
     @State private var lastOverloadTip: String?
     @State private var showAlternatives = false
     @State private var alternatives: [String] = []
@@ -47,6 +51,19 @@ struct ExerciseCard: View {
                 Spacer()
                 if !exercise.isWarmup && !exercise.isCardio {
                     Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showExerciseInfo.toggle()
+                            if showExerciseInfo && matchedExercise == nil {
+                                lookupExercise()
+                            }
+                        }
+                    } label: {
+                        Image(systemName: showExerciseInfo ? "info.circle.fill" : "info.circle")
+                            .font(.system(size: 16))
+                            .foregroundColor(showExerciseInfo ? WyldeStyles.Colors.vitalBlue : Theme.tertiaryText)
+                    }
+
+                    Button {
                         showAlternatives.toggle()
                         if alternatives.isEmpty { loadAlternatives() }
                     } label: {
@@ -60,6 +77,12 @@ struct ExerciseCard: View {
                     .foregroundColor(WyldeStyles.Colors.bronze)
             }
             .padding(16)
+
+            // Exercise demo + instructions panel
+            if showExerciseInfo {
+                exerciseInfoPanel
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+            }
 
             // Alternatives panel
             if showAlternatives && !alternatives.isEmpty {
@@ -527,6 +550,134 @@ struct ExerciseCard: View {
         let target = progressionTarget
         weights = exercise.sets.map { $0.weight > 0 ? $0.weight : target.weight }
         reps = exercise.sets.map(\.reps).map(Double.init)
+    }
+
+    // MARK: - Exercise Info (Demo Images + Instructions)
+
+    private func lookupExercise() {
+        matchedExercise = ExerciseRepository.shared.first(matching: exercise.name)
+        if let matched = matchedExercise, matched.images.count > 1 {
+            startDemoTimer(frameCount: matched.images.count)
+        }
+    }
+
+    private var exerciseInfoPanel: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if let ex = matchedExercise {
+                // Demo images — animated frame toggle
+                if let gifUrl = ex.gifUrl, let url = URL(string: gifUrl) {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .success(let img):
+                            img.resizable().aspectRatio(contentMode: .fit)
+                        case .empty:
+                            ProgressView().tint(WyldeStyles.Colors.bronze)
+                                .frame(height: 160)
+                        default:
+                            exercisePlaceholder
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 200)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                } else if !ex.images.isEmpty {
+                    let url = URL(string: ex.images[demoFrameIndex % ex.images.count])
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .success(let img):
+                            img.resizable().aspectRatio(contentMode: .fit)
+                        case .empty:
+                            ProgressView().tint(WyldeStyles.Colors.bronze)
+                                .frame(height: 160)
+                        default:
+                            exercisePlaceholder
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 200)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+
+                // Muscles + equipment
+                HStack(spacing: 8) {
+                    if !ex.primaryMuscle.isEmpty {
+                        infoPill(ex.primaryMuscle.capitalized, color: WyldeStyles.Colors.vitalBlue)
+                    }
+                    infoPill(ex.displayEquipment, color: WyldeStyles.Colors.stone)
+                    infoPill(ex.displayLevel, color: WyldeStyles.Colors.bronze)
+                }
+
+                // Instructions
+                if !ex.instructions.isEmpty {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("HOW TO")
+                            .font(.system(size: 9, weight: .bold))
+                            .tracking(1.5)
+                            .foregroundColor(Theme.tertiaryText)
+
+                        ForEach(Array(ex.instructions.enumerated()), id: \.offset) { i, step in
+                            HStack(alignment: .top, spacing: 8) {
+                                Text("\(i + 1)")
+                                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                    .foregroundColor(WyldeStyles.Colors.bronze)
+                                    .frame(width: 16)
+                                Text(step)
+                                    .font(.system(size: 12))
+                                    .foregroundColor(Theme.secondaryText)
+                                    .lineSpacing(2)
+                            }
+                        }
+                    }
+                }
+            } else {
+                // No match found
+                HStack(spacing: 8) {
+                    Image(systemName: "figure.strengthtraining.traditional")
+                        .font(.system(size: 18))
+                        .foregroundColor(Theme.tertiaryText)
+                    Text("No demo available for this exercise")
+                        .font(.system(size: 12))
+                        .foregroundColor(Theme.secondaryText)
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 12)
+        .onDisappear {
+            demoTimer?.invalidate()
+            demoTimer = nil
+        }
+    }
+
+    private var exercisePlaceholder: some View {
+        VStack(spacing: 6) {
+            Image(systemName: "figure.strengthtraining.traditional")
+                .font(.system(size: 32))
+                .foregroundColor(Theme.tertiaryText)
+            Text("Demo unavailable")
+                .font(.system(size: 11))
+                .foregroundColor(Theme.tertiaryText)
+        }
+        .frame(height: 160)
+    }
+
+    private func infoPill(_ text: String, color: Color) -> some View {
+        Text(text)
+            .font(.system(size: 10, weight: .semibold))
+            .foregroundColor(color)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(color.opacity(0.1))
+            .clipShape(Capsule())
+    }
+
+    private func startDemoTimer(frameCount: Int) {
+        demoTimer?.invalidate()
+        demoTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            Task { @MainActor in
+                demoFrameIndex = (demoFrameIndex + 1) % frameCount
+            }
+        }
     }
 
     private func weightBinding(_ i: Int) -> Binding<Double> {

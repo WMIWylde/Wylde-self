@@ -7,6 +7,7 @@ struct WorkoutGeneratorView: View {
     @State private var showEquipmentPicker = false
     @State private var showWyldeWorkout = false
     @State private var showDescribeWorkout = false
+    @State private var showSpaceScan = false
     @State private var pendingAction: ((Set<String>) -> Void)?
 
     var body: some View {
@@ -67,6 +68,15 @@ struct WorkoutGeneratorView: View {
                                 subtitle: "Tell us what you want to do. We'll build it for you.",
                                 accent: WyldeStyles.Colors.gold,
                                 action: { showDescribeWorkout = true }
+                            )
+
+                            // Scan My Space — photo → AI generates bodyweight workout
+                            programOption(
+                                icon: "camera.viewfinder",
+                                title: "Scan My Space",
+                                subtitle: "Photo your space and equipment. We'll build a bodyweight-focused workout for it.",
+                                accent: WyldeStyles.Colors.vitalTeal,
+                                action: { showSpaceScan = true }
                             )
 
                             // Training style — shapes the AI program's entire structure
@@ -153,6 +163,10 @@ struct WorkoutGeneratorView: View {
         }
         .sheet(isPresented: $showDescribeWorkout) {
             DescribeWorkoutView()
+                .environmentObject(appState)
+        }
+        .sheet(isPresented: $showSpaceScan) {
+            SpaceScanWorkoutView()
                 .environmentObject(appState)
         }
         .sheet(isPresented: $showEquipmentPicker) {

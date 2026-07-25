@@ -198,9 +198,9 @@ struct CreateRecipeView: View {
                         }
 
                         // Save
-                        GoldButton(label: editingRecipe == nil ? "Save Recipe" : "Update Recipe", isDisabled: !isValid) {
+                        GoldButton(label: editingRecipe == nil ? "Save Recipe" : "Update Recipe", action: {
                             saveRecipe()
-                        }
+                        }, isDisabled: !isValid)
                         .padding(.top, 8)
 
                         if editingRecipe != nil {
