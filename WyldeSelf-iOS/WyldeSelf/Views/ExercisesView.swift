@@ -5,6 +5,7 @@ import SwiftUI
 // and shows a detail view (animated frames, muscles, instructions).
 
 struct ExercisesView: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var repo = ExerciseRepository.shared
 
     @State private var query = ""
@@ -24,30 +25,44 @@ struct ExercisesView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Theme.background.ignoresSafeArea()
+        ZStack {
+            Theme.background.ignoresSafeArea()
 
-                VStack(spacing: 0) {
-                    header
-                    categoryStrip
-                    searchBar
-                    filterRow
-                    countLabel
+            VStack(spacing: 0) {
+                header
+                categoryStrip
+                searchBar
+                filterRow
+                countLabel
 
-                    if let err = repo.loadError {
-                        errorState(err)
-                    } else if results.isEmpty {
-                        emptyState
-                    } else {
-                        list
-                    }
+                if let err = repo.loadError {
+                    errorState(err)
+                } else if results.isEmpty {
+                    emptyState
+                } else {
+                    list
                 }
             }
-            .padding(.bottom, 80) // clear the custom bottom tab bar
-            .sheet(item: $detailExercise) { ex in
-                ExerciseDetailView(exercise: ex)
+        }
+        .padding(.bottom, 80) // clear the custom bottom tab bar
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 14, weight: .semibold))
+                        Text("Back")
+                            .font(.system(size: 16))
+                    }
+                    .foregroundColor(Theme.sage)
+                }
             }
+        }
+        .sheet(item: $detailExercise) { ex in
+            ExerciseDetailView(exercise: ex)
         }
     }
 
