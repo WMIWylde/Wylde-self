@@ -38,6 +38,7 @@ struct YouView: View {
                     // HIDDEN for TestFlight — no purchase entry points until IAP is approved
                     // if !appState.isPro { founderCTA }
                     // if appState.isFoundingMember { founderBadge }
+                    badgeGallery
                     quickLinks
                     destructiveLinks
                     Spacer().frame(height: 96)  // breathing room above tab bar
@@ -252,6 +253,44 @@ struct YouView: View {
             }
         }
         .buttonStyle(.plain)
+    }
+
+    // ─────────────── Badge gallery ───────────────
+    private var badgeGallery: some View {
+        let earned = BadgeService.shared.earnedIds
+        return SurfaceCard {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack {
+                    SectionLabel("BADGES")
+                    Spacer()
+                    Text("\(earned.count) of \(BadgeService.badges.count)")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(WyldeStyles.Colors.stone)
+                }
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 4), spacing: 14) {
+                    ForEach(BadgeService.badges) { badge in
+                        let isEarned = earned.contains(badge.id)
+                        VStack(spacing: 5) {
+                            ZStack {
+                                Circle()
+                                    .fill(isEarned ? WyldeStyles.Colors.gold.opacity(0.12) : WyldeStyles.Colors.charcoal.opacity(0.05))
+                                    .frame(width: 46, height: 46)
+                                    .overlay(Circle().stroke(isEarned ? WyldeStyles.Colors.gold.opacity(0.4) : WyldeStyles.Colors.charcoal.opacity(0.08), lineWidth: 1))
+                                Image(systemName: badge.symbol)
+                                    .font(.system(size: 17, weight: .light))
+                                    .foregroundColor(isEarned ? WyldeStyles.Colors.gold : WyldeStyles.Colors.stone.opacity(0.45))
+                            }
+                            Text(badge.name)
+                                .font(.system(size: 8.5, weight: .medium))
+                                .foregroundColor(isEarned ? WyldeStyles.Colors.ink : WyldeStyles.Colors.stone.opacity(0.6))
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .frame(maxWidth: .infinity)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // ─────────────── Founder CTA / badge ───────────────

@@ -22,7 +22,25 @@ struct FoodAnalysis: Codable {
 @MainActor
 final class MacroTrackerService: ObservableObject {
     static let shared = MacroTrackerService()
-    private init() { loadTodaysMeals() }
+    private init() {
+        loadedDayKey = ""
+        loadTodaysMeals()
+        // Midnight rollover: the singleton lives across days when the app
+        // stays backgrounded overnight. Re-check the day whenever we come
+        // back to the foreground.
+        NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in self?.rolloverIfNeeded() }
+        }
+    }
+
+    private var loadedDayKey: String
+
+    /// If the calendar day changed since meals were loaded, reset to the
+    /// new day. Fixes: "today's breakfast added onto yesterday's totals".
+    func rolloverIfNeeded() {
+        guard dayKey() != loadedDayKey else { return }
+        loadTodaysMeals()
+    }
 
     @Published var todaysMeals: [MealEntry] = []
     @Published var isAnalyzing = false
@@ -62,6 +80,7 @@ final class MacroTrackerService: ObservableObject {
     // MARK: - Add Meal
 
     func addMeal(name: String, analysis: FoodAnalysis, mealType: MealType) {
+        rolloverIfNeeded()
         // Reward the log itself — adherence economy parity with web
         Task { @MainActor in BadgeService.shared.count(.meals) }
         struct LedgerRow: Encodable { let delta: Int; let reason: String; let source: String }
@@ -233,8 +252,12 @@ final class MacroTrackerService: ObservableObject {
     }
 
     private func loadTodaysMeals() {
+        loadedDayKey = dayKey()
         guard let data = UserDefaults.standard.data(forKey: dayKey()),
-              let saved = try? JSONDecoder().decode([MealEntry].self, from: data) else { return }
+              let saved = try? JSONDecoder().decode([MealEntry].self, from: data) else {
+            todaysMeals = []   // fresh day starts empty — never inherit yesterday
+            return
+        }
         todaysMeals = saved
     }
 

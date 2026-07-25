@@ -34,6 +34,8 @@ final class BadgeService: ObservableObject {
 
     @Published var pendingCeremony: WyldeBadge?
 
+    var earnedIds: Set<String> { earned }
+
     private let defaults = UserDefaults.standard
     private var earned: Set<String> {
         get { Set(defaults.stringArray(forKey: "wylde_badges_earned") ?? []) }
