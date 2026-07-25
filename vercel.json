@@ -154,6 +154,9 @@
     },
     "api/consumer/redeem.js": {
       "maxDuration": 10
+    },
+    "api/admin/clinics.js": {
+      "maxDuration": 10
     }
   },
   "crons": [

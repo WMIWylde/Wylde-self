@@ -515,6 +515,24 @@
           </div>
         </section>
 
+        <!-- ░ CLINIC APPROVALS ░ -->
+        <section class="surface p-6 md:p-8 reveal" id="clinicApprovals">
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+            <div class="flex items-center gap-3">
+              <h2 class="font-serif text-[24px] font-normal tracking-[-0.015em] text-ink">Clinic approvals</h2>
+              <span class="pill neutral" id="clinicPendingCount">–</span>
+            </div>
+            <button class="pill neutral" onclick="loadClinics()">Refresh</button>
+          </div>
+          <div id="clinicSecretRow" class="mb-4" style="display:none;">
+            <input id="clinicAdminSecret" type="password" placeholder="Admin secret"
+              style="width:100%;max-width:320px;padding:10px 14px;border:1px solid rgba(0,0,0,0.12);border-radius:10px;font-size:13px;"
+              onkeydown="if(event.key==='Enter'){sessionStorage.setItem('wylde_admin_secret',this.value);loadClinics();}" />
+            <div style="font-size:11px;color:#9A958B;margin-top:6px;">Enter the admin secret to manage clinics (stored for this tab only).</div>
+          </div>
+          <div id="clinicList" class="flex flex-col gap-3"></div>
+        </section>
+
       </div>
 
       <!-- RIGHT — Selected Patient Detail -->
@@ -984,6 +1002,55 @@
       setTimeout(() => { btn.textContent = original; }, 1800);
     });
   });
-  </script>
+  
+  // ═══ Clinic approvals (2026-07-25) ═══
+  function _adminSecret() { return sessionStorage.getItem('wylde_admin_secret') || ''; }
+  async function loadClinics() {
+    var secretRow = document.getElementById('clinicSecretRow');
+    var listEl = document.getElementById('clinicList');
+    var countEl = document.getElementById('clinicPendingCount');
+    if (!_adminSecret()) { if (secretRow) secretRow.style.display = 'block'; return; }
+    try {
+      var resp = await fetch('/api/admin/clinics', { headers: { 'X-Admin-Secret': _adminSecret() } });
+      if (resp.status === 401) {
+        sessionStorage.removeItem('wylde_admin_secret');
+        if (secretRow) secretRow.style.display = 'block';
+        if (listEl) listEl.innerHTML = '<div style="font-size:13px;color:#B86570;">Wrong secret — try again.</div>';
+        return;
+      }
+      var data = await resp.json();
+      if (secretRow) secretRow.style.display = 'none';
+      var clinics = data.clinics || [];
+      var pending = clinics.filter(function(c) { return c.status === 'pending'; });
+      if (countEl) countEl.textContent = pending.length + ' pending';
+      if (!listEl) return;
+      listEl.innerHTML = clinics.map(function(c) {
+        var badge = c.status === 'approved' ? '<span class="pill neutral"><span class="dot" style="background:#6E8A7C"></span>approved</span>'
+                  : c.status === 'pending'  ? '<span class="pill neutral"><span class="dot" style="background:#C7965E"></span>pending</span>'
+                  : '<span class="pill crit"><span class="dot"></span>' + c.status + '</span>';
+        var actions = c.status === 'pending'
+          ? '<button class="pill neutral" onclick="clinicAction(\'' + c.clinician_id + '\',\'approve\')">Approve</button>'
+          : c.status === 'approved'
+            ? '<button class="pill neutral" onclick="clinicAction(\'' + c.clinician_id + '\',\'suspend\')">Suspend</button>'
+            : '<button class="pill neutral" onclick="clinicAction(\'' + c.clinician_id + '\',\'approve\')">Re-approve</button>';
+        return '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid rgba(0,0,0,0.08);border-radius:12px;flex-wrap:wrap;">' +
+          '<div><div style="font-size:14px;font-weight:600;">' + (c.clinic_name || 'Unnamed clinic') + '</div>' +
+          '<div style="font-size:12px;color:#9A958B;">' + (c.email || c.clinician_id) + ' · signed up ' + new Date(c.created_at).toLocaleDateString() + '</div></div>' +
+          '<div style="display:flex;gap:8px;align-items:center;">' + badge + actions + '</div></div>';
+      }).join('') || '<div style="font-size:13px;color:#9A958B;">No clinic signups yet.</div>';
+    } catch (e) {
+      if (listEl) listEl.innerHTML = '<div style="font-size:13px;color:#B86570;">Could not load clinics.</div>';
+    }
+  }
+  async function clinicAction(id, action) {
+    await fetch('/api/admin/clinics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': _adminSecret() },
+      body: JSON.stringify({ clinician_id: id, action: action })
+    });
+    loadClinics();
+  }
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(loadClinics, 500); });
+</script>
 </body>
 </html>
