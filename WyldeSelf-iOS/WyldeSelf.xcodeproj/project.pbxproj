@@ -11,16 +11,11 @@
 		1618CBE42196225475D0C3C2 /* FoodScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69E107E33E7FC797119B57B0 /* FoodScannerView.swift */; };
 		18A966E3AE3C65C025FD7A33 /* ConsumerModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C62374029D5DB6ADFC8027 /* ConsumerModels.swift */; };
 		1E676D246DFD4BF057B505E7 /* LiftingCoach.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEE5CC471CD6CDF6FC9422 /* LiftingCoach.swift */; };
-		BT10001 /* BackgroundTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT10002 /* BackgroundTimer.swift */; };
-		MC10001 /* MacroCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = MC10002 /* MacroCalculator.swift */; };
 		226DB19A0A68CF671A037743 /* CoachService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843B810CFE4E4C6C4991366 /* CoachService.swift */; };
 		362218F195F2E3CB7D31A5D9 /* guided-meditation.m4a in Resources */ = {isa = PBXBuildFile; fileRef = FA5FDC2D6C2789D0FC463D9D /* guided-meditation.m4a */; };
 		3CEB2998F10B188B9BB71D31 /* FutureVisionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2B347630952E8C8CA2062F /* FutureVisionView.swift */; };
 		3EB94B73D90D13EDAD1851DA /* wyldeself-intro.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 8DDF27D0AD3DFF23AE7F9504 /* wyldeself-intro.mp4 */; };
 		497DB2330828280086695940 /* CheckinSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED05833A5593DE8DE9080106 /* CheckinSync.swift */; };
-		A1B2C3D4E5F6071800000006 /* BadgeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071800000005 /* BadgeService.swift */; };
-		A1B2C3D4E5F6071800000004 /* WorkoutLogSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071800000003 /* WorkoutLogSync.swift */; };
-		A1B2C3D4E5F6071800000002 /* ProgressionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071800000001 /* ProgressionEngine.swift */; };
 		49D46F732FF73CE20044000E /* WyldeSelfWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 49D46F532FF73CE00044000E /* WyldeSelfWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		49E9488F2FE1C51C007FD50D /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 49E9488E2FE1C51C007FD50D /* Supabase */; };
 		4A507556A9AAD62894AFF6F1 /* VisionCreationFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7439DFCD26DABDF020845D2E /* VisionCreationFlow.swift */; };
@@ -29,16 +24,15 @@
 		50A8509CE4E4A1BD4E070F0F /* WorkoutService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3623AA1C98F5FD93FB6739C /* WorkoutService.swift */; };
 		531AF1254D1C85952EB2BA0F /* ReorderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33C2E7A7E79E3612AD1F4F4A /* ReorderView.swift */; };
 		54ACB79B98CF6A41D49A035F /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF420548325F72C353160DF2 /* AuthService.swift */; };
+		55FE0DD464E6D63C92DB3A4D /* MealDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07233285A002323B6F127C2B /* MealDetailView.swift */; };
 		5A4AB3FE4181FCD75D3C619B /* CoachChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF4835D17241407BFFB21D4 /* CoachChatView.swift */; };
 		5A67B7DA36AD63031104A78B /* MealPlanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18F936666895C871BB1E34F /* MealPlanService.swift */; };
-		E237ECE16CE3C4978ACC66D7 /* NutritionPreferencesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFEEBCDCD70D00BD1C02905 /* NutritionPreferencesService.swift */; };
-		B70630E6D92C64BFAD6745ED /* RecipeBookService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D27E85A246F35FA083B065 /* RecipeBookService.swift */; };
 		5BC247E261A81C158532BC3D /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352956980DD2811651EE9D0A /* SignInView.swift */; };
 		5FCFEFDF3D6CC8A88FE046F0 /* ExerciseCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A054D6EC4B792386BE934C /* ExerciseCard.swift */; };
 		6059D435113646AA939D0277 /* ProtocolTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1AA03C12AC3C85B020A3B1 /* ProtocolTrackerService.swift */; };
 		65FBC8E7CEC068561E2C87FD /* MealPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AFFF42775D4153D41F2066 /* MealPlan.swift */; };
-		9F5B7B82D98FB4ADE9512585 /* NutritionPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5AC371656915BE3ACA369C /* NutritionPreferences.swift */; };
 		6A37D341076537A6868C7660 /* WyldeScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FAC72A0042A0FCA4C090D4 /* WyldeScore.swift */; };
+		6CF007D1FA78952DD0C8EB3C /* CreateRecipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA99A87EB34F5B3FF1F8F463 /* CreateRecipeView.swift */; };
 		737EF09808A24CE680E5C184 /* WorkoutProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE58C92F2054D9E998BA6D6C /* WorkoutProgram.swift */; };
 		7523CD98CF0AAF21E9CAD442 /* NutritionTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD1F3F8F5C76E6EA177FB4 /* NutritionTabView.swift */; };
 		7669D5F8914FB4FB31B28749 /* FutureTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5C465C4BB8F17531A9F2 /* FutureTabView.swift */; };
@@ -53,6 +47,7 @@
 		8F10BCBC638BDED70C47FA03 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F126C93E921C9F6B9698D5 /* SplashView.swift */; };
 		99AC14C19937D84359DB2870 /* JournalingTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9B457E960389780C1D7432D /* JournalingTimerView.swift */; };
 		9D7133D59AEAABF595CE4DC7 /* WorkoutCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C7457299486313C374A0B9 /* WorkoutCalendarView.swift */; };
+		9F5B7B82D98FB4ADE9512585 /* NutritionPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5AC371656915BE3ACA369C /* NutritionPreferences.swift */; };
 		A10001 /* WyldeSelfApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001 /* WyldeSelfApp.swift */; };
 		A10002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10002 /* ContentView.swift */; };
 		A10003 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10003 /* AppDelegate.swift */; };
@@ -79,18 +74,20 @@
 		A10026 /* JourneyPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10026 /* JourneyPhase.swift */; };
 		A10027 /* CoachLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10027 /* CoachLine.swift */; };
 		A10028 /* WyldeStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10028 /* WyldeStyles.swift */; };
+		A1B2C3D4E5F6071800000002 /* ProgressionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071800000001 /* ProgressionEngine.swift */; };
+		A1B2C3D4E5F6071800000004 /* WorkoutLogSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071800000003 /* WorkoutLogSync.swift */; };
+		A1B2C3D4E5F6071800000006 /* BadgeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071800000005 /* BadgeService.swift */; };
 		A3D81F9B947EE5D76747F083 /* VisionTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD6EAA094DE1A417B99DD349 /* VisionTheme.swift */; };
 		A3F396A2D7CCA845AB1A80FE /* WyldeScoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3245AF428E0732CDC8B62655 /* WyldeScoreService.swift */; };
 		A6BBE708419A60DBE90DF00E /* MealPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83B41DA2B4C49B1FE789CCD /* MealPlanView.swift */; };
-		6CF007D1FA78952DD0C8EB3C /* CreateRecipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA99A87EB34F5B3FF1F8F463 /* CreateRecipeView.swift */; };
-		55FE0DD464E6D63C92DB3A4D /* MealDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07233285A002323B6F127C2B /* MealDetailView.swift */; };
-		E4854A35E498864689FB7FEB /* NutritionPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7932D9C9B06F559821F5B481 /* NutritionPreferencesView.swift */; };
 		A8CB2D23D6EB86B182C431ED /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91180521F9514686E9160EBF /* OnboardingView.swift */; };
 		ACA54FDA9CB2728ADED95C59 /* YouView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36DC41DE8014E1FAD7AF5F91 /* YouView.swift */; };
 		B47E22954C3FC0CEAA0E33E4 /* RestTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 572F46AD3D93FB29BD076690 /* RestTimerView.swift */; };
 		B4DBEDE0E33ADB693F9F626B /* WorkoutGeneratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 484A32CBA3C0D8BDEBFCFB7F /* WorkoutGeneratorView.swift */; };
+		B70630E6D92C64BFAD6745ED /* RecipeBookService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D27E85A246F35FA083B065 /* RecipeBookService.swift */; };
 		B91C567B73439B06B53242B4 /* ClinicalAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 266BF07DED1AA40E9CE5A9FF /* ClinicalAPI.swift */; };
 		BB49253CE915018D4512DF36 /* CinematicEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF64D03B1398C1C46DFCCB8C /* CinematicEffects.swift */; };
+		BT10001 /* BackgroundTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT10002 /* BackgroundTimer.swift */; };
 		C1F3B0C06D74EC542FDC4DD2 /* WorkoutContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1FB6CF9D2C933C1754C50 /* WorkoutContainerView.swift */; };
 		C5291E6E267C1A8290EB2CAE /* WorkoutDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07DC257E3ECC043B6773A58 /* WorkoutDayView.swift */; };
 		C60C7CC6C017D714F0C8F352 /* GuidedMeditationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC61017E88572D0AF4662A7C /* GuidedMeditationView.swift */; };
@@ -99,18 +96,21 @@
 		D2421988CEDCAD47A494339A /* ProgramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75AB4CA4640E38AE003A94AB /* ProgramView.swift */; };
 		D5CEDDD9C143C8A38DFEEB08 /* IntroAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24DF7686CA8480ADCA7BA7CC /* IntroAnimationView.swift */; };
 		E19B9D461B3AB1C2EE60070C /* CareMessagingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF7FBABC90464C1050C45FA /* CareMessagingView.swift */; };
+		E237ECE16CE3C4978ACC66D7 /* NutritionPreferencesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFEEBCDCD70D00BD1C02905 /* NutritionPreferencesService.swift */; };
+		E4854A35E498864689FB7FEB /* NutritionPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7932D9C9B06F559821F5B481 /* NutritionPreferencesView.swift */; };
 		F01C427D255E073C74CC7611 /* FutureVision.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07F46ED130E8FA952F7BE9A /* FutureVision.swift */; };
 		F6F60DD2FAF8EF8AA596BF42 /* ImageLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F09EC6B89EAABB04C9E946F /* ImageLibrary.swift */; };
 		F70AA43BF26D80A2976420EB /* ProtocolTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADAB00E2228BCBC88233AD1C /* ProtocolTrackerView.swift */; };
 		F8218F47300813FB0094074F /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = F8218F48300813FB0094074F /* RevenueCat */; };
+		MC10001 /* MacroCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = MC10002 /* MacroCalculator.swift */; };
 		N10001 /* SecureStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20001 /* SecureStorage.swift */; };
 		N10002 /* FileStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20002 /* FileStorage.swift */; };
 		N10003 /* EveningReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20003 /* EveningReflectionView.swift */; };
 		N10004 /* VoiceFoodLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20004 /* VoiceFoodLogView.swift */; };
 		N10005 /* EquipmentPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20005 /* EquipmentPickerView.swift */; };
+		N10006 /* WyldeWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20006 /* WyldeWorkoutView.swift */; };
 		N10007 /* DescribeWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20007 /* DescribeWorkoutView.swift */; };
 		SS10001 /* SpaceScanWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SS10002 /* SpaceScanWorkoutView.swift */; };
-		N10006 /* WyldeWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = N20006 /* WyldeWorkoutView.swift */; };
 		T10001 /* AppStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20001 /* AppStateTests.swift */; };
 		T10002 /* SecureStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20002 /* SecureStorageTests.swift */; };
 		T10003 /* FileStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20003 /* FileStorageTests.swift */; };
@@ -163,6 +163,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		07233285A002323B6F127C2B /* MealDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MealDetailView.swift; sourceTree = "<group>"; };
 		0AF4835D17241407BFFB21D4 /* CoachChatView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoachChatView.swift; sourceTree = "<group>"; };
 		0FA73C8676309DF2E6B7DBA1 /* WalkthroughOverlay.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WalkthroughOverlay.swift; sourceTree = "<group>"; };
 		157C5C465C4BB8F17531A9F2 /* FutureTabView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FutureTabView.swift; sourceTree = "<group>"; };
@@ -171,6 +172,7 @@
 		1B2ECA0779B45656B4576A32 /* QiGongFlowView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = QiGongFlowView.swift; sourceTree = "<group>"; };
 		24DF7686CA8480ADCA7BA7CC /* IntroAnimationView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = IntroAnimationView.swift; sourceTree = "<group>"; };
 		266BF07DED1AA40E9CE5A9FF /* ClinicalAPI.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClinicalAPI.swift; sourceTree = "<group>"; };
+		2D5AC371656915BE3ACA369C /* NutritionPreferences.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NutritionPreferences.swift; sourceTree = "<group>"; };
 		2F09EC6B89EAABB04C9E946F /* ImageLibrary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ImageLibrary.swift; sourceTree = "<group>"; };
 		3245AF428E0732CDC8B62655 /* WyldeScoreService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WyldeScoreService.swift; sourceTree = "<group>"; };
 		32587F63CC09EC8287D208C3 /* FoodSearchView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FoodSearchView.swift; sourceTree = "<group>"; };
@@ -192,21 +194,20 @@
 		7439DFCD26DABDF020845D2E /* VisionCreationFlow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VisionCreationFlow.swift; sourceTree = "<group>"; };
 		75AB4CA4640E38AE003A94AB /* ProgramView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProgramView.swift; sourceTree = "<group>"; };
 		7843B810CFE4E4C6C4991366 /* CoachService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoachService.swift; sourceTree = "<group>"; };
+		7932D9C9B06F559821F5B481 /* NutritionPreferencesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NutritionPreferencesView.swift; sourceTree = "<group>"; };
 		7A1AA03C12AC3C85B020A3B1 /* ProtocolTrackerService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProtocolTrackerService.swift; sourceTree = "<group>"; };
 		88CEE5CC471CD6CDF6FC9422 /* LiftingCoach.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LiftingCoach.swift; sourceTree = "<group>"; };
-		BT10002 /* BackgroundTimer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BackgroundTimer.swift; sourceTree = "<group>"; };
-		MC10002 /* MacroCalculator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MacroCalculator.swift; sourceTree = "<group>"; };
 		8DDF27D0AD3DFF23AE7F9504 /* wyldeself-intro.mp4 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file; path = "wyldeself-intro.mp4"; sourceTree = "<group>"; };
+		8EFEEBCDCD70D00BD1C02905 /* NutritionPreferencesService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NutritionPreferencesService.swift; sourceTree = "<group>"; };
 		91180521F9514686E9160EBF /* OnboardingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		96AFFF42775D4153D41F2066 /* MealPlan.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MealPlan.swift; sourceTree = "<group>"; };
-		2D5AC371656915BE3ACA369C /* NutritionPreferences.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NutritionPreferences.swift; sourceTree = "<group>"; };
 		9AAD1F3F8F5C76E6EA177FB4 /* NutritionTabView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NutritionTabView.swift; sourceTree = "<group>"; };
 		A07DC257E3ECC043B6773A58 /* WorkoutDayView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutDayView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6071800000001 /* ProgressionEngine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProgressionEngine.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6071800000003 /* WorkoutLogSync.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutLogSync.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6071800000005 /* BadgeService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BadgeService.swift; sourceTree = "<group>"; };
 		A3623AA1C98F5FD93FB6739C /* WorkoutService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutService.swift; sourceTree = "<group>"; };
 		A83B41DA2B4C49B1FE789CCD /* MealPlanView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MealPlanView.swift; sourceTree = "<group>"; };
-		BA99A87EB34F5B3FF1F8F463 /* CreateRecipeView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CreateRecipeView.swift; sourceTree = "<group>"; };
-		07233285A002323B6F127C2B /* MealDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MealDetailView.swift; sourceTree = "<group>"; };
-		7932D9C9B06F559821F5B481 /* NutritionPreferencesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NutritionPreferencesView.swift; sourceTree = "<group>"; };
 		A8D83A4483E5DB70EE0AE39B /* WyldeScoreCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WyldeScoreCard.swift; sourceTree = "<group>"; };
 		ADAB00E2228BCBC88233AD1C /* ProtocolTrackerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProtocolTrackerView.swift; sourceTree = "<group>"; };
 		B10001 /* WyldeSelfApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WyldeSelfApp.swift; sourceTree = "<group>"; };
@@ -237,8 +238,10 @@
 		B10027 /* CoachLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachLine.swift; sourceTree = "<group>"; };
 		B10028 /* WyldeStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WyldeStyles.swift; sourceTree = "<group>"; };
 		B99999 /* WyldeSelf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WyldeSelf.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BA99A87EB34F5B3FF1F8F463 /* CreateRecipeView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CreateRecipeView.swift; sourceTree = "<group>"; };
 		BE58C92F2054D9E998BA6D6C /* WorkoutProgram.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutProgram.swift; sourceTree = "<group>"; };
 		BF2B347630952E8C8CA2062F /* FutureVisionView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FutureVisionView.swift; sourceTree = "<group>"; };
+		BT10002 /* BackgroundTimer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BackgroundTimer.swift; sourceTree = "<group>"; };
 		C111ECD9FD92B6838B1A2F28 /* DynamicWarmupView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DynamicWarmupView.swift; sourceTree = "<group>"; };
 		CC61017E88572D0AF4662A7C /* GuidedMeditationView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GuidedMeditationView.swift; sourceTree = "<group>"; };
 		CF64D03B1398C1C46DFCCB8C /* CinematicEffects.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CinematicEffects.swift; sourceTree = "<group>"; };
@@ -248,27 +251,24 @@
 		E07F46ED130E8FA952F7BE9A /* FutureVision.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FutureVision.swift; sourceTree = "<group>"; };
 		E0F126C93E921C9F6B9698D5 /* SplashView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		E18F936666895C871BB1E34F /* MealPlanService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MealPlanService.swift; sourceTree = "<group>"; };
-		8EFEEBCDCD70D00BD1C02905 /* NutritionPreferencesService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NutritionPreferencesService.swift; sourceTree = "<group>"; };
-		F4D27E85A246F35FA083B065 /* RecipeBookService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecipeBookService.swift; sourceTree = "<group>"; };
 		ED05833A5593DE8DE9080106 /* CheckinSync.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CheckinSync.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F6071800000005 /* BadgeService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BadgeService.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F6071800000003 /* WorkoutLogSync.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutLogSync.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F6071800000001 /* ProgressionEngine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProgressionEngine.swift; sourceTree = "<group>"; };
 		EFE589914AA93A37EDC80FA9 /* VisionCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VisionCard.swift; sourceTree = "<group>"; };
+		F4D27E85A246F35FA083B065 /* RecipeBookService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecipeBookService.swift; sourceTree = "<group>"; };
 		F8A1FB6CF9D2C933C1754C50 /* WorkoutContainerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutContainerView.swift; sourceTree = "<group>"; };
 		F9B457E960389780C1D7432D /* JournalingTimerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = JournalingTimerView.swift; sourceTree = "<group>"; };
 		FA5FDC2D6C2789D0FC463D9D /* guided-meditation.m4a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file; path = "guided-meditation.m4a"; sourceTree = "<group>"; };
 		FCDBF19CEB09C8382410A612 /* CareTeamView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CareTeamView.swift; sourceTree = "<group>"; };
 		FD6EAA094DE1A417B99DD349 /* VisionTheme.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VisionTheme.swift; sourceTree = "<group>"; };
 		FF420548325F72C353160DF2 /* AuthService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		MC10002 /* MacroCalculator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MacroCalculator.swift; sourceTree = "<group>"; };
 		N20001 /* SecureStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureStorage.swift; sourceTree = "<group>"; };
 		N20002 /* FileStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileStorage.swift; sourceTree = "<group>"; };
 		N20003 /* EveningReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EveningReflectionView.swift; sourceTree = "<group>"; };
 		N20004 /* VoiceFoodLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceFoodLogView.swift; sourceTree = "<group>"; };
 		N20005 /* EquipmentPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EquipmentPickerView.swift; sourceTree = "<group>"; };
+		N20006 /* WyldeWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WyldeWorkoutView.swift; sourceTree = "<group>"; };
 		N20007 /* DescribeWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescribeWorkoutView.swift; sourceTree = "<group>"; };
 		SS10002 /* SpaceScanWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceScanWorkoutView.swift; sourceTree = "<group>"; };
-		N20006 /* WyldeWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WyldeWorkoutView.swift; sourceTree = "<group>"; };
 		T20001 /* AppStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateTests.swift; sourceTree = "<group>"; };
 		T20002 /* SecureStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureStorageTests.swift; sourceTree = "<group>"; };
 		T20003 /* FileStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileStorageTests.swift; sourceTree = "<group>"; };
@@ -900,6 +900,7 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "WyldeSelf Watch reads your heart rate, steps, and workout data to display real-time health metrics on your wrist.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "WyldeSelf Watch saves workouts and activity data you log from your wrist to Apple Health.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKApplication = YES;
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.wyldeself.app;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -939,6 +940,7 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "WyldeSelf Watch reads your heart rate, steps, and workout data to display real-time health metrics on your wrist.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "WyldeSelf Watch saves workouts and activity data you log from your wrist to Apple Health.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKApplication = YES;
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.wyldeself.app;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
