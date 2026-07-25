@@ -160,6 +160,9 @@
     },
     "api/admin/pulse.js": {
       "maxDuration": 15
+    },
+    "api/consumer/care/join.js": {
+      "maxDuration": 10
     }
   },
   "crons": [

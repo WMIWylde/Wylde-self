@@ -45,7 +45,7 @@ enum ClinicalAPI {
 
     static func acceptClinicCode(_ code: String) async throws -> CareAcceptResponse {
         struct Body: Codable { let code: String }
-        return try await request("/api/consumer/care/accept", method: "POST", body: Body(code: code))
+        return try await request("/api/consumer/care/join", method: "POST", body: Body(code: code))
     }
 
     static func careRelationships() async throws -> CareRelationshipsResponse {

@@ -15,6 +15,22 @@ module.exports = async function handler(req, res) {
 
   // GET — fetch clinic settings (auto-creates on first access)
   if (req.method === 'GET') {
+    // Team members receive the OWNER's clinic settings, not a fresh clinic
+    if (user.email) {
+      const { data: membership } = await supabase
+        .from('clinic_team_members')
+        .select('clinician_id')
+        .ilike('email', user.email)
+        .in('status', ['invited', 'active'])
+        .maybeSingle();
+      if (membership) {
+        const { data: ownerSettings } = await supabase
+          .from('clinic_settings').select('*')
+          .eq('clinician_id', membership.clinician_id).maybeSingle();
+        if (ownerSettings) return res.status(200).json({ settings: ownerSettings, team_member: true });
+      }
+    }
+
     let { data } = await supabase
       .from('clinic_settings')
       .select('*')
@@ -32,6 +48,16 @@ module.exports = async function handler(req, res) {
       data = newSettings;
     }
 
+    // Ensure a permanent patient join code exists
+    if (data && !data.join_code) {
+      const code = 'WY' + Math.random().toString(36).slice(2, 8).toUpperCase();
+      const { data: updated } = await supabase
+        .from('clinic_settings')
+        .update({ join_code: code })
+        .eq('clinician_id', data.clinician_id)
+        .select().single();
+      if (updated) data = updated;
+    }
     return res.status(200).json({ settings: data });
   }
 

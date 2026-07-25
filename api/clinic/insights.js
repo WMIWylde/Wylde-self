@@ -7,7 +7,7 @@ module.exports = async function handler(req, res) {
 
   const auth = await requireClinicAccess(req, res);
   if (!auth) return;
-  const { user } = auth;
+  const { user, clinicianId } = auth;
 
   const supabase = getSupabaseAdmin();
 
@@ -19,7 +19,7 @@ module.exports = async function handler(req, res) {
     const { data } = await supabase
       .from('clinical_insights')
       .select('*')
-      .eq('clinician_id', user.id)
+      .eq('clinician_id', clinicianId)
       .eq('patient_id', patientId)
       .order('created_at', { ascending: false })
       .limit(20);
@@ -41,7 +41,7 @@ module.exports = async function handler(req, res) {
   const { data: rel } = await supabase
     .from('care_relationships')
     .select('id')
-    .eq('clinician_id', user.id)
+    .eq('clinician_id', clinicianId)
     .eq('patient_id', patient_id)
     .eq('status', 'active')
     .single();
@@ -115,7 +115,7 @@ module.exports = async function handler(req, res) {
     // Store insights in DB
     const insightRows = insights.map(i => ({
       patient_id,
-      clinician_id: user.id,
+      clinician_id: clinicianId,
       relationship_id: rel.id,
       insight_type: 'ai_generated',
       severity: i.severity || 'low',
@@ -134,13 +134,13 @@ module.exports = async function handler(req, res) {
     const { data: allInsights } = await supabase
       .from('clinical_insights')
       .select('*')
-      .eq('clinician_id', user.id)
+      .eq('clinician_id', clinicianId)
       .eq('patient_id', patient_id)
       .order('created_at', { ascending: false })
       .limit(20);
 
     auditLog(supabase, {
-      clinician_id: user.id,
+      clinician_id: clinicianId,
       action: 'insight_generated',
       target_type: 'clinical_insight',
       target_id: patient_id,

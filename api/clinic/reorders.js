@@ -7,7 +7,7 @@ module.exports = async function handler(req, res) {
 
   const auth = await requireClinicAccess(req, res);
   if (!auth) return;
-  const { user } = auth;
+  const { user, clinicianId } = auth;
 
   // Rate limit: 20/min
   const rl = rateLimit({ key: 'clinic-reorders', ip: clientIp(req), limit: 20, windowMs: 60000 });
@@ -20,7 +20,7 @@ module.exports = async function handler(req, res) {
     const { data } = await supabase
       .from('reorder_requests')
       .select('*, clinic_products(name, category, price, price_unit)')
-      .eq('clinician_id', user.id)
+      .eq('clinician_id', clinicianId)
       .order('created_at', { ascending: false })
       .limit(50);
 
@@ -59,14 +59,14 @@ module.exports = async function handler(req, res) {
       .from('reorder_requests')
       .update(updates)
       .eq('id', id)
-      .eq('clinician_id', user.id)
+      .eq('clinician_id', clinicianId)
       .select()
       .single();
 
     if (error) return res.status(500).json({ error: error.message });
 
     auditLog(supabase, {
-      clinician_id: user.id,
+      clinician_id: clinicianId,
       action: 'reorder_status_changed',
       target_type: 'reorder_request',
       target_id: id,

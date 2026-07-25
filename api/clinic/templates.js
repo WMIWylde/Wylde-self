@@ -6,7 +6,7 @@ module.exports = async function handler(req, res) {
 
   const auth = await requireClinicAccess(req, res);
   if (!auth) return;
-  const { user } = auth;
+  const { user, clinicianId } = auth;
 
   // Rate limit: 20/min
   const rl = rateLimit({ key: 'clinic-templates', ip: clientIp(req), limit: 20, windowMs: 60000 });

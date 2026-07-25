@@ -6,7 +6,7 @@ module.exports = async function handler(req, res) {
 
   const auth = await requireClinicAccess(req, res);
   if (!auth) return;
-  const { user } = auth;
+  const { user, clinicianId } = auth;
 
   // Rate limit: 30/min
   const rl = rateLimit({ key: 'clinic-products', ip: clientIp(req), limit: 30, windowMs: 60000 });
@@ -19,7 +19,7 @@ module.exports = async function handler(req, res) {
     const { data, error } = await supabase
       .from('clinic_products')
       .select('*')
-      .eq('clinician_id', user.id)
+      .eq('clinician_id', clinicianId)
       .eq('is_active', true)
       .order('sort_order', { ascending: true });
 
@@ -33,7 +33,7 @@ module.exports = async function handler(req, res) {
     const { data, error } = await supabase
       .from('clinic_products')
       .insert({
-        clinician_id: user.id,
+        clinician_id: clinicianId,
         name: body.name,
         category: body.category || 'supplement',
         description: body.description,
@@ -65,7 +65,7 @@ module.exports = async function handler(req, res) {
       .from('clinic_products')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
-      .eq('clinician_id', user.id)
+      .eq('clinician_id', clinicianId)
       .select()
       .single();
 
@@ -82,7 +82,7 @@ module.exports = async function handler(req, res) {
       .from('clinic_products')
       .update({ is_active: false })
       .eq('id', id)
-      .eq('clinician_id', user.id);
+      .eq('clinician_id', clinicianId);
 
     return res.status(200).json({ ok: true });
   }

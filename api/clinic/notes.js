@@ -7,7 +7,7 @@ module.exports = async function handler(req, res) {
 
   const auth = await requireClinicAccess(req, res);
   if (!auth) return;
-  const { user } = auth;
+  const { user, clinicianId } = auth;
 
   // Rate limit: 30/min
   const rl = rateLimit({ key: 'clinic-notes', ip: clientIp(req), limit: 30, windowMs: 60000 });
@@ -24,7 +24,7 @@ module.exports = async function handler(req, res) {
     const { data: rel } = await supabase
       .from('care_relationships')
       .select('id')
-      .eq('clinician_id', user.id)
+      .eq('clinician_id', clinicianId)
       .eq('patient_id', patientId)
       .eq('status', 'active')
       .single();
@@ -34,7 +34,7 @@ module.exports = async function handler(req, res) {
     const { data, error } = await supabase
       .from('patient_notes')
       .select('*')
-      .eq('clinician_id', user.id)
+      .eq('clinician_id', clinicianId)
       .eq('patient_id', patientId)
       .order('created_at', { ascending: false })
       .limit(50);
@@ -52,7 +52,7 @@ module.exports = async function handler(req, res) {
     const { data: rel } = await supabase
       .from('care_relationships')
       .select('id')
-      .eq('clinician_id', user.id)
+      .eq('clinician_id', clinicianId)
       .eq('patient_id', patient_id)
       .eq('status', 'active')
       .single();
@@ -62,7 +62,7 @@ module.exports = async function handler(req, res) {
     const { data, error } = await supabase
       .from('patient_notes')
       .insert({
-        clinician_id: user.id,
+        clinician_id: clinicianId,
         patient_id,
         content,
         note_type: note_type || 'general',
@@ -73,7 +73,7 @@ module.exports = async function handler(req, res) {
     if (error) return res.status(500).json({ error: error.message });
 
     auditLog(supabase, {
-      clinician_id: user.id,
+      clinician_id: clinicianId,
       action: 'note_created',
       target_type: 'patient_note',
       target_id: data.id,

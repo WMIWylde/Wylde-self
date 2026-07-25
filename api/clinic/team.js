@@ -7,7 +7,7 @@ module.exports = async function handler(req, res) {
 
   const auth = await requireClinicAccess(req, res);
   if (!auth) return;
-  const { user } = auth;
+  const { user, clinicianId } = auth;
 
   // Rate limit: 20/min
   const rl = rateLimit({ key: 'clinic-team', ip: clientIp(req), limit: 20, windowMs: 60000 });
@@ -41,10 +41,24 @@ module.exports = async function handler(req, res) {
       .select()
       .single();
 
+    // Send a real invite email via Supabase auth (creates the account if
+    // needed; the redirect lands them on the clinical dashboard).
+    if (!error) {
+      try {
+        await supabase.auth.admin.inviteUserByEmail(email, {
+          redirectTo: 'https://www.wyldeself.com/clinical-dashboard',
+        });
+      } catch (e) {
+        // Existing users can't be re-invited — membership row still grants
+        // them access on next sign-in, so this is non-fatal.
+        console.log('[team] invite email skipped:', e.message);
+      }
+    }
+
     if (error) return res.status(500).json({ error: error.message });
 
     auditLog(supabase, {
-      clinician_id: user.id,
+      clinician_id: clinicianId,
       action: 'team_member_changed',
       target_type: 'team_member',
       target_id: data.id,
@@ -74,7 +88,7 @@ module.exports = async function handler(req, res) {
     if (error) return res.status(500).json({ error: error.message });
 
     auditLog(supabase, {
-      clinician_id: user.id,
+      clinician_id: clinicianId,
       action: 'team_member_changed',
       target_type: 'team_member',
       target_id: id,
@@ -95,7 +109,7 @@ module.exports = async function handler(req, res) {
       .eq('clinic_id', user.id);
 
     auditLog(supabase, {
-      clinician_id: user.id,
+      clinician_id: clinicianId,
       action: 'team_member_changed',
       target_type: 'team_member',
       target_id: id,

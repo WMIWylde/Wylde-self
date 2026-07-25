@@ -8,7 +8,7 @@ module.exports = async function handler(req, res) {
 
   const auth = await requireClinicAccess(req, res);
   if (!auth) return;
-  const { user } = auth;
+  const { user, clinicianId } = auth;
 
   // Rate limit: 10/min
   const rl = rateLimit({ key: 'clinic-assign-protocol', ip: clientIp(req), limit: 10, windowMs: 60000 });
@@ -25,7 +25,7 @@ module.exports = async function handler(req, res) {
   const { data: rel } = await supabase
     .from('care_relationships')
     .select('id')
-    .eq('clinician_id', user.id)
+    .eq('clinician_id', clinicianId)
     .eq('patient_id', patient_id)
     .eq('status', 'active')
     .single();
@@ -68,7 +68,7 @@ module.exports = async function handler(req, res) {
   }
 
   auditLog(supabase, {
-    clinician_id: user.id,
+    clinician_id: clinicianId,
     action: 'protocol_assigned',
     target_type: 'patient_protocol',
     target_id: protocol.id,
