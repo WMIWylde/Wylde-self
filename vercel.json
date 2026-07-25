@@ -157,6 +157,9 @@
     },
     "api/admin/clinics.js": {
       "maxDuration": 10
+    },
+    "api/admin/pulse.js": {
+      "maxDuration": 15
     }
   },
   "crons": [

@@ -515,6 +515,20 @@
           </div>
         </section>
 
+        <!-- ░ BETA PULSE (live data) ░ -->
+        <section class="surface p-6 md:p-8 reveal" id="betaPulse">
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+            <div class="flex items-center gap-3">
+              <h2 class="font-serif text-[24px] font-normal tracking-[-0.015em] text-ink">Beta pulse</h2>
+              <span class="pill neutral">live</span>
+            </div>
+            <button class="pill neutral" onclick="loadPulse()">Refresh</button>
+          </div>
+          <div id="pulseStats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px;"></div>
+          <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9A958B;margin-bottom:10px;">Latest feedback</div>
+          <div id="pulseFeedback" class="flex flex-col gap-2"></div>
+        </section>
+
         <!-- ░ CLINIC APPROVALS ░ -->
         <section class="surface p-6 md:p-8 reveal" id="clinicApprovals">
           <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
@@ -1003,6 +1017,35 @@
     });
   });
   
+  // ═══ Beta pulse (2026-07-25) ═══
+  async function loadPulse() {
+    if (!_adminSecret()) return;
+    var statsEl = document.getElementById('pulseStats');
+    var fbEl = document.getElementById('pulseFeedback');
+    try {
+      var resp = await fetch('/api/admin/pulse', { headers: { 'X-Admin-Secret': _adminSecret() } });
+      if (!resp.ok) return;
+      var d = await resp.json();
+      function stat(label, value) {
+        return '<div style="border:1px solid rgba(0,0,0,0.08);border-radius:12px;padding:14px;">' +
+          '<div style="font-size:22px;font-weight:700;">' + value + '</div>' +
+          '<div style="font-size:11px;color:#9A958B;margin-top:2px;">' + label + '</div></div>';
+      }
+      if (statsEl) statsEl.innerHTML =
+        stat('Total users', d.users_total) +
+        stat('Active 24h', d.active_24h) +
+        stat('Active 7d', d.active_7d) +
+        stat('Sets logged 7d', d.sets_logged_7d) +
+        stat('Points earned 7d', d.points_earned_7d) +
+        stat('Redemptions', d.redemptions_total);
+      if (fbEl) fbEl.innerHTML = (d.feedback || []).map(function(x) {
+        return '<div style="border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;">' +
+          '<div style="font-size:13px;">' + String(x.message || '').replace(/</g, '&lt;') + '</div>' +
+          '<div style="font-size:11px;color:#9A958B;margin-top:4px;">' + (x.email || 'unknown') + ' · ' + (x.platform || '') + ' build ' + (x.build || '?') + ' · ' + new Date(x.created_at).toLocaleDateString() + '</div></div>';
+      }).join('') || '<div style="font-size:13px;color:#9A958B;">No feedback yet.</div>';
+    } catch (e) {}
+  }
+
   // ═══ Clinic approvals (2026-07-25) ═══
   function _adminSecret() { return sessionStorage.getItem('wylde_admin_secret') || ''; }
   async function loadClinics() {
@@ -1020,6 +1063,7 @@
       }
       var data = await resp.json();
       if (secretRow) secretRow.style.display = 'none';
+      loadPulse();
       var clinics = data.clinics || [];
       var pending = clinics.filter(function(c) { return c.status === 'pending'; });
       if (countEl) countEl.textContent = pending.length + ' pending';
