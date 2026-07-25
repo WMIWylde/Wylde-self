@@ -7,6 +7,7 @@ struct MainTabView: View {
 
     @State private var xpToast: (amount: Int, reason: String)? = nil
     @State private var xpToastID = 0
+    @StateObject private var badgeService = BadgeService.shared
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -37,6 +38,13 @@ struct MainTabView: View {
 
             Color.clear
                 .frame(width: 0, height: 0)
+                .onAppear { badgeService.start(appState: appState) }
+                .fullScreenCover(item: Binding(
+                    get: { badgeService.pendingCeremony.map { CeremonyBadge(badge: $0) } },
+                    set: { if $0 == nil { badgeService.pendingCeremony = nil } }
+                )) { wrapped in
+                    BadgeCeremonyView(badge: wrapped.badge) { badgeService.pendingCeremony = nil }
+                }
                 .onReceive(NotificationCenter.default.publisher(for: .wyldeXPAwarded)) { note in
                     guard let amount = note.userInfo?["amount"] as? Int,
                           let reason = note.userInfo?["reason"] as? String else { return }
@@ -215,4 +223,11 @@ struct HamburgerButton: View {
         }
         .buttonStyle(.plain)
     }
+}
+
+
+/// Identifiable wrapper so fullScreenCover(item:) can present a badge.
+struct CeremonyBadge: Identifiable {
+    let badge: WyldeBadge
+    var id: String { badge.id }
 }

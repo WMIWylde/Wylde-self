@@ -543,6 +543,7 @@ final class WorkoutService: ObservableObject {
             personalRecords[key] = PersonalRecord(exerciseName: exerciseName, bestWeight: weight, bestReps: reps, achievedAt: Date())
             savePRs()
         }
+        Task { @MainActor in BadgeService.shared.count(.prs) }
     }
 
     func pr(for exerciseName: String) -> PersonalRecord? {

@@ -20,7 +20,10 @@ class AppState: ObservableObject {
     @Published var userName: String = ""                            { didSet { defaults.set(userName, forKey: "wylde_name") } }
     /// Current day in the transformation — calculated from start date, auto-advances daily.
     @Published var currentDay: Int = 1
-    @Published var streak: Int = 0                                  { didSet { defaults.set(streak, forKey: "wylde_streak") } }
+    @Published var streak: Int = 0                                  { didSet {
+        defaults.set(streak, forKey: "wylde_streak")
+        if !isLoading && streak > oldValue { Task { @MainActor in BadgeService.shared.evaluate(streak: streak) } }
+    } }
 
     /// Dates ("yyyy-MM-dd") on which the user has "closed the loop"
     /// (completed Evening Reflection). Set-like semantics — a date is

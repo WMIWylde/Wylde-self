@@ -63,6 +63,7 @@ final class MacroTrackerService: ObservableObject {
 
     func addMeal(name: String, analysis: FoodAnalysis, mealType: MealType) {
         // Reward the log itself — adherence economy parity with web
+        Task { @MainActor in BadgeService.shared.count(.meals) }
         struct LedgerRow: Encodable { let delta: Int; let reason: String; let source: String }
         Task {
             try? await SupabaseService.shared.from("points_ledger")
