@@ -44,7 +44,7 @@ final class ProtocolTrackerService: ObservableObject {
     func logDose(prescriptionId: String, protocolId: String?, status: String, dose: String? = nil, notes: String? = nil, sideEffects: [String: String]? = nil) async {
         if status == "taken" {
             struct LedgerRow: Encodable { let delta: Int; let reason: String; let source: String }
-            try? await SupabaseService.shared.from("points_ledger")
+            _ = try? await SupabaseService.shared.from("points_ledger")
                 .insert(LedgerRow(delta: 10, reason: "Dose logged", source: "ios")).execute()
         }
         guard let token = await AuthService.shared.accessToken,

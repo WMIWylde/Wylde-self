@@ -85,7 +85,7 @@ final class MacroTrackerService: ObservableObject {
         Task { @MainActor in BadgeService.shared.count(.meals) }
         struct LedgerRow: Encodable { let delta: Int; let reason: String; let source: String }
         Task {
-            try? await SupabaseService.shared.from("points_ledger")
+            _ = try? await SupabaseService.shared.from("points_ledger")
                 .insert(LedgerRow(delta: 10, reason: "Food logged", source: "ios")).execute()
         }
         let entry = MealEntry(

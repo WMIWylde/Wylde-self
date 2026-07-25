@@ -141,13 +141,13 @@ final class BadgeService: ObservableObject {
         for badge in newly {
             Task {
                 if let session = try? await SupabaseService.shared.auth.session {
-                    try? await SupabaseService.shared.from("badges")
+                    _ = try? await SupabaseService.shared.from("badges")
                         .insert(BadgeRow(user_id: session.user.id.uuidString,
                                          badge_id: badge.id,
                                          earned_at: ISO8601DateFormatter().string(from: Date())))
                         .execute()
                 }
-                try? await SupabaseService.shared.from("points_ledger")
+                _ = try? await SupabaseService.shared.from("points_ledger")
                     .insert(LedgerRow(delta: 100, reason: "Badge: \(badge.name)", source: "ios"))
                     .execute()
             }
