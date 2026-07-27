@@ -8,6 +8,8 @@ struct FoodSearchView: View {
 
     @State private var searchText = ""
     @State private var results: [SearchFood] = []
+    @State private var portionFood: SearchFood?
+    @State private var portionQty: Double = 1.0
     @State private var isSearching = false
     @State private var selectedMealType: MealType = .lunch
     @State private var showBarcode = false
@@ -136,11 +138,18 @@ struct FoodSearchView: View {
                 Task { await searchBarcode(barcode) }
             }
         }
+        .sheet(item: Binding(
+            get: { portionFood.map { PortionWrapper(food: $0) } },
+            set: { if $0 == nil { portionFood = nil } }
+        )) { wrapped in
+            portionSheet(wrapped.food)
+                .presentationDetents([.height(340)])
+        }
     }
 
     private func foodRow(_ food: SearchFood) -> some View {
         Button {
-            logFood(food)
+            portionFood = food
         } label: {
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 3) {
@@ -198,7 +207,11 @@ struct FoodSearchView: View {
         guard let url = URL(string: "https://www.wyldeself.com/api/nutrition/search?q=\(searchText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? searchText)") else { return }
 
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
+            var request = URLRequest(url: url)
+            if let token = await AuthService.shared.accessToken {
+                request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            }
+            let (data, _) = try await URLSession.shared.data(for: request)
             struct Resp: Codable { let foods: [SearchFood] }
             let resp = try JSONDecoder().decode(Resp.self, from: data)
             results = resp.foods
@@ -216,7 +229,13 @@ struct FoodSearchView: View {
         guard let url = URL(string: "https://www.wyldeself.com/api/nutrition/search?barcode=\(barcode)") else { return }
 
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
+            let (data, _) = try await { () -> (Data, URLResponse) in
+                var request = URLRequest(url: url)
+                if let token = await AuthService.shared.accessToken {
+                    request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+                }
+                return try await URLSession.shared.data(for: request)
+            }()
             struct Resp: Codable { let foods: [SearchFood] }
             let resp = try JSONDecoder().decode(Resp.self, from: data)
             results = resp.foods
@@ -229,16 +248,86 @@ struct FoodSearchView: View {
 
     // MARK: - Log
 
-    private func logFood(_ food: SearchFood) {
+    @ViewBuilder
+    private func portionSheet(_ food: SearchFood) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text(food.name)
+                .font(.system(size: 18, weight: .semibold, design: .serif))
+                .foregroundColor(WyldeStyles.Colors.ink)
+                .lineLimit(2)
+
+            if let size = food.servingSize, let unit = food.servingUnit {
+                Text("1 serving = \(size.clean) \(unit)")
+                    .font(.system(size: 12))
+                    .foregroundColor(WyldeStyles.Colors.stone)
+            }
+
+            Text("HOW MUCH?")
+                .font(.system(size: 10, weight: .semibold))
+                .tracking(2)
+                .foregroundColor(WyldeStyles.Colors.stone)
+
+            HStack(spacing: 8) {
+                ForEach([0.25, 0.5, 1.0, 1.5, 2.0], id: \.self) { q in
+                    Button {
+                        portionQty = q
+                    } label: {
+                        Text(q.clean + "×")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(portionQty == q ? WyldeStyles.Colors.paper : WyldeStyles.Colors.ink)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(portionQty == q ? WyldeStyles.Colors.ink : WyldeStyles.Colors.bone)
+                            .clipShape(Capsule())
+                    }
+                }
+            }
+
+            HStack {
+                Text("Custom:")
+                    .font(.system(size: 13))
+                    .foregroundColor(WyldeStyles.Colors.stone)
+                Slider(value: $portionQty, in: 0.25...4, step: 0.25)
+                    .tint(WyldeStyles.Colors.sage)
+                Text(portionQty.clean + "×")
+                    .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                    .foregroundColor(WyldeStyles.Colors.ink)
+                    .frame(width: 50)
+            }
+
+            Text("\(Int(Double(food.calories ?? 0) * portionQty)) cal · \(Int((food.protein ?? 0) * portionQty))g protein")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(WyldeStyles.Colors.bronze)
+
+            Button {
+                logFood(food, quantity: portionQty)
+                portionFood = nil
+                portionQty = 1.0
+            } label: {
+                Text("Log It")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(WyldeStyles.Colors.paper)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(WyldeStyles.Colors.ink)
+                    .clipShape(Capsule())
+            }
+        }
+        .padding(20)
+        .background(Theme.appBG)
+    }
+
+    private func logFood(_ food: SearchFood, quantity: Double = 1.0) {
+        let qLabel = quantity == 1.0 ? food.name : "\(quantity.clean)\u{00D7} \(food.name)"
         let analysis = FoodAnalysis(
-            description: food.name,
-            calories: food.calories ?? 0,
-            protein: Int(food.protein ?? 0),
-            carbs: Int(food.carbs ?? 0),
-            fat: Int(food.fat ?? 0),
+            description: qLabel,
+            calories: Int(Double(food.calories ?? 0) * quantity),
+            protein: Int((food.protein ?? 0) * quantity),
+            carbs: Int((food.carbs ?? 0) * quantity),
+            fat: Int((food.fat ?? 0) * quantity),
             items: []
         )
-        tracker.addMeal(name: food.name, analysis: analysis, mealType: selectedMealType)
+        tracker.addMeal(name: qLabel, analysis: analysis, mealType: selectedMealType)
         appState.proteinLogged = tracker.totalProtein
         appState.caloriesLogged = tracker.totalCalories
         appState.carbsLogged = tracker.totalCarbs
@@ -327,5 +416,18 @@ class BarcodeScannerVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         session.stopRunning()
+    }
+}
+
+
+private struct PortionWrapper: Identifiable {
+    let food: SearchFood
+    var id: String { food.name }
+}
+
+private extension Double {
+    /// "0.5" -> "½-friendly" plain formatting: trims trailing zeros.
+    var clean: String {
+        self == floor(self) ? String(Int(self)) : String(format: "%.2g", self)
     }
 }
