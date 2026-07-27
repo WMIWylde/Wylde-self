@@ -4,1097 +4,577 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#F7F5F0" />
-  <title>Wylde Self · Patient Adherence Dashboard</title>
-  <meta name="description" content="A calm, considered clinical assistant for physicians. Track adherence, biometrics, and pharmacy fulfillment in one quiet view." />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Wylde Self · Command Center</title>
   <link rel="icon" href="/logo-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            paper:       '#F7F5F0',
-            white:       '#FFFFFF',
-            cream:       '#FAF8F3',
-            warmgray:    '#F0EDE6',
-            line:        'rgba(45,42,38,0.08)',
-            line2:       'rgba(45,42,38,0.14)',
-            ink:         '#2A2823',
-            ink2:        '#6B675F',
-            ink3:        '#9A958B',
-            numeric:     '#1A1815',
-            sage:        '#6E8A7C',
-            sageDeep:    '#5C7A6C',
-            sageDim:     'rgba(110,138,124,0.10)',
-            clay:        '#A8916C',
-            claydim:     'rgba(168,145,108,0.10)',
-            success:     '#5C9678',
-            successbg:   'rgba(92,150,120,0.10)',
-            warn:        '#C7965E',
-            warnbg:      'rgba(199,150,94,0.10)',
-            crit:        '#B86570',
-            critbg:      'rgba(184,101,112,0.10)',
-            sky:         '#6B89A8',
-            skybg:       'rgba(107,137,168,0.08)',
-          },
-          fontFamily: {
-            sans:  ['Inter','system-ui','-apple-system','sans-serif'],
-            serif: ['Fraunces','Georgia','serif'],
-          },
-          boxShadow: {
-            soft: '0 1px 2px rgba(45,42,38,0.04), 0 4px 16px rgba(45,42,38,0.04)',
-            card: '0 2px 4px rgba(45,42,38,0.04), 0 8px 24px rgba(45,42,38,0.05)',
-            hover:'0 4px 8px rgba(45,42,38,0.06), 0 16px 40px rgba(45,42,38,0.07)',
-          },
-        },
-      },
-    };
-  </script>
-
   <style>
     *,*::before,*::after{box-sizing:border-box}
     html,body{
       background:#F7F5F0;color:#2A2823;
       font-family:'Inter',system-ui,sans-serif;font-weight:400;
       -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
-      letter-spacing:-0.005em;font-optical-sizing:auto;
-      overflow-x:hidden;
+      letter-spacing:-0.005em;margin:0;
     }
-    body{min-height:100vh;position:relative}
-    a{text-decoration:none;color:inherit}
-    .font-serif{font-family:'Fraunces','Georgia',serif;font-optical-sizing:auto;}
-    ::selection{background:rgba(110,138,124,0.18);color:#2A2823}
+    ::selection{background:rgba(110,138,124,0.18)}
 
-    /* very soft ambient — warm gradient at top */
-    .ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-    .ambient::before{
-      content:'';position:absolute;width:900px;height:600px;
-      top:-280px;left:50%;transform:translateX(-50%);
-      filter:blur(120px);opacity:.3;
-      background:radial-gradient(ellipse, rgba(110,138,124,0.10), rgba(168,145,108,0.04) 50%, transparent 70%);
-      animation:breathe 6s ease-in-out infinite;
+    /* ── Gate ── */
+    .gate{
+      min-height:100vh;display:grid;place-items:center;padding:24px;
     }
-    @keyframes breathe{ 0%,100%{opacity:.22} 50%{opacity:.36} }
-
-    /* Surface — white card with subtle elevation */
-    .surface{
-      background:#FFFFFF;
-      border-radius:20px;
-      box-shadow:0 1px 2px rgba(45,42,38,0.04), 0 4px 16px rgba(45,42,38,0.04);
+    .gate-card{
+      width:100%;max-width:400px;background:#fff;
+      border:1px solid rgba(45,42,38,0.08);border-radius:24px;
+      padding:48px 36px 36px;text-align:center;
+      box-shadow:0 24px 60px rgba(45,42,38,0.08);
     }
+    .gate-card img{width:36px;height:36px;border-radius:10px;margin:0 auto 20px;display:block}
+    .gate-card h1{font-family:'Fraunces',serif;font-size:26px;font-weight:400;margin:0 0 8px;letter-spacing:-0.015em}
+    .gate-card p{font-size:14px;color:#6B675F;margin:0 0 24px;line-height:1.6}
+    .gate-input{
+      width:100%;padding:13px 16px;border:1px solid rgba(45,42,38,0.14);
+      border-radius:12px;background:#FAF8F3;font-size:14px;font-family:inherit;color:#2A2823;
+    }
+    .gate-input:focus{outline:none;border-color:#6E8A7C;background:#fff}
+    .gate-input::placeholder{color:#9A958B}
+    .gate-btn{
+      width:100%;margin-top:12px;padding:13px;border-radius:999px;border:none;
+      background:#2A2823;color:#FAF8F3;font-size:14px;font-weight:500;cursor:pointer;
+      font-family:inherit;transition:background .15s;
+    }
+    .gate-btn:hover{background:#3D3A33}
+    .gate-error{font-size:13px;color:#8E4951;margin-top:12px;display:none}
 
-    /* Pill — capsule, title case */
-    .pill{
+    /* ── Dashboard ── */
+    .dash{display:none;min-height:100vh}
+    .dash.active{display:block}
+
+    /* Nav */
+    .topnav{
+      position:sticky;top:0;z-index:50;
+      padding:14px 24px;
+      display:flex;justify-content:space-between;align-items:center;
+      background:rgba(247,245,240,0.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      border-bottom:1px solid rgba(45,42,38,0.08);
+    }
+    .topnav-left{display:flex;align-items:center;gap:12px}
+    .topnav-left img{width:28px;height:28px;border-radius:8px}
+    .topnav-title{font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#2A2823}
+    .topnav-title span{color:#5C7A6C}
+    .topnav-label{font-size:13px;font-weight:500;color:#6B675F;margin-left:12px;padding-left:12px;border-left:1px solid rgba(45,42,38,0.14)}
+    .topnav-right{display:flex;gap:8px;align-items:center}
+    .btn-sm{
       display:inline-flex;align-items:center;gap:6px;
-      font-size:12px;font-weight:500;
-      padding:5px 11px;border-radius:999px;line-height:1.2;
-      letter-spacing:-0.005em;
+      padding:7px 14px;border-radius:999px;font-size:12px;font-weight:500;
+      border:1px solid rgba(45,42,38,0.14);background:transparent;color:#2A2823;
+      cursor:pointer;font-family:inherit;transition:background .15s;
     }
-    .pill.success { color:#3F7158; background:rgba(92,150,120,0.12);  border:1px solid rgba(92,150,120,0.22); }
-    .pill.warn    { color:#8B6A3F; background:rgba(199,150,94,0.12);  border:1px solid rgba(199,150,94,0.24); }
-    .pill.crit    { color:#8E4951; background:rgba(184,101,112,0.10); border:1px solid rgba(184,101,112,0.26); }
-    .pill.sky     { color:#4D6985; background:rgba(107,137,168,0.10); border:1px solid rgba(107,137,168,0.22); }
-    .pill.sage    { color:#5C7A6C; background:rgba(110,138,124,0.10); border:1px solid rgba(110,138,124,0.22); }
-    .pill.clay    { color:#7D6849; background:rgba(168,145,108,0.10); border:1px solid rgba(168,145,108,0.22); }
-    .pill.neutral { color:#6B675F; background:#FAF8F3;                border:1px solid rgba(45,42,38,0.08); }
-    .pill .dot{
-      width:6px;height:6px;border-radius:50%;background:currentColor;
-      animation:pulse-dot 3s ease-in-out infinite;
-    }
-    @keyframes pulse-dot{ 0%,100%{opacity:1} 50%{opacity:.55} }
+    .btn-sm:hover{background:#FAF8F3}
+    .btn-sm.active{background:#2A2823;color:#FAF8F3;border-color:#2A2823}
 
-    /* Banner — soft, calm */
-    .alert-banner{
-      display:flex;align-items:center;gap:18px;
-      padding:18px 22px;border-radius:18px;
-      background:rgba(184,101,112,0.06);
-      border:1px solid rgba(184,101,112,0.20);
-    }
-    .alert-banner .ico{
-      width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
-      background:rgba(184,101,112,0.12);color:#8E4951;flex-shrink:0;
-    }
+    /* Main */
+    .main{max-width:1200px;margin:0 auto;padding:24px 24px 48px}
 
-    /* Alert row */
-    .alert-row{
-      display:grid;grid-template-columns:auto 1fr auto auto;gap:16px;align-items:center;
-      padding:18px 20px;border-radius:14px;
-      background:#FAF8F3;border:1px solid rgba(45,42,38,0.06);
-      transition:background .15s ease, border-color .15s ease;
+    /* Section */
+    .section{margin-bottom:28px}
+    .section-head{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:16px;flex-wrap:wrap;gap:8px;
     }
-    .alert-row:hover{ background:#FFFFFF;border-color:rgba(45,42,38,0.14);box-shadow:0 1px 2px rgba(45,42,38,0.04); }
-    .alert-row.crit{ border-left:3px solid #B86570; }
-    .alert-row.warn{ border-left:3px solid #C7965E; }
-    .alert-row.sky { border-left:3px solid #6B89A8; }
-    .alert-row .pavatar{
-      width:36px;height:36px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;
-      background:linear-gradient(135deg, #FAF8F3, #F0EDE6);
-      border:1px solid rgba(45,42,38,0.08);
-      color:#6B675F;font-weight:500;font-size:11.5px;letter-spacing:0.02em;
-    }
+    .section-title{font-family:'Fraunces',serif;font-size:22px;font-weight:400;letter-spacing:-0.015em;margin:0}
+    .section-sub{font-size:12px;color:#9A958B;margin-top:2px}
 
-    /* KPI Card */
-    .kpi{
-      background:#FFFFFF;border:1px solid rgba(45,42,38,0.06);
-      border-radius:20px;padding:24px 26px;
-      display:flex;flex-direction:column;gap:8px;min-height:130px;
+    /* Cards */
+    .card{
+      background:#fff;border:1px solid rgba(45,42,38,0.06);
+      border-radius:18px;padding:20px 22px;
       box-shadow:0 1px 2px rgba(45,42,38,0.03);
-      transition:transform .2s ease, box-shadow .2s ease;
     }
-    .kpi:hover{ transform:translateY(-1px); box-shadow:0 4px 16px rgba(45,42,38,0.06); }
-    .kpi.alert { border-color:rgba(184,101,112,0.30); }
-    .kpi.warn  { border-color:rgba(199,150,94,0.28); }
-    .kpi .label{
-      font-size:12px;font-weight:500;color:#6B675F;letter-spacing:-0.005em;
-    }
-    .kpi .num{
-      font-family:'Fraunces',serif;font-size:48px;font-weight:400;
-      letter-spacing:-0.02em;line-height:1;color:#1A1815;
-      font-feature-settings:'tnum';
-    }
-    .kpi .sub{ font-size:12.5px;color:#6B675F;letter-spacing:-0.005em; }
 
-    /* Patient table */
-    .ptable{ width:100%;border-collapse:collapse; }
-    .ptable thead th{
-      text-align:left;
-      font-size:11px;letter-spacing:-0.002em;color:#9A958B;font-weight:500;
-      padding:14px 18px;border-bottom:1px solid rgba(45,42,38,0.08);
-      cursor:pointer;user-select:none;
+    /* KPI grid */
+    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+    .kpi{text-align:left}
+    .kpi .label{font-size:11.5px;font-weight:500;color:#9A958B;letter-spacing:0.01em;text-transform:uppercase}
+    .kpi .num{font-family:'Fraunces',serif;font-size:38px;font-weight:400;letter-spacing:-0.02em;line-height:1.1;margin-top:6px;color:#1A1815}
+    .kpi .sub{font-size:12px;color:#6B675F;margin-top:4px}
+
+    /* Status grid */
+    .status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+    .status-item{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 16px;border-radius:12px;
+      background:#FAF8F3;border:1px solid rgba(45,42,38,0.06);
     }
-    .ptable thead th:hover{ color:#6B675F; }
-    .ptable tbody tr{ cursor:pointer;transition:background .15s ease; }
-    .ptable tbody tr:hover{ background:#FAF8F3; }
-    .ptable tbody tr.active{ background:rgba(110,138,124,0.06); box-shadow:inset 3px 0 0 0 #6E8A7C; }
-    .ptable tbody td{
-      padding:18px;border-bottom:1px solid rgba(45,42,38,0.05);
+    .status-item .name{font-size:13px;font-weight:500}
+    .status-item .detail{font-size:11px;color:#9A958B;margin-top:2px}
+    .pill{
+      display:inline-flex;align-items:center;gap:5px;
+      font-size:11px;font-weight:500;padding:4px 10px;border-radius:999px;
+    }
+    .pill.green{color:#3F7158;background:rgba(92,150,120,0.12);border:1px solid rgba(92,150,120,0.22)}
+    .pill.amber{color:#8B6A3F;background:rgba(199,150,94,0.12);border:1px solid rgba(199,150,94,0.24)}
+    .pill.red{color:#8E4951;background:rgba(184,101,112,0.10);border:1px solid rgba(184,101,112,0.26)}
+    .pill.gray{color:#6B675F;background:#F0EDE6;border:1px solid rgba(45,42,38,0.10)}
+    .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+    /* Clinic table */
+    .clinic-table{width:100%;border-collapse:collapse}
+    .clinic-table th{
+      text-align:left;font-size:11px;font-weight:500;color:#9A958B;
+      padding:10px 14px;border-bottom:1px solid rgba(45,42,38,0.08);
+      letter-spacing:0.01em;text-transform:uppercase;
+    }
+    .clinic-table td{
+      padding:14px;border-bottom:1px solid rgba(45,42,38,0.04);
       font-size:13.5px;vertical-align:middle;
     }
-    .ptable tbody tr:last-child td{ border-bottom:0; }
-    .ptable .pname{ display:flex;align-items:center;gap:12px; }
-    .ptable .pavatar{
-      width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
-      background:linear-gradient(135deg, #FAF8F3, #F0EDE6);
-      border:1px solid rgba(45,42,38,0.06);
-      color:#6B675F;font-weight:500;font-size:11px;letter-spacing:0.02em;
+    .clinic-table tr:last-child td{border-bottom:0}
+    .clinic-table tr:hover td{background:rgba(250,248,243,0.6)}
+    .clinic-name{font-weight:600;color:#2A2823}
+    .clinic-meta{font-size:12px;color:#9A958B;margin-top:2px}
+    .action-btn{
+      padding:6px 14px;border-radius:999px;font-size:12px;font-weight:500;
+      border:1px solid;cursor:pointer;font-family:inherit;transition:all .15s;
+      background:transparent;
     }
-    .ptable .pinfo{ font-size:12px;color:#9A958B;margin-top:2px;letter-spacing:-0.005em; }
-    .ptable .score{
-      font-family:'Fraunces',serif;font-size:18px;font-weight:400;
-      font-feature-settings:'tnum';letter-spacing:-0.01em;
-    }
-    .ptable .score.success{ color:#3F7158; }
-    .ptable .score.warn{ color:#8B6A3F; }
-    .ptable .score.crit{ color:#8E4951; }
-    .ptable .trend{ display:inline-flex;align-items:center;gap:4px;font-size:12.5px; }
-    .ptable .trend.up{ color:#3F7158; }
-    .ptable .trend.down{ color:#8E4951; }
-    .ptable .trend.flat{ color:#9A958B; }
+    .action-btn.approve{color:#3F7158;border-color:rgba(92,150,120,0.3)}
+    .action-btn.approve:hover{background:rgba(92,150,120,0.1)}
+    .action-btn.suspend{color:#8E4951;border-color:rgba(184,101,112,0.3)}
+    .action-btn.suspend:hover{background:rgba(184,101,112,0.08)}
 
-    /* Buttons */
-    .btn{
-      display:inline-flex;align-items:center;gap:7px;
-      padding:9px 16px;border-radius:999px;font-size:13px;font-weight:500;
-      letter-spacing:-0.005em;line-height:1.1;
-      border:1px solid transparent;cursor:pointer;
-      transition:transform .15s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
-      white-space:nowrap;
+    /* Feedback */
+    .fb-item{
+      padding:14px 16px;border-radius:12px;
+      background:#FAF8F3;border:1px solid rgba(45,42,38,0.06);
+      margin-bottom:10px;
     }
-    .btn:hover{ transform:translateY(-1px); }
-    .btn.primary{
-      background:#2A2823;color:#FAF8F3;border-color:#2A2823;
-    }
-    .btn.primary:hover{ background:#3D3A33;border-color:#3D3A33; box-shadow:0 4px 16px rgba(45,42,38,0.18); }
-    .btn.attention{
-      background:rgba(184,101,112,0.10);color:#8E4951;border-color:rgba(184,101,112,0.30);
-    }
-    .btn.attention:hover{ background:rgba(184,101,112,0.18);border-color:rgba(184,101,112,0.42); }
-    .btn.ghost{
-      background:transparent;color:#2A2823;border-color:rgba(45,42,38,0.14);
-    }
-    .btn.ghost:hover{ background:#FAF8F3;border-color:rgba(45,42,38,0.22); }
+    .fb-item:last-child{margin-bottom:0}
+    .fb-msg{font-size:13.5px;line-height:1.5;color:#2A2823}
+    .fb-meta{font-size:11.5px;color:#9A958B;margin-top:6px}
 
-    /* Heatmap cell */
-    .cell{
-      width:100%;aspect-ratio:1/1;border-radius:4px;
-      background:#F0EDE6;border:1px solid rgba(45,42,38,0.04);
-      transition:transform .15s ease;
-    }
-    .cell.s0{ background:#F0EDE6; }
-    .cell.s1{ background:rgba(110,138,124,0.20); }
-    .cell.s2{ background:rgba(110,138,124,0.50); }
-    .cell.s3{ background:#6E8A7C; }
-    .cell.miss{ background:rgba(184,101,112,0.36); }
-    .cell.today{ outline:1.5px solid #6E8A7C;outline-offset:1px; }
-    .cell:hover{ transform:scale(1.18); z-index:5; box-shadow:0 0 0 1px rgba(45,42,38,0.18); }
+    /* Loading */
+    .loading{color:#9A958B;font-size:13px;padding:20px 0;text-align:center}
+    .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(45,42,38,0.12);border-top-color:#6E8A7C;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-    .spark path{ fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round; }
-    .spark .axis{ stroke:rgba(45,42,38,0.06); stroke-width:1; }
+    /* Empty */
+    .empty{color:#9A958B;font-size:13px;padding:16px 0;text-align:center}
 
-    /* Score ring */
-    .ring{
-      width:120px;height:120px;border-radius:50%;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(110,138,124,0.06), transparent 60%),
-        conic-gradient(from -90deg,
-          var(--ring-color, #6E8A7C) 0%,
-          var(--ring-color, #6E8A7C) var(--p, 94%),
-          rgba(45,42,38,0.06) var(--p, 94%),
-          rgba(45,42,38,0.06) 100%);
-      mask: radial-gradient(circle, transparent 60%, black 61%);
-      -webkit-mask: radial-gradient(circle, transparent 60%, black 61%);
+    /* Responsive */
+    @media(max-width:640px){
+      .topnav{padding:12px 16px}
+      .topnav-label{display:none}
+      .main{padding:16px 16px 40px}
+      .kpi .num{font-size:30px}
+      .clinic-table{font-size:12px}
+      .clinic-table th,.clinic-table td{padding:10px 8px}
     }
 
-    .reveal{opacity:0;transform:translateY(8px);transition:opacity .5s ease, transform .5s ease}
-    .reveal.in{opacity:1;transform:none}
-
-    ::-webkit-scrollbar{width:8px;height:8px}
-    ::-webkit-scrollbar-track{background:transparent}
-    ::-webkit-scrollbar-thumb{background:rgba(45,42,38,0.12);border-radius:8px}
-    ::-webkit-scrollbar-thumb:hover{background:rgba(45,42,38,0.22)}
-
-    [data-lucide]{ width:15px; height:15px; stroke-width:1.5; }
+    /* Footer */
+    .footer{
+      padding:20px 0;border-top:1px solid rgba(45,42,38,0.06);
+      display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+      font-size:11px;color:#9A958B;
+    }
   </style>
-
-  <!-- Pre-render unlock check -->
-  <script>
-    (function(){
-      try {
-        if (localStorage.getItem('wyldeself_clinical_access') === 'true') {
-          document.documentElement.setAttribute('data-unlocked', 'true');
-        }
-      } catch(e) {}
-    })();
-  </script>
 </head>
-<body class="bg-paper text-ink min-h-screen">
+<body>
 
-  <!-- ━━━━━━━━━━━━━━━━━━ ACCESS GATE ━━━━━━━━━━━━━━━━━━ -->
-  <div id="gate-overlay" role="dialog" aria-modal="true" aria-labelledby="gate-title">
-    <div class="gate-card">
-      <img src="/logo-icon.png" alt="" class="gate-logo" />
-      <h2 id="gate-title" class="gate-title">Clinical access</h2>
-      <p class="gate-sub">Enter the access code shared with you to view the live dashboard and clinical overview.</p>
-      <form id="gate-form" autocomplete="off">
-        <input id="gate-input" type="password" placeholder="Access code" autocomplete="off" autofocus aria-label="Access code" />
-        <button id="gate-submit" type="submit">Unlock</button>
-        <p id="gate-error" hidden>That code didn't work. Check your email or request access below.</p>
-      </form>
-      <a class="gate-request" href="mailto:clinical@wyldeself.com?subject=Wylde%20Self%20%C2%B7%20Clinical%20Access&amp;body=Practice%20name%3A%0APractice%20size%3A%0ACurrent%20EHR%3A%0ABiggest%20between-visit%20pain%20point%3A%0A">Don't have a code? Request access →</a>
-    </div>
+<!-- ━━━━━━━ GATE ━━━━━━━ -->
+<div id="gate" class="gate">
+  <div class="gate-card">
+    <img src="/logo-icon.png" alt="" />
+    <h1>Command Center</h1>
+    <p>Admin access only. Enter your admin secret to continue.</p>
+    <form id="gate-form" autocomplete="off">
+      <input id="gate-input" class="gate-input" type="password" placeholder="Admin secret" autocomplete="off" autofocus />
+      <button type="submit" class="gate-btn">Unlock</button>
+    </form>
+    <div id="gate-error" class="gate-error">Invalid secret. Try again.</div>
   </div>
-  <style>
-    html:not([data-unlocked="true"]) body { overflow: hidden !important; }
-    [data-unlocked="true"] #gate-overlay { display: none !important; }
-    #gate-overlay {
-      position: fixed; inset: 0; z-index: 9999;
-      background: rgba(247,245,240,0.96);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      display: grid; place-items: center; padding: 24px;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      transition: opacity 0.4s ease;
-    }
-    .gate-card {
-      width: 100%; max-width: 440px;
-      background: #FFFFFF;
-      border: 1px solid rgba(45,42,38,0.08);
-      border-radius: 24px;
-      padding: 44px 36px 32px;
-      box-shadow: 0 24px 60px rgba(45,42,38,0.10), 0 4px 16px rgba(45,42,38,0.06);
-      text-align: center;
-    }
-    .gate-logo { width: 36px; height: 36px; border-radius: 10px; margin: 0 auto 20px; display: block; }
-    .gate-title {
-      font-family: 'Fraunces', Georgia, serif;
-      font-weight: 400; font-size: 28px;
-      letter-spacing: -0.018em; line-height: 1.15;
-      color: #2A2823; margin-bottom: 10px;
-    }
-    .gate-sub { font-size: 14.5px; line-height: 1.6; color: #6B675F; margin: 0 auto 26px; max-width: 36ch; }
-    #gate-form { display: flex; flex-direction: column; gap: 12px; }
-    #gate-input {
-      width: 100%; padding: 14px 16px;
-      border: 1px solid rgba(45,42,38,0.14);
-      border-radius: 12px; background: #FAF8F3;
-      font-size: 14px; font-family: inherit; color: #2A2823;
-      letter-spacing: -0.005em;
-      transition: border-color 0.2s ease, background 0.2s ease;
-    }
-    #gate-input::placeholder { color: #9A958B; }
-    #gate-input:focus { outline: none; border-color: #6E8A7C; background: #FFFFFF; }
-    #gate-submit {
-      padding: 14px 22px; border-radius: 999px;
-      background: #2A2823; color: #FAF8F3;
-      font-weight: 500; font-size: 14px; letter-spacing: -0.005em;
-      border: 1px solid #2A2823; cursor: pointer;
-      transition: transform 0.2s ease, background 0.2s ease;
-      font-family: inherit;
-    }
-    #gate-submit:hover { transform: translateY(-1px); background: #3D3A33; }
-    #gate-error {
-      font-size: 13px; color: #8E4951;
-      background: rgba(184,101,112,0.08);
-      border: 1px solid rgba(184,101,112,0.20);
-      border-radius: 10px; padding: 10px 14px; margin: 4px 0 0;
-      line-height: 1.5;
-    }
-    .gate-request {
-      display: block; margin-top: 22px; padding-top: 22px;
-      border-top: 1px solid rgba(45,42,38,0.08);
-      font-size: 13.5px; color: #5C7A6C;
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-    .gate-request:hover { color: #2A2823; }
-  </style>
-  <script>
-    (function() {
-      // ─── CHANGE THIS to whatever code you share with clinicians.
-      // Client-side gate — soft access control, not security.
-      const ACCESS_CODE = 'WyldeClinical2026';
-      const ACCESS_KEY  = 'wyldeself_clinical_access';
-      // ───────────────────────────────────────────────────────
+</div>
 
-      try {
-        if (localStorage.getItem(ACCESS_KEY) === 'true') {
-          document.documentElement.setAttribute('data-unlocked', 'true');
-          return;
-        }
-      } catch(e) {}
+<!-- ━━━━━━━ DASHBOARD ━━━━━━━ -->
+<div id="dash" class="dash">
 
-      const form    = document.getElementById('gate-form');
-      const input   = document.getElementById('gate-input');
-      const error   = document.getElementById('gate-error');
-      const overlay = document.getElementById('gate-overlay');
-
-      setTimeout(() => input?.focus(), 60);
-
-      form?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const code = input.value.trim();
-        if (code === ACCESS_CODE) {
-          try { localStorage.setItem(ACCESS_KEY, 'true'); } catch(e) {}
-          document.documentElement.setAttribute('data-unlocked', 'true');
-          overlay.style.opacity = '0';
-          setTimeout(() => overlay.remove(), 400);
-        } else {
-          error.hidden = false;
-          input.value = '';
-          input.focus();
-        }
-      });
-    })();
-  </script>
-  <!-- ━━━━━━━━━━━━━━━━━━ /ACCESS GATE ━━━━━━━━━━━━━━━━━━ -->
-
-  <div class="ambient" aria-hidden="true"></div>
-
-  <!-- ─────── TOP NAV ─────── -->
-  <nav id="nav" class="fixed top-0 inset-x-0 z-50 px-6 md:px-8 py-3.5 flex justify-between items-center bg-paper/85 backdrop-blur-md border-b border-line">
-    <div class="flex items-center gap-5">
-      <a href="/" class="flex items-center gap-2.5" aria-label="Wylde Self home">
-        <img src="/logo-icon.png" alt="" class="w-7 h-7 rounded-lg block flex-shrink-0" />
-        <span class="hidden sm:inline tracking-[0.16em] text-[12px] font-semibold uppercase text-ink">WYLDE <span class="text-sageDeep">SELF</span></span>
-      </a>
-      <span class="hidden md:inline-block w-px h-4 bg-line2"></span>
-      <span class="hidden md:inline-flex items-center gap-2 text-[14px] font-medium text-ink">
-        Patient Adherence Dashboard
-      </span>
+  <nav class="topnav">
+    <div class="topnav-left">
+      <img src="/logo-icon.png" alt="" />
+      <span class="topnav-title">WYLDE <span>SELF</span></span>
+      <span class="topnav-label">Command Center</span>
     </div>
-    <div class="flex items-center gap-2">
-      <div class="relative hidden sm:block">
-        <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink3 w-4 h-4"></i>
-        <input type="text" placeholder="Search patients" aria-label="Search"
-          class="bg-cream border border-line rounded-full pl-10 pr-4 py-2 text-[13px] w-72 placeholder:text-ink3 focus:outline-none focus:border-line2 transition" />
-      </div>
-      <button class="pill crit" aria-label="3 patients need attention"><i data-lucide="bell" class="w-3 h-3"></i>3 need attention</button>
-      <a href="/clinical.html" class="pill neutral hidden md:inline-flex"><i data-lucide="arrow-left" class="w-3 h-3"></i>Back to site</a>
-      <span class="pill clay"><i data-lucide="circle-user" class="w-3 h-3"></i>Dr. Itzin</span>
+    <div class="topnav-right">
+      <button class="btn-sm" onclick="refreshAll()">Refresh</button>
+      <button class="btn-sm" onclick="logout()">Sign out</button>
     </div>
   </nav>
 
-  <!-- ─────── MAIN ─────── -->
-  <div class="relative z-10 pt-20 pb-10 px-4 md:px-8 max-w-[1620px] mx-auto">
+  <div class="main">
 
-    <!-- ░ Banner ░ -->
-    <div class="alert-banner reveal mb-6">
-      <span class="ico"><i data-lucide="alert-circle" class="w-5 h-5"></i></span>
-      <div class="flex-1 min-w-0">
-        <div class="text-[15px] font-medium text-ink leading-snug">3 patients need attention today</div>
-        <div class="text-[13px] text-ink2 mt-1 leading-snug">Adherence has dropped, refills are overdue, or biometrics are trending below baseline.</div>
-      </div>
-      <button class="btn attention" onclick="document.getElementById('alerts').scrollIntoView({behavior:'smooth'})">
-        Review now <i data-lucide="arrow-right" class="w-3 h-3"></i>
-      </button>
-    </div>
-
-    <!-- ░ KPI ROW ░ -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5 mb-6">
-      <div class="kpi reveal">
-        <div class="label">Cohort adherence</div>
-        <div class="num">87<span class="text-ink2 text-[22px] font-normal font-sans">%</span></div>
-        <div class="flex items-center gap-2.5 mt-1">
-          <span class="pill success"><span class="dot"></span>On track</span>
-          <span class="sub">+3% vs last week</span>
+    <!-- ░ SYSTEM HEALTH ░ -->
+    <div class="section" id="s-health">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">System health</h2>
+          <div class="section-sub" id="health-ts"></div>
         </div>
+        <button class="btn-sm" onclick="loadHealth()">Check now</button>
       </div>
-      <div class="kpi reveal">
-        <div class="label">Active patients</div>
-        <div class="num">47</div>
-        <div class="sub mt-1">Across 8 active protocols</div>
-      </div>
-      <div class="kpi alert reveal">
-        <div class="label">Need attention</div>
-        <div class="num text-crit">6</div>
-        <div class="flex items-center gap-2 mt-1">
-          <span class="pill crit">Review today</span>
-        </div>
-      </div>
-      <div class="kpi warn reveal">
-        <div class="label">Refills due</div>
-        <div class="num text-warn">3</div>
-        <div class="flex items-center gap-2 mt-1">
-          <span class="pill warn">Approve when ready</span>
+      <div class="card">
+        <div id="health-grid" class="status-grid">
+          <div class="loading"><span class="spin"></span>Checking providers...</div>
         </div>
       </div>
     </div>
 
-    <!-- ░ TWO-COLUMN GRID ░ -->
-    <div class="grid grid-cols-12 gap-5 md:gap-6">
-
-      <div class="col-span-12 xl:col-span-8 flex flex-col gap-6">
-
-        <!-- ░ ACTIVE ALERTS ░ -->
-        <section id="alerts" class="surface p-6 md:p-8 reveal">
-          <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
-            <div class="flex items-center gap-3">
-              <h2 class="font-serif text-[24px] font-normal tracking-[-0.015em] text-ink">Today's priorities</h2>
-              <span class="pill neutral">8 open</span>
-            </div>
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <button class="pill neutral active"><span class="dot" style="background:#B86570"></span>Needs attention · 3</button>
-              <button class="pill neutral"><span class="dot" style="background:#C7965E"></span>Trending lower · 4</button>
-              <button class="pill neutral"><span class="dot" style="background:#6B89A8"></span>Updates · 1</button>
-            </div>
-          </div>
-
-          <div id="alertList" class="flex flex-col gap-3"></div>
-        </section>
-
-        <!-- ░ AT-RISK PATIENTS TABLE ░ -->
-        <section class="surface overflow-hidden reveal">
-          <div class="flex items-center justify-between p-6 md:p-8 pb-4 flex-wrap gap-3">
-            <div class="flex items-center gap-3">
-              <h2 class="font-serif text-[24px] font-normal tracking-[-0.015em] text-ink">Patients to review</h2>
-              <span class="pill neutral">9 patients</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <button class="pill neutral"><i data-lucide="filter" class="w-3 h-3"></i>Filter</button>
-              <button class="pill neutral"><i data-lucide="download" class="w-3 h-3"></i>Export</button>
-            </div>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="ptable">
-              <thead>
-                <tr>
-                  <th>Patient</th>
-                  <th>Adherence</th>
-                  <th>7-day trend</th>
-                  <th>Last check-in</th>
-                  <th>Notes</th>
-                  <th>Status</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="patientTbody"></tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- ░ BETA PULSE (live data) ░ -->
-        <section class="surface p-6 md:p-8 reveal" id="betaPulse">
-          <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
-            <div class="flex items-center gap-3">
-              <h2 class="font-serif text-[24px] font-normal tracking-[-0.015em] text-ink">Beta pulse</h2>
-              <span class="pill neutral">live</span>
-            </div>
-            <button class="pill neutral" onclick="loadPulse()">Refresh</button>
-          </div>
-          <div id="pulseStats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px;"></div>
-          <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9A958B;margin-bottom:10px;">Latest feedback</div>
-          <div id="pulseFeedback" class="flex flex-col gap-2"></div>
-        </section>
-
-        <!-- ░ CLINIC APPROVALS ░ -->
-        <section class="surface p-6 md:p-8 reveal" id="clinicApprovals">
-          <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
-            <div class="flex items-center gap-3">
-              <h2 class="font-serif text-[24px] font-normal tracking-[-0.015em] text-ink">Clinic approvals</h2>
-              <span class="pill neutral" id="clinicPendingCount">–</span>
-            </div>
-            <button class="pill neutral" onclick="loadClinics()">Refresh</button>
-          </div>
-          <div id="clinicSecretRow" class="mb-4" style="display:none;">
-            <input id="clinicAdminSecret" type="password" placeholder="Admin secret"
-              style="width:100%;max-width:320px;padding:10px 14px;border:1px solid rgba(0,0,0,0.12);border-radius:10px;font-size:13px;"
-              onkeydown="if(event.key==='Enter'){sessionStorage.setItem('wylde_admin_secret',this.value);loadClinics();}" />
-            <div style="font-size:11px;color:#9A958B;margin-top:6px;">Enter the admin secret to manage clinics (stored for this tab only).</div>
-          </div>
-          <div id="clinicList" class="flex flex-col gap-3"></div>
-        </section>
-
+    <!-- ░ BETA PULSE ░ -->
+    <div class="section" id="s-pulse">
+      <div class="section-head">
+        <h2 class="section-title">Beta pulse</h2>
+        <button class="btn-sm" onclick="loadPulse()">Refresh</button>
       </div>
-
-      <!-- RIGHT — Selected Patient Detail -->
-      <aside class="col-span-12 xl:col-span-4 xl:sticky xl:top-24 self-start flex flex-col gap-6">
-
-        <!-- ░ PATIENT HEADER ░ -->
-        <section class="surface p-6 md:p-8 reveal">
-          <div class="flex items-center justify-between mb-5">
-            <div class="text-[12px] font-medium text-ink3">Selected patient</div>
-            <span class="pill crit"><span class="dot"></span>Needs attention</span>
-          </div>
-
-          <div class="flex items-start gap-4">
-            <div class="w-14 h-14 rounded-2xl grid place-items-center font-medium text-[14px] tracking-wide flex-shrink-0"
-                 style="background:linear-gradient(135deg, #FAF8F3, #F0EDE6);border:1px solid rgba(45,42,38,0.08);color:#6B675F;">
-              MR
-            </div>
-            <div class="min-w-0 flex-1">
-              <h3 class="font-serif text-[22px] font-normal tracking-[-0.015em] text-ink leading-tight">Marcus Reed</h3>
-              <div class="text-[12.5px] text-ink2 mt-1.5">38 years · MRN #WS-04412</div>
-              <div class="text-[12.5px] text-ink3 mt-0.5">Phase II protocol · Day 42 of 84</div>
-            </div>
-          </div>
-
-          <!-- Adherence summary — humanized -->
-          <div class="mt-6 pt-6 border-t border-line">
-            <div class="flex items-center justify-between gap-4">
-              <div class="flex-1">
-                <div class="text-[12px] font-medium text-ink3">Adherence</div>
-                <div class="font-serif text-[52px] font-normal tracking-[-0.02em] leading-none mt-2 text-numeric">68<span class="text-ink2 text-[22px] font-normal font-sans">%</span></div>
-                <div class="text-[12.5px] text-ink2 mt-2">Last 30 days · −12% vs the past 60</div>
-              </div>
-              <div class="relative">
-                <div class="ring" style="--p:68%;--ring-color:#B86570;"></div>
-                <div class="absolute inset-0 grid place-items-center">
-                  <div class="text-center">
-                    <i data-lucide="alert-circle" class="text-crit w-6 h-6 mx-auto"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <p class="text-[13.5px] text-ink2 leading-relaxed mt-4">
-              Adherence is trending lower than usual, primarily on evening peptide doses.
-            </p>
-            <p class="text-[13.5px] text-sageDeep leading-relaxed mt-2">
-              Suggested: Send a check-in or schedule a brief call before the next visit.
-            </p>
-          </div>
-        </section>
-
-        <!-- ░ PATIENT-SPECIFIC NOTES ░ -->
-        <section class="surface p-6 md:p-8 reveal">
-          <div class="text-[12px] font-medium text-ink3 mb-4">Notes for this patient</div>
-          <div class="flex flex-col gap-3">
-            <div class="alert-row crit">
-              <span class="flex-shrink-0" style="width:32px;height:32px;border-radius:10px;background:rgba(184,101,112,0.12);color:#8E4951;display:grid;place-items:center;">
-                <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
-              </span>
-              <div class="min-w-0">
-                <div class="text-[13.5px] font-medium text-ink">Missed 3 evening peptide doses</div>
-                <div class="text-[12px] text-ink3 mt-0.5">Past 5 days · BPC-157</div>
-              </div>
-              <span class="text-[11px] text-ink3">2h</span>
-              <button class="btn attention" style="padding:7px 13px;font-size:12px">Send check-in</button>
-            </div>
-            <div class="alert-row warn">
-              <span class="flex-shrink-0" style="width:32px;height:32px;border-radius:10px;background:rgba(199,150,94,0.12);color:#8B6A3F;display:grid;place-items:center;">
-                <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
-              </span>
-              <div class="min-w-0">
-                <div class="text-[13.5px] font-medium text-ink">Sleep is 18% below baseline</div>
-                <div class="text-[12px] text-ink3 mt-0.5">Training days · 7-night avg</div>
-              </div>
-              <span class="text-[11px] text-ink3">4h</span>
-              <button class="btn ghost" style="padding:7px 13px;font-size:12px">Review</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- ░ ADHERENCE HEATMAP ░ -->
-        <section class="surface p-6 md:p-8 reveal">
-          <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
-            <div class="text-[12px] font-medium text-ink3">Daily adherence · last 30 days</div>
-            <div class="flex items-center gap-3 text-[11px] text-ink3">
-              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-warmgray border border-line"></span>Missed</span>
-              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-sage"></span>Completed</span>
-            </div>
-          </div>
-          <div id="heatmap" class="flex flex-col gap-2.5"></div>
-          <div id="cellTip" class="pointer-events-none fixed z-[100] hidden bg-white border border-line2 rounded-lg px-3 py-2 text-[12px] text-ink shadow-card"></div>
-        </section>
-
-        <!-- ░ BIOMETRICS — humanized ░ -->
-        <section class="surface p-6 md:p-8 reveal">
-          <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
-            <div class="text-[12px] font-medium text-ink3">Baseline + progress tracking</div>
-            <span class="pill success"><span class="dot"></span>Synced 3m ago</span>
-          </div>
-          <div id="biometrics" class="flex flex-col gap-3"></div>
-        </section>
-
-        <!-- ░ ACTIVE PROTOCOL ░ -->
-        <section class="surface p-6 md:p-8 reveal">
-          <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
-            <div class="text-[12px] font-medium text-ink3">Active protocol</div>
-            <span class="pill warn"><span class="dot"></span>Refill due soon</span>
-          </div>
-
-          <div class="bg-cream border border-line rounded-2xl p-5 mb-4">
-            <div class="flex items-start justify-between gap-2 mb-3">
-              <div class="min-w-0">
-                <div class="font-serif text-[19px] font-normal tracking-[-0.01em] text-ink truncate">BPC-157 + TB-500</div>
-                <div class="text-[12.5px] text-ink2 mt-0.5">250 mcg + 500 mcg · once daily SC</div>
-              </div>
-              <span class="pill clay">Vial 2 of 4</span>
-            </div>
-            <div class="grid grid-cols-4 gap-1.5 mt-3">
-              <div class="h-1.5 rounded-full bg-clay"></div>
-              <div class="h-1.5 rounded-full bg-clay"></div>
-              <div class="h-1.5 rounded-full bg-warmgray border border-line"></div>
-              <div class="h-1.5 rounded-full bg-warmgray border border-line"></div>
-            </div>
-            <div class="text-[11.5px] text-ink3 mt-3">Last filled · Apr 02 · Tailor Made Compounding</div>
-          </div>
-
-          <button id="refillBtn" class="btn primary w-full justify-center" style="padding:14px 20px;font-size:13.5px;">
-            <i data-lucide="check" class="w-4 h-4"></i>
-            Approve refill
-          </button>
-          <div class="text-[11px] text-ink3 mt-3 text-center">Routes to Tailor Made · countersigned by Dr. Itzin</div>
-        </section>
-
-        <!-- ░ AI INSIGHT ░ -->
-        <section class="surface p-6 md:p-8 reveal">
-          <div class="flex items-center justify-between mb-4">
-            <div class="text-[12px] font-medium text-ink3">Weekly summary</div>
-            <span class="text-[11.5px] text-ink3">Apr 19 – Apr 26</span>
-          </div>
-          <p class="text-[14px] leading-relaxed text-ink">
-            Marcus is meeting protein targets, but sleep has dropped 18% below baseline on training days. Heart-rate variability is also trending lower.
-          </p>
-          <div class="mt-4 px-4 py-3.5 bg-cream border border-line rounded-2xl">
-            <div class="text-[11.5px] font-medium text-sageDeep mb-1.5">Suggested adjustment</div>
-            <p class="text-[13px] text-ink2 leading-relaxed">Move Ipamorelin to morning on training days, and consider 200 mg magnesium glycinate at 21:00.</p>
-          </div>
-          <div class="mt-5 flex items-center gap-2 flex-wrap">
-            <button data-act="approve" class="ai-action btn primary">
-              <i data-lucide="check" class="w-3.5 h-3.5"></i>Approve &amp; apply
-            </button>
-            <button data-act="override" class="ai-action btn ghost">
-              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>Edit
-            </button>
-            <button class="ai-action btn ghost">
-              <i data-lucide="x" class="w-3.5 h-3.5"></i>Dismiss
-            </button>
-          </div>
-        </section>
-
-      </aside>
+      <div class="card">
+        <div id="pulse-kpis" class="kpi-grid">
+          <div class="loading"><span class="spin"></span>Loading stats...</div>
+        </div>
+      </div>
     </div>
 
-    <!-- footer strip -->
-    <div class="mt-10 pt-6 border-t border-line flex flex-wrap items-center justify-between gap-3 text-[11.5px] text-ink3">
-      <span>© <span id="yr">2026</span> Wylde Self · Clinical Infrastructure</span>
-      <span>HIPAA-aligned · SOC 2-track · Physician-supervised</span>
-      <span class="font-serif italic">Considered. Clinical. Calm.</span>
+    <!-- ░ SIGNUPS ░ -->
+    <div class="section" id="s-signups">
+      <div class="section-head">
+        <h2 class="section-title">Signups</h2>
+        <div class="section-sub">Last 30 days</div>
+      </div>
+      <div class="card">
+        <div id="signup-chart" style="height:120px;position:relative">
+          <div class="loading"><span class="spin"></span>Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ░ CLINIC MANAGEMENT ░ -->
+    <div class="section" id="s-clinics">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Clinics</h2>
+          <div class="section-sub" id="clinic-count"></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn-sm filter-btn active" data-filter="all" onclick="filterClinics('all',this)">All</button>
+          <button class="btn-sm filter-btn" data-filter="pending" onclick="filterClinics('pending',this)">Pending</button>
+          <button class="btn-sm filter-btn" data-filter="approved" onclick="filterClinics('approved',this)">Approved</button>
+          <button class="btn-sm filter-btn" data-filter="suspended" onclick="filterClinics('suspended',this)">Suspended</button>
+        </div>
+      </div>
+      <div class="card" style="padding:0;overflow-x:auto">
+        <table class="clinic-table">
+          <thead>
+            <tr>
+              <th>Clinic</th>
+              <th>Type</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Onboarding</th>
+              <th>Signed up</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="clinic-tbody">
+            <tr><td colspan="7" class="loading"><span class="spin"></span>Loading clinics...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ░ USER FEEDBACK ░ -->
+    <div class="section" id="s-feedback">
+      <div class="section-head">
+        <h2 class="section-title">Recent feedback</h2>
+      </div>
+      <div id="feedback-list">
+        <div class="loading"><span class="spin"></span>Loading feedback...</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>&copy; <script>document.write(new Date().getFullYear())</script> Wylde Self</span>
+      <span style="font-family:'Fraunces',serif;font-style:italic">Considered. Clinical. Calm.</span>
     </div>
   </div>
+</div>
 
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════ */
+let _secret = '';
+let _clinics = [];
+let _currentFilter = 'all';
 
-  <script>
-  /* DATA (modular) */
-  const ENDPOINTS = {
-    // alerts:    `/clinical/v1/alerts?status=open`,
-    // patients:  `/clinical/v1/patients?status=needs_attention`,
-    // closeout:  `/clinical/v1/closeout/${id}?days=30`,
-    // biometrics:`/clinical/v1/biometrics/${id}`,
-    // refill:    `/clinical/v1/rx/${id}/approve`,
-  };
+function secret() { return _secret; }
+function headers() { return { 'X-Admin-Secret': secret(), 'Content-Type': 'application/json' }; }
 
-  const ALERTS = [
-    { sev:'crit', patient:'Marcus Reed',     initials:'MR', title:'Adherence has dropped 12% over 7 days',          meta:'Missed 3 evening doses · BPC-157',         ago:'2h',  action:'Open patient',      actClass:'attention' },
-    { sev:'crit', patient:'Sara Chen',       initials:'SC', title:'Refill is overdue by 2 days',                    meta:'Sermorelin · last filled Mar 22',          ago:'1d',  action:'Approve refill',    actClass:'attention' },
-    { sev:'crit', patient:'Sebastian Orr',   initials:'SO', title:'Hasn’t checked in for 4 days',               meta:'Adherence currently at 54%',               ago:'1d',  action:'Send a message',    actClass:'attention' },
-    { sev:'warn', patient:'Ana Vasquez',     initials:'AV', title:'Sleep is averaging 18% below baseline',          meta:'Training days · 7-night avg',              ago:'4h',  action:'Send a reminder',   actClass:'ghost' },
-    { sev:'warn', patient:'Daniel Tovar',    initials:'DT', title:'HRV has trended lower for the past 7 days',      meta:'Approaching 15% deviation threshold',      ago:'6h',  action:'Review trend',      actClass:'ghost' },
-    { sev:'warn', patient:'Priya Sharma',    initials:'PS', title:'Protein targets missed 4 of 7 days',             meta:'Avg 142g vs 180g target',                  ago:'12h', action:'Send a reminder',   actClass:'ghost' },
-    { sev:'warn', patient:'Mei Watanabe',    initials:'MW', title:'Refill needed in 3 days',                        meta:'Ipamorelin · auto-route ready',            ago:'12h', action:'Pre-approve',       actClass:'ghost' },
-    { sev:'sky',  patient:'Rohan Ahuja',     initials:'RA', title:'Adherence streak extended to 28 days',           meta:'Currently at 96% · steady',                ago:'2d',  action:'Open patient',      actClass:'ghost' },
-  ];
+/* ═══════════════════════════════════════════
+   GATE
+   ═══════════════════════════════════════════ */
+(function initGate() {
+  const saved = sessionStorage.getItem('wylde_admin_secret');
+  if (saved) { _secret = saved; unlock(); return; }
 
-  const PATIENTS = [
-    { id:'p_044', initials:'MR', name:'Marcus Reed',    age:38, protocol:'Phase II · Neural Recovery',   score:68, trend:-12, lastCheckin:'2h ago',  notes:'3 missed doses', status:'crit',    label:'Needs attention',  active:true  },
-    { id:'p_017', initials:'SC', name:'Sara Chen',      age:42, protocol:'Phase I · Hormone Therapy',    score:54, trend:-8,  lastCheckin:'1d ago',  notes:'Refill overdue', status:'crit',    label:'Needs attention',  active:false },
-    { id:'p_119', initials:'SO', name:'Sebastian Orr',  age:39, protocol:'Phase II · Recovery',          score:54, trend:-15, lastCheckin:'4d ago',  notes:'No check-in 4d', status:'crit',    label:'Needs attention',  active:false },
-    { id:'p_088', initials:'AV', name:'Ana Vasquez',    age:36, protocol:'Phase I · Metabolic Reset',    score:78, trend:-6,  lastCheckin:'4h ago',  notes:'Sleep trend',    status:'warn',    label:'Trending lower',   active:false },
-    { id:'p_103', initials:'DT', name:'Daniel Tovar',   age:45, protocol:'Phase II · Neural Recovery',   score:81, trend:-4,  lastCheckin:'6h ago',  notes:'HRV trend',      status:'warn',    label:'Trending lower',   active:false },
-    { id:'p_125', initials:'PS', name:'Priya Sharma',   age:34, protocol:'Phase I · Onboarding',         score:74, trend:-3,  lastCheckin:'12h ago', notes:'Nutrition gap',  status:'warn',    label:'Trending lower',   active:false },
-    { id:'p_133', initials:'MW', name:'Mei Watanabe',   age:48, protocol:'Phase III · Maintenance',      score:91, trend:+2,  lastCheckin:'12h ago', notes:'Refill in 3d',   status:'warn',    label:'Refill due',       active:false },
-    { id:'p_062', initials:'RA', name:'Rohan Ahuja',    age:34, protocol:'Phase III · Maintenance',      score:96, trend:+3,  lastCheckin:'2d ago',  notes:'—',                status:'success', label:'On track',         active:false },
-    { id:'p_152', initials:'NC', name:'Nora Coleman',   age:41, protocol:'Phase II · Recovery',          score:88, trend:+1,  lastCheckin:'1d ago',  notes:'—',                status:'success', label:'On track',         active:false },
-  ];
-
-  const BIOMETRICS = [
-    {
-      key:'hrv', label:'Heart-rate variability', unit:'ms',
-      current:62, baseline:74, dirGood:'up',
-      history:[78,77,76,76,74,75,73,72,71,70,69,69,68,67,66,65,65,64,63,63,64,63,62,62,62],
-      interp:'Lower than usual — may reflect stress or limited recovery.',
-      suggest:'Confirm sleep window and reduce afternoon caffeine.',
-    },
-    {
-      key:'sleep', label:'Sleep score', unit:'/100',
-      current:72, baseline:86, dirGood:'up',
-      history:[88,87,86,86,84,85,84,82,80,82,81,80,78,76,77,76,75,74,73,72,71,72,73,72,72],
-      interp:'Sleep quality has slipped over the past two weeks.',
-      suggest:'Review evening routine and screen exposure.',
-    },
-    {
-      key:'rhr', label:'Resting heart rate', unit:'bpm',
-      current:54, baseline:58, dirGood:'down',
-      history:[60,59,58,57,57,58,57,56,56,55,55,54,54,55,54,53,54,54,55,54,53,54,53,54,54],
-      interp:'Within healthy range — slightly improved versus baseline.',
-      suggest:'Continue current protocol.',
-    },
-  ];
-
-  /* RENDERERS */
-  function renderAlerts(){
-    const el = document.getElementById('alertList');
-    el.innerHTML = ALERTS.map(a => {
-      const sevIcon = a.sev === 'crit' ? 'alert-circle' : a.sev === 'warn' ? 'trending-down' : 'info';
-      const sevColor = a.sev === 'crit' ? '#8E4951' : a.sev === 'warn' ? '#8B6A3F' : '#4D6985';
-      const sevBg = a.sev === 'crit' ? 'rgba(184,101,112,0.12)' : a.sev === 'warn' ? 'rgba(199,150,94,0.12)' : 'rgba(107,137,168,0.10)';
-      return `
-        <div class="alert-row ${a.sev}">
-          <div class="flex items-center gap-3 min-w-0">
-            <span class="pavatar">${a.initials}</span>
-            <span style="display:inline-flex;width:30px;height:30px;border-radius:9px;background:${sevBg};color:${sevColor};align-items:center;justify-content:center;flex-shrink:0;">
-              <i data-lucide="${sevIcon}" style="width:14px;height:14px;"></i>
-            </span>
-          </div>
-          <div class="min-w-0">
-            <div class="text-[13.5px] font-medium text-ink truncate">${a.title}</div>
-            <div class="text-[12px] text-ink3 truncate mt-0.5">${a.patient} · ${a.meta}</div>
-          </div>
-          <span class="text-[11.5px] text-ink3 whitespace-nowrap">${a.ago}</span>
-          <button class="btn ${a.actClass}">${a.action}</button>
-        </div>`;
-    }).join('');
-  }
-
-  function renderPatients(){
-    const tb = document.getElementById('patientTbody');
-    tb.innerHTML = PATIENTS.map(p => {
-      const scoreCls = p.score >= 85 ? 'success' : p.score >= 75 ? 'warn' : 'crit';
-      const trendDir = p.trend > 0 ? 'up' : p.trend < 0 ? 'down' : 'flat';
-      const trendIcon = trendDir === 'up' ? 'arrow-up-right' : trendDir === 'down' ? 'arrow-down-right' : 'minus';
-      const action = p.status === 'crit'
-        ? `<button class="btn attention">Open →</button>`
-        : `<button class="btn ghost">Open</button>`;
-      return `
-        <tr data-id="${p.id}" class="${p.active?'active':''}">
-          <td>
-            <div class="pname">
-              <span class="pavatar">${p.initials}</span>
-              <div class="min-w-0">
-                <div class="text-ink font-medium">${p.name}</div>
-                <div class="pinfo">${p.age} years · ${p.protocol}</div>
-              </div>
-            </div>
-          </td>
-          <td><span class="score ${scoreCls}">${p.score}<span class="text-ink3 text-[14px] font-sans">%</span></span></td>
-          <td><span class="trend ${trendDir}"><i data-lucide="${trendIcon}" class="w-3 h-3"></i>${p.trend>0?'+':''}${p.trend}%</span></td>
-          <td><span class="text-[12.5px] text-ink2">${p.lastCheckin}</span></td>
-          <td><span class="text-[12.5px] text-ink2">${p.notes}</span></td>
-          <td><span class="pill ${p.status}">${p.label}</span></td>
-          <td class="text-right">${action}</td>
-        </tr>`;
-    }).join('');
-
-    tb.querySelectorAll('tr').forEach(row => {
-      row.addEventListener('click', () => {
-        tb.querySelectorAll('tr').forEach(r => r.classList.remove('active'));
-        row.classList.add('active');
-      });
-    });
-  }
-
-  // Heatmap
-  function generateMatrix(){
-    const days = 30;
-    const seed = (i) => ((i * 9301 + 49297) % 233280) / 233280;
-    const rows = [
-      { key:'doses',     label:'Peptide doses',  icon:'syringe' },
-      { key:'check',     label:'Daily check-in', icon:'check-circle-2' },
-      { key:'workout',   label:'Workout',        icon:'dumbbell' },
-      { key:'nutrition', label:'Nutrition',      icon:'utensils' },
-    ];
-    rows.forEach((r, ri) => {
-      r.series = [];
-      for (let i=0;i<days;i++){
-        const k = seed(i*7 + ri*13);
-        let v;
-        if (r.key === 'doses' && i > 22 && k < 0.5) v = 'miss';
-        else if (k < 0.10) v = 0;
-        else if (k < 0.22) v = 1;
-        else if (k < 0.50) v = 2;
-        else v = 3;
-        r.series.push(v);
+  document.getElementById('gate-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const val = document.getElementById('gate-input').value.trim();
+    if (!val) return;
+    // Validate against the API
+    try {
+      const resp = await fetch('/api/admin/clinics', { headers: { 'X-Admin-Secret': val } });
+      if (resp.ok) {
+        _secret = val;
+        sessionStorage.setItem('wylde_admin_secret', val);
+        unlock();
+      } else {
+        document.getElementById('gate-error').style.display = 'block';
+        document.getElementById('gate-input').value = '';
+        document.getElementById('gate-input').focus();
       }
-    });
-    return { days, rows };
-  }
-
-  function renderHeatmap(){
-    const el = document.getElementById('heatmap');
-    const { days, rows } = generateMatrix();
-    const today = new Date();
-    const labels = [];
-    for (let i=days-1;i>=0;i--){ const d = new Date(today); d.setDate(today.getDate()-i); labels.push(d); }
-
-    el.innerHTML = rows.map(r => {
-      const cells = r.series.map((v,i) => {
-        const isToday = i === days-1;
-        const cls = v === 'miss' ? 'miss' : `s${v}`;
-        const stateLabel = v === 'miss' ? 'Missed' : ['Skipped','Partial','Done','Completed'][v];
-        const dateStr = labels[i].toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric'});
-        return `<div class="cell ${cls} ${isToday?'today':''}" data-date="${dateStr}" data-axis="${r.label}" data-state="${stateLabel}"></div>`;
-      }).join('');
-      return `
-        <div class="grid grid-cols-[120px_1fr] gap-3 items-center">
-          <div class="flex items-center gap-2 min-w-0">
-            <span class="w-6 h-6 rounded-lg grid place-items-center flex-shrink-0"
-                  style="background:rgba(110,138,124,0.10);border:1px solid rgba(110,138,124,0.20);color:#5C7A6C;">
-              <i data-lucide="${r.icon}" class="w-3 h-3"></i>
-            </span>
-            <span class="text-[12.5px] font-medium text-ink truncate">${r.label}</span>
-          </div>
-          <div class="grid" style="grid-template-columns:repeat(${days},1fr);gap:3px;">${cells}</div>
-        </div>`;
-    }).join('');
-
-    const tip = document.getElementById('cellTip');
-    el.querySelectorAll('.cell').forEach(c => {
-      c.addEventListener('mouseenter', () => {
-        const isMissed = c.classList.contains('miss');
-        tip.innerHTML = `
-          <div class="text-[11px] font-medium text-ink3 mb-0.5">${c.dataset.axis}</div>
-          <div class="text-[12.5px] text-ink">${c.dataset.date}</div>
-          <div class="text-[11.5px] mt-1
-            ${isMissed?'text-crit':c.dataset.state==='Completed'?'text-sageDeep':'text-ink2'}">${c.dataset.state}</div>`;
-        tip.classList.remove('hidden');
-      });
-      c.addEventListener('mousemove', e => {
-        tip.style.left = (e.clientX + 12) + 'px';
-        tip.style.top = (e.clientY + 12) + 'px';
-      });
-      c.addEventListener('mouseleave', () => tip.classList.add('hidden'));
-    });
-  }
-
-  // Biometrics — humanized
-  function sparkPath(values, w=300, h=36, pad=4){
-    const min = Math.min(...values), max = Math.max(...values);
-    const range = (max-min) || 1;
-    const step = (w - pad*2) / (values.length - 1);
-    return values.map((v,i)=>{
-      const x = pad + i*step;
-      const y = h - pad - ((v - min)/range) * (h - pad*2);
-      return `${i===0?'M':'L'}${x.toFixed(1)},${y.toFixed(1)}`;
-    }).join(' ');
-  }
-
-  function renderBiometrics(){
-    const el = document.getElementById('biometrics');
-    el.innerHTML = BIOMETRICS.map(b => {
-      const deltaPct = ((b.current - b.baseline) / b.baseline) * 100;
-      const absPct = Math.abs(deltaPct);
-      const directionGood = (b.dirGood==='down' && deltaPct < 0) || (b.dirGood==='up' && deltaPct > 0);
-      const isAlert = absPct > 15;
-      const stroke = isAlert ? '#B86570' : (directionGood ? '#5C9678' : '#C7965E');
-      const pillCls = isAlert ? 'crit' : (directionGood ? 'success' : 'warn');
-      const stateLabel = isAlert ? 'Lower than usual' : directionGood ? 'Within range' : 'Watch';
-      const path = sparkPath(b.history);
-
-      return `
-        <div class="bg-cream border ${isAlert?'border-crit/30':'border-line'} rounded-2xl p-5">
-          <div class="flex items-start justify-between gap-3 mb-3">
-            <div class="min-w-0">
-              <div class="text-[12px] font-medium text-ink3">${b.label}</div>
-              <div class="flex items-baseline gap-2 mt-2">
-                <span class="font-serif text-[28px] font-normal tracking-[-0.02em] leading-none text-numeric">${b.current}</span>
-                <span class="text-ink2 text-[13px]">${b.unit}</span>
-              </div>
-            </div>
-            <div class="text-right flex-shrink-0">
-              <span class="pill ${pillCls}">${stateLabel}</span>
-              <div class="text-[12px] text-ink2 mt-2">${deltaPct>=0?'+':''}${deltaPct.toFixed(0)}% vs baseline</div>
-            </div>
-          </div>
-
-          <svg class="spark w-full" viewBox="0 0 300 36" height="36" preserveAspectRatio="none" aria-hidden="true">
-            <line class="axis" x1="0" y1="18" x2="300" y2="18"/>
-            <path d="${path}" stroke="${stroke}" />
-          </svg>
-
-          <p class="text-[12.5px] text-ink2 leading-relaxed mt-3">${b.interp}</p>
-          <p class="text-[12.5px] text-sageDeep leading-relaxed mt-1.5">Suggested: ${b.suggest}</p>
-        </div>`;
-    }).join('');
-  }
-
-  /* INIT */
-  document.addEventListener('DOMContentLoaded', () => {
-    renderAlerts();
-    renderPatients();
-    renderHeatmap();
-    renderBiometrics();
-    if (window.lucide) lucide.createIcons();
-
-    const y = document.getElementById('yr'); if (y) y.textContent = new Date().getFullYear();
-
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }});
-    }, {rootMargin:'0px 0px -6% 0px', threshold:0.05});
-    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-
-    const refillBtn = document.getElementById('refillBtn');
-    if (refillBtn) {
-      refillBtn.addEventListener('click', () => {
-        const original = refillBtn.innerHTML;
-        refillBtn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Sending to pharmacy…';
-        if (window.lucide) lucide.createIcons();
-        setTimeout(() => {
-          refillBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Refill approved';
-          if (window.lucide) lucide.createIcons();
-          setTimeout(() => { refillBtn.innerHTML = original; if (window.lucide) lucide.createIcons(); }, 2400);
-        }, 900);
-      });
+    } catch (_) {
+      document.getElementById('gate-error').style.display = 'block';
     }
-
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('.ai-action');
-      if (!btn || !btn.dataset.act) return;
-      const act = btn.dataset.act;
-      const original = btn.innerHTML;
-      btn.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> ' + (act==='approve'?'Applying…':'Opening editor…');
-      if (window.lucide) lucide.createIcons();
-      setTimeout(() => {
-        if (act === 'approve') {
-          btn.parentElement.outerHTML = '<div class="mt-5 pill success" style="display:inline-flex"><span class="dot"></span>Adjustment applied · ' + new Date().toLocaleTimeString() + '</div>';
-        } else {
-          btn.innerHTML = original;
-        }
-        if (window.lucide) lucide.createIcons();
-      }, 700);
-    });
-
-    document.getElementById('alertList').addEventListener('click', (e) => {
-      const btn = e.target.closest('.btn');
-      if (!btn) return;
-      const original = btn.textContent;
-      btn.innerHTML = '<i data-lucide="check" class="w-3 h-3"></i>Done';
-      if (window.lucide) lucide.createIcons();
-      setTimeout(() => { btn.textContent = original; }, 1800);
-    });
   });
-  
-  // ═══ Beta pulse (2026-07-25) ═══
-  async function loadPulse() {
-    if (!_adminSecret()) return;
-    var statsEl = document.getElementById('pulseStats');
-    var fbEl = document.getElementById('pulseFeedback');
-    try {
-      var resp = await fetch('/api/admin/pulse', { headers: { 'X-Admin-Secret': _adminSecret() } });
-      if (!resp.ok) return;
-      var d = await resp.json();
-      function stat(label, value) {
-        return '<div style="border:1px solid rgba(0,0,0,0.08);border-radius:12px;padding:14px;">' +
-          '<div style="font-size:22px;font-weight:700;">' + value + '</div>' +
-          '<div style="font-size:11px;color:#9A958B;margin-top:2px;">' + label + '</div></div>';
-      }
-      if (statsEl) statsEl.innerHTML =
-        stat('Total users', d.users_total) +
-        stat('Active 24h', d.active_24h) +
-        stat('Active 7d', d.active_7d) +
-        stat('Sets logged 7d', d.sets_logged_7d) +
-        stat('Points earned 7d', d.points_earned_7d) +
-        stat('Redemptions', d.redemptions_total);
-      if (fbEl) fbEl.innerHTML = (d.feedback || []).map(function(x) {
-        return '<div style="border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;">' +
-          '<div style="font-size:13px;">' + String(x.message || '').replace(/</g, '&lt;') + '</div>' +
-          '<div style="font-size:11px;color:#9A958B;margin-top:4px;">' + (x.email || 'unknown') + ' · ' + (x.platform || '') + ' build ' + (x.build || '?') + ' · ' + new Date(x.created_at).toLocaleDateString() + '</div></div>';
-      }).join('') || '<div style="font-size:13px;color:#9A958B;">No feedback yet.</div>';
-    } catch (e) {}
+})();
+
+function unlock() {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('dash').classList.add('active');
+  refreshAll();
+}
+
+function logout() {
+  sessionStorage.removeItem('wylde_admin_secret');
+  _secret = '';
+  document.getElementById('dash').classList.remove('active');
+  document.getElementById('gate').style.display = 'grid';
+  document.getElementById('gate-error').style.display = 'none';
+  document.getElementById('gate-input').value = '';
+}
+
+function refreshAll() {
+  loadHealth();
+  loadPulse();
+  loadClinics();
+}
+
+/* ═══════════════════════════════════════════
+   SYSTEM HEALTH
+   ═══════════════════════════════════════════ */
+async function loadHealth() {
+  const el = document.getElementById('health-grid');
+  const ts = document.getElementById('health-ts');
+  el.innerHTML = '<div class="loading"><span class="spin"></span>Checking providers...</div>';
+  try {
+    const resp = await fetch('/api/admin/ai-health', { headers: { 'X-Admin-Secret': secret() } });
+    const d = await resp.json();
+    ts.textContent = 'Last checked ' + new Date(d.timestamp).toLocaleTimeString();
+
+    const providers = d.providers || {};
+    let html = '';
+    for (const [name, info] of Object.entries(providers)) {
+      const ok = info.status === 'healthy' || info.status === 'configured';
+      const pillClass = ok ? 'green' : 'red';
+      const label = info.status.charAt(0).toUpperCase() + info.status.slice(1);
+      const detail = info.latency_ms ? info.model + ' / ' + info.latency_ms + 'ms'
+                   : info.mode ? 'Mode: ' + info.mode
+                   : '';
+      html += '<div class="status-item">' +
+        '<div><div class="name">' + name.charAt(0).toUpperCase() + name.slice(1) + '</div>' +
+        (detail ? '<div class="detail">' + detail + '</div>' : '') +
+        '</div>' +
+        '<span class="pill ' + pillClass + '"><span class="dot"></span>' + label + '</span>' +
+        '</div>';
+    }
+
+    // Overall
+    const overallPill = d.overall === 'healthy' ? 'green' : 'amber';
+    html += '<div class="status-item">' +
+      '<div><div class="name">Overall</div></div>' +
+      '<span class="pill ' + overallPill + '"><span class="dot"></span>' + d.overall + '</span>' +
+      '</div>';
+
+    el.innerHTML = html;
+  } catch (e) {
+    el.innerHTML = '<div class="empty">Could not load health data.</div>';
+  }
+}
+
+/* ═══════════════════════════════════════════
+   BETA PULSE
+   ═══════════════════════════════════════════ */
+async function loadPulse() {
+  const kpis = document.getElementById('pulse-kpis');
+  const fbList = document.getElementById('feedback-list');
+  const chartEl = document.getElementById('signup-chart');
+  kpis.innerHTML = '<div class="loading"><span class="spin"></span>Loading stats...</div>';
+  try {
+    const resp = await fetch('/api/admin/pulse', { headers: { 'X-Admin-Secret': secret() } });
+    const d = await resp.json();
+
+    kpis.innerHTML =
+      kpiCard('Total users', d.users_total, d.users_app + ' app &middot; ' + d.users_clinicians + ' clinicians') +
+      kpiCard('Active 24h', d.active_24h, pct(d.active_24h, d.users_total)) +
+      kpiCard('Active 7d', d.active_7d, pct(d.active_7d, d.users_total)) +
+      kpiCard('Sets logged 7d', d.sets_logged_7d, d.sets_logged_24h + ' in last 24h') +
+      kpiCard('Points earned 7d', d.points_earned_7d.toLocaleString(), '') +
+      kpiCard('Redemptions', d.redemptions_total, '');
+
+    // Signup chart
+    if (chartEl && d.signups_30d) {
+      renderSignupChart(chartEl, d.signups_30d);
+    }
+
+    // Feedback
+    const fb = d.feedback || [];
+    if (fb.length === 0) {
+      fbList.innerHTML = '<div class="empty">No feedback yet.</div>';
+    } else {
+      fbList.innerHTML = fb.map(function(f) {
+        const date = new Date(f.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const meta = [f.email, f.platform ? f.platform + ' build ' + (f.build || '?') : '', date].filter(Boolean).join(' &middot; ');
+        return '<div class="fb-item">' +
+          '<div class="fb-msg">' + esc(f.message || '') + '</div>' +
+          '<div class="fb-meta">' + meta + '</div></div>';
+      }).join('');
+    }
+  } catch (e) {
+    kpis.innerHTML = '<div class="empty">Could not load pulse data.</div>';
+  }
+}
+
+function kpiCard(label, value, sub) {
+  return '<div class="kpi card"><div class="label">' + label + '</div>' +
+    '<div class="num">' + value + '</div>' +
+    (sub ? '<div class="sub">' + sub + '</div>' : '') + '</div>';
+}
+
+function pct(a, b) {
+  if (!b) return '';
+  return Math.round((a / b) * 100) + '% of total';
+}
+
+/* ═══════════════════════════════════════════
+   CLINICS
+   ═══════════════════════════════════════════ */
+async function loadClinics() {
+  const tbody = document.getElementById('clinic-tbody');
+  const countEl = document.getElementById('clinic-count');
+  tbody.innerHTML = '<tr><td colspan="7" class="loading"><span class="spin"></span>Loading clinics...</td></tr>';
+  try {
+    const resp = await fetch('/api/admin/clinics', { headers: { 'X-Admin-Secret': secret() } });
+    const d = await resp.json();
+    _clinics = d.clinics || [];
+    const pending = _clinics.filter(function(c) { return c.status === 'pending'; }).length;
+    countEl.textContent = _clinics.length + ' total' + (pending ? ', ' + pending + ' pending' : '');
+    renderClinics();
+  } catch (e) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">Could not load clinics.</td></tr>';
+  }
+}
+
+function renderClinics() {
+  const tbody = document.getElementById('clinic-tbody');
+  const filtered = _currentFilter === 'all' ? _clinics : _clinics.filter(function(c) { return c.status === _currentFilter; });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">No clinics match this filter.</td></tr>';
+    return;
   }
 
-  // ═══ Clinic approvals (2026-07-25) ═══
-  function _adminSecret() { return sessionStorage.getItem('wylde_admin_secret') || ''; }
-  async function loadClinics() {
-    var secretRow = document.getElementById('clinicSecretRow');
-    var listEl = document.getElementById('clinicList');
-    var countEl = document.getElementById('clinicPendingCount');
-    if (!_adminSecret()) { if (secretRow) secretRow.style.display = 'block'; return; }
-    try {
-      var resp = await fetch('/api/admin/clinics', { headers: { 'X-Admin-Secret': _adminSecret() } });
-      if (resp.status === 401) {
-        sessionStorage.removeItem('wylde_admin_secret');
-        if (secretRow) secretRow.style.display = 'block';
-        if (listEl) listEl.innerHTML = '<div style="font-size:13px;color:#B86570;">Wrong secret — try again.</div>';
-        return;
-      }
-      var data = await resp.json();
-      if (secretRow) secretRow.style.display = 'none';
-      loadPulse();
-      var clinics = data.clinics || [];
-      var pending = clinics.filter(function(c) { return c.status === 'pending'; });
-      if (countEl) countEl.textContent = pending.length + ' pending';
-      if (!listEl) return;
-      listEl.innerHTML = clinics.map(function(c) {
-        var badge = c.status === 'approved' ? '<span class="pill neutral"><span class="dot" style="background:#6E8A7C"></span>approved</span>'
-                  : c.status === 'pending'  ? '<span class="pill neutral"><span class="dot" style="background:#C7965E"></span>pending</span>'
-                  : '<span class="pill crit"><span class="dot"></span>' + c.status + '</span>';
-        var actions = c.status === 'pending'
-          ? '<button class="pill neutral" onclick="clinicAction(\'' + c.clinician_id + '\',\'approve\')">Approve</button>'
-          : c.status === 'approved'
-            ? '<button class="pill neutral" onclick="clinicAction(\'' + c.clinician_id + '\',\'suspend\')">Suspend</button>'
-            : '<button class="pill neutral" onclick="clinicAction(\'' + c.clinician_id + '\',\'approve\')">Re-approve</button>';
-        return '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid rgba(0,0,0,0.08);border-radius:12px;flex-wrap:wrap;">' +
-          '<div><div style="font-size:14px;font-weight:600;">' + (c.clinic_name || 'Unnamed clinic') + '</div>' +
-          '<div style="font-size:12px;color:#9A958B;">' + (c.email || c.clinician_id) + ' · signed up ' + new Date(c.created_at).toLocaleDateString() + '</div></div>' +
-          '<div style="display:flex;gap:8px;align-items:center;">' + badge + actions + '</div></div>';
-      }).join('') || '<div style="font-size:13px;color:#9A958B;">No clinic signups yet.</div>';
-    } catch (e) {
-      if (listEl) listEl.innerHTML = '<div style="font-size:13px;color:#B86570;">Could not load clinics.</div>';
+  tbody.innerHTML = filtered.map(function(c) {
+    const pillClass = c.status === 'approved' ? 'green' : c.status === 'pending' ? 'amber' : 'red';
+    const location = [c.city, c.state].filter(Boolean).join(', ') || '---';
+    const date = new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const onboard = c.onboarding_complete
+      ? '<span class="pill green"><span class="dot"></span>Complete</span>'
+      : '<span class="pill gray"><span class="dot"></span>In progress</span>';
+
+    var actions = '';
+    if (c.status === 'pending') {
+      actions = '<button class="action-btn approve" onclick="clinicAction(\'' + c.clinician_id + '\',\'approved\')">Approve</button>';
+    } else if (c.status === 'approved') {
+      actions = '<button class="action-btn suspend" onclick="clinicAction(\'' + c.clinician_id + '\',\'suspended\')">Suspend</button>';
+    } else {
+      actions = '<button class="action-btn approve" onclick="clinicAction(\'' + c.clinician_id + '\',\'approved\')">Re-approve</button>';
     }
-  }
-  async function clinicAction(id, action) {
+
+    return '<tr>' +
+      '<td><div class="clinic-name">' + esc(c.clinic_name || 'Unnamed') + '</div>' +
+        '<div class="clinic-meta">' + esc(c.signup_email || c.email || c.clinician_id) + '</div></td>' +
+      '<td>' + esc(c.clinic_type || '---') + '</td>' +
+      '<td>' + esc(location) + '</td>' +
+      '<td><span class="pill ' + pillClass + '"><span class="dot"></span>' + c.status + '</span></td>' +
+      '<td>' + onboard + '</td>' +
+      '<td style="font-size:12px;color:#6B675F">' + date + '</td>' +
+      '<td style="text-align:right">' + actions + '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+function filterClinics(status, btn) {
+  _currentFilter = status;
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  renderClinics();
+}
+
+async function clinicAction(clinicianId, newStatus) {
+  try {
     await fetch('/api/admin/clinics', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': _adminSecret() },
-      body: JSON.stringify({ clinician_id: id, action: action })
+      method: 'PATCH',
+      headers: headers(),
+      body: JSON.stringify({ clinician_id: clinicianId, status: newStatus }),
     });
     loadClinics();
-  }
-  document.addEventListener('DOMContentLoaded', function() { setTimeout(loadClinics, 500); });
+  } catch (_) {}
+}
+
+/* ═══════════════════════════════════════════
+   SIGNUP CHART
+   ═══════════════════════════════════════════ */
+function renderSignupChart(el, data) {
+  const max = Math.max(...data.map(d => d.count), 1);
+  const total = data.reduce((a, d) => a + d.count, 0);
+  const barW = 100 / data.length;
+
+  let html = '<div style="display:flex;align-items:flex-end;height:100px;gap:2px;padding:0 4px">';
+  data.forEach(function(d) {
+    const h = Math.max((d.count / max) * 100, d.count > 0 ? 4 : 0);
+    const date = new Date(d.date + 'T12:00:00');
+    const label = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const bg = d.count > 0 ? '#6E8A7C' : 'rgba(45,42,38,0.06)';
+    html += '<div title="' + label + ': ' + d.count + ' signup' + (d.count !== 1 ? 's' : '') + '" ' +
+      'style="flex:1;height:' + h + '%;background:' + bg + ';border-radius:3px 3px 0 0;' +
+      'min-width:4px;transition:opacity .15s;cursor:default" ' +
+      'onmouseenter="this.style.opacity=0.7" onmouseleave="this.style.opacity=1"></div>';
+  });
+  html += '</div>';
+  html += '<div style="display:flex;justify-content:space-between;padding:6px 4px 0;font-size:11px;color:#9A958B">';
+  html += '<span>' + data[0].date.slice(5).replace('-', '/') + '</span>';
+  html += '<span>' + total + ' signups in 30 days</span>';
+  html += '<span>Today</span>';
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════════ */
+function esc(s) {
+  var d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
 </script>
 </body>
 </html>

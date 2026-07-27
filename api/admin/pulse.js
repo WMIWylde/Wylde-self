@@ -26,8 +26,9 @@ module.exports = async function handler(req, res) {
   const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
 
   try {
-    const [users, sets24, setsWeek, points, feedback, redemptions] = await Promise.all([
+    const [users, clinics, sets24, setsWeek, points, feedback, redemptions] = await Promise.all([
       supabase.auth.admin.listUsers({ page: 1, perPage: 1000 }),
+      supabase.from('clinic_settings').select('clinician_id'),
       supabase.from('workout_set_logs').select('user_id', { count: 'exact', head: true }).gte('logged_at', dayAgo),
       supabase.from('workout_set_logs').select('user_id', { count: 'exact', head: true }).gte('logged_at', weekAgo),
       supabase.from('points_ledger').select('delta').gte('created_at', weekAgo),
@@ -36,16 +37,39 @@ module.exports = async function handler(req, res) {
     ]);
 
     const allUsers = (users.data && users.data.users) || [];
+    const clinicianIds = new Set((clinics.data || []).map(c => c.clinician_id));
+    const appUsers = allUsers.filter(u => !clinicianIds.has(u.id));
     const activeDay = allUsers.filter(u => u.last_sign_in_at && u.last_sign_in_at > dayAgo).length;
     const activeWeek = allUsers.filter(u => u.last_sign_in_at && u.last_sign_in_at > weekAgo).length;
     const emailById = {};
     allUsers.forEach(u => { emailById[u.id] = u.email; });
     const pointsWeek = (points.data || []).filter(r => r.delta > 0).reduce((a, r) => a + r.delta, 0);
 
+    // Signups by day (last 30 days)
+    const thirtyAgo = new Date(Date.now() - 30 * 86400000);
+    const signupsByDay = {};
+    allUsers.forEach(u => {
+      const d = new Date(u.created_at);
+      if (d >= thirtyAgo) {
+        const key = d.toISOString().slice(0, 10);
+        signupsByDay[key] = (signupsByDay[key] || 0) + 1;
+      }
+    });
+    // Fill in missing days
+    const signups = [];
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 86400000);
+      const key = d.toISOString().slice(0, 10);
+      signups.push({ date: key, count: signupsByDay[key] || 0 });
+    }
+
     return res.status(200).json({
       users_total: allUsers.length,
+      users_app: appUsers.length,
+      users_clinicians: clinicianIds.size,
       active_24h: activeDay,
       active_7d: activeWeek,
+      signups_30d: signups,
       sets_logged_24h: sets24.count || 0,
       sets_logged_7d: setsWeek.count || 0,
       points_earned_7d: pointsWeek,
