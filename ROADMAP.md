@@ -23,3 +23,14 @@ evolved" notification instead of a button.
 
 ## Warmup videos v2
 User films new warmup set -> motion-transfer pipeline (proven with Qi Gong).
+
+## Coach memory + daily check-in — iOS parity
+Web has coach_memory (fact extraction every 3 turns, injected into prompt)
+and the daily check-in popup (personalized question, opens chat pre-seeded).
+Port to CoachService/CoachChatView + a Today-screen check-in card.
+
+## Bring-your-own-AI (power users)
+Users plug in their own Anthropic/OpenAI API key for unlimited coach usage.
+SECURITY RULE: key stored ON DEVICE ONLY (Keychain / localStorage), sent
+directly from client to provider, NEVER stored server-side. Settings toggle
+"Use my own AI key". Positioning: power-user feature, after clinic billing.

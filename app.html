@@ -12465,6 +12465,124 @@
     if (Array.isArray(_savedChat)) chatHistory = _savedChat.slice(-WYLDE_CHAT_MAX);
   } catch(_) { chatHistory = []; }
 
+  // ═══ COACH MEMORY (2026-07-26) ═══
+  // Durable facts the coach learns about the user. Injected into every
+  // coach prompt; extracted from conversations every few turns.
+  var _coachMemories = null;
+  var _coachTurnsSinceExtract = 0;
+
+  function loadCoachMemory() {
+    var sb = _getSupabase();
+    if (!sb || !currentUser) return Promise.resolve([]);
+    return sb.from('coach_memory').select('fact, category').order('created_at', { ascending: false }).limit(40)
+      .then(function(res) { _coachMemories = (res.data || []); return _coachMemories; })
+      .catch(function() { return []; });
+  }
+
+  function _coachMemoryBlock() {
+    if (!_coachMemories || !_coachMemories.length) return '';
+    return '\n\nWHAT YOU REMEMBER ABOUT THEM (from past conversations — use naturally, never recite the list):\n' +
+      _coachMemories.map(function(m) { return '\u2022 ' + m.fact; }).join('\n');
+  }
+
+  function _extractCoachMemory() {
+    var sb = _getSupabase();
+    if (!sb || !currentUser || chatHistory.length < 4) return;
+    var transcript = chatHistory.slice(-12).map(function(m) {
+      return (m.role === 'user' ? 'THEM: ' : 'YOU: ') + m.content;
+    }).join('\n');
+    var known = (_coachMemories || []).map(function(m) { return m.fact; }).join('; ');
+    apiFetch('/api/anthropic', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 400,
+        system: 'Extract durable personal facts about THEM from this coaching conversation — things worth remembering for months: identity goals, life circumstances, struggles, preferences, injuries, motivations, relationships to training. NOT transient states (today\u2019s mood, one workout). Skip anything already known. Already known: ' + (known || 'nothing') + '. Return ONLY a JSON array of objects: [{"fact":"...","category":"identity|training|life|preference"}]. Max 3 facts. Return [] if nothing new and durable.',
+        messages: [{ role: 'user', content: transcript }]
+      })
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      var text = (data.content && data.content[0] && data.content[0].text) || '[]';
+      var m = text.match(/\[[\s\S]*\]/);
+      if (!m) return;
+      var facts = [];
+      try { facts = JSON.parse(m[0]); } catch(_) { return; }
+      var existing = (_coachMemories || []).map(function(x) { return x.fact.toLowerCase(); });
+      facts.filter(function(f) { return f && f.fact && existing.indexOf(f.fact.toLowerCase()) === -1; })
+        .slice(0, 3)
+        .forEach(function(f) {
+          sb.from('coach_memory').insert({ fact: f.fact, category: f.category || 'general' }).then(function(){}, function(){});
+          (_coachMemories = _coachMemories || []).unshift({ fact: f.fact, category: f.category });
+        });
+    }).catch(function(){});
+  }
+
+  // ═══ DAILY COACH CHECK-IN ═══
+  function maybeShowCoachCheckin() {
+    if (!currentUser) return;
+    var key = 'wylde_coach_checkin_' + new Date().toISOString().slice(0, 10);
+    if (localStorage.getItem(key)) return;
+    localStorage.setItem(key, '1');
+    loadCoachMemory().then(function() {
+      return getUserContext().then(function(ctx) {
+        return apiFetch('/api/anthropic', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 120,
+            system: 'You are the user\u2019s future self (Wylde coach voice: calm, direct, warm, no hype, no emojis). Based on their data and what you remember, write ONE opening line for today\u2019s check-in: a single specific question that helps you understand them better or moves their becoming forward. It can reference their real data. One or two sentences max. Question mark required.' + _coachMemoryBlock() + '\n\nTheir data:\n' + formatContextForPrompt(ctx).slice(0, 1500),
+            messages: [{ role: 'user', content: 'Write today\u2019s check-in question.' }]
+          })
+        });
+      });
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      var q = (data.content && data.content[0] && data.content[0].text) || 'What would make today feel like a win \u2014 not a perfect day, just a won one?';
+      showCoachCheckinPopup(q.trim());
+    }).catch(function() {
+      showCoachCheckinPopup('What would make today feel like a win \u2014 not a perfect day, just a won one?');
+    });
+  }
+
+  function showCoachCheckinPopup(question) {
+    var el = document.createElement('div');
+    el.id = 'coachCheckinPopup';
+    el.style.cssText = 'position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);width:calc(100% - 40px);max-width:420px;z-index:500;background:var(--bg-surface);border:1px solid var(--border-warm);border-radius:18px;padding:18px;box-shadow:0 16px 50px rgba(0,0,0,0.45);opacity:0;transition:all 0.45s cubic-bezier(0.2,0.8,0.2,1);';
+    el.innerHTML =
+      '<div style="font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">' + (typeof _futureSelfLabel === 'function' ? _futureSelfLabel() : 'Future You') + ' checked in</div>' +
+      '<div style="font-size:14px;color:var(--text);line-height:1.5;margin-bottom:14px;">' + question.replace(/</g, '&lt;') + '</div>' +
+      '<div style="display:flex;gap:10px;">' +
+        '<button onclick="dismissCoachCheckin()" style="flex:1;padding:11px;border-radius:22px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;">Later</button>' +
+        '<button onclick="answerCoachCheckin()" style="flex:1;padding:11px;border-radius:22px;border:none;background:var(--text);color:var(--bg);font-size:12px;font-weight:600;cursor:pointer;">Answer</button>' +
+      '</div>';
+    el.dataset.question = question;
+    document.body.appendChild(el);
+    requestAnimationFrame(function() { el.style.opacity = '1'; el.style.transform = 'translateX(-50%) translateY(0)'; });
+  }
+  window.dismissCoachCheckin = function() {
+    var el = document.getElementById('coachCheckinPopup');
+    if (el) { el.style.opacity = '0'; setTimeout(function() { el.remove(); }, 400); }
+  };
+  window.answerCoachCheckin = function() {
+    var el = document.getElementById('coachCheckinPopup');
+    var q = (el && el.dataset.question) || 'What would make today feel like a win?';
+    dismissCoachCheckin();
+    // Seed the question as the coach's opening message, then open the chat
+    chatHistory.push({ role: 'assistant', content: q });
+    saveChatHistory();
+    if (typeof showScreen === 'function') showScreen('coach');
+    var messages = document.getElementById('chatMessages');
+    if (messages) {
+      var aiDiv = document.createElement('div');
+      aiDiv.className = 'msg msg-ai';
+      aiDiv.innerHTML = '<div class="msg-label">' + (typeof _futureSelfLabel === 'function' ? _futureSelfLabel() : 'Future You') + '</div><div class="msg-bubble">' + q.replace(/</g, '&lt;').replace(/\n/g, '<br>') + '</div>';
+      messages.appendChild(aiDiv);
+      messages.scrollTop = messages.scrollHeight;
+    }
+  };
+  // Fire once the app is settled and authed
+  setTimeout(function() { try { maybeShowCoachCheckin(); } catch(_) {} }, 6000);
+
   function saveChatHistory() {
     try {
       var trimmed = chatHistory.slice(-WYLDE_CHAT_MAX);
@@ -12585,7 +12703,7 @@
         '\u2022 Occasionally \u2014 maybe 1 in 4 messages \u2014 weave in a single light science callout (e.g. "Sleep below 6h cuts strength output ~10%."). Never lecture, never list multiple. One line, then back to action.\n\n' +
 
         // ─── CONTEXT ──────────────────────────────────────────────
-        contextBlock + phaseBlock + identityBlock + '\n\n' +
+        contextBlock + phaseBlock + identityBlock + _coachMemoryBlock() + '\n\n' +
 
         // ─── COACHING RULES ───────────────────────────────────────
         'COACHING RULES:\n' +
@@ -12620,6 +12738,9 @@
       var reply = (data.content && data.content[0] && data.content[0].text) || "I'm here. Keep going.";
       chatHistory.push({ role: 'assistant', content: reply });
       saveChatHistory();
+      _coachTurnsSinceExtract++;
+      if (_coachTurnsSinceExtract >= 3) { _coachTurnsSinceExtract = 0; _extractCoachMemory(); }
+      if (_coachMemories === null) loadCoachMemory();
       var aiDiv = document.createElement('div');
       aiDiv.className = 'msg msg-ai';
       aiDiv.innerHTML = '<div class="msg-label">' + _futureSelfLabel() + '</div><div class="msg-bubble">' + reply.replace(/\n/g, '<br>') + '</div>';
