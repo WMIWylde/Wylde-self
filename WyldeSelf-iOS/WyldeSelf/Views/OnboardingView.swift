@@ -25,6 +25,10 @@ struct OnboardingView: View {
     @State private var selectedRestrictions: Set<Restriction> = []
     @State private var nameError = false
     @State private var futurePhoto: UIImage? = nil
+    @State private var sleepBaseline = ""
+    @State private var stressBaseline = ""
+    @State private var energyBaseline = ""
+    @State private var obstacle = ""
     @State private var showPhotoPicker = false
     @State private var futureRendering: UIImage? = nil
     @State private var isRendering = false
@@ -154,6 +158,10 @@ struct OnboardingView: View {
         appState.weight = weight
         appState.weightUnit = weightUnit
         appState.healthConcerns = Array(healthConcerns)
+        appState.sleepBaseline = sleepBaseline
+        appState.stressBaseline = stressBaseline
+        appState.energyBaseline = energyBaseline
+        appState.biggestObstacle = obstacle.trimmingCharacters(in: .whitespacesAndNewlines)
         appState.healthNotes = healthNotes
         // Legacy fields — backward compat
         appState.dietaryPrefs = Array(dietaryPrefs)
@@ -362,6 +370,45 @@ struct OnboardingView: View {
     private var step4: some View {
         VStack(alignment: .leading, spacing: 28) {
             stepHeader("Almost there", sub: "Choose your dietary direction. You can always change this later.")
+
+            fieldGroup("Sleep most nights") {
+                FlowLayout(spacing: 8) {
+                    ForEach(["4\u{2013}6 hours", "6\u{2013}7 hours", "7\u{2013}8 hours", "8+ hours"], id: \.self) { opt in
+                        PillButton(label: opt, isSelected: sleepBaseline == opt) {
+                            sleepBaseline = sleepBaseline == opt ? "" : opt
+                        }
+                    }
+                }
+            }
+
+            fieldGroup("Stress level (right now)") {
+                FlowLayout(spacing: 8) {
+                    ForEach(["Low", "Medium", "High", "Exhausted"], id: \.self) { opt in
+                        PillButton(label: opt, isSelected: stressBaseline == opt) {
+                            stressBaseline = stressBaseline == opt ? "" : opt
+                        }
+                    }
+                }
+            }
+
+            fieldGroup("Energy level (today)") {
+                FlowLayout(spacing: 8) {
+                    ForEach(["Low", "Medium", "High", "Peak"], id: \.self) { opt in
+                        PillButton(label: opt, isSelected: energyBaseline == opt) {
+                            energyBaseline = energyBaseline == opt ? "" : opt
+                        }
+                    }
+                }
+            }
+
+            fieldGroup("Biggest obstacle", optional: true) {
+                TextField("e.g., Time, consistency, injury", text: $obstacle)
+                    .font(.system(size: 15))
+                    .padding(14)
+                    .background(Theme.cardSurface)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(WyldeStyles.Colors.charcoal.opacity(0.10), lineWidth: 1))
+            }
 
             fieldGroup("Dietary direction", optional: true) {
                 let frameworks: [DietaryFramework] = [.balancedWholeFood, .highProtein, .mediterranean, .vegetarian, .vegan, .keto, .paleo, .pescatarian]

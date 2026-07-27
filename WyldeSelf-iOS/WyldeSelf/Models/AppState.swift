@@ -58,6 +58,10 @@ class AppState: ObservableObject {
     @Published var ageRange: String = ""                             { didSet { guard !isLoading else { return }; secure.set(ageRange, forKey: "wylde_age") } }
     @Published var fitnessLevel: String = ""                         { didSet { defaults.set(fitnessLevel, forKey: "wylde_level") } }
     @Published var trainingStyle: String = ""                        { didSet { defaults.set(trainingStyle, forKey: "wylde_training_style") } }
+    @Published var sleepBaseline: String = ""                        { didSet { defaults.set(sleepBaseline, forKey: "wylde_sleep_baseline") } }
+    @Published var stressBaseline: String = ""                       { didSet { defaults.set(stressBaseline, forKey: "wylde_stress_baseline") } }
+    @Published var energyBaseline: String = ""                       { didSet { defaults.set(energyBaseline, forKey: "wylde_energy_baseline") } }
+    @Published var biggestObstacle: String = ""                      { didSet { defaults.set(biggestObstacle, forKey: "wylde_obstacle") } }
     @Published var trainingDays: String = ""                         { didSet { defaults.set(trainingDays, forKey: "wylde_days") } }
     @Published var equipment: String = ""                            { didSet { defaults.set(equipment, forKey: "wylde_equipment") } }
     @Published var gymAccess: String = ""                            { didSet { defaults.set(gymAccess, forKey: "wylde_gym_access") } }
@@ -305,6 +309,10 @@ class AppState: ObservableObject {
         ageRange = secure.get(forKey: "wylde_age") ?? defaults.string(forKey: "wylde_age") ?? ""
         fitnessLevel = defaults.string(forKey: "wylde_level") ?? ""
         trainingStyle = defaults.string(forKey: "wylde_training_style") ?? ""
+        sleepBaseline = defaults.string(forKey: "wylde_sleep_baseline") ?? ""
+        stressBaseline = defaults.string(forKey: "wylde_stress_baseline") ?? ""
+        energyBaseline = defaults.string(forKey: "wylde_energy_baseline") ?? ""
+        biggestObstacle = defaults.string(forKey: "wylde_obstacle") ?? ""
         trainingDays = defaults.string(forKey: "wylde_days") ?? ""
         equipment = defaults.string(forKey: "wylde_equipment") ?? ""
         gymAccess = defaults.string(forKey: "wylde_gym_access") ?? ""

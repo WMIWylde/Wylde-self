@@ -4422,6 +4422,19 @@
       </div>
 
       <div class="form-group ob-field">
+        <label>Classes you enjoy <span class="ob-optional">(optional — logged alongside your program)</span></label>
+        <div class="pill-group" id="classGroup">
+          <button type="button" class="pill" onclick="togglePill(this)">Yoga</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Pilates</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Spin</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Boxing</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Swimming</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Martial arts</button>
+          <button type="button" class="pill" onclick="togglePill(this)">Not interested</button>
+        </div>
+      </div>
+
+      <div class="form-group ob-field">
         <label>Do you have access to a gym?</label>
         <div class="pill-group" id="gymGroup">
           <button type="button" class="pill" onclick="selectPill(this,'gymGroup'); toggleGymDetails()">Yes</button>
@@ -9630,6 +9643,8 @@
       var gym     = document.querySelector('#gymGroup .selected');
       var classes = Array.from(document.querySelectorAll('#classGroup .selected')).map(function(p){ return p.textContent; });
       var health  = Array.from(document.querySelectorAll('#healthGroup .selected')).map(function(p){ return p.textContent; });
+      var classes = Array.from(document.querySelectorAll('#classGroup .selected')).map(function(p){ return p.textContent; }).filter(function(x){ return x !== 'Not interested'; });
+      state.classPrefs = classes;
       var notes   = _obVal(document.getElementById('healthNotes'));
       var sleepEl = document.querySelector('#sleepGroup .selected');
       var stressEl = document.querySelector('#stressGroup .selected');

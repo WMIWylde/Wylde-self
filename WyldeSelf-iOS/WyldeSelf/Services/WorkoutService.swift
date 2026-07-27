@@ -163,6 +163,10 @@ final class WorkoutService: ObservableObject {
         - Gym access: \(gym)
         \(appState.gymName.isEmpty ? "" : "- Gym: \(appState.gymName)")
         \(appState.healthConcerns.isEmpty ? "" : "- Health concerns: \(appState.healthConcerns.joined(separator: ", "))")
+        \(appState.sleepBaseline.isEmpty ? "" : "- Typical sleep: \(appState.sleepBaseline) (short sleep -> cap volume, prioritize recovery)")
+        \(appState.stressBaseline.isEmpty ? "" : "- Stress: \(appState.stressBaseline)")
+        \(appState.energyBaseline.isEmpty ? "" : "- Energy: \(appState.energyBaseline)")
+        \(appState.biggestObstacle.isEmpty ? "" : "- Biggest obstacle: \(appState.biggestObstacle) (program around this)")
 
         CRITICAL EQUIPMENT CONSTRAINT:
         - ONLY use exercises that can be performed with the listed equipment
