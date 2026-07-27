@@ -62,6 +62,7 @@ struct CoachChatView: View {
                 inputBar
             }
         }
+        .onAppear { service.consumePendingOpener() }
     }
 
     // MARK: - Header

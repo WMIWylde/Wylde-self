@@ -7,6 +7,16 @@ final class CoachService: ObservableObject {
     private init() { loadHistory() }
 
     @Published var messages: [CoachMessage] = []
+    /// A coach-authored opener (daily check-in question) queued before the
+    /// chat opens. CoachChatView consumes it on appear.
+    @Published var pendingOpener: String?
+
+    func consumePendingOpener() {
+        guard let opener = pendingOpener else { return }
+        pendingOpener = nil
+        messages.append(CoachMessage(role: .assistant, content: opener))
+        saveHistory()
+    }
     @Published var isTyping = false
 
     private let historyKey = "wylde_coach_chat"
@@ -39,6 +49,42 @@ final class CoachService: ObservableObject {
 
     func quickAction(_ action: String, appState: AppState) async {
         await send(action, appState: appState)
+    }
+
+    // MARK: - Daily check-in
+
+    /// One personalized opening question in the future-self voice.
+    /// Returns nil on any failure — caller falls back to a rotation.
+    func generateCheckinQuestion(appState: AppState) async -> String? {
+        guard let url = URL(string: "https://www.wyldeself.com/api/anthropic") else { return nil }
+        let context = """
+        Day \(appState.currentDay) of their program. Streak: \(appState.streak) days. \
+        Goals: \(appState.goals.joined(separator: ", ")). \
+        Identity statement: \(appState.identityStatement.isEmpty ? "not set" : appState.identityStatement). \
+        Workout done today: \(appState.workoutCompleted ? "yes" : "not yet"). \
+        Name: \(appState.userName.isEmpty ? "unknown" : appState.userName).
+        """
+        let payload: [String: Any] = [
+            "model": "claude-haiku-4-5-20251001",
+            "max_tokens": 120,
+            "system": "You are the user's future self (Wylde coach voice: calm, direct, warm, no hype, no emojis, no exclamation points). Write ONE opening line for today's check-in: a single specific question that helps you understand them better or moves their becoming forward. Reference their real data when it sharpens the question. One or two sentences max. End with a question mark. Their data: " + context,
+            "messages": [["role": "user", "content": "Write today's check-in question."]],
+        ]
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let token = await AuthService.shared.accessToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        request.timeoutInterval = 15
+        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            struct Resp: Codable { struct C: Codable { let text: String? }; let content: [C]? }
+            let resp = try JSONDecoder().decode(Resp.self, from: data)
+            let text = resp.content?.first?.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+            return (text?.isEmpty == false && text!.count < 300) ? text : nil
+        } catch { return nil }
     }
 
     // MARK: - API

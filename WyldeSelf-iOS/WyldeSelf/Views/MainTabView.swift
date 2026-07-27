@@ -8,9 +8,91 @@ struct MainTabView: View {
     @State private var xpToast: (amount: Int, reason: String)? = nil
     @State private var xpToastID = 0
     @StateObject private var badgeService = BadgeService.shared
+    @StateObject private var coachService = CoachService.shared
+    @State private var showCoachChat = false
+    @State private var coachCheckin: String? = nil
 
     var body: some View {
         ZStack(alignment: .bottom) {
+            // ── The Coach: present on every screen ──
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button {
+                        showCoachChat = true
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .fill(Theme.cardSurface)
+                                .frame(width: 52, height: 52)
+                                .overlay(Circle().stroke(WyldeStyles.Colors.bronze.opacity(0.35), lineWidth: 1))
+                                .shadow(color: .black.opacity(0.22), radius: 14, y: 5)
+                            Image(systemName: "circle.hexagongrid.circle")
+                                .font(.system(size: 24, weight: .light))
+                                .foregroundColor(WyldeStyles.Colors.bronze)
+                            if coachService.pendingOpener != nil {
+                                Circle()
+                                    .fill(WyldeStyles.Colors.clay)
+                                    .frame(width: 10, height: 10)
+                                    .offset(x: 18, y: -18)
+                            }
+                        }
+                    }
+                    .padding(.trailing, 18)
+                    .padding(.bottom, 92)
+                }
+            }
+            .zIndex(40)
+
+            // ── Daily check-in card (first open of the day) ──
+            if let q = coachCheckin {
+                VStack {
+                    Spacer()
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("\(appState.userName.isEmpty ? "FUTURE YOU" : "FUTURE \(appState.userName.uppercased())") CHECKED IN")
+                            .font(.system(size: 10, weight: .semibold))
+                            .tracking(2)
+                            .foregroundColor(WyldeStyles.Colors.bronze)
+                        Text(q)
+                            .font(.system(size: 15, design: .serif))
+                            .foregroundColor(WyldeStyles.Colors.ink)
+                            .lineSpacing(3)
+                        HStack(spacing: 10) {
+                            Button("Later") {
+                                withAnimation { coachCheckin = nil }
+                            }
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(WyldeStyles.Colors.stone)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(WyldeStyles.Colors.bone)
+                            .clipShape(Capsule())
+                            Button("Answer") {
+                                coachService.pendingOpener = q
+                                withAnimation { coachCheckin = nil }
+                                showCoachChat = true
+                            }
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(WyldeStyles.Colors.paper)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(WyldeStyles.Colors.ink)
+                            .clipShape(Capsule())
+                        }
+                    }
+                    .padding(18)
+                    .background(Theme.cardSurface)
+                    .overlay(RoundedRectangle(cornerRadius: 18).stroke(WyldeStyles.Colors.bronze.opacity(0.25), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: 18))
+                    .shadow(color: .black.opacity(0.25), radius: 20, y: 8)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 100)
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .zIndex(45)
+            }
+
             // XP earn toast — rises above everything, auto-dismisses
             if let toast = xpToast {
                 VStack {
@@ -38,7 +120,13 @@ struct MainTabView: View {
 
             Color.clear
                 .frame(width: 0, height: 0)
-                .onAppear { badgeService.start(appState: appState) }
+                .onAppear {
+                    badgeService.start(appState: appState)
+                    maybeCoachCheckin()
+                }
+                .fullScreenCover(isPresented: $showCoachChat) {
+                    CoachChatView().environmentObject(appState)
+                }
                 .fullScreenCover(item: Binding(
                     get: { badgeService.pendingCeremony.map { CeremonyBadge(badge: $0) } },
                     set: { if $0 == nil { badgeService.pendingCeremony = nil } }
@@ -225,6 +313,37 @@ struct HamburgerButton: View {
     }
 }
 
+
+extension MainTabView {
+    /// Once per day, on first open: the coach asks one question.
+    fileprivate func maybeCoachCheckin() {
+        let key = "wylde_coach_checkin_" + ISO8601DateFormatter().string(from: Date()).prefix(10)
+        guard !UserDefaults.standard.bool(forKey: String(key)) else { return }
+        UserDefaults.standard.set(true, forKey: String(key))
+
+        let fallbacks = [
+            "What would make today feel like a win — not a perfect day, just a won one?",
+            "What's the one thing you're most likely to skip today — and what would it take not to?",
+            "Who are you building all this for? Say it plainly.",
+            "What did yesterday teach you that today should use?",
+            "Where's your energy actually at right now — and what does today need from it?",
+        ]
+        let dayIndex = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0
+
+        Task {
+            // Try a personalized question; fall back to the rotation.
+            var question = fallbacks[dayIndex % fallbacks.count]
+            if let generated = await CoachService.shared.generateCheckinQuestion(appState: appState) {
+                question = generated
+            }
+            await MainActor.run {
+                withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                    coachCheckin = question
+                }
+            }
+        }
+    }
+}
 
 /// Identifiable wrapper so fullScreenCover(item:) can present a badge.
 struct CeremonyBadge: Identifiable {

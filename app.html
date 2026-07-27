@@ -12581,7 +12581,33 @@
     }
   };
   // Fire once the app is settled and authed
-  setTimeout(function() { try { maybeShowCoachCheckin(); } catch(_) {} }, 6000);
+  // Fire on app open (short settle for auth hydration)
+  setTimeout(function() { try { maybeShowCoachCheckin(); } catch(_) {} }, 1800);
+
+  // ═══ Floating coach orb — the coach lives on every screen ═══
+  (function() {
+    function mountOrb() {
+      if (document.getElementById('coachOrb')) return;
+      var orb = document.createElement('button');
+      orb.id = 'coachOrb';
+      orb.setAttribute('aria-label', 'Talk to your future self');
+      orb.style.cssText = 'position:fixed;right:18px;bottom:96px;z-index:400;width:52px;height:52px;border-radius:50%;background:var(--bg-surface);border:1px solid var(--border-warm);box-shadow:0 10px 30px rgba(0,0,0,0.35);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.15s;';
+      orb.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/></svg>';
+      orb.onmouseenter = function() { orb.style.transform = 'scale(1.06)'; };
+      orb.onmouseleave = function() { orb.style.transform = 'scale(1)'; };
+      orb.onclick = function() { if (typeof showScreen === 'function') showScreen('coach'); };
+      document.body.appendChild(orb);
+      // Hide while on the coach screen itself
+      var obs = new MutationObserver(function() {
+        var coachScreen = document.getElementById('screen-coach');
+        var onCoach = coachScreen && coachScreen.style.display !== 'none' && coachScreen.offsetParent !== null;
+        orb.style.display = onCoach ? 'none' : 'flex';
+      });
+      obs.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['style', 'class'] });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountOrb);
+    else mountOrb();
+  })();
 
   function saveChatHistory() {
     try {
