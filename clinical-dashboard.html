@@ -393,7 +393,7 @@ function render() {
     case 'therapyLibrary': renderTherapyLibrary(c); break;
     case 'messages': renderMessages(c); break;
     case 'reorders': renderReorders(c); break;
-    case 'billing': c.innerHTML = comingSoon('Billing & Orders'); break;
+    case 'billing': renderBilling(c); break;
     case 'onboard': renderOnboard(c); break;
     case 'settings': renderSettings(c); break;
     case 'patientDetail': renderPatientDetail(c); break;
@@ -484,6 +484,50 @@ async function loadProducts() {
 }
 
 // ─── Accept Code ───
+async function renderBilling(c) {
+  c.innerHTML = '<div class="text-sm text-ink3 p-6">Loading billing\u2026</div>';
+  const token = (await sb.auth.getSession()).data?.session?.access_token;
+  let b = null;
+  try {
+    const resp = await fetch(API + '/api/clinic/billing', { headers: { 'Authorization': 'Bearer ' + token } });
+    if (resp.ok) b = await resp.json();
+  } catch(_) {}
+  if (!b) { c.innerHTML = '<div class="text-sm text-crit p-6">Could not load billing.</div>'; return; }
+
+  const statusLabel = {
+    comped: ['Complimentary access', 'Your clinic is on Wylde at no charge. We\u2019ll reach out before anything changes.', 'bg-successbg text-success'],
+    active: ['Active subscription', 'Your subscription is active.', 'bg-successbg text-success'],
+    trialing: ['Trial', 'You\u2019re in a trial period.', 'bg-successbg text-success'],
+    past_due: ['Payment issue', 'Your last payment failed \u2014 update your card to keep access.', 'bg-critbg text-crit'],
+    cancelled: ['Cancelled', 'Your subscription has ended.', 'bg-critbg text-crit'],
+  }[b.billing_status] || ['Unknown', '', 'bg-warmgray text-ink'];
+
+  c.innerHTML =
+    '<div class="max-w-xl">' +
+      '<div class="bg-white rounded-xl border border-line shadow-soft p-6 mb-4">' +
+        '<div class="flex items-center justify-between mb-2">' +
+          '<h2 class="text-lg font-semibold">Wylde Clinical</h2>' +
+          '<span class="text-[10px] px-2 py-0.5 rounded-full ' + statusLabel[2] + '">' + statusLabel[0] + '</span>' +
+        '</div>' +
+        '<p class="text-sm text-ink3 mb-4">' + statusLabel[1] + '</p>' +
+        (b.period_end ? '<p class="text-xs text-ink3 mb-4">Current period ends ' + new Date(b.period_end).toLocaleDateString() + '</p>' : '') +
+        '<div class="flex gap-2">' +
+          (b.billing_status === 'comped' && b.price_configured
+            ? '<button onclick="billingAction(\'checkout\')" class="px-4 py-2 bg-sage text-white rounded-lg text-sm font-semibold">Subscribe</button>' : '') +
+          (['active','trialing','past_due'].includes(b.billing_status) || b.has_subscription
+            ? '<button onclick="billingAction(\'portal\')" class="px-4 py-2 border border-line2 rounded-lg text-sm font-semibold">Manage billing</button>' : '') +
+          (b.billing_status === 'cancelled' && b.price_configured
+            ? '<button onclick="billingAction(\'checkout\')" class="px-4 py-2 bg-sage text-white rounded-lg text-sm font-semibold">Resubscribe</button>' : '') +
+        '</div>' +
+      '</div>' +
+      '<p class="text-xs text-ink3">Questions about billing? Reply to any email from Wylde and we\u2019ll sort it.</p>' +
+    '</div>';
+}
+async function billingAction(action) {
+  const data = await apiWrite('/api/clinic/billing', 'POST', { action });
+  if (data && data.url) window.location.href = data.url;
+}
+
 function copyClinicCode() {
   if (!clinicSettings || !clinicSettings.join_code) return;
   var text = 'Join ' + (clinicSettings.clinic_name || 'our clinic') + ' on Wylde Self. Download the app and enter clinic code: ' + clinicSettings.join_code;

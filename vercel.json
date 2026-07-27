@@ -163,6 +163,9 @@
     },
     "api/consumer/care/join.js": {
       "maxDuration": 10
+    },
+    "api/clinic/billing.js": {
+      "maxDuration": 15
     }
   },
   "crons": [

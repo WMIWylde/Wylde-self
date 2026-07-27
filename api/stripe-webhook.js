@@ -70,6 +70,37 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ received: true, updated: data?.length || 0 });
     }
 
+    // ── Clinic subscription lifecycle ──
+    if (event.type === 'checkout.session.completed' ||
+        event.type === 'customer.subscription.created' ||
+        event.type === 'customer.subscription.updated' ||
+        event.type === 'customer.subscription.deleted') {
+      const obj = event.data.object;
+      const clinicianId = (obj.metadata && obj.metadata.clinician_id) ||
+                          (obj.subscription_details && obj.subscription_details.metadata && obj.subscription_details.metadata.clinician_id) ||
+                          obj.client_reference_id;
+      if (clinicianId) {
+        const supabase = getSupabaseAdmin();
+        const update = {};
+        if (event.type === 'checkout.session.completed') {
+          update.stripe_customer_id = obj.customer;
+          if (obj.subscription) update.stripe_subscription_id = obj.subscription;
+          update.billing_status = 'active';
+        } else {
+          update.stripe_subscription_id = obj.id;
+          update.stripe_customer_id = obj.customer;
+          update.billing_status = event.type === 'customer.subscription.deleted' ? 'cancelled'
+            : (obj.status === 'active' || obj.status === 'trialing') ? obj.status
+            : obj.status; // past_due, unpaid, etc. flow through verbatim
+          if (obj.current_period_end) update.billing_period_end = new Date(obj.current_period_end * 1000).toISOString();
+        }
+        const { error: bErr } = await supabase.from('clinic_settings').update(update).eq('clinician_id', clinicianId);
+        if (bErr) console.error('[stripe-webhook] clinic billing update failed:', bErr.message);
+        else console.log('[stripe-webhook] clinic billing:', event.type, '->', update.billing_status, 'for', clinicianId);
+        return res.status(200).json({ received: true, billing: update.billing_status });
+      }
+    }
+
     // Acknowledge all other event types without action.
     return res.status(200).json({ received: true, ignored: event.type });
   } catch (err) {
