@@ -6,6 +6,7 @@ struct WorkoutGeneratorView: View {
     @StateObject private var service = WorkoutService.shared
     @State private var showEquipmentPicker = false
     @State private var showWyldeWorkout = false
+    @State private var todayDayIndex: Int?
     @State private var showDescribeWorkout = false
     @State private var showSpaceScan = false
     @State private var pendingAction: ((Set<String>) -> Void)?
@@ -35,7 +36,7 @@ struct WorkoutGeneratorView: View {
                             .font(.system(size: 13))
                             .foregroundColor(WyldeStyles.Colors.stone)
                             .multilineTextAlignment(.center)
-                    } else if service.program == nil {
+                    } else {
                         // Header
                         Image(systemName: "figure.strengthtraining.traditional")
                             .font(.system(size: 44))
@@ -52,6 +53,19 @@ struct WorkoutGeneratorView: View {
 
                         // Program options
                         VStack(spacing: 12) {
+                            // Today's pre-generated session — the default path
+                            if let program = service.program, !program.days.isEmpty {
+                                let todayIndex = (appState.currentDay - 1) % program.days.count
+                                let today = program.days[todayIndex]
+                                programOption(
+                                    icon: "sparkles.rectangle.stack",
+                                    title: "Today's Session — \(today.focus)",
+                                    subtitle: "Day \(todayIndex + 1) of your \(program.days.count)-day program. Built for you.",
+                                    accent: WyldeStyles.Colors.sage,
+                                    action: { todayDayIndex = todayIndex }
+                                )
+                            }
+
                             // Wylde Workout — freeform with voice logging
                             programOption(
                                 icon: "bolt.heart.fill",
@@ -157,6 +171,12 @@ struct WorkoutGeneratorView: View {
                 .padding(.horizontal, 28)
             }
         }
+        .fullScreenCover(item: Binding(
+            get: { todayDayIndex.map { DayIndexWrapper(index: $0) } },
+            set: { if $0 == nil { todayDayIndex = nil } }
+        )) { wrapped in
+            NavigationStack { WorkoutDayView(dayIndex: wrapped.index).environmentObject(appState) }
+        }
         .fullScreenCover(isPresented: $showWyldeWorkout) {
             WyldeWorkoutView()
                 .environmentObject(appState)
@@ -212,4 +232,10 @@ struct WorkoutGeneratorView: View {
         }
         .buttonStyle(.plain)
     }
+}
+
+
+private struct DayIndexWrapper: Identifiable {
+    let index: Int
+    var id: Int { index }
 }

@@ -505,6 +505,23 @@ final class WorkoutService: ObservableObject {
 
     private var adaptationContext: String?
 
+    /// Swap an exercise for an alternative — keeps the set/rep scheme,
+    /// clears any logged sets (different movement, different weights).
+    func swapExercise(dayIndex: Int, exerciseIndex: Int, newName: String) {
+        guard var program = program,
+              program.days.indices.contains(dayIndex),
+              program.days[dayIndex].exercises.indices.contains(exerciseIndex) else { return }
+        let oldEx = program.days[dayIndex].exercises[exerciseIndex]
+        let fresh = oldEx.sets.map { _ in SetLog(reps: 0, weight: 0) }
+        program.days[dayIndex].exercises[exerciseIndex] = WorkoutExercise(
+            id: UUID(), name: newName, setsReps: oldEx.setsReps, cue: oldEx.cue,
+            isWarmup: oldEx.isWarmup, isCardio: oldEx.isCardio, sets: fresh
+        )
+        self.program = program
+        saveProgram()
+        HapticManager.shared.impact(.medium)
+    }
+
     // MARK: - Set Logging
 
     func logSet(dayIndex: Int, exerciseIndex: Int, setIndex: Int, weight: Double, reps: Int) {

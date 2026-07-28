@@ -60,14 +60,18 @@ final class CoachService: ObservableObject {
         let context = """
         Day \(appState.currentDay) of their program. Streak: \(appState.streak) days. \
         Goals: \(appState.goals.joined(separator: ", ")). \
-        Identity statement: \(appState.identityStatement.isEmpty ? "not set" : appState.identityStatement). \
+        Identity statement: \(appState.identityStatement.isEmpty ? "UNKNOWN" : appState.identityStatement). \
+        Typical sleep: \(appState.sleepBaseline.isEmpty ? "UNKNOWN" : appState.sleepBaseline). \
+        Stress: \(appState.stressBaseline.isEmpty ? "UNKNOWN" : appState.stressBaseline). \
+        Energy: \(appState.energyBaseline.isEmpty ? "UNKNOWN" : appState.energyBaseline). \
+        Biggest obstacle: \(appState.biggestObstacle.isEmpty ? "UNKNOWN" : appState.biggestObstacle). \
         Workout done today: \(appState.workoutCompleted ? "yes" : "not yet"). \
         Name: \(appState.userName.isEmpty ? "unknown" : appState.userName).
         """
         let payload: [String: Any] = [
             "model": "claude-haiku-4-5-20251001",
             "max_tokens": 120,
-            "system": "You are the user's future self (Wylde coach voice: calm, direct, warm, no hype, no emojis, no exclamation points). Write ONE opening line for today's check-in: a single specific question that helps you understand them better or moves their becoming forward. Reference their real data when it sharpens the question. One or two sentences max. End with a question mark. Their data: " + context,
+            "system": "You are the user's future self (Wylde coach voice: calm, direct, warm, no hype, no emojis, no exclamation points). Write ONE opening line for today's check-in. PRIORITY: if any field below reads UNKNOWN, ask about ONE of them conversationally (never like a form — like their future self who wants to know). Otherwise ask a question that deepens your understanding of who they are or moves their becoming forward, referencing their real data. One or two sentences max. End with a question mark. Their data: " + context,
             "messages": [["role": "user", "content": "Write today's check-in question."]],
         ]
         var request = URLRequest(url: url)

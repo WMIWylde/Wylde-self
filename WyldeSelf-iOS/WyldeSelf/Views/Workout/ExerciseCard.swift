@@ -92,9 +92,28 @@ struct ExerciseCard: View {
                         .tracking(1.5)
                         .foregroundColor(Theme.tertiaryText)
                     ForEach(alternatives, id: \.self) { alt in
-                        Text("→ \(alt)")
-                            .font(.system(size: 12))
-                            .foregroundColor(Theme.secondaryText)
+                        Button {
+                            WorkoutService.shared.swapExercise(dayIndex: dayIndex, exerciseIndex: exerciseIndex, newName: alt)
+                            showAlternatives = false
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "arrow.2.squarepath")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(WyldeStyles.Colors.sage)
+                                Text(alt)
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(WyldeStyles.Colors.ink)
+                                Spacer()
+                                Text("Swap in")
+                                    .font(.system(size: 10, weight: .semibold))
+                                    .foregroundColor(WyldeStyles.Colors.sage)
+                            }
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 10)
+                            .background(WyldeStyles.Colors.sage.opacity(0.07))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal, 16)
