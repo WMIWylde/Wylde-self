@@ -34,3 +34,10 @@ Users plug in their own Anthropic/OpenAI API key for unlimited coach usage.
 SECURITY RULE: key stored ON DEVICE ONLY (Keychain / localStorage), sent
 directly from client to provider, NEVER stored server-side. Settings toggle
 "Use my own AI key". Positioning: power-user feature, after clinic billing.
+
+## Per-clinic pharmacy connections
+Each clinic connects their own supplier/pharmacy catalog (as founder did with
+DirectRX): import catalog -> cost basis -> clinic sets client pricing/margins.
+clinic_products already per-clinician; needs a generic importer (CSV upload
+first, per-vendor API adapters as demand appears). Bulk pricing rules
+(category x multiplier) belong here too.
