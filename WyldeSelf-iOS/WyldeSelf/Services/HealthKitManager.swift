@@ -104,6 +104,9 @@ class HealthKitManager {
         workoutStartDate = Date()
         workoutActivityType = activityType
         isWorkoutActive = true
+        // Wake the watch: live HR/calorie tracking for any session started on the phone
+        launchWatchWorkout(activityType: activityType,
+                           location: activityType == .walking ? .outdoor : .indoor)
         #if DEBUG
         print("[HealthKit] Workout session started (\(activityType.rawValue))")
         #endif
@@ -209,6 +212,22 @@ class HealthKitManager {
                 continuation.resume(returning: totalSeconds / 3600.0)
             }
             store.execute(query)
+        }
+    }
+}
+
+
+extension HealthKitManager {
+    /// Wake the watch app and start a live workout session on it.
+    /// Fire-and-forget: no watch paired / app not installed just no-ops.
+    func launchWatchWorkout(activityType: HKWorkoutActivityType,
+                            location: HKWorkoutSessionLocationType = .indoor) {
+        let config = HKWorkoutConfiguration()
+        config.activityType = activityType
+        config.locationType = location
+        store.startWatchApp(with: config) { success, error in
+            if let error { print("[HealthKit] startWatchApp: \(error.localizedDescription)") }
+            else if success { print("[HealthKit] watch workout launched") }
         }
     }
 }

@@ -123,11 +123,16 @@ struct WatchWorkoutView: View {
 
         connector.startWorkout()
 
+        // Real HealthKit workout session: live HR + calories, rings credit
+        WatchWorkoutSessionManager.shared.start(activityType: .traditionalStrengthTraining)
+
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             DispatchQueue.main.async {
                 elapsed += 1
-                // Estimate calories (rough: ~8 cal/min for strength training)
-                calories = Double(elapsed) / 60.0 * 8.0
+                let mgr = WatchWorkoutSessionManager.shared
+                if mgr.activeCalories > 0 { calories = mgr.activeCalories }
+                else { calories = Double(elapsed) / 60.0 * 8.0 }  // fallback estimate
+                if mgr.heartRate > 0 { heartRate = mgr.heartRate }
             }
         }
 
@@ -135,6 +140,7 @@ struct WatchWorkoutView: View {
     }
 
     private func endWorkout() {
+        WatchWorkoutSessionManager.shared.end()
         timer?.invalidate()
         timer = nil
         isActive = false
