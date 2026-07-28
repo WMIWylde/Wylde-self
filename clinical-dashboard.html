@@ -825,6 +825,7 @@ function renderLibrary(c) {
           '<div class="flex justify-between items-start mb-3">' +
             '<span class="text-lg">' + (cats[p.category] || '&#x1F4E6;') + '</span>' +
             '<span class="text-[10px] px-2 py-0.5 rounded-full ' + (p.is_in_stock !== false ? 'bg-successbg text-success' : 'bg-critbg text-crit') + '">' + (p.is_in_stock !== false ? 'In Stock' : 'Out') + '</span>' +
+            (p.cost != null ? '<div class="text-[10px] text-ink3 mt-1">Cost $' + p.cost + (p.price ? ' &middot; margin $' + (p.price - p.cost).toFixed(0) : ' &middot; <button onclick="event.stopPropagation();setProductPrice(\'' + p.id + '\',' + p.cost + ')" class="text-sage underline">set price</button>') + '</div>' : '') +
           '</div>' +
           '<h3 class="text-sm font-semibold mb-1">' + escapeHTML(p.name) + '</h3>' +
           '<p class="text-xs text-ink3 mb-2">' + escapeHTML(p.category) + ' &middot; ' + escapeHTML(p.method || '&mdash;') + '</p>' +
@@ -958,6 +959,18 @@ async function apiWrite(path, method, bodyObj) {
     showToast('Network error — check your connection', 'error');
     return null;
   }
+}
+
+async function setProductPrice(id, cost) {
+  const suggested = cost != null ? Math.round(cost * 2) : '';
+  const input = prompt('Client price for this product ($):' + (cost != null ? ' (your cost: $' + cost + ')' : ''), suggested);
+  if (input === null) return;
+  const price = parseFloat(input);
+  if (isNaN(price) || price < 0) { showToast('Enter a valid price', 'error'); return; }
+  const ok = await apiWrite('/api/clinic/products', 'PUT', { id, price });
+  if (!ok) return;
+  await loadProducts(); render();
+  showToast('Price set: $' + price, 'success');
 }
 
 async function deleteProduct(id) {
