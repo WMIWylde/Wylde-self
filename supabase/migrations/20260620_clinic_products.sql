@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS clinic_products (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   clinician_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
-  category TEXT NOT NULL CHECK (category IN ('peptide', 'supplement', 'medication', 'service', 'lab_test')),
+  category TEXT NOT NULL CHECK (category IN ('peptide', 'supplement', 'medication', 'service', 'lab_test', 'glp-1', 'supply')),
   description TEXT,
   mechanism TEXT,
   benefits JSONB DEFAULT '[]'::jsonb,
