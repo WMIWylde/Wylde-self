@@ -57,11 +57,14 @@ final class WorkoutService: ObservableObject {
             #endif
         } catch {
             #if DEBUG
-            print("[WorkoutService] ❌ AI failed: \(error.localizedDescription) — using fallback template")
+            print("[WorkoutService] AI failed — using fallback template")
             #endif
             self.program = fallbackForEquipment(appState: appState)
             usedFallback = true
             saveProgram()
+            await MainActor.run {
+                ErrorBanner.shared.show("Workout personalization unavailable — using a template program.", type: .generationFailed)
+            }
         }
 
         isGenerating = false

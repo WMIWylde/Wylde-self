@@ -171,6 +171,7 @@ struct MainTabView: View {
             BottomTabBar()
         }
         .background(Theme.background)
+        .errorBanner()
         // ─── Hamburger overlay — global on every tab ──────────────
         // Sits above all tab content via the parent ZStack. Tapping
         // opens the native SettingsDrawer. Suppressed in WebView tabs

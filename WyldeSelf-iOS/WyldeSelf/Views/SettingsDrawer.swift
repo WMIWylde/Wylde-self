@@ -121,7 +121,7 @@ struct SettingsDrawer: View {
                 .padding(.vertical, 12)
 
             // ── Destructive actions ────────────────────────────
-            DrawerLink(icon: "trash",                              label: "Reset Profile", action: { showResetConfirm = true })
+            DrawerLink(icon: "arrow.counterclockwise",              label: "Clear Device Cache", action: { showResetConfirm = true })
             DrawerLink(icon: "rectangle.portrait.and.arrow.right", label: "Sign Out",      destructive: true, action: signOutAndDismiss)
 
             // Push everything to the top
@@ -158,14 +158,14 @@ struct SettingsDrawer: View {
         } message: {
             Text("This takes you back through the setup questions so we can rebuild your training, nutrition, and daily plan from scratch. Your account and history stay intact.")
         }
-        .alert("Reset profile?", isPresented: $showResetConfirm) {
+        .alert("Clear device cache?", isPresented: $showResetConfirm) {
             Button("Cancel", role: .cancel) { }
-            Button("Reset", role: .destructive) {
+            Button("Clear cache", role: .destructive) {
                 appState.resetAllData()
                 dismiss()
             }
         } message: {
-            Text("Wipes your local data. You'll redo onboarding. Cloud data on your account stays.")
+            Text("Removes locally cached data (workout history, generated images, preferences) and restarts onboarding. Your account and cloud data are not affected. Use \"Delete account\" to remove everything.")
         }
     }
 

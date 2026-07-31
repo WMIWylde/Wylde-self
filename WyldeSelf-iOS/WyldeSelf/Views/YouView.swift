@@ -59,11 +59,11 @@ struct YouView: View {
             .fullScreenCover(isPresented: $showProtocol) { ProtocolTrackerView().environmentObject(appState) }
             .sheet(isPresented: $showExercises)        { NavigationStack { ExercisesView() } }
             .fullScreenCover(isPresented: $showTherapyLibrary) { TherapyLibraryView() }
-            .alert("Reset profile?", isPresented: $showResetConfirm) {
+            .alert("Clear device cache?", isPresented: $showResetConfirm) {
                 Button("Cancel", role: .cancel) {}
-                Button("Reset", role: .destructive) { appState.resetAllData() }
+                Button("Clear cache", role: .destructive) { appState.resetAllData() }
             } message: {
-                Text("Wipes your local data. You'll redo onboarding. Cloud data on your account stays.")
+                Text("Removes locally cached data and restarts onboarding. Your account and cloud data are not affected.")
             }
             .alert("Delete your account?", isPresented: $showDeleteConfirm) {
                 Button("Cancel", role: .cancel) {}
@@ -410,7 +410,7 @@ struct YouView: View {
 
     private var destructiveLinks: some View {
         VStack(spacing: 0) {
-            row(icon: "trash", label: "Reset profile", destructive: false) { showResetConfirm = true }
+            row(icon: "arrow.counterclockwise", label: "Clear device cache", destructive: false) { showResetConfirm = true }
             divider
             row(icon: "rectangle.portrait.and.arrow.right", label: "Sign out", destructive: false) {
                 Task { await AuthService.shared.signOut() }

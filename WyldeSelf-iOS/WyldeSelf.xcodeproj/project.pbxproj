@@ -12,6 +12,7 @@
 		18A966E3AE3C65C025FD7A33 /* ConsumerModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C62374029D5DB6ADFC8027 /* ConsumerModels.swift */; };
 		1E676D246DFD4BF057B505E7 /* LiftingCoach.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CEE5CC471CD6CDF6FC9422 /* LiftingCoach.swift */; };
 		226DB19A0A68CF671A037743 /* CoachService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843B810CFE4E4C6C4991366 /* CoachService.swift */; };
+		EB10001 /* ErrorBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB20001 /* ErrorBanner.swift */; };
 		362218F195F2E3CB7D31A5D9 /* guided-meditation.m4a in Resources */ = {isa = PBXBuildFile; fileRef = FA5FDC2D6C2789D0FC463D9D /* guided-meditation.m4a */; };
 		3CEB2998F10B188B9BB71D31 /* FutureVisionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2B347630952E8C8CA2062F /* FutureVisionView.swift */; };
 		3EB94B73D90D13EDAD1851DA /* wyldeself-intro.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 8DDF27D0AD3DFF23AE7F9504 /* wyldeself-intro.mp4 */; };
@@ -197,6 +198,7 @@
 		7439DFCD26DABDF020845D2E /* VisionCreationFlow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VisionCreationFlow.swift; sourceTree = "<group>"; };
 		75AB4CA4640E38AE003A94AB /* ProgramView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProgramView.swift; sourceTree = "<group>"; };
 		7843B810CFE4E4C6C4991366 /* CoachService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoachService.swift; sourceTree = "<group>"; };
+		EB20001 /* ErrorBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBanner.swift; sourceTree = "<group>"; };
 		7932D9C9B06F559821F5B481 /* NutritionPreferencesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NutritionPreferencesView.swift; sourceTree = "<group>"; };
 		7A1AA03C12AC3C85B020A3B1 /* ProtocolTrackerService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProtocolTrackerService.swift; sourceTree = "<group>"; };
 		88CEE5CC471CD6CDF6FC9422 /* LiftingCoach.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LiftingCoach.swift; sourceTree = "<group>"; };
@@ -450,6 +452,7 @@
 				4202E73E303454CED28BA0A5 /* FutureVisionService.swift */,
 				A3623AA1C98F5FD93FB6739C /* WorkoutService.swift */,
 				7843B810CFE4E4C6C4991366 /* CoachService.swift */,
+				EB20001 /* ErrorBanner.swift */,
 				450A3040BEA993FD183CB41B /* MacroTrackerService.swift */,
 				E18F936666895C871BB1E34F /* MealPlanService.swift */,
 				8EFEEBCDCD70D00BD1C02905 /* NutritionPreferencesService.swift */,
@@ -820,6 +823,7 @@
 				895AE0504FC089DC025DFF9C /* QiGongFlowView.swift in Sources */,
 				C60C7CC6C017D714F0C8F352 /* GuidedMeditationView.swift in Sources */,
 				226DB19A0A68CF671A037743 /* CoachService.swift in Sources */,
+				EB10001 /* ErrorBanner.swift in Sources */,
 				5A4AB3FE4181FCD75D3C619B /* CoachChatView.swift in Sources */,
 				8E8881408C7AD92A30FBD15D /* MacroTrackerService.swift in Sources */,
 				1618CBE42196225475D0C3C2 /* FoodScannerView.swift in Sources */,

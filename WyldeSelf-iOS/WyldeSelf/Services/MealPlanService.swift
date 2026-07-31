@@ -83,6 +83,9 @@ final class MealPlanService: ObservableObject {
             #if DEBUG
             print("[MealPlanService] Swap failed: \(error)")
             #endif
+            await MainActor.run {
+                ErrorBanner.shared.show("Couldn't swap that meal. Check your connection.", type: .networkError)
+            }
         }
     }
 
@@ -129,6 +132,9 @@ final class MealPlanService: ObservableObject {
             #if DEBUG
             print("[MealPlanService] Day regeneration failed: \(error)")
             #endif
+            await MainActor.run {
+                ErrorBanner.shared.show("Couldn't regenerate meals. Try again later.", type: .generationFailed)
+            }
         }
     }
 
