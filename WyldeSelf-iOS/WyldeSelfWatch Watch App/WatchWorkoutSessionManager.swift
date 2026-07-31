@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import HealthKit
 
 // ════════════════════════════════════════════════════════════════════
@@ -60,8 +61,9 @@ final class WatchWorkoutSessionManager: NSObject, ObservableObject {
         timer?.invalidate()
         timer = nil
         session?.end()
-        builder?.endCollection(withEnd: Date()) { [weak self] _, _ in
-            self?.builder?.finishWorkout { _, _ in }
+        let workoutBuilder = builder
+        workoutBuilder?.endCollection(withEnd: Date()) { _, _ in
+            workoutBuilder?.finishWorkout { _, _ in }
         }
         isActive = false
     }
