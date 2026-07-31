@@ -67,6 +67,7 @@
 		A10019 /* IdentityProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10019 /* IdentityProfile.swift */; };
 		A10020 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10020 /* PaywallView.swift */; };
 		A10021 /* SettingsDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10021 /* SettingsDrawer.swift */; };
+		A10031 /* EditProfileSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10031 /* EditProfileSheet.swift */; };
 		A10022 /* IdentityImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10022 /* IdentityImportView.swift */; };
 		A10023 /* StartTodayFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10023 /* StartTodayFlow.swift */; };
 		A10024 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10024 /* PurchaseManager.swift */; };
@@ -114,6 +115,8 @@
 		T10001 /* AppStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20001 /* AppStateTests.swift */; };
 		T10002 /* SecureStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20002 /* SecureStorageTests.swift */; };
 		T10003 /* FileStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20003 /* FileStorageTests.swift */; };
+		T10004 /* AuthServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20004 /* AuthServiceTests.swift */; };
+		T10005 /* CoachCheckinTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T20005 /* CoachCheckinTests.swift */; };
 		W10001 /* WatchSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20001 /* WatchSync.swift */; };
 /* End PBXBuildFile section */
 
@@ -230,6 +233,7 @@
 		B10019 /* IdentityProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityProfile.swift; sourceTree = "<group>"; };
 		B10020 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		B10021 /* SettingsDrawer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDrawer.swift; sourceTree = "<group>"; };
+		B10031 /* EditProfileSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileSheet.swift; sourceTree = "<group>"; };
 		B10022 /* IdentityImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityImportView.swift; sourceTree = "<group>"; };
 		B10023 /* StartTodayFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartTodayFlow.swift; sourceTree = "<group>"; };
 		B10024 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
@@ -272,6 +276,8 @@
 		T20001 /* AppStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateTests.swift; sourceTree = "<group>"; };
 		T20002 /* SecureStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureStorageTests.swift; sourceTree = "<group>"; };
 		T20003 /* FileStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileStorageTests.swift; sourceTree = "<group>"; };
+		T20004 /* AuthServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthServiceTests.swift; sourceTree = "<group>"; };
+		T20005 /* CoachCheckinTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachCheckinTests.swift; sourceTree = "<group>"; };
 		T30001 /* WyldeSelfTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WyldeSelfTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		W20001 /* WatchSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSync.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -393,6 +399,7 @@
 				B10017 /* ExercisesView.swift */,
 				B10020 /* PaywallView.swift */,
 				B10021 /* SettingsDrawer.swift */,
+				B10031 /* EditProfileSheet.swift */,
 				B10022 /* IdentityImportView.swift */,
 				B10023 /* StartTodayFlow.swift */,
 				36DC41DE8014E1FAD7AF5F91 /* YouView.swift */,
@@ -520,6 +527,8 @@
 				T20001 /* AppStateTests.swift */,
 				T20002 /* SecureStorageTests.swift */,
 				T20003 /* FileStorageTests.swift */,
+				T20004 /* AuthServiceTests.swift */,
+				T20005 /* CoachCheckinTests.swift */,
 			);
 			path = WyldeSelfTests;
 			sourceTree = "<group>";
@@ -764,6 +773,7 @@
 				A10019 /* IdentityProfile.swift in Sources */,
 				A10020 /* PaywallView.swift in Sources */,
 				A10021 /* SettingsDrawer.swift in Sources */,
+				A10031 /* EditProfileSheet.swift in Sources */,
 				A10022 /* IdentityImportView.swift in Sources */,
 				A10023 /* StartTodayFlow.swift in Sources */,
 				A10024 /* PurchaseManager.swift in Sources */,
@@ -855,6 +865,8 @@
 				T10001 /* AppStateTests.swift in Sources */,
 				T10002 /* SecureStorageTests.swift in Sources */,
 				T10003 /* FileStorageTests.swift in Sources */,
+				T10004 /* AuthServiceTests.swift in Sources */,
+				T10005 /* CoachCheckinTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

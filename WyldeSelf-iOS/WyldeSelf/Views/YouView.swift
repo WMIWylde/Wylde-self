@@ -22,6 +22,9 @@ struct YouView: View {
     @State private var showIdentityImport = false
     @State private var showPaywall = false
     @State private var showResetConfirm = false
+    @State private var showDeleteConfirm = false
+    @State private var isDeletingAccount = false
+    @State private var deleteError: String?
     @State private var showCoach = false
     @State private var showProtocol = false
     @State private var showExercises = false
@@ -61,6 +64,40 @@ struct YouView: View {
                 Button("Reset", role: .destructive) { appState.resetAllData() }
             } message: {
                 Text("Wipes your local data. You'll redo onboarding. Cloud data on your account stays.")
+            }
+            .alert("Delete your account?", isPresented: $showDeleteConfirm) {
+                Button("Cancel", role: .cancel) {}
+                Button("Delete everything", role: .destructive) {
+                    isDeletingAccount = true
+                    Task {
+                        do {
+                            try await AuthService.shared.deleteAccount(appState: appState)
+                            appState.isAuthenticated = false
+                        } catch {
+                            deleteError = error.localizedDescription
+                        }
+                        isDeletingAccount = false
+                    }
+                }
+            } message: {
+                Text("This permanently deletes your account, all your data, workout history, coach memory, care-team connections, and everything else. This cannot be undone.")
+            }
+            .alert("Deletion failed", isPresented: .init(get: { deleteError != nil }, set: { if !$0 { deleteError = nil } })) {
+                Button("OK", role: .cancel) { deleteError = nil }
+            } message: {
+                Text(deleteError ?? "")
+            }
+            .overlay {
+                if isDeletingAccount {
+                    Color.black.opacity(0.5).ignoresSafeArea()
+                    VStack(spacing: 12) {
+                        ProgressView()
+                            .tint(.white)
+                        Text("Deleting account…")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white)
+                    }
+                }
             }
         }
     }
@@ -375,9 +412,13 @@ struct YouView: View {
         VStack(spacing: 0) {
             row(icon: "trash", label: "Reset profile", destructive: false) { showResetConfirm = true }
             divider
-            row(icon: "rectangle.portrait.and.arrow.right", label: "Sign out", destructive: true) {
+            row(icon: "rectangle.portrait.and.arrow.right", label: "Sign out", destructive: false) {
                 Task { await AuthService.shared.signOut() }
                 appState.isAuthenticated = false
+            }
+            divider
+            row(icon: "person.crop.circle.badge.minus", label: "Delete account", destructive: true) {
+                showDeleteConfirm = true
             }
         }
         .background(Theme.cardSurface)

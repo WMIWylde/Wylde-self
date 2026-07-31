@@ -569,6 +569,15 @@ struct IdentityImportView: View {
 
     private func submit() {
         guard appState.isPro else { phase = .locked; return }
+
+        guard let userId = AuthService.shared.userID, !userId.isEmpty else {
+            #if DEBUG
+            print("[IdentityImport] No authenticated user — cannot submit")
+            #endif
+            HapticManager.shared.notification(.error)
+            return
+        }
+
         let cleanUrls = urls.map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
         let cleanText = rawText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleanUrls.isEmpty || !cleanText.isEmpty else { return }
@@ -577,7 +586,6 @@ struct IdentityImportView: View {
         phase = .loading
         Task {
             do {
-                let userId = "" // TODO: pass real Supabase user UUID once auth is wired
                 let result = try await IdentityAnalysisService.shared.analyze(
                     userId: userId, urls: cleanUrls, rawText: cleanText
                 )

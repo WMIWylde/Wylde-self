@@ -202,14 +202,7 @@ struct CareMessagingView: View {
             #endif
         } catch {
             #if DEBUG
-            print("[CareMessaging] Load failed: \(error)")
-            if let url = URL(string: "\(baseURL)/api/consumer/messages") {
-                var req2 = URLRequest(url: url)
-                if let t = await AuthService.shared.accessToken { req2.setValue("Bearer \(t)", forHTTPHeaderField: "Authorization") }
-                if let (d, _) = try? await URLSession.shared.data(for: req2), let str = String(data: d, encoding: .utf8) {
-                    print("[CareMessaging] Raw: \(str.prefix(300))")
-                }
-            }
+            print("[CareMessaging] Load failed: \(error.localizedDescription)")
             #endif
         }
         isLoading = false

@@ -37,7 +37,7 @@ final class AuthService: ObservableObject {
             isSignedIn = true
             postAuthChanged(true)
             #if DEBUG
-            print("[AuthService] Session restored, token: \(session.accessToken.prefix(20))...")
+            print("[AuthService] Session restored for user \(session.user.id.uuidString.prefix(8))…")
             #endif
         } catch {
             userID = nil
@@ -69,35 +69,43 @@ final class AuthService: ObservableObject {
     }
 
     /// Sign up with email + password.
+    /// Only transitions to signed-in state when a valid session exists.
+    /// If Supabase email confirmation is enabled, signup returns a user
+    /// but no session — the user must confirm before they can sign in.
     func signUp(email: String, password: String) async throws {
         let result = try await supabase.auth.signUp(email: email, password: password)
         userID = result.user.id.uuidString
         self.email = result.user.email
-        // Try to get session token after sign up
+
+        // Only mark signed in if we actually have a session
         if let session = try? await supabase.auth.session {
             cachedToken = session.accessToken
+            isSignedIn = true
+            postAuthChanged(true)
             #if DEBUG
-            print("[AuthService] SignUp token: \(session.accessToken.prefix(20))...")
+            print("[AuthService] SignUp completed with active session")
+            #endif
+        } else {
+            // User created but needs email confirmation — don't set signed in
+            isSignedIn = false
+            postAuthChanged(false)
+            #if DEBUG
+            print("[AuthService] SignUp completed — email confirmation required")
             #endif
         }
-        isSignedIn = true
-        postAuthChanged(true)
     }
 
     /// Sign in with email + password.
     func signIn(email: String, password: String) async throws {
         #if DEBUG
-        print("[AuthService] Attempting sign-in for \(email)...")
+        print("[AuthService] Attempting sign-in…")
         #endif
         let session = try await supabase.auth.signIn(email: email, password: password)
-        #if DEBUG
-        print("[AuthService] Sign-in succeeded!")
-        #endif
         userID = session.user.id.uuidString
         self.email = session.user.email
         cachedToken = session.accessToken
         #if DEBUG
-        print("[AuthService] Token cached: \(session.accessToken.prefix(30))...")
+        print("[AuthService] Sign-in succeeded for user \(session.user.id.uuidString.prefix(8))…")
         #endif
         isSignedIn = true
         postAuthChanged(true)
@@ -120,8 +128,56 @@ final class AuthService: ObservableObject {
         try? await supabase.auth.signOut()
         userID = nil
         email = nil
+        cachedToken = nil
         isSignedIn = false
         postAuthChanged(false)
+    }
+
+    /// Permanently delete the user's account and all server-side data.
+    /// Calls /api/account/delete then clears local state.
+    func deleteAccount(appState: AppState) async throws {
+        guard let token = await accessToken else {
+            throw AccountError.notAuthenticated
+        }
+
+        let url = URL(string: "https://www.wyldeself.com/api/account/delete")!
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let (data, response) = try await URLSession.shared.data(for: req)
+        let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+
+        guard status == 200 else {
+            let msg = (try? JSONDecoder().decode([String: String].self, from: data))?["error"] ?? "Failed"
+            throw AccountError.serverError(msg)
+        }
+
+        // Wipe all local data
+        appState.resetAllData()
+
+        // Clear keychain
+        SecureStorage.shared.deleteAllUserData()
+
+        // Sign out locally
+        await signOut()
+
+        #if DEBUG
+        print("[AuthService] Account deleted and local data wiped")
+        #endif
+    }
+
+    enum AccountError: LocalizedError {
+        case notAuthenticated
+        case serverError(String)
+
+        var errorDescription: String? {
+            switch self {
+            case .notAuthenticated: return "You must be signed in to delete your account."
+            case .serverError(let msg): return msg
+            }
+        }
     }
 
     /// Current Supabase access token — used by ClinicalAPI to attach as Bearer.

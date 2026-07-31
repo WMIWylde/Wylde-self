@@ -39,6 +39,8 @@ struct MainTabView: View {
                             }
                         }
                     }
+                    .accessibilityLabel("Coach")
+                    .accessibilityHint(coachService.pendingOpener != nil ? "New message from your coach" : "Open the AI coach")
                     .padding(.trailing, 18)
                     .padding(.bottom, 92)
                 }
@@ -88,6 +90,8 @@ struct MainTabView: View {
                     .shadow(color: .black.opacity(0.25), radius: 20, y: 8)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 100)
+                    .accessibilityElement(children: .contain)
+                    .accessibilityLabel("Daily coach check-in")
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
                 .zIndex(45)
@@ -283,6 +287,8 @@ struct TabButton: View {
             .frame(maxWidth: .infinity)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(tab.rawValue)
+        .accessibilityAddTraits(isActive ? .isSelected : [])
     }
 }
 
@@ -310,16 +316,19 @@ struct HamburgerButton: View {
                 )
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("Menu")
+        .accessibilityHint("Open settings drawer")
     }
 }
 
 
 extension MainTabView {
     /// Once per day, on first open: the coach asks one question.
+    /// The seen-flag is only set after the question is actually presented,
+    /// so failures or backgrounding won't silently consume the check-in.
     fileprivate func maybeCoachCheckin() {
         let key = "wylde_coach_checkin_" + ISO8601DateFormatter().string(from: Date()).prefix(10)
         guard !UserDefaults.standard.bool(forKey: String(key)) else { return }
-        UserDefaults.standard.set(true, forKey: String(key))
 
         let fallbacks = [
             "What would make today feel like a win — not a perfect day, just a won one?",
@@ -331,7 +340,6 @@ extension MainTabView {
         let dayIndex = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0
 
         Task {
-            // Try a personalized question; fall back to the rotation.
             var question = fallbacks[dayIndex % fallbacks.count]
             if let generated = await CoachService.shared.generateCheckinQuestion(appState: appState) {
                 question = generated
@@ -340,6 +348,8 @@ extension MainTabView {
                 withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                     coachCheckin = question
                 }
+                // Mark seen only after the question is actually shown
+                UserDefaults.standard.set(true, forKey: String(key))
             }
         }
     }

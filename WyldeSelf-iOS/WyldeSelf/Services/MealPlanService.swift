@@ -412,7 +412,7 @@ final class MealPlanService: ObservableObject {
                     let violations = prefsService.checkAllergyViolations(ingredients: allIngredients)
                     if !violations.isEmpty {
                         #if DEBUG
-                        print("[MealPlanService] Removed meal '\(meal.name)' — allergy violation: \(violations.map { "\($0.0) (\($0.1.displayName))" })")
+                        print("[MealPlanService] Removed meal — \(violations.count) allergy violation(s)")
                         #endif
                         return true
                     }

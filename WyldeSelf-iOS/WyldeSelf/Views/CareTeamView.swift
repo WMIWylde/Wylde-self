@@ -647,7 +647,7 @@ final class CareTeamViewModel: ObservableObject {
         do {
             let r = try await ClinicalAPI.generateCareInvite(message: note)
             #if DEBUG
-            print("[CareTeam] Code generated: \(r.code)")
+            print("[CareTeam] Code generated (length: \(r.code.count))")
             #endif
             generatedCode = r.code
             generatedExpiresAt = formatDate(r.expires_at)

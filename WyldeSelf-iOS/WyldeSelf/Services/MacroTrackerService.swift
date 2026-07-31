@@ -169,7 +169,7 @@ final class MacroTrackerService: ObservableObject {
         #endif
         guard httpCode == 200 else {
             #if DEBUG
-            if let str = String(data: data, encoding: .utf8) { print("[MacroTracker] Error: \(str.prefix(300))") }
+            print("[MacroTracker] Error: HTTP \(httpCode)")
             #endif
             throw MacroError.apiFailed
         }

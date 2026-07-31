@@ -18,6 +18,7 @@ struct SignInView: View {
     @State private var mode: AuthMode = .signIn
     @State private var sending: Bool = false
     @State private var sent: Bool = false
+    @State private var signedUp: Bool = false
     @State private var errorText: String?
 
     var body: some View {
@@ -96,20 +97,25 @@ struct SignInView: View {
     // ─────────────── form / sent card ───────────────
     private var card: some View {
         VStack(alignment: .leading, spacing: 14) {
-            if sent {
+            if sent || signedUp {
                 HStack(spacing: 10) {
-                    Image(systemName: "envelope.badge.fill")
+                    Image(systemName: signedUp ? "checkmark.circle.fill" : "envelope.badge.fill")
                         .foregroundColor(WyldeStyles.Colors.sage)
-                    Text("Check your email")
+                    Text(signedUp ? "Account created" : "Check your email")
                         .font(.system(size: 16, weight: .medium, design: .serif))
                         .foregroundColor(WyldeStyles.Colors.ink)
                 }
-                Text("We sent a one-tap sign-in link to **\(email)**. Tap it on this device.")
+                Text(signedUp
+                     ? "Your account has been created. Check your email at **\(email)** to confirm, then come back and sign in."
+                     : "We sent a one-tap sign-in link to **\(email)**. Tap it on this device.")
                     .font(.system(size: 13.5))
                     .foregroundColor(WyldeStyles.Colors.stone)
                     .lineSpacing(2)
-                Button("Use a different email") {
+                Button(signedUp ? "Sign in" : "Use a different email") {
+                    let wasSignUp = signedUp
                     sent = false
+                    signedUp = false
+                    if wasSignUp { mode = .signIn }
                 }
                 .font(.system(size: 13, weight: .medium))
                 .foregroundColor(WyldeStyles.Colors.sage)
@@ -225,15 +231,32 @@ struct SignInView: View {
                 try await AuthService.shared.signIn(email: trimmedEmail, password: password)
             case .signUp:
                 try await AuthService.shared.signUp(email: trimmedEmail, password: password)
+                // If signup didn't produce a session (email confirmation required),
+                // show a confirmation message instead of leaving the user stuck.
+                if !AuthService.shared.isSignedIn {
+                    signedUp = true
+                }
             case .magicLink:
                 try await AuthService.shared.sendMagicLink(email: trimmedEmail)
                 sent = true
             }
         } catch {
             #if DEBUG
-            print("[SignIn] ERROR: \(error)")
+            print("[SignIn] \(mode) error: \(error)")
             #endif
-            errorText = error.localizedDescription
+            // Provide user-friendly error messages
+            let msg = error.localizedDescription
+            if msg.contains("invalid_credentials") || msg.contains("Invalid login") {
+                errorText = "Incorrect email or password. Try again or create an account."
+            } else if msg.contains("already registered") || msg.contains("already been registered") {
+                errorText = "An account with this email already exists. Try signing in instead."
+            } else if msg.contains("Password") && msg.contains("6") {
+                errorText = "Password must be at least 6 characters."
+            } else if msg.contains("network") || msg.contains("connection") {
+                errorText = "No internet connection. Please check your network and try again."
+            } else {
+                errorText = msg
+            }
         }
     }
 }

@@ -29,6 +29,8 @@ struct SettingsDrawer: View {
     @State private var showExercises = false
     @State private var showFeedback = false
     @State private var showNutritionPrefs = false
+    @State private var showEditProfile = false
+    @State private var showRebuildConfirm = false
 
     /// Centralized dismiss — calls custom onClose if provided, otherwise
     /// falls back to SwiftUI sheet dismiss.
@@ -97,8 +99,14 @@ struct SettingsDrawer: View {
                 HapticManager.shared.impact(.light)
                 showIdentityImport = true
             })
-            // TODO: Wire up native Edit Profile and Rebuild My Program screens
-            // (Previously routed through the WebView bridge which has been removed.)
+            DrawerLink(icon: "person.fill",             label: "Edit Profile",       action: {
+                HapticManager.shared.impact(.light)
+                showEditProfile = true
+            })
+            DrawerLink(icon: "arrow.triangle.2.circlepath", label: "Rebuild My Program", action: {
+                HapticManager.shared.impact(.light)
+                showRebuildConfirm = true
+            })
 
             // ── Appearance ─────────────────────────────────────
             appearanceControl
@@ -137,6 +145,18 @@ struct SettingsDrawer: View {
         }
         .fullScreenCover(isPresented: $showNutritionPrefs) {
             NutritionPreferencesView().environmentObject(appState)
+        }
+        .sheet(isPresented: $showEditProfile) {
+            EditProfileSheet().environmentObject(appState)
+        }
+        .alert("Rebuild your program?", isPresented: $showRebuildConfirm) {
+            Button("Cancel", role: .cancel) {}
+            Button("Rebuild", role: .destructive) {
+                appState.onboardingComplete = false
+                dismiss()
+            }
+        } message: {
+            Text("This takes you back through the setup questions so we can rebuild your training, nutrition, and daily plan from scratch. Your account and history stay intact.")
         }
         .alert("Reset profile?", isPresented: $showResetConfirm) {
             Button("Cancel", role: .cancel) { }

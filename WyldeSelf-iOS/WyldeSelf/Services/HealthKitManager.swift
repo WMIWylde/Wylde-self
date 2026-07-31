@@ -57,7 +57,7 @@ class HealthKitManager {
         defaults.set(Date().timeIntervalSince1970, forKey: "wylde_health_last_sync")
 
         #if DEBUG
-        print("[HealthKit] Synced — Steps: \(Int(s)), Cal: \(Int(c)), Exercise: \(Int(e))min")
+        print("[HealthKit] Synced — 3 metrics updated")
         #endif
     }
 
@@ -175,7 +175,7 @@ class HealthKitManager {
 
             #if DEBUG
             let mins = Int(end.timeIntervalSince(start) / 60)
-            print("[HealthKit] Workout saved: \(activityType.rawValue), \(mins)min, \(Int(calories)) cal")
+            print("[HealthKit] Workout saved: \(mins)min")
             #endif
         } catch {
             #if DEBUG

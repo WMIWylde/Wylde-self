@@ -70,7 +70,7 @@ enum ClinicalAPI {
         if let token = await AuthService.shared.accessToken {
             req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             #if DEBUG
-            print("[ClinicalAPI] Token attached: \(token.prefix(20))...")
+            print("[ClinicalAPI] Token attached")
             #endif
         } else {
             #if DEBUG
