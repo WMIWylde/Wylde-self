@@ -42,11 +42,6 @@ final class ProtocolTrackerService: ObservableObject {
     // MARK: - Log a dose
 
     func logDose(prescriptionId: String, protocolId: String?, status: String, dose: String? = nil, notes: String? = nil, sideEffects: [String: String]? = nil) async {
-        if status == "taken" {
-            struct LedgerRow: Encodable { let delta: Int; let reason: String; let source: String }
-            _ = try? await SupabaseService.shared.from("points_ledger")
-                .insert(LedgerRow(delta: 10, reason: "Dose logged", source: "ios")).execute()
-        }
         guard let token = await AuthService.shared.accessToken,
               let url = URL(string: "\(baseURL)/api/consumer/protocols") else { return }
 
@@ -70,12 +65,25 @@ final class ProtocolTrackerService: ObservableObject {
         do {
             let (_, response) = try await URLSession.shared.data(for: request)
             if let http = response as? HTTPURLResponse, http.statusCode == 201 {
+                // Award points only after server confirms the dose was saved
+                if status == "taken" {
+                    struct LedgerRow: Encodable { let delta: Int; let reason: String; let source: String }
+                    _ = try? await SupabaseService.shared.from("points_ledger")
+                        .insert(LedgerRow(delta: 10, reason: "Dose logged", source: "ios")).execute()
+                }
                 await fetch() // Refresh data
+            } else {
+                await MainActor.run {
+                    ErrorBanner.shared.show("Dose wasn't saved. Try again.", type: .syncFailed)
+                }
             }
         } catch {
             #if DEBUG
             print("[ProtocolTracker] Log dose failed: \(error.localizedDescription)")
             #endif
+            await MainActor.run {
+                ErrorBanner.shared.show("Couldn't log dose. Check your connection.", type: .networkError)
+            }
         }
     }
 

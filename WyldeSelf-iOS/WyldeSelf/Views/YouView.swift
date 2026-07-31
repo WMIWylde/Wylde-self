@@ -414,6 +414,7 @@ struct YouView: View {
             divider
             row(icon: "rectangle.portrait.and.arrow.right", label: "Sign out", destructive: false) {
                 Task { await AuthService.shared.signOut() }
+                appState.resetAllData()
                 appState.isAuthenticated = false
             }
             divider

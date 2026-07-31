@@ -156,9 +156,11 @@ module.exports = async function handler(req, res) {
       const adherenceLogs = adherenceMap[rel.patient_id] || [];
       const unreadMessages = unreadByRelId[rel.id] || 0;
 
-      const last7 = checkins.slice(0, 7);
-      const adherence = last7.length > 0
-        ? Math.round(last7.reduce((s, c) => s + (c.doses > 0 ? 1 : 0), 0) / last7.length * 100)
+      // Compute adherence from actual prescription dose records, not morning routine
+      const patientLogs = adherenceLogs.filter(l => l.status !== 'scheduled');
+      const takenLogs = adherenceLogs.filter(l => l.status === 'taken');
+      const adherence = patientLogs.length > 0
+        ? Math.round(takenLogs.length / patientLogs.length * 100)
         : null;
 
       return {

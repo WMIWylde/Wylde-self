@@ -410,6 +410,13 @@ class AppState: ObservableObject {
             "wylde_classes",
             "wylde_morning_actions", "wylde_morning_done",
             "wylde_protein_goal", "wylde_calories_goal",
+            // Coach and walkthrough
+            "wylde_coach_chat", "wylde_walkthrough_seen",
+            // Workout program
+            "wylde_workout_program", "wylde_freeform_workout_start", "wylde_workout_start",
+            // Health sync
+            "wylde_health_steps", "wylde_health_calories", "wylde_health_exercise_min",
+            "wylde_health_last_sync",
             // Legacy keys — remove stale UserDefaults copies of now-secure fields
             "wylde_gender", "wylde_age", "wylde_height", "wylde_weight",
             "wylde_health", "wylde_health_notes", "wylde_diet", "wylde_diet_notes",
@@ -432,7 +439,9 @@ class AppState: ObservableObject {
             "wylde_meals_",
             // Morning ritual keys are now day-scoped (see dayKey usage above)
             "wylde_morning_done_",
-            "wylde_morning_actions_"
+            "wylde_morning_actions_",
+            // Coach check-in daily flags
+            "wylde_coach_checkin_"
         ]
         for key in defaults.dictionaryRepresentation().keys {
             if dailyPrefixes.contains(where: { key.hasPrefix($0) }) {

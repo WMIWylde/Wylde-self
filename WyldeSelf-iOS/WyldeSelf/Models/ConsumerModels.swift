@@ -27,12 +27,12 @@ struct MeResponse: Codable {
         let day_number: Int?
     }
     struct Prescription: Codable, Identifiable {
+        let id: UUID
         let drug: String
         let dose: String
         let frequency: String
         let status: String
         let last_filled_at: String?
-        var id: String { "\(drug)-\(dose)" }
     }
     struct TodayState: Codable {
         let adherence_required: [String]

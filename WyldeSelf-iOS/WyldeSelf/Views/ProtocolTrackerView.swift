@@ -147,7 +147,12 @@ struct ProtocolTrackerView: View {
     // MARK: - Prescription Card
 
     private func prescriptionCard(_ rx: MeResponse.Prescription) -> some View {
-        let todayLogged = service.adherenceLogs.contains { $0.prescriptionId?.uuidString == rx.id && $0.status == "taken" }
+        let todayStr = ISO8601DateFormatter().string(from: Date()).prefix(10)
+        let todayLogged = service.adherenceLogs.contains {
+            $0.prescriptionId == rx.id
+            && $0.status == "taken"
+            && ($0.createdAt ?? "").hasPrefix(String(todayStr))
+        }
 
         return VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -170,7 +175,7 @@ struct ProtocolTrackerView: View {
             if !todayLogged {
                 HStack(spacing: 8) {
                     Button {
-                        Task { await service.logDose(prescriptionId: rx.id, protocolId: nil, status: "taken", dose: rx.dose) }
+                        Task { await service.logDose(prescriptionId: rx.id.uuidString, protocolId: nil, status: "taken", dose: rx.dose) }
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "checkmark")
@@ -186,7 +191,7 @@ struct ProtocolTrackerView: View {
                     }
 
                     Button {
-                        Task { await service.logDose(prescriptionId: rx.id, protocolId: nil, status: "skipped") }
+                        Task { await service.logDose(prescriptionId: rx.id.uuidString, protocolId: nil, status: "skipped") }
                     } label: {
                         Text("Skip")
                             .font(.system(size: 13, weight: .medium))
