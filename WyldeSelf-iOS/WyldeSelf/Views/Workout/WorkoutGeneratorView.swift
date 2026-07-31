@@ -10,6 +10,7 @@ struct WorkoutGeneratorView: View {
     @State private var showDescribeWorkout = false
     @State private var showSpaceScan = false
     @State private var pendingAction: ((Set<String>) -> Void)?
+    @State private var awaitingProgram = false
 
     var body: some View {
         ZStack {
@@ -124,6 +125,7 @@ struct WorkoutGeneratorView: View {
                                 title: "AI-Built Program",
                                 subtitle: "Custom split based on your goals, equipment, and schedule.",
                                 action: {
+                                    awaitingProgram = true
                                     pendingAction = { equipment in
                                         Task { await service.generateProgram(appState: appState, equipment: equipment) }
                                     }
@@ -137,6 +139,7 @@ struct WorkoutGeneratorView: View {
                                 subtitle: "No equipment needed. Push-ups, pull-ups, squats, HIIT. Train anywhere.",
                                 accent: WyldeStyles.Colors.vitalTeal,
                                 action: {
+                                    awaitingProgram = true
                                     service.sessionEquipment = ["bodyweight"]
                                     service.program = service.bodyweightProgram()
                                 }
@@ -147,6 +150,7 @@ struct WorkoutGeneratorView: View {
                                 title: "Gym Strength Split",
                                 subtitle: "4-day push/pull split. Chest & Tri, Back & Bi, Legs, Shoulders & Arms.",
                                 action: {
+                                    awaitingProgram = true
                                     service.sessionEquipment = ["bodyweight", "dumbbells", "barbell", "bench", "cables", "machines"]
                                     service.program = service.fallbackProgram(goal: appState.goals.first ?? "Build muscle & strength")
                                 }
@@ -158,6 +162,7 @@ struct WorkoutGeneratorView: View {
                                 subtitle: "Full body. Core-focused. 4 days of kettlebell + high intensity intervals.",
                                 accent: WyldeStyles.Colors.vitalOrange,
                                 action: {
+                                    awaitingProgram = true
                                     service.sessionEquipment = ["bodyweight", "kettlebell"]
                                     service.program = service.kettlebellHIITProgram()
                                 }
@@ -195,6 +200,14 @@ struct WorkoutGeneratorView: View {
                 pendingAction = nil
             }
             .environmentObject(appState)
+        }
+        .onChange(of: service.program?.days.count) { _ in
+            // Auto-open today's session when the user just picked or generated a program
+            guard awaitingProgram, !service.isGenerating,
+                  let program = service.program, !program.days.isEmpty else { return }
+            awaitingProgram = false
+            let idx = (appState.currentDay - 1) % program.days.count
+            todayDayIndex = idx
         }
     }
 
