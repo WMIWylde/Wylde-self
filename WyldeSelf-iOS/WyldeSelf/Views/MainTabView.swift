@@ -61,7 +61,10 @@ struct MainTabView: View {
                             .foregroundColor(WyldeStyles.Colors.ink)
                             .lineSpacing(3)
                         HStack(spacing: 10) {
-                            Button("Later") {
+                            Button("Not now") {
+                                // Clear the daily flag so it reappears next app open
+                                let key = "wylde_coach_checkin_" + ISO8601DateFormatter().string(from: Date()).prefix(10)
+                                UserDefaults.standard.removeObject(forKey: String(key))
                                 withAnimation { coachCheckin = nil }
                             }
                             .font(.system(size: 13, weight: .semibold))
@@ -168,7 +171,6 @@ struct MainTabView: View {
             BottomTabBar()
         }
         .background(Theme.background)
-        .ignoresSafeArea(.keyboard)
         // ─── Hamburger overlay — global on every tab ──────────────
         // Sits above all tab content via the parent ZStack. Tapping
         // opens the native SettingsDrawer. Suppressed in WebView tabs
@@ -220,7 +222,7 @@ struct MainTabView: View {
     private func tabContent<Content: View>(_ tab: AppState.Tab, @ViewBuilder content: () -> Content) -> some View {
         let isActive = appState.selectedTab == tab
         content()
-            .frame(maxWidth: UIScreen.main.bounds.width)
+            .frame(maxWidth: .infinity)
             .clipped()
             .opacity(isActive ? 1 : 0)
             .allowsHitTesting(isActive)
@@ -249,17 +251,23 @@ struct BottomTabBar: View {
             }
         }
         .frame(height: 72)
-        .padding(.bottom, safeAreaBottom)
+        .padding(.bottom, Self.safeAreaBottom)
         .background(
             BlurredTabBarBackground()
                 .ignoresSafeArea(edges: .bottom)
         )
     }
 
-    private var safeAreaBottom: CGFloat {
-        UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .first?.windows.first?.safeAreaInsets.bottom ?? 0
+    /// Safe-area bottom inset — uses the key window from the foreground scene,
+    /// which is more reliable than grabbing the first connected scene.
+    private static var safeAreaBottom: CGFloat {
+        guard let scene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: { $0.activationState == .foregroundActive }),
+              let window = scene.keyWindow else {
+            return 0
+        }
+        return window.safeAreaInsets.bottom
     }
 }
 

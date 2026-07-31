@@ -37,6 +37,8 @@ struct WyldeSelfApp: App {
                     CheckinSync.shared.start(appState: appState)
                     // WatchSync — sends daily state to Apple Watch companion
                     WatchSync.shared.start(appState: appState)
+                    // Migrate base64 photos from UserDefaults to FileStorage (one-time)
+                    migratePhotosToFileStorage()
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                     // Refresh daily state, then recompute the day counter.
@@ -64,6 +66,22 @@ struct WyldeSelfApp: App {
                 title: "Time for your walk",
                 body: "30+ minutes outside. Phone in your pocket. Your body needs the reset."
             )
+        }
+    }
+
+    /// One-time migration: move base64 Future Self photos from UserDefaults
+    /// to FileStorage. Large image data should not live in UserDefaults.
+    private func migratePhotosToFileStorage() {
+        let keys = ["wylde_future_photo", "wylde_future_rendering"]
+        for key in keys {
+            if let base64 = UserDefaults.standard.string(forKey: key),
+               FileStorage.shared.readString(forKey: key) == nil {
+                FileStorage.shared.writeString(base64, forKey: key)
+                UserDefaults.standard.removeObject(forKey: key)
+                #if DEBUG
+                print("[Migration] Moved \(key) from UserDefaults to FileStorage")
+                #endif
+            }
         }
     }
 

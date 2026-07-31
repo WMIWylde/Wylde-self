@@ -463,7 +463,7 @@ struct TodayView: View {
     }
 
     private var futureSelfImage: UIImage? {
-        guard let base64 = UserDefaults.standard.string(forKey: "wylde_future_rendering"),
+        guard let base64 = FileStorage.shared.readString(forKey: "wylde_future_rendering"),
               let data = Data(base64Encoded: base64),
               let img = UIImage(data: data) else { return nil }
         return img

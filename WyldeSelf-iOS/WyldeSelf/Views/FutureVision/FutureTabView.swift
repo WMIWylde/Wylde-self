@@ -13,7 +13,7 @@ struct FutureTabView: View {
 
     private var transformationImage: UIImage? {
         _ = refreshTick
-        guard let base64 = UserDefaults.standard.string(forKey: "wylde_future_rendering"),
+        guard let base64 = FileStorage.shared.readString(forKey: "wylde_future_rendering"),
               let data = Data(base64Encoded: base64),
               let img = UIImage(data: data) else { return nil }
         return img
@@ -21,7 +21,7 @@ struct FutureTabView: View {
 
     private var beforePhoto: UIImage? {
         _ = refreshTick
-        guard let base64 = UserDefaults.standard.string(forKey: "wylde_future_photo"),
+        guard let base64 = FileStorage.shared.readString(forKey: "wylde_future_photo"),
               let data = Data(base64Encoded: base64),
               let img = UIImage(data: data) else { return nil }
         return img
@@ -238,7 +238,7 @@ struct FutureTabView: View {
         guard let jpegData = photo.jpegData(compressionQuality: 0.8) else { return }
         isRerendering = true
         rerenderError = nil
-        UserDefaults.standard.set(jpegData.base64EncodedString(), forKey: "wylde_future_photo")
+        FileStorage.shared.writeString(jpegData.base64EncodedString(), forKey: "wylde_future_photo")
         refreshTick += 1
 
         let base64 = "data:image/jpeg;base64," + jpegData.base64EncodedString()
@@ -272,7 +272,7 @@ struct FutureTabView: View {
                let clean = img.components(separatedBy: ",").last,
                let imgData = Data(base64Encoded: clean),
                UIImage(data: imgData) != nil {
-                UserDefaults.standard.set(clean, forKey: "wylde_future_rendering")
+                FileStorage.shared.writeString(clean, forKey: "wylde_future_rendering")
                 refreshTick += 1
             } else {
                 rerenderError = resp.error ?? "Rendering failed. Try again."

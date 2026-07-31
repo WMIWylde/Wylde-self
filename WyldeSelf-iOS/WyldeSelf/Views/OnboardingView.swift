@@ -128,7 +128,7 @@ struct OnboardingView: View {
             // Moving to step 6 — save photo and start rendering
             if let photo = futurePhoto, let jpegData = photo.jpegData(compressionQuality: 0.8) {
                 let base64 = jpegData.base64EncodedString()
-                UserDefaults.standard.set(base64, forKey: "wylde_future_photo")
+                FileStorage.shared.writeString(base64, forKey: "wylde_future_photo")
             }
             step = 6
             Task { await generateFutureSelf() }
@@ -179,7 +179,7 @@ struct OnboardingView: View {
         // Save rendered future self if generated
         if let rendering = futureRendering, let jpegData = rendering.jpegData(compressionQuality: 0.9) {
             let base64 = jpegData.base64EncodedString()
-            UserDefaults.standard.set(base64, forKey: "wylde_future_rendering")
+            FileStorage.shared.writeString(base64, forKey: "wylde_future_rendering")
         }
         // Calculate personalized macro targets from body data + goals
         NutritionPreferencesService.shared.syncMacroGoalsToAppState(appState)

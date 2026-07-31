@@ -90,8 +90,9 @@ enum ClinicalAPI {
             if let err = try? JSONDecoder().decode(APIError.self, from: data) { throw err }
             throw APIError(error: "Request failed (HTTP \(http.statusCode))")
         }
-        if Response.self == EmptyResponse.self {
-            return EmptyResponse() as! Response
+        if Response.self == EmptyResponse.self,
+           let empty = EmptyResponse() as? Response {
+            return empty
         }
         return try JSONDecoder().decode(Response.self, from: data)
     }
