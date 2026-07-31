@@ -203,7 +203,7 @@ struct ProtocolTrackerView: View {
                     }
 
                     Button {
-                        sideEffectPrescriptionId = rx.id
+                        sideEffectPrescriptionId = rx.id.uuidString
                         showSideEffectSheet = true
                     } label: {
                         Image(systemName: "exclamationmark.triangle")
