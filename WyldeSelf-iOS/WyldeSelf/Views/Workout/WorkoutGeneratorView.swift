@@ -201,7 +201,7 @@ struct WorkoutGeneratorView: View {
             }
             .environmentObject(appState)
         }
-        .onChange(of: service.program?.days.count) { _ in
+        .onChange(of: service.program?.days.count) {
             // Auto-open today's session when the user just picked or generated a program
             guard awaitingProgram, !service.isGenerating,
                   let program = service.program, !program.days.isEmpty else { return }
