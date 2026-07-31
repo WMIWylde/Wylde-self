@@ -49,7 +49,8 @@ final class WatchWorkoutSessionManager: NSObject, ObservableObject {
             isActive = true
             elapsed = 0
             timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-                Task { @MainActor in self?.elapsed += 1 }
+                guard let mgr = self else { return }
+                Task { @MainActor in mgr.elapsed += 1 }
             }
         } catch {
             print("[WatchWorkout] session start failed: \(error.localizedDescription)")
