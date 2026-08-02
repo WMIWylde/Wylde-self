@@ -203,9 +203,10 @@ struct WorkoutGeneratorView: View {
         }
         .onChange(of: service.program?.days.count) {
             // Auto-open today's session when the user just picked or generated a program
-            guard awaitingProgram, !service.isGenerating,
+            guard awaitingProgram || service.justGenerated, !service.isGenerating,
                   let program = service.program, !program.days.isEmpty else { return }
             awaitingProgram = false
+            service.justGenerated = false
             let idx = (appState.currentDay - 1) % program.days.count
             todayDayIndex = idx
         }

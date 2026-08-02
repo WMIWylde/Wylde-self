@@ -11,6 +11,8 @@ final class WorkoutService: ObservableObject {
     @Published var generationError: String?
     /// True when the current program is a canned template because AI generation failed.
     @Published var usedFallback = false
+    /// Set by generation flows (space scan, describe) so the picker auto-navigates.
+    var justGenerated = false
     @Published var personalRecords: [String: PersonalRecord] = [:]
 
     private let programKey = "wylde_workout_program"
@@ -51,6 +53,7 @@ final class WorkoutService: ObservableObject {
             }
             self.program = program
             usedFallback = false
+            justGenerated = true
             saveProgram()
             #if DEBUG
             print("[WorkoutService] ✅ AI program generated: \(program.days.count) days")
@@ -730,6 +733,7 @@ final class WorkoutService: ObservableObject {
                 return result
             }
             self.program = program
+            justGenerated = true
             saveProgram()
         } catch {
             #if DEBUG
@@ -746,8 +750,19 @@ final class WorkoutService: ObservableObject {
             throw WorkoutError.invalidURL
         }
 
-        // Compress and encode image
-        guard let imageData = image.jpegData(compressionQuality: 0.5) else {
+        // Resize + compress to stay under the 2MB API body limit.
+        // A 12MP photo at 0.5 quality can still be 1.5MB+ as base64.
+        let maxDimension: CGFloat = 1024
+        let resized: UIImage
+        if max(image.size.width, image.size.height) > maxDimension {
+            let scale = maxDimension / max(image.size.width, image.size.height)
+            let newSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+            let renderer = UIGraphicsImageRenderer(size: newSize)
+            resized = renderer.image { _ in image.draw(in: CGRect(origin: .zero, size: newSize)) }
+        } else {
+            resized = image
+        }
+        guard let imageData = resized.jpegData(compressionQuality: 0.4) else {
             throw WorkoutError.generationFailed
         }
         let base64Image = imageData.base64EncodedString()
@@ -822,7 +837,16 @@ final class WorkoutService: ObservableObject {
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
 
         let (data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw WorkoutError.generationFailed
+        }
+        #if DEBUG
+        print("[WorkoutService] Space scan API: HTTP \(httpResponse.statusCode), \(data.count) bytes")
+        #endif
+        guard httpResponse.statusCode == 200 else {
+            if httpResponse.statusCode == 413 {
+                throw WorkoutError.generationFailed  // Image too large — already resized, shouldn't hit this
+            }
             throw WorkoutError.generationFailed
         }
 

@@ -2,7 +2,7 @@
 const { applyCors, rateLimit, clientIp } = require('../lib/security');
 const { getUserFromRequest } = require('../lib/supabase-admin');
 
-const MAX_BODY_BYTES = 2 * 1024 * 1024; // 2MB for image payloads
+const MAX_BODY_BYTES = 4 * 1024 * 1024; // 4MB for image payloads
 
 module.exports = async function handler(req, res) {
   if (applyCors(req, res, { methods: 'POST, OPTIONS' })) return;
