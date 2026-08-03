@@ -96,6 +96,7 @@
 		MD10001 /* MeditationPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MD20001 /* MeditationPickerView.swift */; };
 		MD10002 /* future-self-kite-meditation.m4a in Resources */ = {isa = PBXBuildFile; fileRef = MD20002 /* future-self-kite-meditation.m4a */; };
 		MD10003 /* octopus-of-compassion-meditation.m4a in Resources */ = {isa = PBXBuildFile; fileRef = MD20003 /* octopus-of-compassion-meditation.m4a */; };
+		MD10004 /* urge-surfing-meditation.m4a in Resources */ = {isa = PBXBuildFile; fileRef = MD20004 /* urge-surfing-meditation.m4a */; };
 		C67910E979584C833D7A4BFF /* SupabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF1630ABE8FEBBA81A03240 /* SupabaseClient.swift */; };
 		CB13F2054F494BFCC899EF4B /* TherapyLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2506714E6F6E59E7BB6D829 /* TherapyLibraryView.swift */; };
 		D2421988CEDCAD47A494339A /* ProgramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75AB4CA4640E38AE003A94AB /* ProgramView.swift */; };
@@ -256,6 +257,7 @@
 		MD20001 /* MeditationPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationPickerView.swift; sourceTree = "<group>"; };
 		MD20002 /* future-self-kite-meditation.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = "future-self-kite-meditation.m4a"; path = "future-self-kite-meditation.m4a"; sourceTree = "<group>"; };
 		MD20003 /* octopus-of-compassion-meditation.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = "octopus-of-compassion-meditation.m4a"; path = "octopus-of-compassion-meditation.m4a"; sourceTree = "<group>"; };
+		MD20004 /* urge-surfing-meditation.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = "urge-surfing-meditation.m4a"; path = "urge-surfing-meditation.m4a"; sourceTree = "<group>"; };
 		CF64D03B1398C1C46DFCCB8C /* CinematicEffects.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CinematicEffects.swift; sourceTree = "<group>"; };
 		CFF1630ABE8FEBBA81A03240 /* SupabaseClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SupabaseClient.swift; sourceTree = "<group>"; };
 		D2506714E6F6E59E7BB6D829 /* TherapyLibraryView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TherapyLibraryView.swift; sourceTree = "<group>"; };
@@ -380,6 +382,7 @@
 				FA5FDC2D6C2789D0FC463D9D /* guided-meditation.m4a */,
 				MD20002 /* future-self-kite-meditation.m4a */,
 				MD20003 /* octopus-of-compassion-meditation.m4a */,
+				MD20004 /* urge-surfing-meditation.m4a */,
 				8DDF27D0AD3DFF23AE7F9504 /* wyldeself-intro.mp4 */,
 			);
 			path = WyldeSelf;
@@ -739,6 +742,7 @@
 				362218F195F2E3CB7D31A5D9 /* guided-meditation.m4a in Resources */,
 				MD10002 /* future-self-kite-meditation.m4a in Resources */,
 				MD10003 /* octopus-of-compassion-meditation.m4a in Resources */,
+				MD10004 /* urge-surfing-meditation.m4a in Resources */,
 				3EB94B73D90D13EDAD1851DA /* wyldeself-intro.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

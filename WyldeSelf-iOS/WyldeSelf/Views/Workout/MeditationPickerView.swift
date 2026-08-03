@@ -199,5 +199,15 @@ struct Meditation: Identifiable {
             accent: WyldeStyles.Colors.bronze,
             facilitator: "Tommy Sobel"
         ),
+        Meditation(
+            id: "urge-surfing",
+            title: "Urge Surfing",
+            subtitle: "Ride the wave of impulse without acting on it. A mindfulness practice for self-control.",
+            audioFile: "urge-surfing-meditation",
+            durationSeconds: 260,
+            icon: "water.waves",
+            accent: Color(red: 0.42, green: 0.56, blue: 0.74),
+            facilitator: "Tommy Sobel"
+        ),
     ]
 }
