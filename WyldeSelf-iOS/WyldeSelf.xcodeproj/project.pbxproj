@@ -93,6 +93,9 @@
 		C1F3B0C06D74EC542FDC4DD2 /* WorkoutContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1FB6CF9D2C933C1754C50 /* WorkoutContainerView.swift */; };
 		C5291E6E267C1A8290EB2CAE /* WorkoutDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07DC257E3ECC043B6773A58 /* WorkoutDayView.swift */; };
 		C60C7CC6C017D714F0C8F352 /* GuidedMeditationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC61017E88572D0AF4662A7C /* GuidedMeditationView.swift */; };
+		MD10001 /* MeditationPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MD20001 /* MeditationPickerView.swift */; };
+		MD10002 /* future-self-kite-meditation.m4a in Resources */ = {isa = PBXBuildFile; fileRef = MD20002 /* future-self-kite-meditation.m4a */; };
+		MD10003 /* octopus-of-compassion-meditation.m4a in Resources */ = {isa = PBXBuildFile; fileRef = MD20003 /* octopus-of-compassion-meditation.m4a */; };
 		C67910E979584C833D7A4BFF /* SupabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF1630ABE8FEBBA81A03240 /* SupabaseClient.swift */; };
 		CB13F2054F494BFCC899EF4B /* TherapyLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2506714E6F6E59E7BB6D829 /* TherapyLibraryView.swift */; };
 		D2421988CEDCAD47A494339A /* ProgramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75AB4CA4640E38AE003A94AB /* ProgramView.swift */; };
@@ -250,6 +253,9 @@
 		BT10002 /* BackgroundTimer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BackgroundTimer.swift; sourceTree = "<group>"; };
 		C111ECD9FD92B6838B1A2F28 /* DynamicWarmupView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DynamicWarmupView.swift; sourceTree = "<group>"; };
 		CC61017E88572D0AF4662A7C /* GuidedMeditationView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GuidedMeditationView.swift; sourceTree = "<group>"; };
+		MD20001 /* MeditationPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationPickerView.swift; sourceTree = "<group>"; };
+		MD20002 /* future-self-kite-meditation.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = "future-self-kite-meditation.m4a"; path = "future-self-kite-meditation.m4a"; sourceTree = "<group>"; };
+		MD20003 /* octopus-of-compassion-meditation.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = "octopus-of-compassion-meditation.m4a"; path = "octopus-of-compassion-meditation.m4a"; sourceTree = "<group>"; };
 		CF64D03B1398C1C46DFCCB8C /* CinematicEffects.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CinematicEffects.swift; sourceTree = "<group>"; };
 		CFF1630ABE8FEBBA81A03240 /* SupabaseClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SupabaseClient.swift; sourceTree = "<group>"; };
 		D2506714E6F6E59E7BB6D829 /* TherapyLibraryView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TherapyLibraryView.swift; sourceTree = "<group>"; };
@@ -372,6 +378,8 @@
 				D10005 /* Services */,
 				D10006 /* Utilities */,
 				FA5FDC2D6C2789D0FC463D9D /* guided-meditation.m4a */,
+				MD20002 /* future-self-kite-meditation.m4a */,
+				MD20003 /* octopus-of-compassion-meditation.m4a */,
 				8DDF27D0AD3DFF23AE7F9504 /* wyldeself-intro.mp4 */,
 			);
 			path = WyldeSelf;
@@ -515,6 +523,7 @@
 				F8A1FB6CF9D2C933C1754C50 /* WorkoutContainerView.swift */,
 				1B2ECA0779B45656B4576A32 /* QiGongFlowView.swift */,
 				CC61017E88572D0AF4662A7C /* GuidedMeditationView.swift */,
+				MD20001 /* MeditationPickerView.swift */,
 				F9B457E960389780C1D7432D /* JournalingTimerView.swift */,
 				N20007 /* DescribeWorkoutView.swift */,
 				SS10002 /* SpaceScanWorkoutView.swift */,
@@ -728,6 +737,8 @@
 				A10013 /* Assets.xcassets in Resources */,
 				A10018 /* exercises.json in Resources */,
 				362218F195F2E3CB7D31A5D9 /* guided-meditation.m4a in Resources */,
+				MD10002 /* future-self-kite-meditation.m4a in Resources */,
+				MD10003 /* octopus-of-compassion-meditation.m4a in Resources */,
 				3EB94B73D90D13EDAD1851DA /* wyldeself-intro.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -822,6 +833,7 @@
 				MC10001 /* MacroCalculator.swift in Sources */,
 				895AE0504FC089DC025DFF9C /* QiGongFlowView.swift in Sources */,
 				C60C7CC6C017D714F0C8F352 /* GuidedMeditationView.swift in Sources */,
+				MD10001 /* MeditationPickerView.swift in Sources */,
 				226DB19A0A68CF671A037743 /* CoachService.swift in Sources */,
 				EB10001 /* ErrorBanner.swift in Sources */,
 				5A4AB3FE4181FCD75D3C619B /* CoachChatView.swift in Sources */,

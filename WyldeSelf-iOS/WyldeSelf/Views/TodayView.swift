@@ -188,7 +188,7 @@ struct TodayView: View {
             QiGongFlowView()
         }
         .fullScreenCover(isPresented: $showMeditation) {
-            GuidedMeditationView()
+            MeditationPickerView()
         }
         .sheet(isPresented: $showSchedule) {
             WorkoutCalendarView().environmentObject(appState)

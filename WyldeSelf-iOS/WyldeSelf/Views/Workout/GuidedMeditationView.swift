@@ -1,14 +1,14 @@
 import SwiftUI
 import AVFoundation
 
-/// Guided visualization meditation — timer with optional audio.
-/// Audio file placeholder: when you create the guided meditation audio,
-/// add it to the bundle as "guided-meditation.m4a" or stream from URL.
+/// Guided visualization meditation — timer with pulsing glow and audio.
+/// Accepts a Meditation model to play specific audio content.
 struct GuidedMeditationView: View {
+    var meditation: Meditation?
     @Environment(\.dismiss) private var dismiss
 
     @State private var phase: Phase = .intro
-    @State private var remaining: Int = 600  // 10 minutes default
+    @State private var remaining: Int = 600
     @State private var totalDuration: Int = 600
     @State private var timer: Timer?
     @State private var isPaused = false
@@ -53,20 +53,26 @@ struct GuidedMeditationView: View {
                 .font(.system(size: 48))
                 .foregroundColor(accentColor)
 
-            Text("Guided Meditation")
+            Text(meditation?.title ?? "Guided Meditation")
                 .font(.system(size: 28, weight: .bold, design: .serif))
                 .foregroundColor(WyldeStyles.Colors.ink)
 
-            Text("Close your eyes. Visualize the version\nof yourself you're becoming.")
+            Text(meditation?.subtitle ?? "Close your eyes. Visualize the version\nof yourself you're becoming.")
                 .font(.system(size: 15))
                 .foregroundColor(WyldeStyles.Colors.stone)
                 .multilineTextAlignment(.center)
                 .lineSpacing(3)
 
-            Text("10 minutes · guided audio")
+            if let fac = meditation?.facilitator {
+                Text("by \(fac)")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(WyldeStyles.Colors.bronze)
+            }
+
+            Text("\(meditation?.durationLabel ?? "10 min") · guided audio")
                 .font(.system(size: 12, weight: .medium))
                 .foregroundColor(accentColor.opacity(0.6))
-                .padding(.top, 8)
+                .padding(.top, 4)
 
             GoldButton(label: "Begin") {
                 phase = .active
@@ -288,12 +294,17 @@ struct GuidedMeditationView: View {
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
         try? AVAudioSession.sharedInstance().setActive(true)
 
-        // Try bundled audio first
-        if let url = Bundle.main.url(forResource: "guided-meditation", withExtension: "m4a") {
+        let filename = meditation?.audioFile ?? "guided-meditation"
+        if let url = Bundle.main.url(forResource: filename, withExtension: "m4a") {
             audioPlayer = try? AVAudioPlayer(contentsOf: url)
+            // Use actual audio duration if available
+            if let player = audioPlayer, player.duration > 0 {
+                let audioDuration = Int(player.duration)
+                totalDuration = audioDuration
+                remaining = audioDuration
+            }
             audioPlayer?.play()
         }
-        // TODO: Add remote URL streaming when meditation audio is ready
     }
 
     // MARK: - Visualization Prompts
