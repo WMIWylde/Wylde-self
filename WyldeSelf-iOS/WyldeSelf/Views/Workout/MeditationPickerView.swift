@@ -124,10 +124,21 @@ struct MeditationPickerView: View {
                 .font(.system(size: 12.5))
                 .foregroundColor(WyldeStyles.Colors.stone)
                 .lineSpacing(2)
-            // Website link placeholder — will be wired when URL is provided
-            // Button { UIApplication.shared.open(URL(string: "https://...")!) } label: {
-            //     Text("Learn more about Tommy →")
-            // }
+            Button {
+                if let url = URL(string: "https://superconscious-healing.com/") {
+                    UIApplication.shared.open(url)
+                }
+            } label: {
+                HStack(spacing: 4) {
+                    Text("Learn more about Tommy")
+                        .font(.system(size: 13, weight: .semibold))
+                    Image(systemName: "arrow.up.right")
+                        .font(.system(size: 10, weight: .semibold))
+                }
+                .foregroundColor(WyldeStyles.Colors.bronze)
+                .padding(.top, 4)
+            }
+            .buttonStyle(.plain)
         }
         .padding(16)
         .background(WyldeStyles.Colors.bronze.opacity(0.05))
