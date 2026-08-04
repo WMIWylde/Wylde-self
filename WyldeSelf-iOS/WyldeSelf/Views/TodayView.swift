@@ -719,10 +719,12 @@ struct TodayView: View {
         .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
     }
 
+    @State private var isEditingBook = false
+
     private var readingTracker: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Current book
-            if appState.currentBook.isEmpty {
+            if appState.currentBook.isEmpty || isEditingBook {
                 HStack(spacing: 6) {
                     Image(systemName: "book.fill")
                         .font(.system(size: 11))
@@ -730,6 +732,7 @@ struct TodayView: View {
                     TextField("What are you reading?", text: $appState.currentBook)
                         .font(.system(size: 13))
                         .foregroundColor(Theme.text)
+                        .onSubmit { isEditingBook = false }
                 }
             } else {
                 HStack(spacing: 6) {
@@ -742,7 +745,7 @@ struct TodayView: View {
                         .lineLimit(1)
                     Spacer()
                     Button {
-                        appState.currentBook = ""
+                        isEditingBook = true
                     } label: {
                         Image(systemName: "pencil")
                             .font(.system(size: 10))
