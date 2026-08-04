@@ -280,6 +280,7 @@ enum MealType: String, Codable, CaseIterable {
     case lunch = "Lunch"
     case dinner = "Dinner"
     case snack = "Snack"
+    case drink = "Drink"
 }
 
 struct MealEntry: Identifiable, Codable {
