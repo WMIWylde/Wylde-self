@@ -299,6 +299,33 @@
       </div>
     </div>
 
+    <!-- ░ USERS ░ -->
+    <div class="section" id="s-users">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Users</h2>
+          <div class="section-sub" id="user-count"></div>
+        </div>
+        <button class="btn-sm" id="export-csv-btn" onclick="exportCSV()" style="display:none">Export CSV</button>
+      </div>
+      <div class="card" style="padding:0;overflow-x:auto">
+        <table class="clinic-table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Type</th>
+              <th>Signed up</th>
+              <th>Last active</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="user-tbody">
+            <tr><td colspan="5" class="loading"><span class="spin"></span>Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <div class="footer">
       <span>&copy; <script>document.write(new Date().getFullYear())</script> Wylde Self</span>
       <span style="font-family:'Fraunces',serif;font-style:italic">Considered. Clinical. Calm.</span>
@@ -312,6 +339,7 @@
    ═══════════════════════════════════════════ */
 let _secret = '';
 let _clinics = [];
+let _users = [];
 let _currentFilter = 'all';
 
 function secret() { return _secret; }
@@ -447,6 +475,10 @@ async function loadPulse() {
           '<div class="fb-meta">' + meta + '</div></div>';
       }).join('');
     }
+
+    // Users
+    _users = d.users || [];
+    renderUsers();
   } catch (e) {
     kpis.innerHTML = '<div class="empty">Could not load pulse data.</div>';
   }
@@ -537,6 +569,62 @@ async function clinicAction(clinicianId, newStatus) {
     });
     loadClinics();
   } catch (_) {}
+}
+
+/* ═══════════════════════════════════════════
+   USERS
+   ═══════════════════════════════════════════ */
+function renderUsers() {
+  var tbody = document.getElementById('user-tbody');
+  var countEl = document.getElementById('user-count');
+  var exportBtn = document.getElementById('export-csv-btn');
+  if (!tbody) return;
+
+  countEl.textContent = _users.length + ' total';
+  if (exportBtn) exportBtn.style.display = 'inline-flex';
+
+  if (_users.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">No users yet.</td></tr>';
+    return;
+  }
+
+  var now = new Date();
+  var weekAgo = new Date(now - 7 * 86400000).toISOString();
+
+  tbody.innerHTML = _users.map(function(u) {
+    var email = esc(u.email || '?');
+    var type = u.is_clinician ? '<span class="pill amber"><span class="dot"></span>Clinician</span>' : '<span class="pill gray"><span class="dot"></span>App user</span>';
+    var signed = new Date(u.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    var lastRaw = u.last_sign_in_at;
+    var last = lastRaw ? new Date(lastRaw).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Never';
+    var active = lastRaw && lastRaw > weekAgo;
+    var status = active ? '<span class="pill green"><span class="dot"></span>Active</span>' : '<span class="pill gray"><span class="dot"></span>Inactive</span>';
+    return '<tr>' +
+      '<td style="font-weight:500">' + email + '</td>' +
+      '<td>' + type + '</td>' +
+      '<td style="font-size:12px;color:#6B675F">' + signed + '</td>' +
+      '<td style="font-size:12px;color:#6B675F">' + last + '</td>' +
+      '<td>' + status + '</td></tr>';
+  }).join('');
+}
+
+function exportCSV() {
+  if (!_users.length) return;
+  var rows = [['Email', 'Type', 'Signed Up', 'Last Active']];
+  _users.forEach(function(u) {
+    rows.push([
+      u.email || '',
+      u.is_clinician ? 'Clinician' : 'App user',
+      (u.created_at || '').slice(0, 10),
+      (u.last_sign_in_at || 'never').slice(0, 10),
+    ]);
+  });
+  var csv = rows.map(function(r) { return r.map(function(c) { return '"' + c.replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
+  var blob = new Blob([csv], { type: 'text/csv' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'wyldeself-users-' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.click();
 }
 
 /* ═══════════════════════════════════════════

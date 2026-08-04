@@ -75,6 +75,12 @@ module.exports = async function handler(req, res) {
       points_earned_7d: pointsWeek,
       redemptions_total: redemptions.count || 0,
       feedback: (feedback.data || []).map(f => ({ ...f, email: emailById[f.user_id] || null, user_id: undefined })),
+      users: allUsers.map(u => ({
+        email: u.email,
+        created_at: u.created_at,
+        last_sign_in_at: u.last_sign_in_at || null,
+        is_clinician: clinicianIds.has(u.id),
+      })).sort((a, b) => (b.created_at || '').localeCompare(a.created_at || '')),
     });
   } catch (err) {
     console.error('[pulse]', err.message);
