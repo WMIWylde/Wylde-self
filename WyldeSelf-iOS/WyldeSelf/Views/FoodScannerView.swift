@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 
 struct FoodScannerView: View {
     @EnvironmentObject var appState: AppState
@@ -10,6 +11,7 @@ struct FoodScannerView: View {
     @State private var selectedMealType: MealType = .lunch
     @State private var showCamera = false
     @State private var showPhotoPicker = false
+    @State private var cameraPermissionDenied = false
 
     enum Phase { case capture, analyzing, result }
     @State private var phase: Phase = .capture
@@ -106,8 +108,15 @@ struct FoodScannerView: View {
             VStack(spacing: 12) {
                 if UIImagePickerController.isSourceTypeAvailable(.camera) {
                     GoldButton(label: "Take Photo") {
-                        showCamera = true
+                        requestCameraAndShow()
                     }
+                }
+
+                if cameraPermissionDenied {
+                    Text("Camera access denied. Go to Settings → Wylde Self → Camera to enable.")
+                        .font(.system(size: 12))
+                        .foregroundColor(WyldeStyles.Colors.error)
+                        .multilineTextAlignment(.center)
                 }
 
                 Button {
@@ -282,6 +291,25 @@ struct FoodScannerView: View {
             phase = .result
         } else {
             phase = .capture
+        }
+    }
+
+    private func requestCameraAndShow() {
+        let status = AVCaptureDevice.authorizationStatus(for: .video)
+        switch status {
+        case .authorized:
+            showCamera = true
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                DispatchQueue.main.async {
+                    if granted { showCamera = true }
+                    else { cameraPermissionDenied = true }
+                }
+            }
+        case .denied, .restricted:
+            cameraPermissionDenied = true
+        @unknown default:
+            showCamera = true
         }
     }
 }

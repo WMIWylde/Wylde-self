@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import AVFoundation
 
 /// Take a photo of your space + available equipment → AI generates a
 /// bodyweight-focused workout tailored to what it sees.
@@ -14,6 +15,7 @@ struct SpaceScanWorkoutView: View {
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var isAnalyzing = false
     @State private var analysisError: String?
+    @State private var cameraPermissionDenied = false
 
     var body: some View {
         ZStack {
@@ -97,7 +99,7 @@ struct SpaceScanWorkoutView: View {
                 .lineSpacing(2)
 
             VStack(spacing: 12) {
-                Button { showCamera = true } label: {
+                Button { requestCameraAndShow() } label: {
                     HStack(spacing: 8) {
                         Image(systemName: "camera.fill")
                             .font(.system(size: 14))
@@ -208,6 +210,25 @@ struct SpaceScanWorkoutView: View {
             } else {
                 analysisError = service.generationError ?? "Couldn't generate a workout. Try again or take a clearer photo."
             }
+        }
+    }
+
+    private func requestCameraAndShow() {
+        let status = AVCaptureDevice.authorizationStatus(for: .video)
+        switch status {
+        case .authorized:
+            showCamera = true
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                DispatchQueue.main.async {
+                    if granted { showCamera = true }
+                    else { cameraPermissionDenied = true; analysisError = "Camera access denied. Go to Settings → Wylde Self to enable." }
+                }
+            }
+        case .denied, .restricted:
+            analysisError = "Camera access denied. Go to Settings → Wylde Self → Camera to enable."
+        @unknown default:
+            showCamera = true
         }
     }
 }
